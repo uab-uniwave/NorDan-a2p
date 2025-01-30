@@ -1,0 +1,74 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+ <PropertyGroup>
+ <TargetFramework>net8.0-Windows</TargetFramework>
+ <ImplicitUsings>enable</ImplicitUsings>
+ <Nullable>enable</Nullable>
+ <BaseOutputPath>..\..\Output</BaseOutputPath>
+ <OutputPath>$(BaseOutputPath)\$(Configuration)\</OutputPath>
+ <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+ <OutputType>Library</OutputType>
+ </PropertyGroup>
+
+ <ItemGroup>
+ <Compile Remove="Core\Interfaces\Services\Import\SubServices\**" />
+ <EmbeddedResource Remove="Core\Interfaces\Services\Import\SubServices\**" />
+ <None Remove="Core\Interfaces\Services\Import\SubServices\**" />
+ </ItemGroup>
+
+ <ItemGroup>
+ <Compile Include="Core\Interfaces\Services\Import\SubServices\IImportSapa_v1.cs" />
+ <Compile Include="Core\Interfaces\Services\Import\SubServices\IImportSapa_v2.cs" />
+ <Compile Include="Core\Interfaces\Services\Import\SubServices\IImportSchuco.cs" />
+ </ItemGroup>
+
+ <ItemGroup>
+ <None Include="Core\Entities\ConcreteEntity\ItemSchuco.cs" />
+ <None Include="Core\Entities\Models\A2PLogGridRecord.cs" />
+ </ItemGroup>
+
+ <ItemGroup>
+ <PackageReference Include="ClosedXML" Version="0.104.2" />
+ <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.0-preview3.24332.3" />
+	 <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.0" />
+	 <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
+	 <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
+	 <PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="9.0.0" />
+	 <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+	 <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+	 <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+	 <PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
+	 <PackageReference Include="Serilog.Expressions" Version="5.1.0-dev-00186" />
+	 <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.1-dev-02308" />
+	 <PackageReference Include="Serilog.Extensions.Logging.File" Version="9.0.0-dev-02302" />
+	 <PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
+	 <PackageReference Include="Serilog.Formatting.Compact.Reader" Version="4.1.0-dev-00085" />
+	 <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
+	 <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+	 <PackageReference Include="Serilog.Sinks.EventLog" Version="4.0.1-dev-00087" />
+	 <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+	 <PackageReference Include="Eris.Serilog.Formatting.Json" Version="1.1.0">
+  <TreatAsUsed>true</TreatAsUsed>
+ </PackageReference>
+	 <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
+ </ItemGroup>
+
+
+ <ItemGroup>
+ <None Update="appsettings.Production.json">
+  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+ </None>
+ <None Update="appsettings.Development.json">
+  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+ </None>
+ <None Update="appsettings.json">
+  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+ </None>
+ </ItemGroup>
+
+
+ <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+ <Exec Command="&quot;$(DevEnvDir)devenv.com&quot; &quot;$(SolutionPath)&quot; /Clean &quot;$(ConfigurationName)&quot;" />
+ </Target>
+
+</Project>

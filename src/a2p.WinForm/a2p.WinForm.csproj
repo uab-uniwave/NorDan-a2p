@@ -1,0 +1,80 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+ <PropertyGroup>
+ <OutputType>WinExe</OutputType>
+ <TargetFramework>net8.0-Windows</TargetFramework>
+ <Nullable>enable</Nullable>
+ <UseWindowsForms>true</UseWindowsForms>
+ <ImplicitUsings>enable</ImplicitUsings>
+
+     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+	 <!--<ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>-->
+<!--<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>	-->
+	
+
+	 
+	 
+ <BaseOutputPath>..\..\Output</BaseOutputPath>
+	 <OutputPath>$(BaseOutputPath)\$(Configuration)\</OutputPath>
+ <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+ </PropertyGroup>
+
+ <ItemGroup>
+ <Compile Remove="ThemeColor.cs" />
+ </ItemGroup>
+
+	<ItemGroup>
+
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.0-preview3.24332.3" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="9.0.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+		<PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+		<PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+		<PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
+		<PackageReference Include="Serilog.Expressions" Version="5.1.0-dev-00186" />
+		<PackageReference Include="Serilog.Extensions.Logging" Version="9.0.1-dev-02308" />
+		<PackageReference Include="Serilog.Extensions.Logging.File" Version="9.0.0-dev-02302" />
+		<PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
+		<PackageReference Include="Serilog.Formatting.Compact.Reader" Version="4.1.0-dev-00085" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+		<PackageReference Include="Serilog.Sinks.EventLog" Version="4.0.1-dev-00087" />
+		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+		<PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
+	</ItemGroup>
+
+ <ItemGroup>
+ <ProjectReference Include="..\a2p.Shared\a2p.Shared.csproj" />
+ </ItemGroup>
+
+ <ItemGroup>
+ <Compile Update="Properties\Resources.Designer.cs">
+  <DesignTime>True</DesignTime>
+  <AutoGen>True</AutoGen>
+  <DependentUpon>Resources.resx</DependentUpon>
+ </Compile>
+ </ItemGroup>
+
+ <ItemGroup>
+ <EmbeddedResource Update="Properties\Resources.resx">
+  <Generator>ResXFileCodeGenerator</Generator>
+  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+ </EmbeddedResource>
+ </ItemGroup>
+
+	<ItemGroup>
+		<None Update="..\a2p.Shared\appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="..\a2p.Shared\appsettings.Development.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="..\a2p.Shared\appsettings.Production.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+</Project>

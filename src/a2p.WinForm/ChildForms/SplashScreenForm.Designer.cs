@@ -1,4 +1,8 @@
-﻿namespace a2p.WinForm
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using Color = System.Drawing.Color;
+using Font = System.Drawing.Font;
+
+namespace a2p.WinForm
 {
     partial class SplashScreenForm
     {
@@ -178,7 +182,7 @@
             // 
             // panel2
             // 
-            this.panel2.BackColor=Color.FromArgb(88, 89, 81);
+            this.panel2.BackColor = UniwaveColors.a2pGreyDark;
             this.panel2.Controls.Add(this.label2);
             this.panel2.Dock=DockStyle.Bottom;
             this.panel2.Location=new Point(0, 368);
@@ -190,7 +194,8 @@
             // 
             // panel3
             // 
-            this.panel3.BackColor=Color.FromArgb(88, 89, 81);
+            this.panel3.BackColor= UniwaveColors.a2pGreyDark;
+            this.panel2.Controls.Add(this.label2);
             this.panel3.BorderStyle=BorderStyle.Fixed3D;
             this.panel3.Dock=DockStyle.Top;
             this.panel3.Location=new Point(0, 35);

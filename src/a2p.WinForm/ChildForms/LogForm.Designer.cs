@@ -54,7 +54,7 @@ namespace a2p.WinForm.ChildForms
             // chxVerbose
             // 
             this.chxVerbose.AutoSize = true;
-            this.chxVerbose.BackColor = UniwaveColors.uwGreyDark;
+            this.chxVerbose.BackColor = UniwaveColors.a2pGreyDark;
             this.chxVerbose.Checked = true;
             this.chxVerbose.CheckState = CheckState.Checked;
             this.chxVerbose.FlatAppearance.BorderColor = UniwaveColors.uwOrangeDeep;
@@ -74,7 +74,7 @@ namespace a2p.WinForm.ChildForms
             // chxDebug
             // 
             this.chxDebug.AutoSize = true;
-            this.chxDebug.BackColor = UniwaveColors.uwGreyDark;
+            this.chxDebug.BackColor = UniwaveColors.a2pGreyDark;
             this.chxDebug.Checked = true;
             this.chxDebug.CheckState = CheckState.Checked;
             this.chxDebug.FlatAppearance.BorderColor = UniwaveColors.uwOrangeDeep;
@@ -94,7 +94,7 @@ namespace a2p.WinForm.ChildForms
             // chxInformation
             // 
             this.chxInformation.AutoSize = true;
-            this.chxInformation.BackColor = UniwaveColors.uwGreyDark;
+            this.chxInformation.BackColor = UniwaveColors.a2pGreyDark;
             this.chxInformation.Checked = true;
             this.chxInformation.CheckState = CheckState.Checked;
             this.chxInformation.FlatAppearance.BorderColor = UniwaveColors.uwOrangeDeep;
@@ -115,7 +115,7 @@ namespace a2p.WinForm.ChildForms
             // 
             this.chxWarning.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             this.chxWarning.AutoSize = true;
-            this.chxWarning.BackColor = UniwaveColors.uwGreyDark;
+            this.chxWarning.BackColor = UniwaveColors.a2pGreyDark;
             this.chxWarning.Checked = true;
             this.chxWarning.CheckState = CheckState.Checked;
             this.chxWarning.FlatAppearance.BorderColor = UniwaveColors.uwOrangeDeep;
@@ -135,7 +135,7 @@ namespace a2p.WinForm.ChildForms
             // chxError
             // 
             this.chxError.AutoSize = true;
-            this.chxError.BackColor = UniwaveColors.uwGreyDark;
+            this.chxError.BackColor = UniwaveColors.a2pGreyDark;
             this.chxError.Checked = true;
             this.chxError.CheckState = CheckState.Checked;
             this.chxError.FlatAppearance.BorderColor = UniwaveColors.uwOrangeDeep;
@@ -156,7 +156,7 @@ namespace a2p.WinForm.ChildForms
             // 
             this.chxFatal.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             this.chxFatal.AutoSize = true;
-            this.chxFatal.BackColor = UniwaveColors.uwGreyDark;
+            this.chxFatal.BackColor = UniwaveColors.a2pGreyDark;
             this.chxFatal.Checked = true;
             this.chxFatal.CheckState = CheckState.Checked;
             this.chxFatal.FlatAppearance.BorderColor = UniwaveColors.uwOrangeDeep;
@@ -233,7 +233,7 @@ namespace a2p.WinForm.ChildForms
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            BackColor = UniwaveColors.uwGreyDark;
+            BackColor = UniwaveColors.a2pGreyDark;
             ClientSize = new Size(2206, 1253);
             Controls.Add(this.dataGridViewLog);
             Controls.Add(this.plGridPropertiesPanel);
@@ -269,3 +269,5 @@ namespace a2p.WinForm.ChildForms
         private DataGridView dataGridViewLog;
     }
 }
+
+

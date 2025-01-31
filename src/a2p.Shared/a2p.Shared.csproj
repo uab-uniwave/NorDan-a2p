@@ -17,6 +17,10 @@
  </ItemGroup>
 
  <ItemGroup>
+   <None Remove="appsettings.Development.json" />
+ </ItemGroup>
+
+ <ItemGroup>
  <Compile Include="Core\Interfaces\Services\Import\SubServices\IImportSapa_v1.cs" />
  <Compile Include="Core\Interfaces\Services\Import\SubServices\IImportSapa_v2.cs" />
  <Compile Include="Core\Interfaces\Services\Import\SubServices\IImportSchuco.cs" />
@@ -53,16 +57,34 @@
 	 <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
  </ItemGroup>
 
+ <ItemGroup>
+   <Page Include="appsettings.Development.json">
+     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+   </Page>
+ </ItemGroup>
+
+ <ItemGroup>
+   <Compile Update="Properties\Resources.Designer.cs">
+     <DesignTime>True</DesignTime>
+     <AutoGen>True</AutoGen>
+     <DependentUpon>Resources.resx</DependentUpon>
+   </Compile>
+ </ItemGroup>
+
+ <ItemGroup>
+   <EmbeddedResource Update="Properties\Resources.resx">
+     <Generator>ResXFileCodeGenerator</Generator>
+     <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+   </EmbeddedResource>
+ </ItemGroup>
+
 
  <ItemGroup>
  <None Update="appsettings.Production.json">
-  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
- </None>
- <None Update="appsettings.Development.json">
-  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
  </None>
  <None Update="appsettings.json">
-  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
  </None>
  </ItemGroup>
 

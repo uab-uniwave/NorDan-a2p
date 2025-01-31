@@ -12,13 +12,13 @@ namespace a2p.WinForm.CustomControls
             this.PerformAutoScale(); // Ensure everything is scaled correctly (optional)
             this.ResumeLayout(true); //                this.DpiChanged+=SplashScreenForm_DpiChanged;
                                      // Attach events before setting DPI to catch any initial changes
-            this.DpiChanged+=ProgressBarForm_DpiChanged;
-            this.Load+=ProgressBarForm_Load;
+            this.DpiChanged += ProgressBarForm_DpiChanged;
+            this.Load += ProgressBarForm_Load;
 
 
             // Set DPI mode and dimensions after attaching events
-            this.AutoScaleMode=AutoScaleMode.Dpi;
-            this.AutoScaleDimensions=new SizeF(96F, 96F);
+            this.AutoScaleMode = AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             this.ResumeLayout(true);
         }
@@ -37,21 +37,34 @@ namespace a2p.WinForm.CustomControls
 
         private void UpdateProgressInternal(ProgressValue progressValue)
         {
-            progressBar.Minimum=progressValue.MinValue;
-            progressBar.Maximum=progressValue.MaxValue;
-            progressBar.Value=progressValue.Value;
+            progressBar.Minimum = progressValue.MinValue;
+            progressBar.Maximum = progressValue.MaxValue;
+            progressBar.Value = progressValue.Value;
 
-            lbProgressBarTitle.Text=progressValue.ProgressTitle??string.Empty;
-            lbProgressBarTask1.Text=progressValue.ProgressTask1??string.Empty;
-            lbProgressBarTask2.Text=progressValue.ProgressTask2??string.Empty;
-            lbProgressBarTask3.Text=progressValue.ProgressTask3??string.Empty;
+            lbProgressBarTitle.Text = progressValue.ProgressTitle ?? string.Empty;
+            lbProgressBarTask1.Text = progressValue.ProgressTask1 ?? string.Empty;
+            lbProgressBarTask2.Text = progressValue.ProgressTask2 ?? string.Empty;
+            lbProgressBarTask3.Text = progressValue.ProgressTask3 ?? string.Empty;
         }
 
 
         private void ProgressBarForm_Load(object? sender, EventArgs e)
         {
+
+            UpdateProgressBar();
             SuspendLayout();
 
+        }
+
+
+        private void UpdateProgressBar()
+        {
+            // Example update logic
+            lbProgressBarTitle.Text = "Loading Files ...";
+            lbProgressBarTask1.Text = "";
+            lbProgressBarTask2.Text = "";
+            lbProgressBarTask3.Text = "";
+            progressBar.Value = 50; // Example progress value
         }
 
         private void ProgressBarForm_Shown(object? sender, EventArgs e)
@@ -61,19 +74,19 @@ namespace a2p.WinForm.CustomControls
         }
         protected override void WndProc(ref Message m)
         {
-            
-                const int WM_DPICHANGED = 0x02E0;
 
-                if (m.Msg==WM_DPICHANGED)
-                {
-                    int newDpi = m.WParam.ToInt32()&0xFFFF; // Extract DPI value
-                    float scaleFactor = newDpi/96f;
+            const int WM_DPICHANGED = 0x02E0;
 
-                    // Resize form properly based on new DPI
-                    this.Scale(new SizeF(scaleFactor, scaleFactor));
-                }
-                base.WndProc(ref m);
-            
+            if (m.Msg == WM_DPICHANGED)
+            {
+                int newDpi = m.WParam.ToInt32() & 0xFFFF; // Extract DPI value
+                float scaleFactor = newDpi / 96f;
+
+                // Resize form properly based on new DPI
+                this.Scale(new SizeF(scaleFactor, scaleFactor));
+            }
+            base.WndProc(ref m);
+
         }
 
 

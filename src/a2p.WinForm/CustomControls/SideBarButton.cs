@@ -43,7 +43,7 @@
             BackColor=Color.Transparent;
             ForeColor=UniwaveColors.uwOrangeDeep;
             Font=new Font("Segoe UI", 8.5F, FontStyle.Bold);
-            FlatAppearance.BorderColor=Color.FromArgb(88, 89, 81);
+            FlatAppearance.BorderColor=UniwaveColors.a2pGreyDark;
             FlatAppearance.BorderSize=0;
 
 
@@ -64,7 +64,7 @@
                     BackColor=Color.Transparent;
                     ForeColor=UniwaveColors.uwOrangeDeep;
                     Font=new Font("Segoe UI", 8.5F, FontStyle.Bold);
-                    FlatAppearance.BorderColor=Color.FromArgb(88, 89, 81);
+                    FlatAppearance.BorderColor=UniwaveColors.a2pGreyDark;
                     FlatAppearance.BorderSize=0;
                 };
 
@@ -90,7 +90,7 @@
                                 BackColor=Color.Transparent;
                                 ForeColor=UniwaveColors.uwOrangeDeep;
                                 Font=new Font("Segoe UI", 8.5F, FontStyle.Bold);
-                                FlatAppearance.BorderColor=Color.FromArgb(88, 89, 81);
+                                FlatAppearance.BorderColor=UniwaveColors.a2pGreyDark;
                                 FlatAppearance.BorderSize=0;
 
                             }
@@ -137,7 +137,7 @@
                     BackColor=Color.Transparent;
                     ForeColor=UniwaveColors.uwOrangeDeep;
                     Font=new Font("Segoe UI", 9F, FontStyle.Bold);
-                    FlatAppearance.BorderColor=Color.FromArgb(88, 89, 81);
+                    FlatAppearance.BorderColor=UniwaveColors.a2pGreyDark;
                     FlatAppearance.BorderSize=0;
 
                 }
@@ -146,7 +146,7 @@
                     BackColor=Color.Gray;
                     ForeColor=Color.DarkGray;
                     Font=new Font("Segoe UI", 8.5F, FontStyle.Bold);
-                    FlatAppearance.BorderColor=Color.FromArgb(88, 89, 81);
+                    FlatAppearance.BorderColor=UniwaveColors.a2pGreyDark;
                     FlatAppearance.BorderSize=0;
                 }
                 else if (!Enabled&&SelectedOne)

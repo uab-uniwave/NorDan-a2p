@@ -64,7 +64,7 @@
             // btSave
             // 
             this.btSave.Anchor=AnchorStyles.Top|AnchorStyles.Bottom|AnchorStyles.Right;
-            this.btSave.BackColor=Color.FromArgb(89, 88, 81);
+            this.btSave.BackColor=UniwaveColors.a2pGreyDark;
             this.btSave.BackgroundImageLayout=ImageLayout.Center;
             this.tableLayoutPanel1.SetColumnSpan(this.btSave, 2);
             this.btSave.FlatAppearance.BorderColor=UniwaveColors.uwOrangeDeep;
@@ -85,7 +85,7 @@
             // button3
             // 
             this.button3.Anchor=AnchorStyles.Top|AnchorStyles.Right;
-            this.button3.BackColor=Color.FromArgb(89, 88, 81);
+            this.button3.BackColor=UniwaveColors.a2pGreyDark;
             this.button3.BackgroundImageLayout=ImageLayout.Center;
             this.button3.FlatAppearance.BorderColor=UniwaveColors.uwOrangeDeep;
             this.button3.FlatAppearance.CheckedBackColor=UniwaveColors.uwOrangeDeep;
@@ -104,7 +104,7 @@
             // button2
             // 
             this.button2.Anchor=AnchorStyles.Top|AnchorStyles.Right;
-            this.button2.BackColor=Color.FromArgb(88, 89, 81);
+            this.button2.BackColor=UniwaveColors.a2pGreyDark;
             this.button2.BackgroundImageLayout=ImageLayout.Center;
             this.button2.FlatAppearance.BorderColor=UniwaveColors.uwOrangeDeep;
             this.button2.FlatAppearance.CheckedBackColor=UniwaveColors.uwOrangeDeep;
@@ -123,7 +123,7 @@
             // button1
             // 
             this.button1.Anchor=AnchorStyles.Top|AnchorStyles.Right;
-            this.button1.BackColor=Color.FromArgb(89, 88, 81);
+            this.button1.BackColor=UniwaveColors.a2pGreyDark;
             this.button1.BackgroundImageLayout=ImageLayout.Center;
             this.button1.FlatAppearance.BorderColor=UniwaveColors.uwOrangeDeep;
             this.button1.FlatAppearance.CheckedBackColor=UniwaveColors.uwOrangeDeep;
@@ -143,7 +143,7 @@
             // 
             this.tbSuccess.AccessibleRole=AccessibleRole.Text;
             this.tbSuccess.Anchor=AnchorStyles.Left|AnchorStyles.Right;
-            this.tbSuccess.BackColor=Color.FromArgb(88, 89, 81);
+            this.tbSuccess.BackColor=UniwaveColors.a2pGreyDark;
             this.tbSuccess.BorderStyle=BorderStyle.None;
             this.tbSuccess.Font=new Font("Segoe UI", 9F, FontStyle.Bold);
             this.tbSuccess.ForeColor=UniwaveColors.uwOrangeDeep;
@@ -162,7 +162,7 @@
             // 
             this.tbWorkingFolder.AccessibleRole=AccessibleRole.Text;
             this.tbWorkingFolder.Anchor=AnchorStyles.Left|AnchorStyles.Right;
-            this.tbWorkingFolder.BackColor=Color.FromArgb(88, 89, 81);
+            this.tbWorkingFolder.BackColor=UniwaveColors.a2pGreyDark;
             this.tbWorkingFolder.BorderStyle=BorderStyle.None;
             this.tbWorkingFolder.Font=new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             this.tbWorkingFolder.ForeColor=UniwaveColors.uwOrangeDeep;
@@ -232,7 +232,7 @@
             // 
             this.tbFailed.AccessibleRole=AccessibleRole.Text;
             this.tbFailed.Anchor=AnchorStyles.Left|AnchorStyles.Right;
-            this.tbFailed.BackColor=Color.FromArgb(88, 89, 81);
+            this.tbFailed.BackColor=UniwaveColors.a2pGreyDark;
             this.tbFailed.BorderStyle=BorderStyle.None;
             this.tbFailed.Font=new Font("Segoe UI", 9F, FontStyle.Bold);
             this.tbFailed.ForeColor=UniwaveColors.uwOrangeDeep;
@@ -300,7 +300,7 @@
             // 
             this.tableLayoutPanel1.AutoSize=true;
             this.tableLayoutPanel1.AutoSizeMode=AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel1.BackColor=Color.FromArgb(88, 89, 81);
+            this.tableLayoutPanel1.BackColor=UniwaveColors.a2pGreyDark;
             this.tableLayoutPanel1.ColumnCount=5;
             this.tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
             this.tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
@@ -346,8 +346,8 @@
             AutoScaleMode=AutoScaleMode.Dpi;
             AutoSize=true;
             AutoSizeMode=AutoSizeMode.GrowAndShrink;
-            BackColor=Color.FromArgb(167, 167, 172);
-            ClientSize=new Size(980, 640);
+            BackColor  = UniwaveColors.uwGreyLight;
+            ClientSize =new Size(980, 640);
             Controls.Add(this.tableLayoutPanel1);
             ForeColor=UniwaveColors.uwGreyLight;
             FormBorderStyle=FormBorderStyle.None;

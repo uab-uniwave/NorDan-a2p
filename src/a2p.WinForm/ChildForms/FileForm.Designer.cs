@@ -27,76 +27,76 @@ namespace a2p.WinForm.ChildForms
         #region Windows Form Designer generated code
         private void InitializeComponent()
         {
-            this.plMainPanel=new Panel();
-            this.plGridPanel=new Panel();
-            this.dataGridViewFiles=new DataGridView();
-            this.plGridPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)this.dataGridViewFiles).BeginInit();
+            plMainPanel = new Panel();
+            plGridPanel = new Panel();
+            dataGridViewFiles = new DataGridView();
+            plGridPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewFiles).BeginInit();
             SuspendLayout();
             // 
             // plMainPanel
             // 
-            this.plMainPanel.Dock=DockStyle.Top;
-            this.plMainPanel.Location=new Point(0, 0);
-            this.plMainPanel.Margin=new Padding(6);
-            this.plMainPanel.Name="plMainPanel";
-            this.plMainPanel.Size=new Size(1600, 60);
-            this.plMainPanel.TabIndex=0;
+            plMainPanel.Dock = DockStyle.Top;
+            plMainPanel.Location = new Point(0, 0);
+            plMainPanel.Margin = new Padding(12, 12, 12, 12);
+            plMainPanel.Name = "plMainPanel";
+            plMainPanel.Size = new Size(3200, 80);
+            plMainPanel.TabIndex = 0;
             // 
             // plGridPanel
             // 
-            this.plGridPanel.AutoScroll=true;
-            this.plGridPanel.BackColor=Color.Transparent;
-            this.plGridPanel.Controls.Add(this.dataGridViewFiles);
-            this.plGridPanel.Dock=DockStyle.Fill;
-            this.plGridPanel.ForeColor=Color.Transparent;
-            this.plGridPanel.Location=new Point(0, 60);
-            this.plGridPanel.Margin=new Padding(6);
-            this.plGridPanel.Name="plGridPanel";
-            this.plGridPanel.Size=new Size(1600, 840);
-            this.plGridPanel.TabIndex=1;
+            plGridPanel.AutoScroll = true;
+            plGridPanel.BackColor = Color.Transparent;
+            plGridPanel.Controls.Add(dataGridViewFiles);
+            plGridPanel.Dock = DockStyle.Fill;
+            plGridPanel.ForeColor = Color.Transparent;
+            plGridPanel.Location = new Point(0, 80);
+            plGridPanel.Margin = new Padding(12, 12, 12, 12);
+            plGridPanel.Name = "plGridPanel";
+            plGridPanel.Size = new Size(3200, 1720);
+            plGridPanel.TabIndex = 1;
             // 
             // dataGridViewFiles
             // 
-            this.dataGridViewFiles.AllowUserToAddRows=false;
-            this.dataGridViewFiles.AutoSizeColumnsMode=DataGridViewAutoSizeColumnsMode.Fill;
-            this.dataGridViewFiles.AutoSizeRowsMode=DataGridViewAutoSizeRowsMode.AllCells;
-            this.dataGridViewFiles.BackgroundColor=Color.FromArgb(88, 89, 81);
-            this.dataGridViewFiles.ColumnHeadersBorderStyle=DataGridViewHeaderBorderStyle.Single;
-            this.dataGridViewFiles.ColumnHeadersHeightSizeMode=DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewFiles.Dock=DockStyle.Fill;
-            this.dataGridViewFiles.EditMode=DataGridViewEditMode.EditOnEnter;
-            this.dataGridViewFiles.EnableHeadersVisualStyles=false;
-            this.dataGridViewFiles.GridColor=UniwaveColors.uwOrangeDeep;
-            this.dataGridViewFiles.Location=new Point(0, 0);
-            this.dataGridViewFiles.Margin=new Padding(6);
-            this.dataGridViewFiles.MultiSelect=false;
-            this.dataGridViewFiles.Name="dataGridViewFiles";
-            this.dataGridViewFiles.RightToLeft=RightToLeft.No;
-            this.dataGridViewFiles.RowHeadersBorderStyle=DataGridViewHeaderBorderStyle.Single;
-            this.dataGridViewFiles.RowHeadersVisible=false;
-            this.dataGridViewFiles.RowHeadersWidth=82;
-            this.dataGridViewFiles.Size=new Size(1600, 840);
-            this.dataGridViewFiles.TabIndex=2;
-            this.dataGridViewFiles.VirtualMode=true;
+            dataGridViewFiles.AllowUserToAddRows = false;
+            dataGridViewFiles.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewFiles.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dataGridViewFiles.BackgroundColor =UniwaveColors.a2pGreyDark;
+            dataGridViewFiles.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+            dataGridViewFiles.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewFiles.Dock = DockStyle.Fill;
+            dataGridViewFiles.EditMode = DataGridViewEditMode.EditOnEnter;
+            dataGridViewFiles.EnableHeadersVisualStyles = false;
+            dataGridViewFiles.GridColor = Color.FromArgb(239, 112, 32);
+            dataGridViewFiles.Location = new Point(0, 0);
+            dataGridViewFiles.Margin = new Padding(12, 12, 12, 12);
+            dataGridViewFiles.MultiSelect = false;
+            dataGridViewFiles.Name = "dataGridViewFiles";
+            dataGridViewFiles.RightToLeft = RightToLeft.No;
+            dataGridViewFiles.RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+            dataGridViewFiles.RowHeadersVisible = false;
+            dataGridViewFiles.RowHeadersWidth = 82;
+            dataGridViewFiles.Size = new Size(3200, 1720);
+            dataGridViewFiles.TabIndex = 2;
+            dataGridViewFiles.VirtualMode = true;
             // 
             // FileForm
             // 
-            AutoScaleDimensions=new SizeF(96F, 96F);
-            AutoScaleMode=AutoScaleMode.Dpi;
-            BackColor=Color.FromArgb(88, 89, 81);
-            ClientSize=new Size(1600, 900);
-            Controls.Add(this.plGridPanel);
-            Controls.Add(this.plMainPanel);
-            FormBorderStyle=FormBorderStyle.None;
-            Margin=new Padding(6);
-            Name="FileForm";
-            Text="FileForm";
-            Shown+=FileForm_Shown;
-            ResizeBegin+=FileForm_ResizeBegin;
-            ResizeEnd+=FileForm_ResizeEnd;
-            this.plGridPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)this.dataGridViewFiles).EndInit();
+            AutoScaleDimensions = new SizeF(192F, 192F);
+            AutoScaleMode = AutoScaleMode.Dpi;
+            BackColor =UniwaveColors.a2pGreyDark;
+            ClientSize = new Size(3200, 1800);
+            Controls.Add(plGridPanel);
+            Controls.Add(plMainPanel);
+            FormBorderStyle = FormBorderStyle.None;
+            Margin = new Padding(12, 12, 12, 12);
+            Name = "FileForm";
+            Text = "FileForm";
+            Shown += FileForm_Shown;
+            ResizeBegin += FileForm_ResizeBegin;
+            ResizeEnd += FileForm_ResizeEnd;
+            plGridPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dataGridViewFiles).EndInit();
             ResumeLayout(false);
 
 

@@ -50,11 +50,18 @@ namespace a2p.WinForm.CustomControls
 
         private void ProgressBarForm_Load(object? sender, EventArgs e)
         {
-            this.PerformAutoScale();
+            SuspendLayout();
+
+        }
+
+        private void ProgressBarForm_Shown(object? sender, EventArgs e)
+        {
+            ResumeLayout(false);
+
         }
         protected override void WndProc(ref Message m)
         {
-            {
+            
                 const int WM_DPICHANGED = 0x02E0;
 
                 if (m.Msg==WM_DPICHANGED)
@@ -66,7 +73,7 @@ namespace a2p.WinForm.CustomControls
                     this.Scale(new SizeF(scaleFactor, scaleFactor));
                 }
                 base.WndProc(ref m);
-            }
+            
         }
 
 
@@ -75,25 +82,6 @@ namespace a2p.WinForm.CustomControls
         private void ProgressBarForm_DpiChanged(object sender, DpiChangedEventArgs e)
         {
             this.PerformAutoScale();
-        }
-
-        private void lbProgressBarTitle_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void progressBar1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void progressPanel1_Paint(object sender, PaintEventArgs e)
-        {
 
         }
     }

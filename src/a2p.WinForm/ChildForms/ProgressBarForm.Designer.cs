@@ -28,27 +28,26 @@
         /// </summary>
         private void InitializeComponent()
         {
-            panel1 = new Panel();
+            plProgressBarPanel = new Panel();
             lbProgressBarTask3 = new Label();
             lbProgressBarTask2 = new Label();
             lbProgressBarTask1 = new Label();
             lbProgressBarTitle = new Label();
-            progressBar = new ProgressBar();
-            panel1.SuspendLayout();
-            SuspendLayout();
+       
+
             // 
-            // panel1
-            // 
-            panel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            panel1.Controls.Add(progressBar);
-            panel1.Location = new Point(0, 65);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(400, 60);
-            panel1.TabIndex = 27;
+
+            plProgressBarPanel.SuspendLayout();
+            plProgressBarPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            plProgressBarPanel.Controls.Add(progressBar);
+            plProgressBarPanel.Location = new Point(0, 65);
+            plProgressBarPanel.Name = "plProgressBarPanel";
+            plProgressBarPanel.Size = new Size(400, 60);
+            plProgressBarPanel.TabIndex = 27;
             // 
             // lbProgressBarTask3
             // 
-            lbProgressBarTask3.BackColor = UniwaveColors.uwGreyDark;
+            lbProgressBarTask3.BackColor = UniwaveColors.uwGreyDeep;
             lbProgressBarTask3.Dock = DockStyle.Bottom;
             lbProgressBarTask3.FlatStyle = FlatStyle.Flat;
             lbProgressBarTask3.Font = new Font("Segoe UI", 7F, FontStyle.Bold);
@@ -62,7 +61,7 @@
             // 
             // lbProgressBarTask2
             // 
-            lbProgressBarTask2.BackColor = Color.FromArgb(88, 89, 81);
+            lbProgressBarTask2.BackColor = UniwaveColors.uwGreyDeep;
             lbProgressBarTask2.Dock = DockStyle.Bottom;
             lbProgressBarTask2.FlatStyle = FlatStyle.Flat;
             lbProgressBarTask2.Font = new Font("Segoe UI", 7F, FontStyle.Bold);
@@ -76,7 +75,7 @@
             // 
             // lbProgressBarTask1
             // 
-            lbProgressBarTask1.BackColor = Color.FromArgb(88, 89, 81);
+            lbProgressBarTask1.BackColor = UniwaveColors.uwGreyDeep;
             lbProgressBarTask1.Dock = DockStyle.Bottom;
             lbProgressBarTask1.FlatStyle = FlatStyle.Flat;
             lbProgressBarTask1.Font = new Font("Segoe UI", 7F, FontStyle.Bold);
@@ -112,15 +111,17 @@
             progressBar.Name = "progressBar";
             progressBar.Size = new Size(300, 23);
             progressBar.TabIndex = 30;
+            progressBar = new ProgressBar();
+
             // 
             // ProgressBarForm
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            BackColor = Color.FromArgb(88, 89, 81);
+            BackColor = UniwaveColors.uwGreyDeep;
             ClientSize = new Size(400, 200);
             Controls.Add(lbProgressBarTitle);
-            Controls.Add(panel1);
+            Controls.Add(plProgressBarPanel);
             Controls.Add(lbProgressBarTask1);
             Controls.Add(lbProgressBarTask2);
             Controls.Add(lbProgressBarTask3);
@@ -133,13 +134,11 @@
             Text = "ProgressBarForm";
             Load += ProgressBarForm_Load;
             DpiChanged += ProgressBarForm_DpiChanged;
-            panel1.ResumeLayout(false);
-            ResumeLayout(false);
-
-        }
+            Shown += ProgressBarForm_Shown;
+ }
 
         #endregion
-        private Panel panel1;
+        private Panel plProgressBarPanel;
         private Label lbProgressBarTask3;
         private Label lbProgressBarTask2;
         private Label lbProgressBarTask1;

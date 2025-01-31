@@ -200,16 +200,16 @@
             this.panel3.TabIndex=9;
             this.panel3.UseWaitCursor=true;
             // 
-            // panel1
+            // plProgressBarPanel
             // 
             this.panel1.BackColor=Color.Transparent;
-            this.panel1.BackgroundImage=(Image)resources.GetObject("panel1.BackgroundImage");
+            this.panel1.BackgroundImage=(Image)resources.GetObject("plProgressBarPanel.BackgroundImage");
             this.panel1.BackgroundImageLayout=ImageLayout.Stretch;
             this.panel1.Controls.Add(this.label1);
             this.panel1.Dock=DockStyle.Fill;
             this.panel1.Location=new Point(0, 43);
             this.panel1.Margin=new Padding(0);
-            this.panel1.Name="panel1";
+            this.panel1.Name="plProgressBarPanel";
             this.panel1.Size=new Size(600, 325);
             this.panel1.TabIndex=10;
             this.panel1.UseWaitCursor=true;

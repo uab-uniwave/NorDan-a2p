@@ -27,21 +27,11 @@ namespace a2p.WinForm.ChildForms
         #region Windows Form Designer generated code
         private void InitializeComponent()
         {
-            plMainPanel = new Panel();
             plGridPanel = new Panel();
             dataGridViewFiles = new DataGridView();
             plGridPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewFiles).BeginInit();
             SuspendLayout();
-            // 
-            // plMainPanel
-            // 
-            plMainPanel.Dock = DockStyle.Top;
-            plMainPanel.Location = new Point(0, 0);
-            plMainPanel.Margin = new Padding(12, 12, 12, 12);
-            plMainPanel.Name = "plMainPanel";
-            plMainPanel.Size = new Size(3200, 80);
-            plMainPanel.TabIndex = 0;
             // 
             // plGridPanel
             // 
@@ -50,10 +40,10 @@ namespace a2p.WinForm.ChildForms
             plGridPanel.Controls.Add(dataGridViewFiles);
             plGridPanel.Dock = DockStyle.Fill;
             plGridPanel.ForeColor = Color.Transparent;
-            plGridPanel.Location = new Point(0, 80);
-            plGridPanel.Margin = new Padding(12, 12, 12, 12);
+            plGridPanel.Location = new Point(0, 0);
+            plGridPanel.Margin = new Padding(12);
             plGridPanel.Name = "plGridPanel";
-            plGridPanel.Size = new Size(3200, 1720);
+            plGridPanel.Size = new Size(1600, 800);
             plGridPanel.TabIndex = 1;
             // 
             // dataGridViewFiles
@@ -61,7 +51,7 @@ namespace a2p.WinForm.ChildForms
             dataGridViewFiles.AllowUserToAddRows = false;
             dataGridViewFiles.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridViewFiles.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridViewFiles.BackgroundColor =UniwaveColors.a2pGreyDark;
+            dataGridViewFiles.BackgroundColor = Color.DimGray;
             dataGridViewFiles.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
             dataGridViewFiles.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewFiles.Dock = DockStyle.Fill;
@@ -69,27 +59,24 @@ namespace a2p.WinForm.ChildForms
             dataGridViewFiles.EnableHeadersVisualStyles = false;
             dataGridViewFiles.GridColor = Color.FromArgb(239, 112, 32);
             dataGridViewFiles.Location = new Point(0, 0);
-            dataGridViewFiles.Margin = new Padding(12, 12, 12, 12);
+            dataGridViewFiles.Margin = new Padding(12);
             dataGridViewFiles.MultiSelect = false;
             dataGridViewFiles.Name = "dataGridViewFiles";
             dataGridViewFiles.RightToLeft = RightToLeft.No;
             dataGridViewFiles.RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
             dataGridViewFiles.RowHeadersVisible = false;
             dataGridViewFiles.RowHeadersWidth = 82;
-            dataGridViewFiles.Size = new Size(3200, 1720);
+            dataGridViewFiles.Size = new Size(1600, 800);
             dataGridViewFiles.TabIndex = 2;
             dataGridViewFiles.VirtualMode = true;
             // 
             // FileForm
             // 
-            AutoScaleDimensions = new SizeF(192F, 192F);
-            AutoScaleMode = AutoScaleMode.Dpi;
-            BackColor =UniwaveColors.a2pGreyDark;
-            ClientSize = new Size(3200, 1800);
+            BackColor = Color.FromArgb(56, 57, 60);
+            ClientSize = new Size(1600, 800);
             Controls.Add(plGridPanel);
-            Controls.Add(plMainPanel);
             FormBorderStyle = FormBorderStyle.None;
-            Margin = new Padding(12, 12, 12, 12);
+            Margin = new Padding(12);
             Name = "FileForm";
             Text = "FileForm";
             Shown += FileForm_Shown;
@@ -103,12 +90,8 @@ namespace a2p.WinForm.ChildForms
 
         }
 
-
-
         #endregion
-
-        private Panel plMainPanel;
-      private Panel plGridPanel;
+        private Panel plGridPanel;
       private DataGridView dataGridViewFiles;
      }
 }

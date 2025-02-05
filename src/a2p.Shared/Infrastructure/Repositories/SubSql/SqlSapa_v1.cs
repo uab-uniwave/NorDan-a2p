@@ -129,7 +129,7 @@ namespace a2p.Shared.Infrastructure.Repositories.SubSql
   // }
   //}
 
-  //public async Task<int> InsertMaterialAsync(MaterialDTO material)
+  //public async Task<int> ReadMaterialAsync(MaterialDTO material)
   //{
   // try
   // {

@@ -1,14 +1,14 @@
-﻿using System.Diagnostics;
-using System.Text;
-
-using a2p.Shared;
+﻿using a2p.Shared;
 using a2p.Shared.Core.Interfaces.Mappers;
-using a2p.Shared.Core.Interfaces.Services.Import;
 using a2p.Shared.Core.Interfaces.Services.Other;
+using a2p.Shared.Core.Interfaces.Services.Read;
 using a2p.Shared.Core.Utils;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
+using System.Diagnostics;
+using System.Text;
 
 namespace a2p.WinForm
 {
@@ -18,17 +18,17 @@ namespace a2p.WinForm
 
 
 
-     
+
 
         [STAThread]
         private static void Main()
         {
-            Application.SetHighDpiMode(HighDpiMode.PerMonitorV2); // ✅ Critical for DPI scaling
+            _ = Application.SetHighDpiMode(HighDpiMode.PerMonitorV2); // ✅ Critical for DPI scaling
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
 
-        _services=DependencyInjection.ConfigureServices();
+            _services = DependencyInjection.ConfigureServices();
             IConfiguration configuration = _services.GetRequiredService<IConfiguration>();
 
 
@@ -37,7 +37,7 @@ namespace a2p.WinForm
 
             IFileService fileService = _services.GetRequiredService<IFileService>();
             IExcelService excelService = _services.GetRequiredService<IExcelService>();
-            IImportService importService = _services.GetRequiredService<IImportService>();
+            IReadService readService = _services.GetRequiredService<IReadService>();
             IOrderMapper orderMapper = _services.GetRequiredService<IOrderMapper>();
 
             logger.Information("Application started.");
@@ -48,11 +48,11 @@ namespace a2p.WinForm
 
             Task.Delay(4000).Wait(); // Ensure splash screen is shown for at least 4 seconds
 
-            MainForm mainWindow = new(fileService, excelService, importService, configuration, logger, orderMapper);
+            MainForm mainWindow = new(fileService, excelService, readService, configuration, logger, orderMapper);
 
             splashScreen.FadeOut();
             splashScreen.Close();
-           
+
 
 
 

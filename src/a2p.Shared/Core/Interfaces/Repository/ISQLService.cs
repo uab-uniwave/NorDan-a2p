@@ -14,6 +14,7 @@ namespace a2p.Shared.Core.Interfaces.Repository
 
   Task<(T1, T2)> ExecuteQueryForTwoValuesAsync<T1, T2>(string sqlCommand, CommandType commandType, params SqlParameter[] parameters);
 
+  Task<(T1, T2)> GetSalesDoc<T1, T2>(string order);
   //Task<string> GetColorAsync(string order);
 
   //  Task<string> GetConnectionAsync(bool useOleProvider = false);

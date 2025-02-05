@@ -11,19 +11,13 @@
  </PropertyGroup>
 
  <ItemGroup>
- <Compile Remove="Core\Interfaces\Services\Import\SubServices\**" />
- <EmbeddedResource Remove="Core\Interfaces\Services\Import\SubServices\**" />
- <None Remove="Core\Interfaces\Services\Import\SubServices\**" />
+ <Compile Remove="Core\Interfaces\Services\Read\SubServices\**" />
+ <EmbeddedResource Remove="Core\Interfaces\Services\Read\SubServices\**" />
+ <None Remove="Core\Interfaces\Services\Read\SubServices\**" />
  </ItemGroup>
 
  <ItemGroup>
    <None Remove="appsettings.Development.json" />
- </ItemGroup>
-
- <ItemGroup>
- <Compile Include="Core\Interfaces\Services\Import\SubServices\IImportSapa_v1.cs" />
- <Compile Include="Core\Interfaces\Services\Import\SubServices\IImportSapa_v2.cs" />
- <Compile Include="Core\Interfaces\Services\Import\SubServices\IImportSchuco.cs" />
  </ItemGroup>
 
  <ItemGroup>
@@ -86,6 +80,11 @@
  <None Update="appsettings.json">
   <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
  </None>
+ </ItemGroup>
+
+
+ <ItemGroup>
+   <Folder Include="Core\Interfaces\Services\Read\SubServices\" />
  </ItemGroup>
 
 

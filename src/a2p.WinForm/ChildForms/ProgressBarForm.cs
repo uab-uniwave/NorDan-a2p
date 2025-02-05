@@ -7,18 +7,17 @@ namespace a2p.WinForm.CustomControls
         public ProgressBarForm()
         {
             this.SuspendLayout();
-
+            this.AutoScaleMode = AutoScaleMode.Dpi;
+            //  this.AutoScaleDimensions = new SizeF(96F, 96F);
             InitializeComponent();
             this.PerformAutoScale(); // Ensure everything is scaled correctly (optional)
             this.ResumeLayout(true); //                this.DpiChanged+=SplashScreenForm_DpiChanged;
                                      // Attach events before setting DPI to catch any initial changes
-            this.DpiChanged += ProgressBarForm_DpiChanged;
-            this.Load += ProgressBarForm_Load;
+
 
 
             // Set DPI mode and dimensions after attaching events
-            this.AutoScaleMode = AutoScaleMode.Dpi;
-            this.AutoScaleDimensions = new SizeF(96F, 96F);
+
 
             this.ResumeLayout(true);
         }

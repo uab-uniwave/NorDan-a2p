@@ -1,7 +1,6 @@
 ﻿namespace a2p.WinForm
 {
-    public static class UniwaveColors
-    {
+    public static class UniwaveColors {
 
         public static Color uwOrangeDeep => Color.FromArgb(239, 112, 32);
         public static Color uwOrangeBright => Color.FromArgb(252, 175, 38);

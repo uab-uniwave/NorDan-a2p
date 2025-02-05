@@ -1,12 +1,11 @@
 ﻿using a2p.Shared.Core.Entities.Models;
-using a2p.Shared.Core.Interfaces.Services.Import;
 using a2p.Shared.Core.Interfaces.Services.Other;
+using a2p.Shared.Core.Interfaces.Services.Read;
 using a2p.Shared.Core.Utils;
 
 using Microsoft.Extensions.Configuration;
 
 using System.Data;
-using System.Text.Json;
 using System.Text.Json.Nodes;
 
 namespace a2p.WinForm.ChildForms
@@ -15,7 +14,7 @@ namespace a2p.WinForm.ChildForms
     {
         private readonly IFileService _fileService;
         private readonly IExcelService _excelService;
-        private readonly IImportService _importService;
+        private readonly IReadService _readService;
         private readonly IConfiguration _configuration;
         private readonly ILogService _logger;
 
@@ -26,7 +25,7 @@ namespace a2p.WinForm.ChildForms
         private string _file;
 
 
-        public LogForm(IFileService fileService, IExcelService excelService, IImportService importService, IConfiguration configuration, ILogService logger)
+        public LogForm(IFileService fileService, IExcelService excelService, IReadService readService, IConfiguration configuration, ILogService logger)
         {
 
             _dataTableLog = new DataTable();
@@ -35,28 +34,15 @@ namespace a2p.WinForm.ChildForms
             _bindingSourceProperties = [];
             _fileService = fileService;
             _excelService = excelService;
-            _importService = importService;
+            _readService = readService;
             _configuration = configuration;
             _logger = logger;
             _file = Path.Combine(_configuration["AppSettings:Folders:RootFolder"] ?? "C://Temp//Import", _configuration["AppSettings:Folders:Log"] ?? "Log", "a2pLog.json");
 
 
-            //   this.SuspendLayout();
-            try
-            {
-                // Your code that might throw an exception
-            }
-            catch (Exception ex2)
-            {
-                string className = nameof(LogForm); // Replace with the actual class name if different
-                string methodName = nameof(InitializeDataTable); // Replace with the actual method name if different
+            this.AutoScaleMode = AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new SizeF(96F, 96F);
 
-                // Log the error
-                _logger?.Error(ex2, "Error in {Class}.{Method} {Message}", className, methodName, ex2.Message);
-
-                // Display the error in a MessageBox
-                _ = MessageBox.Show($"Error in {className}.{methodName}: {ex2.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
             SuspendLayout();
             InitializeComponent();
             InitializeDataGridViews();
@@ -295,7 +281,7 @@ namespace a2p.WinForm.ChildForms
                     this._logger?.Error(ex2, "Error in {Class}.{Method} {Message}", className, methodName, ex2.Message);
 
                     // Display the error in a MessageBox
-                    _ = MessageBox.Show($"Error in {className}.{methodName}: {ex2.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _ = MessageBox.Show($@"Error in {className}.{methodName}: {ex2.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 }
 
@@ -440,7 +426,7 @@ namespace a2p.WinForm.ChildForms
         #endregion -== IGrids events
 
         #region -== IData Table methods ==-
-        public async void LogoMonitorFileAsync()
+        public async Task LogoMonitorFileAsync()
         {
 
             using FileStream fileStream = new(_file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
@@ -464,12 +450,7 @@ namespace a2p.WinForm.ChildForms
         {
             try
             {
-                JsonSerializerOptions options = new()
-                {
-                    PropertyNameCaseInsensitive = true,
-                    AllowTrailingCommas = true,
-                    ReadCommentHandling = JsonCommentHandling.Skip
-                };
+
 
                 using MemoryStream jsonStream = new(System.Text.Encoding.UTF8.GetBytes(jsonLine));
                 JsonNode? root = await JsonNode.ParseAsync(jsonStream);
@@ -503,11 +484,19 @@ namespace a2p.WinForm.ChildForms
 
 
 
-                if (properties != null && properties.Count > 0)
+                if (properties == null)
                 {
-                    logRecord.Properties = properties ?? [];
+                    return logRecord;
                 }
 
+
+                if (properties.Count == 0)
+                {
+                    return logRecord;
+
+                }
+
+                logRecord.Properties = properties ?? [];
                 return logRecord;
 
             }

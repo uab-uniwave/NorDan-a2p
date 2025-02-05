@@ -8,7 +8,7 @@ namespace a2p.Shared.Core.Interfaces.Repository.SubSql
   //Task<string> GetColorAsync(string color);
   //Task<int> InsertItemAsync(ItemDTO position);
 
-  Task<int> InsertMaterialAsync(MaterialDTO material);
+  Task<int> ReadMaterialAsync(MaterialDTO material);
   //Task<int> InsertGlassAsync(GlassDTO glass);
 
   //Task<int> InsertPanelAsync(PanelDTO panel);

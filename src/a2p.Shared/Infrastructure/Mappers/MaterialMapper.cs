@@ -52,7 +52,7 @@ namespace a2p.Shared.Infrastructure.Mappers
       {
        foreach (MaterialDTO material in materials)
        {
-        _=await _sqlSapa_v2.InsertMaterialAsync(material);
+        _=await _sqlSapa_v2.ReadMaterialAsync(material);
        }
       }
       break;

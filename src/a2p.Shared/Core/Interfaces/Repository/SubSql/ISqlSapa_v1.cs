@@ -4,7 +4,7 @@
  {
 
   //Task<string> GetColorAsync(string color);
-  //Task<int> InsertMaterialAsync(MaterialDTO materials);
+  //Task<int> ReadMaterialAsync(MaterialDTO materials);
   //Task<int> InsertItemAsync(ItemDTO position);
   //Task<int> InsertPanelAsync(PanelDTO panel);
 

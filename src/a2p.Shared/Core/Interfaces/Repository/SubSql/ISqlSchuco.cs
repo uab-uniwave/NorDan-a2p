@@ -4,7 +4,7 @@
  {
 
   //Task<int> InsertPositionAsync(ItemDTO position);
-  //Task<int> InsertMaterialAsync(MaterialDTO material);
+  //Task<int> ReadMaterialAsync(MaterialDTO material);
   //Task<int> InsertGlassAsync(GlassDTO glass);
 
 

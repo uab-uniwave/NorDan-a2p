@@ -1,7 +1,8 @@
 ﻿using a2p.Shared.Core.Entities.Models;
 using a2p.Shared.Core.Interfaces.Mappers;
-using a2p.Shared.Core.Interfaces.Services.Import;
+using a2p.Shared.Core.Interfaces.Repository;
 using a2p.Shared.Core.Interfaces.Services.Other;
+using a2p.Shared.Core.Interfaces.Services.Read;
 using a2p.Shared.Core.Utils;
 
 using Microsoft.Extensions.Configuration;
@@ -16,20 +17,21 @@ namespace a2p.WinForm.ChildForms
     {
         private readonly IFileService _fileService;
         private readonly IExcelService _excelService;
-        private readonly IImportService _importService;
+        private readonly IReadService _readService;
         private readonly IConfiguration _configuration;
         private readonly ILogService _logger;
+        private readonly ISqlService _sqlService;
         private readonly IOrderMapper _orderMapper;
         private ProgressValue _progressValue;
         private DataTable _dataTable;
         private BindingSource _bindingSource;
         private List<A2POrder> _orderList;
 
-        public FileForm(IFileService fileService, IExcelService excelService, IImportService importService, IConfiguration configuration, ILogService logger, IOrderMapper orderMapper)
+        public FileForm(IFileService fileService, IExcelService excelService, IReadService readService, IConfiguration configuration, ILogService logger, IOrderMapper orderMapper)
         {
             _fileService = fileService;
             _excelService = excelService;
-            _importService = importService;
+            _readService = readService;
             _configuration = configuration;
             _logger = logger;
             _orderMapper = orderMapper;
@@ -39,6 +41,9 @@ namespace a2p.WinForm.ChildForms
             _progressValue = new ProgressValue();
 
             this.SuspendLayout();
+
+            this.AutoScaleMode = AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new SizeF(96F, 96F);
             InitializeComponent();
             InitializeGrid();
             InitializeTable();
@@ -50,7 +55,6 @@ namespace a2p.WinForm.ChildForms
             {
                 if (dataGridViewFiles != null)
                 {
-                    dataGridViewFiles.SuspendLayout();
                     #region -== DataGrid Columns ==-
                     if (!dataGridViewFiles.Columns.Contains("Order"))
                     {
@@ -220,7 +224,7 @@ namespace a2p.WinForm.ChildForms
                         Alignment = DataGridViewContentAlignment.MiddleCenter
                     };
                     dataGridViewFiles.RowsDefaultCellStyle = RowsDefaultCellStyle;
-                    #endregion -== DataGrid Columns Style ==-
+
 
                     DataGridViewCellStyle DefaultCellStyle = new()
                     {
@@ -234,22 +238,21 @@ namespace a2p.WinForm.ChildForms
                         Alignment = DataGridViewContentAlignment.MiddleCenter
                     };
                     dataGridViewFiles.DefaultCellStyle = DefaultCellStyle;
+                    #endregion -== DataGrid Columns Style ==-
                 }
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, "FF: Unhandled Error initializing grid view");
             }
-            finally
-            {
-                dataGridViewFiles.ResumeLayout(false);
-            }
+
         }
 
         private void InitializeTable()
         {
             try
             {
+                dataGridViewFiles.SuspendLayout();
                 _ = _dataTable.Columns.Add("Order", typeof(string));
                 _ = _dataTable.Columns.Add("Currency", typeof(string));
                 _ = _dataTable.Columns.Add("FileCount", typeof(int));
@@ -265,13 +268,18 @@ namespace a2p.WinForm.ChildForms
 
                 _bindingSource.DataSource = _dataTable;
                 dataGridViewFiles.DataSource = _bindingSource;
-                dataGridViewFiles.ResumeLayout(true);
+
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, "FF: Unhandled Error initializing data table");
-                dataGridViewFiles.ResumeLayout(true);
+
             }
+            finally
+            {
+                dataGridViewFiles.ResumeLayout(false);
+            }
+
         }
 
         public async Task DataTableRefreshAsync(IProgress<ProgressValue>? progress = null)
@@ -296,6 +304,7 @@ namespace a2p.WinForm.ChildForms
                     progress?.Report(_progressValue);
                     _dataTable.Clear();
                 }
+
             }
 
             progress?.Report(_progressValue);
@@ -332,18 +341,22 @@ namespace a2p.WinForm.ChildForms
                 {
                     Invoke(new Action(() =>
                     {
-                        dataGridViewFiles.ResumeLayout(true);
+
+                        plGridPanel.ResumeLayout(false);
+                        plGridPanel.PerformLayout();
+
                     }));
                 }
                 else
                 {
-                    dataGridViewFiles.ResumeLayout(true);
+                    plGridPanel.ResumeLayout(false);
+                    plGridPanel.PerformLayout();
                 }
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, "Error loading FileForm");
-                _ = MessageBox.Show("FF: Unhandled error occurred while loading the files.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _ = MessageBox.Show(@"FF: Unhandled error occurred while loading the files.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -360,22 +373,24 @@ namespace a2p.WinForm.ChildForms
                         string? orderNumber = row.Cells["Order"].Value.ToString();
                         if (!string.IsNullOrEmpty(orderNumber))
                         {
-                            A2POrder? importOrder = _orderList.FirstOrDefault(o => o.Number == orderNumber);
+                            A2POrder? readOrder = _orderList.FirstOrDefault(o => o.Number == orderNumber);
 
-                            if (importOrder != null)
+                            if (readOrder != null)
                             {
-                                orderList.Add(importOrder);
+                                orderList.Add(readOrder);
+
+
                             }
                         }
                     }
                 }
-                await _importService.ImportDataAsync(orderList, progress);
+                await _readService.ReadDataAsync(orderList, progress);
                 dataGridViewFiles.ResumeLayout(false);
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, "Error loading FileForm");
-                _ = MessageBox.Show("An error occurred while loading the files.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _ = MessageBox.Show(@"An error occurred while loading the files.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally { dataGridViewFiles.ResumeLayout(false); }
         }
@@ -445,7 +460,7 @@ namespace a2p.WinForm.ChildForms
                     {
                         if (e.CellStyle != null)
                         {
-                            e.CellStyle.ForeColor = System.Drawing.Color.LightSalmon;
+                            e.CellStyle.ForeColor = System.Drawing.Color.Red;
                         }
                     }
                     else
@@ -457,6 +472,7 @@ namespace a2p.WinForm.ChildForms
                     }
 
                     string? errorList = dataGridViewFiles.Rows[e.RowIndex].Cells["ErrorList"].Value.ToString();
+
                     dataGridViewFiles.Rows[e.RowIndex].Cells[e.ColumnIndex].ToolTipText = errorList;
                 }
             }

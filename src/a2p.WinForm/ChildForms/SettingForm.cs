@@ -13,41 +13,41 @@ namespace a2p.WinForm.ChildForms
 
         public SettingForm(IConfiguration configuration, ILogService logger)
         {
-            _configuration=configuration;
-            _logger=logger;
+            _configuration = configuration;
+            _logger = logger;
 
+            this.AutoScaleMode = AutoScaleMode.Dpi;
             this.SuspendLayout();
-            this.AutoScaleMode=AutoScaleMode.Dpi;
             InitializeComponent();
-            this.PerformAutoScale(); // Ensure everything is scaled correctly (optional)
-            this.ResumeLayout(true); // 
 
 
             // Add change detection handlers for controls
-            tbWorkingFolder.TextChanged+=OnSettingChanged;
-            tbSuccess.TextChanged+=OnSettingChanged;
-            tbFailed.TextChanged+=OnSettingChanged;
-            chbStaging.CheckedChanged+=OnSettingChanged;
-            chbLoadOnStart.CheckedChanged+=OnSettingChanged;
+            tbxWorkingFolder.TextChanged += OnSettingChanged;
+            tbxSuccess.TextChanged += OnSettingChanged;
+            tbxFailed.TextChanged += OnSettingChanged;
+            cbxStaging.CheckedChanged += OnSettingChanged;
+            cbxLoadOnStart.CheckedChanged += OnSettingChanged;
         }
 
         private void OnSettingChanged(object? sender, EventArgs e)
         {
-            _isSettingsChanged=true;
-            btSave.Enabled=true; // Enable the Save button when a change is detected
+            _isSettingsChanged = true;
+            btnSave.Enabled = true; // Enable the Save button when a change is detected
         }
 
         private void SettingForm_Load(object sender, EventArgs e)
         {
+
+            AutoScaleMode = AutoScaleMode.Dpi;
             // Load initial settings into controls
-            tbWorkingFolder.Text=_configuration["AppSettings:WorkingFolder"]??@"C:\Temp\Import";
-            tbSuccess.Text=_configuration["AppSettings:SuccessFolder"]??@"C:\Temp\Import\SC\";
-            tbFailed.Text=_configuration["AppSettings:UnsuccessFolder"]??@"C:\Temp\Import\US\";
-            chbStaging.Checked=bool.Parse(_configuration["AppSettings:Staging"]??"false");
-            chbLoadOnStart.Checked=bool.Parse(_configuration["AppSettings:RefreshFilesOnStartup"]??"false");
+            tbxWorkingFolder.Text = _configuration["AppSettings:WorkingFolder"] ?? @"C:\Temp\Import";
+            tbxSuccess.Text = _configuration["AppSettings:SuccessFolder"] ?? @"C:\Temp\Import\SC\";
+            tbxFailed.Text = _configuration["AppSettings:UnsuccessFolder"] ?? @"C:\Temp\Import\US\";
+            cbxStaging.Checked = bool.Parse(_configuration["AppSettings:Staging"] ?? "false");
+            cbxLoadOnStart.Checked = bool.Parse(_configuration["AppSettings:RefreshFilesOnStartup"] ?? "false");
 
             // Initially disable the Save button
-            btSave.Enabled=false;
+            btnSave.Enabled = false;
         }
 
         private void btSave_Click(object sender, EventArgs e)
@@ -55,11 +55,11 @@ namespace a2p.WinForm.ChildForms
             try
             {
                 // Save the updated settings
-                _configuration["AppSettings:WorkingFolder"]=tbWorkingFolder.Text;
-                _configuration["AppSettings:SuccessFolder"]=tbSuccess.Text;
-                _configuration["AppSettings:UnsuccessFolder"]=tbFailed.Text;
-                _configuration["AppSettings:Staging"]=chbStaging.Checked.ToString();
-                _configuration["AppSettings:RefreshFilesOnStartup"]=chbLoadOnStart.Checked.ToString();
+                _configuration["AppSettings:WorkingFolder"] = tbxWorkingFolder.Text;
+                _configuration["AppSettings:SuccessFolder"] = tbxSuccess.Text;
+                _configuration["AppSettings:UnsuccessFolder"] = tbxFailed.Text;
+                _configuration["AppSettings:Staging"] = cbxStaging.Checked.ToString();
+                _configuration["AppSettings:RefreshFilesOnStartup"] = cbxLoadOnStart.Checked.ToString();
 
                 // Save the configuration to appsettings.json
                 IConfigurationRoot configurationRoot = (IConfigurationRoot)_configuration;
@@ -68,19 +68,19 @@ namespace a2p.WinForm.ChildForms
                     JsonConfigurationSource jsonConfigSource = (JsonConfigurationSource)fileProvider.Source;
                     string? filePath = jsonConfigSource.Path;
                     IConfigurationRoot jsonConfig = new ConfigurationBuilder().AddJsonFile(filePath).Build();
-                    jsonConfig["AppSettings:WorkingFolder"]=tbWorkingFolder.Text;
-                    jsonConfig["AppSettings:SuccessFolder"]=tbSuccess.Text;
-                    jsonConfig["AppSettings:UnsuccessFolder"]=tbFailed.Text;
-                    jsonConfig["AppSettings:Staging"]=chbStaging.Checked.ToString();
-                    jsonConfig["AppSettings:RefreshFilesOnStartup"]=chbLoadOnStart.Checked.ToString();
+                    jsonConfig["AppSettings:WorkingFolder"] = tbxWorkingFolder.Text;
+                    jsonConfig["AppSettings:SuccessFolder"] = tbxSuccess.Text;
+                    jsonConfig["AppSettings:UnsuccessFolder"] = tbxFailed.Text;
+                    jsonConfig["AppSettings:Staging"] = cbxStaging.Checked.ToString();
+                    jsonConfig["AppSettings:RefreshFilesOnStartup"] = cbxLoadOnStart.Checked.ToString();
                     File.WriteAllText(filePath, jsonConfig.GetDebugView());
                 }
 
                 _logger.Information("Settings have been successfully saved.");
 
                 // Reset the change tracking flag and disable the Save button
-                _isSettingsChanged=false;
-                btSave.Enabled=false;
+                _isSettingsChanged = false;
+                btnSave.Enabled = false;
             }
             catch (Exception ex)
             {
@@ -94,9 +94,28 @@ namespace a2p.WinForm.ChildForms
 
         }
 
-        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+
+
+        private void btnWorkingFolder_Click(object sender, EventArgs e)
         {
 
+            FolderBrowserDialog workingFolder = new()
+            {
+                Description = "Select the working folder",
+                SelectedPath = tbxWorkingFolder.Text
+            };
+            if (workingFolder.ShowDialog() == DialogResult.OK)
+            {
+                tbxWorkingFolder.Text = workingFolder.SelectedPath;
+            }
+
+
+        }
+
+        private void SettingForm_Shown(object sender, EventArgs e)
+        {
+
+            PerformLayout();
         }
     }
 }

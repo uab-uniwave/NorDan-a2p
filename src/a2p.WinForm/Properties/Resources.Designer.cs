@@ -63,9 +63,9 @@ namespace a2p.WinForm.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap btClose {
+        internal static System.Drawing.Bitmap btnClose {
             get {
-                object obj = ResourceManager.GetObject("btClose", resourceCulture);
+                object obj = ResourceManager.GetObject("btnClose", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace a2p.WinForm.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap btCloseHover {
+        internal static System.Drawing.Bitmap btnCloseHover {
             get {
-                object obj = ResourceManager.GetObject("btCloseHover", resourceCulture);
+                object obj = ResourceManager.GetObject("btnCloseHover", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace a2p.WinForm.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap btExit {
+        internal static System.Drawing.Bitmap btnExit {
             get {
-                object obj = ResourceManager.GetObject("btExit", resourceCulture);
+                object obj = ResourceManager.GetObject("btnExit", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +93,9 @@ namespace a2p.WinForm.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap btImport {
+        internal static System.Drawing.Bitmap btnImport {
             get {
-                object obj = ResourceManager.GetObject("btImport", resourceCulture);
+                object obj = ResourceManager.GetObject("btnImport", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -103,9 +103,9 @@ namespace a2p.WinForm.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap btLoad {
+        internal static System.Drawing.Bitmap btnLoad {
             get {
-                object obj = ResourceManager.GetObject("btLoad", resourceCulture);
+                object obj = ResourceManager.GetObject("btnLoad", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -113,9 +113,9 @@ namespace a2p.WinForm.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap btLog {
+        internal static System.Drawing.Bitmap btnLog {
             get {
-                object obj = ResourceManager.GetObject("btLog", resourceCulture);
+                object obj = ResourceManager.GetObject("btnLog", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -123,9 +123,9 @@ namespace a2p.WinForm.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap btMaximize {
+        internal static System.Drawing.Bitmap btnMaximize {
             get {
-                object obj = ResourceManager.GetObject("btMaximize", resourceCulture);
+                object obj = ResourceManager.GetObject("btnMaximize", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -133,9 +133,9 @@ namespace a2p.WinForm.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap btMaximizeHover {
+        internal static System.Drawing.Bitmap btnMaximizeHover {
             get {
-                object obj = ResourceManager.GetObject("btMaximizeHover", resourceCulture);
+                object obj = ResourceManager.GetObject("btnMaximizeHover", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -143,9 +143,9 @@ namespace a2p.WinForm.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap btMinimize {
+        internal static System.Drawing.Bitmap btnMinimize {
             get {
-                object obj = ResourceManager.GetObject("btMinimize", resourceCulture);
+                object obj = ResourceManager.GetObject("btnMinimize", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -153,9 +153,9 @@ namespace a2p.WinForm.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap btMinimizeHover {
+        internal static System.Drawing.Bitmap btnMinimizeHover {
             get {
-                object obj = ResourceManager.GetObject("btMinimizeHover", resourceCulture);
+                object obj = ResourceManager.GetObject("btnMinimizeHover", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -163,9 +163,9 @@ namespace a2p.WinForm.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap btProperties {
+        internal static System.Drawing.Bitmap btnMnimizeHover {
             get {
-                object obj = ResourceManager.GetObject("btProperties", resourceCulture);
+                object obj = ResourceManager.GetObject("btnMnimizeHover", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -173,9 +173,19 @@ namespace a2p.WinForm.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap btSideBar {
+        internal static System.Drawing.Bitmap btnProperties {
             get {
-                object obj = ResourceManager.GetObject("btSideBar", resourceCulture);
+                object obj = ResourceManager.GetObject("btnProperties", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap btnSideBar {
+            get {
+                object obj = ResourceManager.GetObject("btnSideBar", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -197,6 +207,15 @@ namespace a2p.WinForm.Properties {
             get {
                 object obj = ResourceManager.GetObject("SpalshScreen", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to btn.Image = LoadImage(btn.FileName.Replace(&quot;btn&quot;, &quot;bt&quot;), btn.Width - 6, btn.Height - 6);.
+        /// </summary>
+        internal static string String {
+            get {
+                return ResourceManager.GetString("String", resourceCulture);
             }
         }
         

@@ -34,6 +34,7 @@ namespace a2p.WinForm
         {
             panel1 = new Panel();
             panel2 = new Panel();
+            panel4 = new Panel();
             tplHeader = new TableLayoutPanel();
             lbHeader4 = new Label();
             lbHeader1 = new Label();
@@ -43,9 +44,7 @@ namespace a2p.WinForm
             panel3 = new Panel();
             label1 = new Label();
             label2 = new Label();
-            panel4 = new Panel();
             panel1.SuspendLayout();
-            panel2.SuspendLayout();
             tplHeader.SuspendLayout();
             panel3.SuspendLayout();
             SuspendLayout();
@@ -53,6 +52,7 @@ namespace a2p.WinForm
             // panel1
             // 
             panel1.Controls.Add(panel2);
+            panel1.Controls.Add(panel4);
             panel1.Controls.Add(tplHeader);
             panel1.Controls.Add(panel3);
             panel1.Dock = DockStyle.Fill;
@@ -67,19 +67,31 @@ namespace a2p.WinForm
             panel2.BackColor = Color.Transparent;
             panel2.BackgroundImage = Properties.Resources.SpalshScreen;
             panel2.BackgroundImageLayout = ImageLayout.Zoom;
-            panel2.Controls.Add(panel4);
             panel2.Dock = DockStyle.Fill;
-            panel2.Location = new Point(0, 70);
+            panel2.Location = new Point(0, 90);
             panel2.Margin = new Padding(6);
             panel2.Name = "panel2";
-            panel2.Size = new Size(1200, 666);
-            panel2.TabIndex = 14;
+            panel2.Size = new Size(1200, 646);
+            panel2.TabIndex = 17;
             panel2.UseWaitCursor = true;
+            // 
+            // panel4
+            // 
+            panel4.BackColor = Color.FromArgb(56, 57, 60);
+            panel4.BorderStyle = BorderStyle.Fixed3D;
+            panel4.Dock = DockStyle.Top;
+            panel4.ForeColor = Color.WhiteSmoke;
+            panel4.Location = new Point(0, 70);
+            panel4.Margin = new Padding(6);
+            panel4.Name = "panel4";
+            panel4.Size = new Size(1200, 20);
+            panel4.TabIndex = 16;
+            panel4.UseWaitCursor = true;
             // 
             // tplHeader
             // 
             tplHeader.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            tplHeader.BackColor = Color.Transparent;
+            tplHeader.BackColor = Color.White;
             tplHeader.ColumnCount = 7;
             tplHeader.ColumnStyles.Add(new ColumnStyle());
             tplHeader.ColumnStyles.Add(new ColumnStyle());
@@ -107,6 +119,7 @@ namespace a2p.WinForm
             // lbHeader4
             // 
             lbHeader4.AutoSize = true;
+            lbHeader4.BackColor = Color.White;
             lbHeader4.Dock = DockStyle.Top;
             lbHeader4.Font = new Font("Segoe UI", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 10, true);
             lbHeader4.ForeColor = Color.FromArgb(239, 112, 32);
@@ -123,7 +136,7 @@ namespace a2p.WinForm
             // lbHeader1
             // 
             lbHeader1.AutoSize = true;
-            lbHeader1.BackColor = Color.Transparent;
+            lbHeader1.BackColor = Color.White;
             lbHeader1.Dock = DockStyle.Top;
             lbHeader1.Font = new Font("Segoe UI", 16.125F);
             lbHeader1.ForeColor = Color.FromArgb(239, 112, 32);
@@ -140,6 +153,7 @@ namespace a2p.WinForm
             // 
             // lbHeader3
             // 
+            lbHeader3.BackColor = Color.White;
             lbHeader3.Dock = DockStyle.Top;
             lbHeader3.Font = new Font("Segoe UI", 16.125F, FontStyle.Bold);
             lbHeader3.ForeColor = Color.FromArgb(239, 112, 32);
@@ -197,11 +211,11 @@ namespace a2p.WinForm
             // 
             // label1
             // 
-            label1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             label1.BackColor = Color.Transparent;
             label1.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label1.ForeColor = Color.White;
-            label1.Location = new Point(2030, 14);
+            label1.Location = new Point(1000, 12);
             label1.Margin = new Padding(10);
             label1.Name = "label1";
             label1.Size = new Size(160, 40);
@@ -225,19 +239,6 @@ namespace a2p.WinForm
             label2.TextAlign = ContentAlignment.MiddleCenter;
             label2.UseWaitCursor = true;
             // 
-            // panel4
-            // 
-            panel4.BackColor = Color.FromArgb(56, 57, 60);
-            panel4.BorderStyle = BorderStyle.Fixed3D;
-            panel4.Dock = DockStyle.Top;
-            panel4.ForeColor = Color.WhiteSmoke;
-            panel4.Location = new Point(0, 0);
-            panel4.Margin = new Padding(6);
-            panel4.Name = "panel4";
-            panel4.Size = new Size(1200, 12);
-            panel4.TabIndex = 14;
-            panel4.UseWaitCursor = true;
-            // 
             // SplashScreenForm
             // 
             BackColor = Color.White;
@@ -251,10 +252,10 @@ namespace a2p.WinForm
             Name = "SplashScreenForm";
             StartPosition = FormStartPosition.CenterScreen;
             panel1.ResumeLayout(false);
-            panel1.PerformLayout();
-
+            tplHeader.ResumeLayout(false);
+            tplHeader.PerformLayout();
+            panel3.ResumeLayout(false);
             ResumeLayout(false);
-            PerformLayout();
 
 
         }
@@ -262,7 +263,6 @@ namespace a2p.WinForm
         #endregion
 
         private Panel panel1;
-        private Panel panel2;
         private TableLayoutPanel tplHeader;
         private Label lbHeader4;
         private Label lbHeader1;
@@ -272,6 +272,7 @@ namespace a2p.WinForm
         private Panel panel3;
         private Label label1;
         private Label label2;
+        private Panel panel2;
         private Panel panel4;
     }
 }

@@ -1,4 +1,4 @@
-﻿using a2p.Shared.Core.Utils;
+﻿using a2p.Shared.Core.Interfaces.Services;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
@@ -8,15 +8,16 @@ namespace a2p.WinForm.ChildForms
     public partial class SettingForm : Form
     {
         private readonly IConfiguration _configuration;
-        private readonly ILogService _logger;
+        private readonly ILogService _logService;
         private bool _isSettingsChanged = false; // Flag to track changes
 
-        public SettingForm(IConfiguration configuration, ILogService logger)
+        public SettingForm(IConfiguration configuration, ILogService logService)
         {
             _configuration = configuration;
-            _logger = logger;
+            _logService = logService;
 
             this.AutoScaleMode = AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new SizeF(96F, 96F);
             this.SuspendLayout();
             InitializeComponent();
 
@@ -76,7 +77,7 @@ namespace a2p.WinForm.ChildForms
                     File.WriteAllText(filePath, jsonConfig.GetDebugView());
                 }
 
-                _logger.Information("Settings have been successfully saved.");
+                _logService.Information("Settings have been successfully saved.");
 
                 // Reset the change tracking flag and disable the Save button
                 _isSettingsChanged = false;
@@ -84,7 +85,7 @@ namespace a2p.WinForm.ChildForms
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "Error while saving settings.");
+                _logService.Error(ex, "Error while saving settings.");
             }
         }
 
@@ -116,6 +117,34 @@ namespace a2p.WinForm.ChildForms
         {
 
             PerformLayout();
+        }
+
+        private void btnSucess_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog successFolder = new()
+            {
+                Description = "Select folder for failed processed files.",
+                SelectedPath = tbxSuccess.Text
+            };
+            if (successFolder.ShowDialog() == DialogResult.OK)
+            {
+                tbxFailed.Text = successFolder.SelectedPath;
+            }
+        }
+
+
+        private void btnFailed_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog failedFolder = new()
+            {
+                Description = "Select folder for failed processed files.",
+                SelectedPath = tbxFailed.Text
+            };
+
+            if (failedFolder.ShowDialog() == DialogResult.OK)
+            {
+                tbxFailed.Text = failedFolder.SelectedPath;
+            }
         }
     }
 }

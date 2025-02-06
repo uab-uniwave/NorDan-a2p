@@ -11,18 +11,12 @@
  </PropertyGroup>
 
  <ItemGroup>
- <Compile Remove="Core\Interfaces\Services\Read\SubServices\**" />
- <EmbeddedResource Remove="Core\Interfaces\Services\Read\SubServices\**" />
- <None Remove="Core\Interfaces\Services\Read\SubServices\**" />
- </ItemGroup>
-
- <ItemGroup>
    <None Remove="appsettings.Development.json" />
  </ItemGroup>
 
  <ItemGroup>
  <None Include="Core\Entities\ConcreteEntity\ItemSchuco.cs" />
- <None Include="Core\Entities\Models\A2PLogGridRecord.cs" />
+ <None Include="Core\Entities\Models\A2PRecordLog.cs" />
  </ItemGroup>
 
  <ItemGroup>
@@ -75,16 +69,17 @@
 
  <ItemGroup>
  <None Update="appsettings.Production.json">
-  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
  </None>
  <None Update="appsettings.json">
-  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
  </None>
  </ItemGroup>
 
 
  <ItemGroup>
-   <Folder Include="Core\Interfaces\Services\Read\SubServices\" />
+   <Folder Include="Core\Interfaces\Services\Read\" />
+   <Folder Include="Core\Utils\" />
  </ItemGroup>
 
 

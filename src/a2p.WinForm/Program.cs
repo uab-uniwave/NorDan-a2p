@@ -1,8 +1,5 @@
 ﻿using a2p.Shared;
-using a2p.Shared.Core.Interfaces.Mappers;
-using a2p.Shared.Core.Interfaces.Services.Other;
-using a2p.Shared.Core.Interfaces.Services.Read;
-using a2p.Shared.Core.Utils;
+using a2p.Shared.Core.Interfaces.Services;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,23 +29,24 @@ namespace a2p.WinForm
             IConfiguration configuration = _services.GetRequiredService<IConfiguration>();
 
 
-            ILogService logger = _services.GetRequiredService<ILogService>();
+            ILogService logService = _services.GetRequiredService<ILogService>();
             Console.SetOut(new DebugTextWriter());
 
+            IPrefService prefService = _services.GetRequiredService<IPrefService>();
             IFileService fileService = _services.GetRequiredService<IFileService>();
-            IExcelService excelService = _services.GetRequiredService<IExcelService>();
             IReadService readService = _services.GetRequiredService<IReadService>();
-            IOrderMapper orderMapper = _services.GetRequiredService<IOrderMapper>();
+            IMappingService mappingService = _services.GetRequiredService<IMappingService>();
+            IA2POrderMapper orderMapper = _services.GetRequiredService<IA2POrderMapper>();
 
-            logger.Information("Application started.");
+            logService.Information("Application started.");
 
             using SplashScreenForm splashScreen = new();
             splashScreen.Show();
             splashScreen.FadeIn();
 
-            Task.Delay(4000).Wait(); // Ensure splash screen is shown for at least 4 seconds
+            Task.Delay(2000).Wait(); // Ensure splash screen is shown for at least 4 seconds
 
-            MainForm mainWindow = new(fileService, excelService, readService, configuration, logger, orderMapper);
+            MainForm mainWindow = new(fileService, readService, mappingService, configuration, logService, orderMapper);
 
             splashScreen.FadeOut();
             splashScreen.Close();

@@ -1,15 +1,12 @@
-﻿using a2p.Shared.Core.Interfaces.Mappers;
-using a2p.Shared.Core.Interfaces.Repository;
-using a2p.Shared.Core.Interfaces.Repository.SubSql;
-using a2p.Shared.Core.Interfaces.Services.Other;
-using a2p.Shared.Core.Interfaces.Services.Read;
-using a2p.Shared.Core.Utils;
+﻿using a2p.Shared.Core.Interfaces.Repository;
+using a2p.Shared.Core.Interfaces.Services;
+using a2p.Shared.Core.Interfaces.Services.Other.Mappers;
 using a2p.Shared.Infrastructure.Mappers;
 using a2p.Shared.Infrastructure.Repositories;
-using a2p.Shared.Infrastructure.Repositories.SubSql;
+using a2p.Shared.Infrastructure.Services;
 using a2p.Shared.Infrastructure.Services.Other;
-using a2p.Shared.Infrastructure.Services.Read;
-using a2p.Shared.Infrastructure.Utils.Logger;
+using a2p.Shared.Infrastructure.Services.Other.Logger;
+using a2p.Shared.Infrastructure.Services.Other.Mappers;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -77,21 +74,19 @@ namespace a2p.Shared
 
             // Register core services
             _ = services.AddSingleton<ILogService, LogService>();
-            _ = services.AddSingleton<IExcelService, ExcelService>();
+            _ = services.AddSingleton<IReadService, ReadService>();
+            _ = services.AddSingleton<IPrefService, PrefService>();
             _ = services.AddSingleton<IFileService, FileService>();
             _ = services.AddSingleton<IItemMapper, ItemMapper>();
             _ = services.AddSingleton<IMaterialMapper, MaterialMapper>();
-            _ = services.AddSingleton<IOrderMapper, OrderMapper>();
+            _ = services.AddSingleton<IA2POrderMapper, A2POrderMapper>();
             _ = services.AddSingleton<IGlassMapper, GlassMapper>();
             _ = services.AddSingleton<IPanelMapper, PanelMapper>();
-            _ = services.AddSingleton<IReadSapa_v1, ReadSapa_v1>();
-            _ = services.AddSingleton<IReadSapa_v2, ReadSapa_v2>();
-            _ = services.AddSingleton<IReadSchuco, ReadSchuco>();
-            _ = services.AddSingleton<IReadService, ReadService>();
-            _ = services.AddSingleton<ISqlService, SqlService>();
-            _ = services.AddSingleton<ISqlSapa_v1, SqlSapa_v1>();
-            _ = services.AddSingleton<ISqlSapa_v2, SqlSapa_v2>();
-            _ = services.AddSingleton<ISqlSchuco, SqlSchuco>();
+            _ = services.AddSingleton<IWriteService, WriteService>();
+            _ = services.AddSingleton<IMappingService, MappingService>();
+            _ = services.AddSingleton<ISqlRepoitory, SQLRepository>();
+
+
 
 
             return services.BuildServiceProvider();

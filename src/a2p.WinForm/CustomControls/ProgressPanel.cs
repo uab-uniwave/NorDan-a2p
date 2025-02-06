@@ -24,7 +24,7 @@
             base.OnPaint(e);
 
             // Custom border color
-            Color borderColor = UniwaveColors.uwOrangeDeep;
+            Color borderColor = Color.FromArgb(239, 112, 32);
 
 
             int borderWidth = 3;

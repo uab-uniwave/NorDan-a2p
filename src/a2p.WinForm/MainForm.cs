@@ -1,9 +1,6 @@
 ﻿using a2p.Shared.Core.Entities.Models;
 using a2p.Shared.Core.Enums;
-using a2p.Shared.Core.Interfaces.Mappers;
-using a2p.Shared.Core.Interfaces.Services.Other;
-using a2p.Shared.Core.Interfaces.Services.Read;
-using a2p.Shared.Core.Utils;
+using a2p.Shared.Core.Interfaces.Services;
 using a2p.WinForm.ChildForms;
 using a2p.WinForm.CustomControls;
 
@@ -11,8 +8,6 @@ using Microsoft.Extensions.Configuration;
 
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
-
-using Timer = System.Windows.Forms.Timer;
 
 
 namespace a2p.WinForm
@@ -27,57 +22,56 @@ namespace a2p.WinForm
         private Button? selectedButton = null;
 
         private readonly IFileService _fileService;
-        private readonly IExcelService _excelService;
         private readonly IReadService _readService;
+        private readonly IMappingService _mappingService;
         private readonly IConfiguration _configuration;
-        private readonly ILogService _logger;
-        private readonly IOrderMapper _orderMapper;
-        private IProgress<ProgressValue> _progress;
+        private readonly ILogService _logService;
+        private readonly IA2POrderMapper _orderMapper;
 
         private static ProgressValue? _progressValue;
-
-
-        private readonly List<Button> _buttonList = [];
-        private readonly Dictionary<Button, Panel> _buttonPanelMap = [];
-        private readonly Dictionary<Panel, bool> _panelStates = [];
-        private ProcessType _processType;
+        private IProgress<ProgressValue> _progress;
+        private static ProcessType _processType = ProcessType.None;
         private ToolTip _toolTip;
-        private FileForm _fileForm;
-        private LogForm _logForm;
-        private SettingForm _settingForm;
+        private readonly OrdersForm _fileForm;
+        private readonly LogForm _logForm;
+        private readonly SettingForm _settingForm;
 
 
 
         #region -== Custom Form Design Componenets ==-
 
         [DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        private static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+
         [DllImport("user32.dll")]
-        public static extern bool ReleaseCapture();
+        private static extern bool ReleaseCapture();
 
         //move form
-        public const int WM_NCLBUTTONDOWN = 0xA1;
-        public const int HTCAPTION = 0x2;
+        private const int WM_NCLBUTTONDOWN = 0xA1;
+        private const int HTCAPTION = 0x2;
 
         //resize form
-        private bool isResizing = false; // Track resizing state`
+        private bool _isResizing = false; // Track resizing state`
+
         #endregion -== Custom Form Design Componenets ==-
 
-        public MainForm(IFileService fileService, IExcelService excelService, IReadService readService, IConfiguration configuration, ILogService logger, IOrderMapper orderMapper)
+        public MainForm(IFileService fileService, IReadService excelService, IMappingService mappingService,
+            IConfiguration configuration, ILogService logService, IA2POrderMapper orderMapper)
         {
             _fileService = fileService;
-            _excelService = excelService;
-            _readService = readService;
+            _readService = excelService;
+            _mappingService = mappingService;
             _configuration = configuration;
-            _logger = logger;
+            _logService = logService;
             _orderMapper = orderMapper;
-            _progress = new Progress<ProgressValue>();
             _progressValue = new ProgressValue();
 
+            _progress = new Progress<ProgressValue>();
+
             _toolTip = new ToolTip();
-            _fileForm = new FileForm(_fileService, _excelService, _readService, _configuration, _logger, _orderMapper);
-            _logForm = new LogForm(_fileService, _excelService, _readService, _configuration, _logger);
-            _settingForm = new SettingForm(_configuration, _logger);
+            _fileForm = new OrdersForm(_fileService, _mappingService, _logService, _orderMapper);
+            _logForm = new LogForm(_configuration, _logService);
+            _settingForm = new SettingForm(_configuration, _logService);
 
             this.AutoScaleMode = AutoScaleMode.Dpi;
             this.SuspendLayout();
@@ -108,21 +102,18 @@ namespace a2p.WinForm
 
             // Set tooltips for buttons
 
-            _toolTip.SetToolTip(btnLoad, "Refresh Files");
-            _toolTip.SetToolTip(btnImport, "Import Files");
+            _toolTip.SetToolTip(btnLoad, "Refresh OrderFiles");
+            _toolTip.SetToolTip(btnImport, "Import OrderFiles");
             _toolTip.SetToolTip(btnLog, "Refresh Logs");
             _toolTip.SetToolTip(btnProperties, "Settings");
             _toolTip.SetToolTip(btnExit, "Exit");
         }
+
         #endregion -== Initialization ==-
 
         #region --== Main Form Events ==-
-        //===============================================================
-        // Custom resizing and moving
-        //===============================================================
-        //Moving form
 
-        private void MainForm_KeyDown(object sender, KeyEventArgs e)
+        private void MainForm_KeyDown(object? sender, KeyEventArgs e)
         {
             // Check if "Ctrl + D" is pressed
             if (e.Control && e.Alt && e.KeyCode == Keys.D)
@@ -137,6 +128,7 @@ namespace a2p.WinForm
                 Console.WriteLine($"Current DPI: {dpiX} x {dpiY}");
             }
         }
+
         private void PlTitleBar_MouseDown(object? sender, MouseEventArgs? e)
         {
             if (e == null)
@@ -149,12 +141,14 @@ namespace a2p.WinForm
                 _ = ReleaseCapture();
                 _ = SendMessage(this.Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0);
             }
+
             if (e.Button == MouseButtons.Left)
             {
                 _ = ReleaseCapture();
                 _ = SendMessage(this.Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0);
             }
         }
+
         private void MainForm_DpiChanged(object? sender, DpiChangedEventArgs e)
         {
             this.PerformAutoScale();
@@ -166,37 +160,39 @@ namespace a2p.WinForm
             try
             {
 
-                _panelStates[plSideBarMain] = true;
+
                 slbPath.Text = _configuration.GetValue<string>("AppSettings:RootFolder") ?? string.Empty;
                 statusStrip.SizingGrip = true;
                 this.PerformAutoScale(); // Ensure everything is scaled correctly (optional)
-                ResumeLayout(false); // Resume layout
+                ResumeLayout(true); // Resume layout
             }
 
 
             catch (Exception ex)
             {
-                _logger.Error(ex, "MF: Unhanded Error while loading main form");
+                _logService.Error(ex, "MF: Unhanded Error while loading main form");
 
             }
         }
+
         private async void MainForm_Shown(object? sender, EventArgs? e)
         {
             this.SuspendLayout(); // Suspend layout updates
             try
             {
-                await ShowFormAsync(_fileForm, () => new FileForm(_fileService, _excelService, _readService, _configuration, _logger, _orderMapper));
+                await ShowFormAsync(_fileForm,
+                    () => new OrdersForm(_fileService, _mappingService, _logService, _orderMapper));
                 if (bool.Parse(_configuration["AppSettings:RefreshFilesOnStartup"] ?? "true"))
                 {
 
-                    BtnLoadClick(btnLoad, e);
+                    BtnLoad_Click(btnLoad, e);
 
                 }
 
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "MF: Unhanded Error while showing main form");
+                _logService.Error(ex, "MF: Unhanded Error while showing main form");
             }
             finally
             {
@@ -206,7 +202,7 @@ namespace a2p.WinForm
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            _logger.DeleteLogFiles();
+            _logService.DeleteLogFiles();
         }
 
 
@@ -229,7 +225,8 @@ namespace a2p.WinForm
             SetRoundedCorners(20); // Update the rounded corners when the form is resized
             if (plFormContainer != null)
             {
-                plFormContainer.Size = new Size(this.ClientSize.Width - plFormContainer.Left, this.ClientSize.Height - plFormContainer.Top);
+                plFormContainer.Size = new Size(this.ClientSize.Width - plFormContainer.Left,
+                    this.ClientSize.Height - plFormContainer.Top);
                 plFormContainer.PerformLayout(); // Ensure the layout is updated
             }
         }
@@ -242,7 +239,7 @@ namespace a2p.WinForm
 
         private async Task ShowFormAsync<T>(T formInstance, Func<T> formCreator) where T : Form
         {
-            if (formInstance == null || formInstance.IsDisposed)
+            if (formInstance.IsDisposed)
             {
                 formInstance = formCreator();
             }
@@ -250,6 +247,7 @@ namespace a2p.WinForm
             // Load the form into the container
             await LoadChildFormAsync(formInstance);
         }
+
         private async Task LoadChildFormAsync(Form childForm)
         {
             plFormContainer.Controls.Clear();
@@ -268,24 +266,25 @@ namespace a2p.WinForm
 
         #endregion -== Child Forms Methods ==-
 
-        #region -== Setup Buttons ==- 
+        #region -== Setup Buttons ==-
 
         private void SetupButtons()
         {
             // Circular buttons
 
 
-            //_ = Properties.Resources.btMaximaizeHover1;
-            SetupCircularButton(btMaximize);
-            SetupCircularButton(btMinimize);
-            SetupCircularButton(btClose);
+            SetupCircularButton(btnMaximize);
+            SetupCircularButton(btnMinimize);
+            SetupCircularButton(btnClose);
 
             // Group buttons with selection
             SetupGroupButton(btnLoad);
-            SetupGroupButton(btnExit);
-            SetupGroupButton(btnLog);
+            SetupGroupButton(btnProperties);
             SetupGroupButton(btnImport);
-            SetupGroupButton(btnSideBar);
+            SetupGroupButton(btnLog);
+            SetupGroupButton(btnExit);
+
+
         }
 
         /// <summary>
@@ -295,7 +294,7 @@ namespace a2p.WinForm
         {
             btn.FlatStyle = FlatStyle.Flat;
             btn.FlatAppearance.BorderSize = 0;
-            btn.BackColor = System.Drawing.Color.Transparent;
+            btn.BackColor = System.Drawing.Color.FromArgb(56, 57, 60);
 
             // Set circular shape
             GraphicsPath path = new();
@@ -303,11 +302,11 @@ namespace a2p.WinForm
             btn.Region = new Region(path);
 
             // Load images
-            btn.Image = LoadImage(btn.Name, btn.Height - 4, btn.Height - 4);
+            btn.Image = LoadImage(btn.Name, btn.Width - 4, btn.Height - 4);
 
             // Hover effect
-            btn.MouseEnter += (s, e) => btn.Image = LoadImage(btn.Name + "Hover", btn.Height - 4, btn.Height - 4);
-            btn.MouseLeave += (s, e) => btn.Image = LoadImage(btn.Name, btn.Height - 4, btn.Height - 4);
+            btn.MouseEnter += (s, e) => btn.Image = LoadImage(btn.Name + "Hover", btn.Width, btn.Height);
+            btn.MouseLeave += (s, e) => btn.Image = LoadImage(btn.Name, btn.Width - 4, btn.Height - 4);
         }
 
         /// <summary>
@@ -320,11 +319,30 @@ namespace a2p.WinForm
             btn.BackColor = System.Drawing.Color.Transparent;
 
             // Load normal image
-            btn.Image = LoadImage(btn.Name, btn.Height - 4, btn.Height - 4);
+            btn.Image = LoadImage(btn.Name, btn.Height / 2, btn.Height / 2);
+            btn.ForeColor = System.Drawing.Color.LightGray;
 
             // Hover effect
-            btn.MouseEnter += (s, e) => btn.BackColor = System.Drawing.Color.FromArgb(50, selectedBackgroundColor);
-            btn.MouseLeave += (s, e) => { if (selectedButton != btn) { btn.BackColor = System.Drawing.Color.Transparent; } };
+            btn.MouseEnter += (s, e) =>
+            {
+                btn.BackColor = System.Drawing.Color.FromArgb(80, selectedBackgroundColor);
+                btn.Image = LoadImage(btn.Name, btn.Height / 5 * 3, btn.Height / 5 * 3);
+                btn.ForeColor = System.Drawing.Color.LightGray;
+                btn.FlatAppearance.BorderSize = 1;
+            };
+            btn.MouseLeave += (s, e) =>
+            {
+                if (selectedButton != btn)
+                {
+                    btn.BackColor = System.Drawing.Color.Transparent;
+                }
+
+                btn.Image = LoadImage(btn.Name, btn.Height / 2, btn.Height / 2);
+                btn.ForeColor = System.Drawing.Color.LightGray;
+                btn.FlatAppearance.BorderSize = 0;
+
+            };
+
 
             // Click event for selection
             btn.Click += (s, e) => SelectButton(btn);
@@ -332,6 +350,7 @@ namespace a2p.WinForm
             // Attach Paint event for border drawing
             btn.Paint += DrawSelectionBorder;
         }
+
         private void SelectButton(Button btn)
         {
             // Reset previous selection
@@ -347,8 +366,7 @@ namespace a2p.WinForm
             selectedButton.Invalidate(); // Redraw new selection
         }
 
-
-        private void DrawSelectionBorder(object sender, PaintEventArgs e)
+        private void DrawSelectionBorder(object? sender, PaintEventArgs e)
         {
             if (sender is Button btn && btn == selectedButton)
             {
@@ -359,21 +377,35 @@ namespace a2p.WinForm
 
         private Image? LoadImage(string imageName, int width, int height)
         {
-            Image originalImage = GetImageByName(imageName);
+
+
+            Image? originalImage = GetImageByName(imageName);
             return originalImage == null ? null : ResizeImage(originalImage, new Size(width, height));
         }
 
-        private Image GetImageByName(string imageName)
+        private Image? GetImageByName(string imageName)
         {
             try
             {
-                return (Image)Properties.Resources.ResourceManager.GetObject(imageName);
+
+                var image = (Image?)Properties.Resources.ResourceManager.GetObject(imageName);
+                if (image == null)
+                {
+
+                    return null;
+                }
+
+                return image;
+
             }
             catch
             {
+                _logService.Debug($"Error loading image: {imageName}");
                 return null;
+
             }
         }
+
         private Image ResizeImage(Image imgToResize, Size size)
         {
             Bitmap resizedBitmap = new(size.Width, size.Height);
@@ -382,42 +414,27 @@ namespace a2p.WinForm
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
                 g.DrawImage(imgToResize, new Rectangle(0, 0, size.Width, size.Height));
             }
+
             return resizedBitmap;
         }
 
 
-        #endregion -== Setup Buttons ==- 
+        #endregion -== Setup Buttons ==-
 
-        #region -== Title Bar buttons Events ==- 
+        #region -== Title Bar buttons Events ==-
 
         // Maximize window
         //===========================================================
         private void btMaximize_Click(object sender, EventArgs e)
         {
 
-            this.WindowState = this.WindowState == FormWindowState.Maximized ? FormWindowState.Normal : FormWindowState.Maximized;
+            this.WindowState = this.WindowState == FormWindowState.Maximized
+                ? FormWindowState.Normal
+                : FormWindowState.Maximized;
 
-            tplHeader.ResumeLayout(false);
-            tplHeader.PerformLayout();
-            tlpTitleBar.ResumeLayout(false);
-            plTitleBar.ResumeLayout(false);
-            plTBPanel.ResumeLayout(false);
-            plTBPanel.PerformLayout();
-            statusStrip.ResumeLayout(false);
-            statusStrip.PerformLayout();
-            tplSideBarHeader.ResumeLayout(false);
-            plSideBarMain.ResumeLayout(false);
-            plSideBarMain.PerformLayout();
-            plTbSBInfo.ResumeLayout(false);
-            plTbSBInfo.PerformLayout();
-            ResumeLayout(false);
-            PerformLayout();
+            base.OnResize(e);
 
         }
-
-
-     
-
 
         // Minimize window
         //============================================================
@@ -426,14 +443,6 @@ namespace a2p.WinForm
             this.WindowState = FormWindowState.Minimized;
         }
 
-        private void btMinimize_MouseHover(object sender, EventArgs e)
-        {
-
-        }
-
-
-
-
         // Close window
         //===============================================================
         private void btClose_Click(object sender, EventArgs e)
@@ -441,50 +450,35 @@ namespace a2p.WinForm
             Application.Exit();
         }
 
-  
-
-
-
-
-
-        #endregion -== Title Bar buttons Events ==- 
+        #endregion -== Title Bar buttons Events ==-
 
         #region -== Side Bar Buttons Events ==-
+
         //SideBar buttons
         //================================================================
-        private void BtnSideBarClick(object sender, EventArgs e)
+
+        private async void BtnLoad_Click(object sender, EventArgs? e)
         {
-            if (_panelStates.TryGetValue(plSideBarMain, out bool isExpanded))
+            await Task.Run(DisableButtons); // Disable buttons at the beginning
+            plSideBarMain.SuspendLayout(); // Suspend layout before expanding
+            _processType = ProcessType.FileImport;
+            if (_progressValue != null)
             {
-                if (isExpanded)
-                {
-
-                    CollapseParentPanel(plSideBarMain);
-
-                }
-                else
-                {
-                    ExpandParentPanel(plSideBarMain);
-                }
+                _progressValue.ProgressTitle = "Loading Order Files ...";
+                _progressValue.MinValue = 0;
+                _progressValue.MaxValue = 100;
+                _progressValue.Value = 0;
             }
             else
             {
-                throw new KeyNotFoundException($"Panel {plSideBarMain.Name} is not initialized in _panelStates.");
+                _progressValue = new ProgressValue();
+                _progressValue.ProgressTitle = "Loading Order Files ...";
+                _progressValue.MinValue = 0;
+                _progressValue.MaxValue = 100;
+                _progressValue.Value = 0;
+
             }
-        }
 
-        private async void BtnLoadClick(object sender, EventArgs? e)
-        {
-            DisableButtons(); // Disable buttons at the beginning
-            plSideBarMain.SuspendLayout(); // Suspend layout before expanding
-            _processType = ProcessType.FileImport;
-            _progressValue.ProgressTitle = "Loading Files ...";
-            _progressValue.MinValue = 0;
-            _progressValue.MaxValue = 100;
-            _progressValue.Value = 0;
-
-            await ShowFormAsync(_fileForm,
-            () => new FileForm(_fileService, _excelService, _readService, _configuration, _logger, _orderMapper));
 
             using ProgressBarForm progressBarForm = new()
             {
@@ -506,35 +500,49 @@ namespace a2p.WinForm
 
             try
             {
-                await ShowFormAsync(_fileForm, () => new FileForm(_fileService, _excelService, _readService, _configuration, _logger, _orderMapper));
-                await _fileForm.DataTableRefreshAsync(_progress);
+                await ShowFormAsync(_fileForm,
+                    () => new OrdersForm(_fileService, _mappingService, _logService, _orderMapper));
+                await _fileForm.OrdersLoad(_progress);
             }
             catch (Exception ex)
             {
-                _ = MessageBox.Show($@"An error occurred during the import: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _ = MessageBox.Show($@"An error occurred during the import: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
                 _processType = ProcessType.None;
 
                 progressBarForm.Close();
-                EnableButtons(); // Enable buttons at the end
+                await Task.Run(EnableButtons);  // Enable buttons at the end
                 plSideBarMain.PerformLayout(); // Resume layout after expanding
             }
         }
 
 
-        private async void BtnImportClick(object sender, EventArgs e)
+        private async void BtnImport_Click(object sender, EventArgs e)
         {
-            DisableButtons(); // Disable buttons at the beginning
+            await Task.Run(DisableButtons); // Disable buttons at the beginning
             plSideBarMain.SuspendLayout(); // Suspend layout before expanding
 
             _processType = ProcessType.FileImport;
+            if (_progressValue != null)
+            {
+                _progressValue.ProgressTitle = "Importing OrderFiles ...";
+                _progressValue.MinValue = 0;
+                _progressValue.MaxValue = 100;
+                _progressValue.Value = 0;
+            }
+            else
+            {
+                _progressValue = new ProgressValue();
+                _progressValue.ProgressTitle = "Importing OrderFiles ...";
+                _progressValue.MinValue = 0;
+                _progressValue.MaxValue = 100;
+                _progressValue.Value = 0;
 
-            _progressValue.ProgressTitle = "Importing Files ...";
-            _progressValue.MinValue = 0;
-            _progressValue.MaxValue = 100;
-            _progressValue.Value = 0;
+            }
+
 
             using ProgressBarForm progressBarForm = new()
             {
@@ -560,37 +568,49 @@ namespace a2p.WinForm
             }
             catch (Exception ex)
             {
-                _ = MessageBox.Show($@"An error occurred during the import: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _ = MessageBox.Show($@"An error occurred during the import: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
                 _processType = ProcessType.None;
 
                 progressBarForm.Close();
-                EnableButtons(); // Enable buttons at the end
+                await Task.Run(EnableButtons);  // Enable buttons at the end
                 plSideBarMain.PerformLayout(); // Resume layout after expanding
             }
         }
 
-        private async void BtnLogClick(object sender, EventArgs e)
+        private async void BtnLog_Click(object sender, EventArgs e)
         {
-            DisableButtons(); // Disable buttons at the beginning
-            plSideBarMain.SuspendLayout(); // Suspend layout before expanding
+            await Task.Run(DisableButtons); // Disable buttons at the beginning
+
 
             await ShowFormAsync(_logForm,
-            () => new LogForm(_fileService, _excelService, _readService, _configuration, _logger));
+              () => new LogForm(_configuration, _logService));
 
 
-            _processType = ProcessType.FileImport;
-            _progressValue.ProgressTitle = "Refreshing Log ...";
-            _progressValue.MinValue = 0;
-            _progressValue.MaxValue = 100;
-            _progressValue.Value = 0;
-
-            using ProgressBarForm progressBarForm = new()
+            _processType = ProcessType.LogRefresh;
+            if (_progressValue != null)
             {
-                StartPosition = FormStartPosition.CenterParent // Set to center relative to parent
-            };
+                _progressValue.ProgressTitle = "Refreshing Log ...";
+                _progressValue.MinValue = 0;
+                _progressValue.MaxValue = 100;
+                _progressValue.Value = 0;
+            }
+            else
+            {
+                _progressValue = new ProgressValue();
+                _progressValue.ProgressTitle = "Refreshing Log ...";
+                _progressValue.MinValue = 0;
+                _progressValue.MaxValue = 100;
+                _progressValue.Value = 0;
+
+            }
+
+
+            using ProgressBarForm progressBarForm = new();
+
             progressBarForm.Load += (sender, args) =>
             {
                 progressBarForm.Location = new Point(
@@ -599,11 +619,11 @@ namespace a2p.WinForm
                 );
             };
 
-            progressBarForm.Show();
+            await Task.Run(progressBarForm.Show);
 
             Progress<ProgressValue> progress = new(progressBarForm.UpdateProgress);
             _progress = progress;
-            _progress?.Report(_progressValue);
+            await Task.Run(() => _progress?.Report(_progressValue));
 
             try
             {
@@ -612,33 +632,46 @@ namespace a2p.WinForm
             }
             catch (Exception ex)
             {
-                _ = MessageBox.Show($@"An error occurred during the import: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _ = MessageBox.Show($@"An error occurred during the import: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
                 _processType = ProcessType.None;
 
-                progressBarForm.Close();
-                EnableButtons(); // Enable buttons at the end
-                plSideBarMain.PerformLayout(); // Resume layout after expanding
+                await Task.Run(EnableButtons);
+                if (InvokeRequired)
+                {
+                    Invoke(new Action(() =>
+                    {
+
+                        progressBarForm.Close();
+                        plSideBarMain.PerformLayout();
+                    }));
+                }
+                else
+                {
+                    progressBarForm.Close();
+                    plSideBarMain.PerformLayout();
+
+                }
+
             }
+
         }
 
         // SideBar Other Buttons
         //========================================================================
-        private async void BtnPropertiesClick(object sender, EventArgs e)
+        private async void BtnProperties_Click(object sender, EventArgs e)
         {
 
 
 
 
             await ShowFormAsync(_settingForm,
-             () => new SettingForm(_configuration, _logger));
+                () => new SettingForm(_configuration, _logService));
         }
 
-        private void btProperties_MouseHover(object sender, EventArgs? e)
-        {
-        }
         private void BtnExit_Click(object sender, EventArgs e)
         {
             Application.Exit();
@@ -646,9 +679,7 @@ namespace a2p.WinForm
 
 
 
-        private void btExit_MouseHover(object sender, EventArgs? e)
-        {
-        }
+
         //Buttons style
         //========================================================================
 
@@ -657,148 +688,61 @@ namespace a2p.WinForm
 
         private void DisableButtons()
         {
-            //foreach (Control control in plSideBarMain.Controls)
-            //{
-            //    if (control is Button button && button != btnSideBar)
-            //    {
-            //        button.Enabled = false;
-            //    }
-            //}
+            if (InvokeRequired)
+            {
+                Invoke(new Action(() =>
+                {
+                    foreach (Control control in plSideBarMain.Controls)
+                    {
+                        if (control is Button button)
+                        {
+                            button.Enabled = false;
+                        }
+                    }
+                }));
+            }
+            else
+            {
+                foreach (Control control in plSideBarMain.Controls)
+                {
+                    if (control is Button button)
+                    {
+                        button.Enabled = false;
+                    }
+                }
+            }
         }
 
         private void EnableButtons() //TODO: Enable buttons
         {
-            //foreach (Control control in plSideBarMain.Controls)
-            //{
-            //    if (control is Button button && button != btnSideBar)
-            //    {
-            //        button.Enabled = true;
-            //    }
-            //  }
-        }
-        #endregion -== Side Bar Buttons Events ==-
 
-        #region -== Side Bar Panels Events ==-
-        //Side Bars Expand and Collapse
-        //========================================================================
-
-        private void UpdateButtonStylesForSidebar(bool isExpanded)
-        {
-            // Suspend layout for all panels to optimize updates
-            plSBButtons.SuspendLayout();
+            if (InvokeRequired)
             {
-                try
+                Invoke(new Action(() =>
                 {
-                    plTbSBInfo.Visible = isExpanded;
-                    // Iterate over parent and child panels
-
-                    foreach (Control control in plTbSBInfo.Controls)
+                    foreach (Control control in plSideBarMain.Controls)
                     {
                         if (control is Button button)
                         {
-
-                            if (isExpanded)
-                            {
-                                // Sidebar expanded: Show text and image side by side
-                                button.Text = button.Tag as string; // Restore original text from the Tag property
-                                button.TextAlign = ContentAlignment.MiddleLeft;
-                                button.ImageAlign = ContentAlignment.MiddleLeft;
-
-                                // Disable tooltips
-                                _toolTip.SetToolTip(button, null);
-                            }
-                            else
-                            {
-                                // Sidebar collapsed: Hide text, show only image
-                                //button.TextImageRelation = TextImageRelation.Overlay;
-                                button.TextAlign = ContentAlignment.MiddleLeft;
-                                button.ImageAlign = ContentAlignment.MiddleLeft;
-                                button.Tag = button.Text; // Store the original text in the Tag property
-                                button.Text = string.Empty; // Clear the text
-                                _toolTip.SetToolTip(button, button.Tag as string);
-                            }
+                            button.Enabled = true;
                         }
                     }
-                }
-
-
-                catch (Exception ex)
+                }));
+            }
+            else
+            {
+                foreach (Control control in plSideBarMain.Controls)
                 {
-                    _logger.Error(ex, "MF: Unhanded Error while updating button styles for sidebar");
-                }
-                finally
-                {
-                    // Resume layout for all panels
-                    plSBButtons.PerformLayout();
-
+                    if (control is Button button)
+                    {
+                        button.Enabled = true;
+                    }
                 }
             }
         }
-        private void ExpandParentPanel(Panel panel)
-        {
-            if (_panelStates[panel])
-            {
-                return;
-            }
 
-            plSideBarMain.SuspendLayout(); // Suspend layout before expanding
 
-            Timer timer = new() { Interval = 10 };
-            timer.Tick += (sender, e) =>
-            {
-                if (panel.Width < GetScaledValue(200))
-                {
-                    panel.Width += GetScaledValue(10);
-                }
-                else
-                {
-                    panel.Width = GetScaledValue(200);
-                    timer.Stop();
-                    _panelStates[panel] = true;
-
-                    // Update button styles for expanded state
-                    UpdateButtonStylesForSidebar(true);
-                    plSideBarMain.ResumeLayout(); // Resume layout after expanding
-                }
-            };
-            timer.Start();
-        }
-
-        private void CollapseParentPanel(Panel panel)
-        {
-            if (!_panelStates[panel])
-            {
-                return;
-            }
-
-            plSideBarMain.SuspendLayout(); // Suspend layout before collapsing
-
-            Timer timer = new() { Interval = 5 };
-            timer.Tick += (sender, e) =>
-            {
-                if (panel.Width > GetScaledValue(40))
-                {
-                    panel.Width -= GetScaledValue(10);
-                }
-                else
-                {
-                    panel.Width = GetScaledValue(40);
-                    timer.Stop();
-                    _panelStates[panel] = false;
-
-                    // Update button styles for collapsed state
-                    UpdateButtonStylesForSidebar(false);
-                    plSideBarMain.ResumeLayout(); // Resume layout after collapsing
-                }
-            };
-            timer.Start();
-        }
-        private int GetScaledValue(int value)
-        {
-            float scalingFactor = this.CreateGraphics().DpiX / 96f;
-            return (int)(value * scalingFactor);
-        }
-        #endregion -== Side Bar Panels Events ==-
+        #endregion -== Side Bar Buttons Events ==-
 
         #region -== Overrides Custom Form Methods==-
         protected override void WndProc(ref Message m)
@@ -824,7 +768,7 @@ namespace a2p.WinForm
                 if (statusStrip.Bounds.Contains(mousePosition))
                 {
                     m.Result = HTBOTTOMRIGHT;
-                    isResizing = true; // Set resizing flag
+                    _isResizing = true; // Set resizing flag
                     return;
                 }
             }
@@ -833,12 +777,12 @@ namespace a2p.WinForm
                 // Detect resize commands
                 if ((m.WParam.ToInt32() & 0xFFF0) == 0xF008) // SC_SIZE
                 {
-                    isResizing = true; // Set resizing flag
+                    _isResizing = true; // Set resizing flag
                 }
             }
             else if (m.Msg == 0x46) // WM_WINDOWPOSCHANGING
             {
-                if (isResizing)
+                if (_isResizing)
                 {
                     this.Invalidate(); // Redraw the form during resize
                 }
@@ -851,7 +795,7 @@ namespace a2p.WinForm
         protected override void OnMouseUp(MouseEventArgs e)
         {
             base.OnMouseUp(e);
-            isResizing = false; // Stop resizing
+            _isResizing = false; // Stop resizing
         }
 
         #endregion -== Overrides Custom Form Methods==-
@@ -863,6 +807,20 @@ namespace a2p.WinForm
 
             // Custom resizing logic
             ResizeControls();
+            tplHeader.ResumeLayout(false);
+            tplHeader.PerformLayout();
+            tlpTitleBar.ResumeLayout(false);
+            plTitleBar.ResumeLayout(false);
+            plTBPanel.ResumeLayout(false);
+            plTBPanel.PerformLayout();
+            statusStrip.ResumeLayout(false);
+            statusStrip.PerformLayout();
+            plSideBarMain.ResumeLayout(false);
+            plSideBarMain.PerformLayout();
+            plTbSBInfo.ResumeLayout(false);
+            plTbSBInfo.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         private void ResizeControls()
@@ -872,10 +830,7 @@ namespace a2p.WinForm
                 plFormContainer.Size = new Size(this.ClientSize.Width - plFormContainer.Left, this.ClientSize.Height - plFormContainer.Top);
             }
 
-            if (btnLoad != null)
-            {
-                btnLoad.Size = new Size(this.ClientSize.Width / 4, this.ClientSize.Height / 10);
-            }
+
         }
 
 

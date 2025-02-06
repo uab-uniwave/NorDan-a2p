@@ -1,7 +1,5 @@
 ﻿using a2p.Shared.Core.Entities.Models;
-using a2p.Shared.Core.Interfaces.Services.Other;
-using a2p.Shared.Core.Interfaces.Services.Read;
-using a2p.Shared.Core.Utils;
+using a2p.Shared.Core.Interfaces.Services;
 
 using Microsoft.Extensions.Configuration;
 
@@ -12,12 +10,10 @@ namespace a2p.WinForm.ChildForms
 {
     public partial class LogForm : Form
     {
-        private readonly IFileService _fileService;
-        private readonly IExcelService _excelService;
-        private readonly IReadService _readService;
-        private readonly IConfiguration _configuration;
-        private readonly ILogService _logger;
 
+        private readonly IConfiguration _configuration;
+        private readonly ILogService _logService;
+        private readonly Color _backColor = Color.FromArgb(56, 57, 60);
         private DataTable _dataTableLog;
         private DataTable _dataTableProperties;
         private BindingSource _bindingSourceLog;
@@ -25,18 +21,16 @@ namespace a2p.WinForm.ChildForms
         private string _file;
 
 
-        public LogForm(IFileService fileService, IExcelService excelService, IReadService readService, IConfiguration configuration, ILogService logger)
+        public LogForm(IConfiguration configuration, ILogService logService)
         {
 
             _dataTableLog = new DataTable();
             _dataTableProperties = new DataTable();
             _bindingSourceLog = [];
             _bindingSourceProperties = [];
-            _fileService = fileService;
-            _excelService = excelService;
-            _readService = readService;
+
             _configuration = configuration;
-            _logger = logger;
+            _logService = logService;
             _file = Path.Combine(_configuration["AppSettings:Folders:RootFolder"] ?? "C://Temp//Import", _configuration["AppSettings:Folders:Log"] ?? "Log", "a2pLog.json");
 
 
@@ -67,10 +61,12 @@ namespace a2p.WinForm.ChildForms
                     HeaderText = "Timestamp",
                     DataPropertyName = "Timestamp",
                     Name = "Timestamp",
-
                     ReadOnly = true,
                     Visible = true,
-                    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+                    Width = 100,
+                    MinimumWidth = 100,
+
+
                 });
                 _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
                 {
@@ -78,7 +74,10 @@ namespace a2p.WinForm.ChildForms
                     DataPropertyName = "Level",
                     Name = "Level",
                     ReadOnly = true,
-                    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+                    Visible = true,
+                    Width = 100,
+                    MinimumWidth = 100,
+
                 });
                 _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
                 {
@@ -87,16 +86,20 @@ namespace a2p.WinForm.ChildForms
                     Name = "Message",
                     ReadOnly = true,
                     Visible = true,
-                    AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                    Width = 400,
+                    MinimumWidth = 400,
+
+
                 });
                 _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
                 {
-                    HeaderText = "Order",
-                    DataPropertyName = "Order",
-                    Name = "Order",
+                    HeaderText = "OrderNumber",
+                    DataPropertyName = "OrderNumber",
+                    Name = "OrderNumber",
                     ReadOnly = true,
                     Visible = true,
-                    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+                    MinimumWidth = 100,
+                    Width = 100,
                 });
                 _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
                 {
@@ -105,7 +108,8 @@ namespace a2p.WinForm.ChildForms
                     Name = "Worksheet",
                     ReadOnly = true,
                     Visible = true,
-                    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+                    MinimumWidth = 100,
+
                 });
                 _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
                 {
@@ -114,7 +118,10 @@ namespace a2p.WinForm.ChildForms
                     Name = "Line",
                     ReadOnly = true,
                     Visible = true,
-                    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+                    MinimumWidth = 100,
+                    Width = 100,
+
+
                 });
                 _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
                 {
@@ -143,7 +150,7 @@ namespace a2p.WinForm.ChildForms
                     Name = "Properties",
                     ReadOnly = true,
                     Visible = true,
-                    AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells
                 });
                 _ = dataGridViewProperties.Columns.Add(new DataGridViewTextBoxColumn
                 {
@@ -162,9 +169,9 @@ namespace a2p.WinForm.ChildForms
                 //=======================================================================================
                 DataGridViewCellStyle ColumnHeadersDefaultCellStyle = new()
                 {
-                    BackColor = UniwaveColors.uwGreyDark,
-                    ForeColor = UniwaveColors.uwOrangeDeep,
-                    SelectionBackColor = UniwaveColors.uwOrangeDeep,
+                    BackColor = Color.FromArgb(56, 57, 60),
+                    ForeColor = Color.FromArgb(239, 112, 32),
+                    SelectionBackColor = Color.FromArgb(239, 112, 32),
                     SelectionForeColor = Color.WhiteSmoke,
                     Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0),
                     Padding = new Padding(5),
@@ -180,9 +187,9 @@ namespace a2p.WinForm.ChildForms
                 DataGridViewCellStyle DefaultCellStyle = new()
                 {
 
-                    BackColor = UniwaveColors.uwGreyDark,
+                    BackColor = Color.FromArgb(56, 57, 60),
                     ForeColor = Color.WhiteSmoke,
-                    SelectionBackColor = UniwaveColors.uwOrangeDeep,
+                    SelectionBackColor = Color.FromArgb(239, 112, 32),
                     SelectionForeColor = Color.WhiteSmoke,
                     Font = new Font("Segoe UI", 9F),
                     Padding = new Padding(5),
@@ -193,9 +200,9 @@ namespace a2p.WinForm.ChildForms
 
                 DataGridViewCellStyle AlternatingRowsDefaultCellStyle = new()
                 {
-                    BackColor = UniwaveColors.a2pGreyDeep,
+                    BackColor = Color.FromArgb(96, 97, 100),
                     ForeColor = Color.WhiteSmoke,
-                    SelectionBackColor = UniwaveColors.uwOrangeDeep,
+                    SelectionBackColor = Color.FromArgb(239, 112, 32),
                     SelectionForeColor = Color.WhiteSmoke,
                     Font = new Font("Segoe UI", 9F),
                     Padding = new Padding(5),
@@ -209,17 +216,17 @@ namespace a2p.WinForm.ChildForms
                 //DataGrid Default cells 
                 DataGridViewCellStyle RowsDefaultCellStyle = new()
                 {
-                    BackColor = UniwaveColors.uwGreyDark,
+                    BackColor = Color.FromArgb(56, 57, 60),
                     ForeColor = Color.WhiteSmoke,
-                    SelectionBackColor = UniwaveColors.uwOrangeDeep,
+                    SelectionBackColor = Color.FromArgb(239, 112, 32),
                     SelectionForeColor = Color.WhiteSmoke,
                     Font = new Font("Segoe UI", 9F),
                     Padding = new Padding(5),
                     WrapMode = DataGridViewTriState.True,
                     Alignment = DataGridViewContentAlignment.MiddleLeft
                 };
-                dataGridViewLog.RowsDefaultCellStyle = ColumnHeadersDefaultCellStyle;
-                dataGridViewProperties.RowsDefaultCellStyle = ColumnHeadersDefaultCellStyle;
+                dataGridViewLog.RowsDefaultCellStyle = RowsDefaultCellStyle;
+                dataGridViewProperties.RowsDefaultCellStyle = RowsDefaultCellStyle;
 
                 dataGridViewLog.Visible = true;
                 dataGridViewProperties.Visible = true;
@@ -231,7 +238,7 @@ namespace a2p.WinForm.ChildForms
             {
                 if (!DesignMode)
                 {
-                    _logger?.Error("LF: Unhandled Error Log Grid View: {$Exception}", ex.Message);
+                    _logService?.Error("LF: Unhandled Error Log Grid View: {$Exception}", ex.Message);
                 }
                 else
                 {
@@ -247,7 +254,7 @@ namespace a2p.WinForm.ChildForms
                 _ = _dataTableLog.Columns.Add("Timestamp", typeof(string));
                 _ = _dataTableLog.Columns.Add("Level", typeof(string));
                 _ = _dataTableLog.Columns.Add("Message", typeof(string));
-                _ = _dataTableLog.Columns.Add("Order", typeof(string));
+                _ = _dataTableLog.Columns.Add("OrderNumber", typeof(string));
                 _ = _dataTableLog.Columns.Add("Worksheet", typeof(string));
                 _ = _dataTableLog.Columns.Add("Line", typeof(string));
                 _ = _dataTableLog.Columns.Add("Exception", typeof(string));
@@ -255,37 +262,32 @@ namespace a2p.WinForm.ChildForms
                 _bindingSourceLog.DataSource = _dataTableLog;
                 dataGridViewLog.DataSource = _bindingSourceLog;
 
+
+
                 // DataTable for log properties 
                 _ = _dataTableProperties.Columns.Add("Properties", typeof(string));
                 _ = _dataTableProperties.Columns.Add("Value", typeof(string));
                 _bindingSourceProperties.DataSource = _dataTableProperties;
                 dataGridViewProperties.DataSource = _bindingSourceProperties;
             }
-            catch (Exception ex)
+
+
+
+
+
+            catch (Exception ex2)
             {
-                if (!DesignMode)
-                {
-                    _logger?.Error("LF: Unhandled Error Initializing Log data table LogForm: {$Exception}", ex.Message);
-                }
-                else { }
-                try
-                {
-                    // Your code that might throw an exception
-                }
-                catch (Exception ex2)
-                {
-                    string className = nameof(LogForm); // Replace with the actual class name if different
-                    string methodName = nameof(InitializeDataTable); // Replace with the actual method name if different
+                string className = nameof(LogForm); // Replace with the actual class name if different
+                string methodName = nameof(InitializeDataTable); // Replace with the actual method name if different
 
-                    // Log the error
-                    this._logger?.Error(ex2, "Error in {Class}.{Method} {Message}", className, methodName, ex2.Message);
+                // Log the error
+                this._logService?.Error(ex2, "Error in {Class}.{Method} {Message}", className, methodName, ex2.Message);
 
-                    // Display the error in a MessageBox
-                    _ = MessageBox.Show($@"Error in {className}.{methodName}: {ex2.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-                }
+                // Display the error in a MessageBox
+                _ = MessageBox.Show($@"Error in {className}.{methodName}: {ex2.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             }
+
         }
 
 
@@ -322,7 +324,7 @@ namespace a2p.WinForm.ChildForms
         private void dataGridViewLog_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
             // Log any errors that occur during processing
-            _logger.Error("LF:GridViewLog. Error in column {$Column}, row {$Row}: {$Exception}", e.ColumnIndex, e.RowIndex, e.Exception?.Message ?? "Exception details missing.");
+            _logService.Error("LF:GridViewLog. Error in column {$Column}, row {$Row}: {$Exception}", e.ColumnIndex, e.RowIndex, e.Exception?.Message ?? "Exception details missing.");
             Console.WriteLine($"LF:GridViewLog. Error in column {e.ColumnIndex}, row {e.RowIndex}: {e.Exception?.Message ?? "Exception details missing."}");
             e.ThrowException = false;
 
@@ -331,7 +333,7 @@ namespace a2p.WinForm.ChildForms
         private void dataGridViewProperties_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
             // Log any errors that occur during processing
-            _logger.Error("LF:GridViewProperties. Error in column {$Column}, row {$Row}: {$Exception}", e.ColumnIndex, e.RowIndex, e.Exception?.Message ?? "Exception details missing.");
+            _logService.Error("LF:GridViewProperties. Error in column {$Column}, row {$Row}: {$Exception}", e.ColumnIndex, e.RowIndex, e.Exception?.Message ?? "Exception details missing.");
             Console.WriteLine($"LF:GridViewProperties. Error in column {e.ColumnIndex}, row {e.RowIndex}: {e.Exception?.Message ?? "Exception details missing."}");
             e.ThrowException = false;
 
@@ -359,12 +361,12 @@ namespace a2p.WinForm.ChildForms
                 //  Use a dictionary to map log levels to styles for better maintainability
                 Dictionary<string, (Color ForeColor, Color BackColor)> logLevelStyles = new()
                    {
-                     { "Verbose", (System.Drawing.Color.LightGray,  UniwaveColors.uwGreyDark) },
-                     { "Debug", (System.Drawing.Color.LightBlue,   UniwaveColors.uwGreyDark ) },
-                     { "Information", (System.Drawing.Color.LightGreen,  UniwaveColors.uwGreyDark) },
-                     { "Warning", (System.Drawing.Color.Yellow,  UniwaveColors.uwGreyDark)},
-                     { "Error", (System.Drawing.Color.Red,  UniwaveColors.uwGreyDark)},
-                     { "Fatal", (System.Drawing.Color.DarkRed,  UniwaveColors.uwGreyDark)}
+                     { "Verbose", (System.Drawing.Color.LightGray,  _backColor) },
+                     { "Debug", (System.Drawing.Color.LightBlue,   _backColor ) },
+                     { "Information", (System.Drawing.Color.LightGreen,  _backColor) },
+                     { "Warning", (System.Drawing.Color.Yellow, _backColor)},
+                     { "Error", (System.Drawing.Color.Red,  _backColor)},
+                     { "Fatal", (System.Drawing.Color.DarkRed,  _backColor)}
                    };
 
                 // Apply the style if the log level matches
@@ -372,7 +374,7 @@ namespace a2p.WinForm.ChildForms
                 {
                     if (e.CellStyle != null)
                     {
-                        e.CellStyle.BackColor = style.BackColor;
+                        e.CellStyle.BackColor = _backColor;
                         e.CellStyle.ForeColor = style.ForeColor;
                     }
 
@@ -381,8 +383,8 @@ namespace a2p.WinForm.ChildForms
                 {
                     if (e.CellStyle != null)
                     {
-                        e.CellStyle.BackColor = UniwaveColors.uwGreyLight;
-                        e.CellStyle.ForeColor = UniwaveColors.a2pGreyDark;
+                        e.CellStyle.BackColor = _backColor;
+                        e.CellStyle.ForeColor = Color.LightGray;
                     }
                 }
 
@@ -396,6 +398,13 @@ namespace a2p.WinForm.ChildForms
                     e.CellStyle.WrapMode = DataGridViewTriState.True;
                 }
             }
+            else
+            {
+                if (e.CellStyle != null)
+                {
+                    e.CellStyle.WrapMode = DataGridViewTriState.False;
+                }
+            }
 
             // Format the "Timestamp" column
             if (columnName == "Timestamp" && e.Value != null)
@@ -404,6 +413,7 @@ namespace a2p.WinForm.ChildForms
                 {
                     e.Value = dateValue.ToString("yyyy-MM-dd HH:mm:ss:ffff");
                     e.FormattingApplied = true;
+
                 }
             }
         }
@@ -420,12 +430,12 @@ namespace a2p.WinForm.ChildForms
             catch (Exception ex)
             {
                 // Log any errors that occur during processing
-                _logger.Error(ex.Message, "LF: Error Grid ${RowIndex} cell Click. Error getting log properties.", e.RowIndex);
+                _logService.Error(ex.Message, "LF: Error Grid ${RowIndex} cell Click. Error getting log properties.", e.RowIndex);
             }
         }
         #endregion -== IGrids events
 
-        #region -== IData Table methods ==-
+        #region -== Data Table methods ==-
         public async Task LogoMonitorFileAsync()
         {
 
@@ -438,7 +448,7 @@ namespace a2p.WinForm.ChildForms
                 if (!string.IsNullOrEmpty(line))
                 {
                     // Parse the JSON line
-                    A2PLogGridRecord logEntry = await LogParseLineAsync(line);
+                    A2PRecordLog logEntry = await LogParseLineAsync(line);
                     // Add the parsed data to the DataTable
                     await Task.Run(() => LogAddAsync(logEntry));
                 }
@@ -446,7 +456,7 @@ namespace a2p.WinForm.ChildForms
 
             }
         }
-        private async Task<A2PLogGridRecord> LogParseLineAsync(string jsonLine)
+        private async Task<A2PRecordLog> LogParseLineAsync(string jsonLine)
         {
             try
             {
@@ -457,8 +467,8 @@ namespace a2p.WinForm.ChildForms
 
                 if (root == null || root["Properties"] is not JsonObject propertiesNode)
                 {
-                    _logger.Warning("LF: Invalid log entry or missing Properties.");
-                    return new A2PLogGridRecord();
+                    _logService.Warning("LF: Invalid log entry or missing Properties.");
+                    return new A2PRecordLog();
                 }
 
                 // Convert Properties to a dictionary
@@ -468,12 +478,12 @@ namespace a2p.WinForm.ChildForms
                 );
 
 
-                A2PLogGridRecord logRecord = new()
+                A2PRecordLog logRecord = new()
                 {
                     Timestamp = root["Timestamp"]?.ToString() ?? string.Empty,
                     Level = root["Level"]?.ToString() ?? string.Empty,
                     Message = propertiesNode["RenderedMessage"]?.ToString() ?? string.Empty,
-                    Order = propertiesNode["Order"]?.ToString() ?? string.Empty,
+                    Order = propertiesNode["OrderNumber"]?.ToString() ?? string.Empty,
                     Worksheet = propertiesNode["Worksheet"]?.ToString() ?? string.Empty,
                     Line = propertiesNode["Line"]?.ToString() ?? string.Empty,
                     Exception = propertiesNode["Exception"]?.ToString() ?? string.Empty
@@ -502,11 +512,11 @@ namespace a2p.WinForm.ChildForms
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "LF: Error parsing log entry: {ex.Message}");
-                return new A2PLogGridRecord();
+                _logService.Error(ex, "LF: Error parsing log entry: {ex.Message}");
+                return new A2PRecordLog();
             }
         }
-        private void LogAddAsync(A2PLogGridRecord logEntry)
+        private void LogAddAsync(A2PRecordLog logEntry)
         {
             try
             {
@@ -529,21 +539,23 @@ namespace a2p.WinForm.ChildForms
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, $"LF: Error adding log entry to DataTable: {ex.Message}");
+                _logService.Error(ex, $"LF: Error adding log entry to DataTable: {ex.Message}");
             }
         }
         public async Task LogRefreshAsync()
         {
+            await LogClearAsync();
+
             try
             {
 
 
-                List<A2PLogGridRecord> logEntries = await _logger.GetRepository(string.Empty);
+                List<A2PRecordLog> logEntries = await _logService.GetRepository(string.Empty);
 
                 if (logEntries != null)
                 {
                     // Remove duplicates based on unique properties (e.g., Timestamp, Message, etc.)
-                    List<A2PLogGridRecord> distinctLogEntries = logEntries
+                    List<A2PRecordLog> distinctLogEntries = logEntries
                      .GroupBy(entry => new
                      {
                          entry.Timestamp,
@@ -562,7 +574,7 @@ namespace a2p.WinForm.ChildForms
                     // Bind the distinct entries to the grid
 
 
-                    foreach (A2PLogGridRecord? logEntry in distinctLogEntries)
+                    foreach (A2PRecordLog? logEntry in distinctLogEntries)
                     {
                         _ = _dataTableLog.Rows.Add(logEntry.Timestamp, logEntry.Level, logEntry.Message, logEntry.Order, logEntry.Worksheet, logEntry.Line, logEntry.Exception, logEntry.Properties);
                     }
@@ -572,7 +584,7 @@ namespace a2p.WinForm.ChildForms
             catch (Exception ex)
             {
                 // Log any errors that occur during processing
-                _logger.Error(ex, $"LF: Error refreshing log entries: {ex.Message}");
+                _logService.Error(ex, $"LF: Error refreshing log entries: {ex.Message}");
             }
 
 
@@ -588,51 +600,59 @@ namespace a2p.WinForm.ChildForms
                 else
                 {
                     await Task.Run(_dataTableLog.Rows.Clear);
+                    await Task.Run(dataGridViewLog.Rows.Clear);
+                    await Task.Run(dataGridViewProperties.Rows.Clear);
                 }
             }
             catch (Exception ex)
             {
                 // Log any errors that occur during processing
-                _logger.Error($"LF: Error clearing log file: {ex.Message}");
+                _logService.Error($"LF: Error clearing log file: {ex.Message}");
             }
         }
 
         //========================================================
         private async Task PropertiesAddAsync(int index)
         {
+
             try
             {
-                // Ensure the index is within bounds
-                if (index < 0 || index >= dataGridViewLog.Rows.Count)
+                if (InvokeRequired)
                 {
-                    _logger.Warning("LF: Row index out of range. Can't get log properties.");
-                    return;
+                    Invoke(new Action(async () => await PropertiesAddAsync(index)));
+
+                    // Ensure the index is within bounds
+                    if (index < 0 || index >= dataGridViewLog.Rows.Count)
+                    {
+                        _logService.Warning("LF: Row index out of range. Can't get log properties.");
+                        return;
+                    }
+
+                    // Get the selected row
+                    DataRow selectedRow = _dataTableLog.Rows[index];
+
+                    // Get the dictionary from the "Properties" column
+                    if (selectedRow["Properties"] is not Dictionary<string, object> properties || properties.Count == 0)
+                    {
+                        _logService.Warning("LF: Selected row has no valid properties.");
+                        return;
+                    }
+
+                    // Clear the previous properties
+                    _dataTableProperties.Rows.Clear();
+
+                    // Add each property to the _dataTableProperties
+                    foreach (KeyValuePair<string, object> property in properties)
+                    {
+                        _ = await Task.Run(
+                            () => _dataTableProperties.Rows.Add(property.Key, property.Value?.ToString()));
+                    }
                 }
-
-                // Get the selected row
-                DataRow selectedRow = _dataTableLog.Rows[index];
-
-                // Get the dictionary from the "Properties" column
-                if (selectedRow["Properties"] is not Dictionary<string, object> properties || properties.Count == 0)
-                {
-                    _logger.Warning("LF: Selected row has no valid properties.");
-                    return;
-                }
-
-                // Clear the previous properties
-                _dataTableProperties.Rows.Clear();
-
-                // Add each property to the _dataTableProperties
-                foreach (KeyValuePair<string, object> property in properties)
-                {
-                    _ = await Task.Run(() => _dataTableProperties.Rows.Add(property.Key, property.Value?.ToString()));
-                }
-
 
             }
             catch (Exception ex)
             {
-                _logger.Error($"LF: Error processing log entry properties: {ex.Message}");
+                _logService.Error($"LF: Error processing log entry properties: {ex.Message}");
             }
 
         }
@@ -722,11 +742,6 @@ namespace a2p.WinForm.ChildForms
         }
         #endregion -== Log Level Filters ==-
 
-
-        private void plLogToolBarPanel_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
     }
 }
 

@@ -29,11 +29,10 @@ namespace a2p.WinForm.ChildForms
             plGridPropertiesPanel = new Panel();
             dataGridViewProperties = new DataGridView();
             dataGridViewLog = new DataGridView();
-            
-            ((System.ComponentModel.ISupportInitialize)dataGridViewProperties).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridViewLog).BeginInit();
             plLogToolBarPanel.SuspendLayout();
             plGridPropertiesPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewProperties).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewLog).BeginInit();
             SuspendLayout();
             // 
             // plLogToolBarPanel
@@ -71,6 +70,7 @@ namespace a2p.WinForm.ChildForms
             chxVerbose.TabIndex = 1;
             chxVerbose.Text = "Verbose";
             chxVerbose.UseVisualStyleBackColor = false;
+            chxVerbose.CheckedChanged += chxLogLevelVerbose_CheckedChanged;
             // 
             // chxDebug
             // 
@@ -91,6 +91,7 @@ namespace a2p.WinForm.ChildForms
             chxDebug.TabIndex = 2;
             chxDebug.Text = "Debug";
             chxDebug.UseVisualStyleBackColor = false;
+            chxDebug.CheckedChanged += chxLogLevelDebug_CheckedChanged;
             // 
             // chxInformation
             // 
@@ -111,6 +112,7 @@ namespace a2p.WinForm.ChildForms
             chxInformation.TabIndex = 3;
             chxInformation.Text = "Info";
             chxInformation.UseVisualStyleBackColor = false;
+            chxInformation.CheckedChanged += chxLogLevelInfo_CheckedChanged;
             // 
             // chxWarning
             // 
@@ -132,6 +134,7 @@ namespace a2p.WinForm.ChildForms
             chxWarning.TabIndex = 4;
             chxWarning.Text = "Warning";
             chxWarning.UseVisualStyleBackColor = false;
+            chxWarning.CheckedChanged += chxLogLevelWarning_CheckedChanged;
             // 
             // chxError
             // 
@@ -152,6 +155,7 @@ namespace a2p.WinForm.ChildForms
             chxError.TabIndex = 5;
             chxError.Text = "Error";
             chxError.UseVisualStyleBackColor = false;
+            chxError.CheckedChanged += chxLogLevelError_CheckedChanged;
             // 
             // chxFatal
             // 
@@ -173,6 +177,7 @@ namespace a2p.WinForm.ChildForms
             chxFatal.TabIndex = 6;
             chxFatal.Text = "Fatal";
             chxFatal.UseVisualStyleBackColor = false;
+            chxFatal.CheckedChanged += chxLogLevelFatal_CheckedChanged;
             // 
             // plGridPropertiesPanel
             // 
@@ -207,6 +212,7 @@ namespace a2p.WinForm.ChildForms
             dataGridViewProperties.Size = new Size(700, 1175);
             dataGridViewProperties.TabIndex = 1;
             dataGridViewProperties.VirtualMode = true;
+            dataGridViewProperties.DataError += dataGridViewProperties_DataError;
             // 
             // dataGridViewLog
             // 
@@ -231,6 +237,7 @@ namespace a2p.WinForm.ChildForms
             dataGridViewLog.Size = new Size(1506, 1175);
             dataGridViewLog.TabIndex = 9;
             dataGridViewLog.VirtualMode = true;
+            dataGridViewLog.DataError += dataGridViewLog_DataError;
             // 
             // LogForm
             // 
@@ -245,16 +252,16 @@ namespace a2p.WinForm.ChildForms
             Name = "LogForm";
             Text = "LogForm";
             WindowState = FormWindowState.Maximized;
+            Shown += LogForm_Shown;
+            DpiChanged += LogForm_DpiChanged;
             ResizeBegin += LogForm_ResizeBegin;
             ResizeEnd += LogForm_ResizeEnd;
             plLogToolBarPanel.ResumeLayout(false);
             plLogToolBarPanel.PerformLayout();
             plGridPropertiesPanel.ResumeLayout(false);
-            plGridPropertiesPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewProperties).EndInit();
             ((System.ComponentModel.ISupportInitialize)dataGridViewLog).EndInit();
             ResumeLayout(false);
-            PerformLayout();
 
         }
 

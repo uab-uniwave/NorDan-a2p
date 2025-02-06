@@ -118,52 +118,58 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="btCloseHover" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btCloseHover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btLog" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btLog.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btProperties" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btProperties.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="UniwaveLogoInversed" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UniwaveLogoInversed.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btSideBar" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btSideBar.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="SpalshScreen" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SpalshScreen.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="btExit" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btExit.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btImport" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btImport.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btClose" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btClose.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btMinimizeHover" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btMinimizeHover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="NordanLogoInversed" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\NordanLogoInversed.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="btMaximizeHover" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btMaximizeHover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btMaximize" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btMaximize.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btMinimize" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btMinimize.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="UniwaveLogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UniwaveLogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btnClose" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btnClose.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btnCloseHover" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btnCloseHover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btnExit" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btnExit.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btnImport" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btnImport.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btnLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btnLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btnLog" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btnLog.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btnMaximize" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btnMaximize.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btnMaximizeHover" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btnMaximizeHover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btnMinimize" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btnMinimize.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btnMinimizeHover" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btnMinimizeHover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btnMnimizeHover" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btnMnimizeHover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btnProperties" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btnProperties.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btnSideBar" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btnSideBar.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="String" xml:space="preserve">
+    <value>btn.Image = LoadImage(btn.Name.Replace("btn", "bt"), btn.Width - 6, btn.Height - 6);</value>
   </data>
 </root>

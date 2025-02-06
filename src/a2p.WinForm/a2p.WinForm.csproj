@@ -17,10 +17,15 @@
  <BaseOutputPath>..\..\Output</BaseOutputPath>
      <OutputPath>$(BaseOutputPath)\$(Configuration)\</OutputPath>
  <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+ <ApplicationIcon>Icon.ico</ApplicationIcon>
  </PropertyGroup>
 
  <ItemGroup>
  <Compile Remove="ThemeColor.cs" />
+ </ItemGroup>
+
+ <ItemGroup>
+   <Content Include="Icon.ico" />
  </ItemGroup>
 
     <ItemGroup>
@@ -75,10 +80,6 @@
         <None Update="..\a2p.Shared\appsettings.Production.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Resources\" />
     </ItemGroup>
 
 </Project>

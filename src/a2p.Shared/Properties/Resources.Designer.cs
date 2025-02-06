@@ -59,5 +59,14 @@ namespace a2p.Shared.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property.
+        /// </summary>
+        internal static string LogForm_InitializeDataGridViews_Property {
+            get {
+                return ResourceManager.GetString("LogForm_InitializeDataGridViews_Property", resourceCulture);
+            }
+        }
     }
 }

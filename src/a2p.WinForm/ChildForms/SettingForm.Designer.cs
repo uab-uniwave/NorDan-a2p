@@ -104,6 +104,7 @@
             btnFailed.TabIndex = 36;
             btnFailed.Text = "...";
             btnFailed.UseVisualStyleBackColor = false;
+            btnFailed.Click += btnFailed_Click;
             // 
             // btnSucess
             // 
@@ -125,6 +126,7 @@
             btnSucess.TabIndex = 35;
             btnSucess.Text = "...";
             btnSucess.UseVisualStyleBackColor = false;
+            btnSucess.Click += btnSucess_Click;
             // 
             // btnWorkingFolder
             // 
@@ -218,7 +220,7 @@
             lbFailFolder.Name = "lbFailFolder";
             lbFailFolder.Size = new Size(312, 44);
             lbFailFolder.TabIndex = 26;
-            lbFailFolder.Text = "Failed Process Files Folder: ";
+            lbFailFolder.Text = "Failed Process OrderFiles Folder: ";
             lbFailFolder.TextAlign = ContentAlignment.MiddleRight;
             // 
             // lbSuccessFolder
@@ -234,7 +236,7 @@
             lbSuccessFolder.Name = "lbSuccessFolder";
             lbSuccessFolder.Size = new Size(312, 44);
             lbSuccessFolder.TabIndex = 27;
-            lbSuccessFolder.Text = "Success Processed Files Folder:";
+            lbSuccessFolder.Text = "Success Processed OrderFiles Folder:";
             lbSuccessFolder.TextAlign = ContentAlignment.MiddleRight;
             // 
             // tbxFailed
@@ -302,7 +304,7 @@
             lbLoadOnStart.Name = "lbLoadOnStart";
             lbLoadOnStart.Size = new Size(312, 44);
             lbLoadOnStart.TabIndex = 32;
-            lbLoadOnStart.Text = "Load Files on Start:";
+            lbLoadOnStart.Text = "Load OrderFiles on Start:";
             lbLoadOnStart.TextAlign = ContentAlignment.MiddleRight;
             // 
             // tbplSettings
@@ -359,6 +361,8 @@
             Margin = new Padding(20, 108, 20, 20);
             MinimumSize = new Size(640, 640);
             Name = "SettingForm";
+            Load += SettingForm_Load;
+            Shown += SettingForm_Shown;
             tbplSettings.ResumeLayout(false);
             tbplSettings.PerformLayout();
             ResumeLayout(false);

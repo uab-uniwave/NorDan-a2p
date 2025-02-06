@@ -6,9 +6,13 @@ namespace a2p.WinForm.CustomControls
     {
         public ProgressBarForm()
         {
+
+
+
+
             this.SuspendLayout();
             this.AutoScaleMode = AutoScaleMode.Dpi;
-            //  this.AutoScaleDimensions = new SizeF(96F, 96F);
+            this.AutoScaleDimensions = new SizeF(96F, 96F);
             InitializeComponent();
             this.PerformAutoScale(); // Ensure everything is scaled correctly (optional)
             this.ResumeLayout(true); //                this.DpiChanged+=SplashScreenForm_DpiChanged;
@@ -24,13 +28,16 @@ namespace a2p.WinForm.CustomControls
 
         public void UpdateProgress(ProgressValue progressValue)
         {
-            if (InvokeRequired)
+            if (IsHandleCreated && !IsDisposed)
             {
-                Invoke(new Action(() => UpdateProgressInternal(progressValue)));
-            }
-            else
-            {
-                UpdateProgressInternal(progressValue);
+                if (InvokeRequired)
+                {
+                    Invoke(new Action(() => UpdateProgressInternal(progressValue)));
+                }
+                else
+                {
+                    UpdateProgressInternal(progressValue);
+                }
             }
         }
 
@@ -59,7 +66,7 @@ namespace a2p.WinForm.CustomControls
         private void UpdateProgressBar()
         {
             // Example update logic
-            lbProgressBarTitle.Text = "Loading Files ...";
+            lbProgressBarTitle.Text = "Loading OrderFiles ...";
             lbProgressBarTask1.Text = "";
             lbProgressBarTask2.Text = "";
             lbProgressBarTask3.Text = "";

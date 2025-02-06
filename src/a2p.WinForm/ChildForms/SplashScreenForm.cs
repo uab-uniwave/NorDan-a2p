@@ -7,9 +7,9 @@ namespace a2p.WinForm
         public SplashScreenForm()
         {
 
-            this.SuspendLayout();
+
             this.AutoScaleMode = AutoScaleMode.Dpi;
-            //    this.AutoScaleDimensions = new SizeF(96F, 96F);
+            this.AutoScaleDimensions = new SizeF(96F, 96F);
             InitializeComponent(); // Initialize components first
 
             // Attach events before setting DPI to catch any initial changes
@@ -19,14 +19,13 @@ namespace a2p.WinForm
             // Set DPI mode and dimensions after attaching events
 
 
-            this.ResumeLayout(true);
+
             this.Opacity = 0; // Start fully transparent
         }
 
 
         private void SplashScreenForm_DpiChanged(object? sender, DpiChangedEventArgs e)
         {
-
 
 
             this.PerformAutoScale();
@@ -36,7 +35,7 @@ namespace a2p.WinForm
         private void SplashScreenForm_Load(object? sender, EventArgs e)
         {
 
-            SetRoundedCorners(10);
+            SetRoundedCorners(50);
 
         }
         public void FadeIn()
@@ -73,16 +72,15 @@ namespace a2p.WinForm
         protected override void WndProc(ref Message m)
         {
             {
-                const int WM_DPICHANGED = 0x02E0;
 
-                if (m.Msg == WM_DPICHANGED)
-                {
-                    int newDpi = m.WParam.ToInt32() & 0xFFFF; // Extract DPI value
-                    float scaleFactor = newDpi / 192f;
+                //if (m.Msg == WM_DPICHANGED)
+                //{
+                //    int newDpi = m.WParam.ToInt32() & 0xFFFF; // Extract DPI value
+                //  float scaleFactor = newDpi / 192f;
 
-                    // Resize form properly based on new DPI
-                    this.Scale(new SizeF(scaleFactor, scaleFactor));
-                }
+                //    // Resize form properly based on new DPI
+                //    this.Scale(new SizeF(scaleFactor, scaleFactor));
+                //}
                 base.WndProc(ref m);
 
             }

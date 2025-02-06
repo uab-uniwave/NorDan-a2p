@@ -4,7 +4,7 @@
  {
   public string File { get; set; } = string.Empty; // Excel file name
   public string Worksheet { get; set; } = string.Empty;// Worksheet name
-  public string Order { get; set; } = string.Empty; // Order identifier
+  public string Order { get; set; } = string.Empty; // OrderNumber identifier
   public string Description { get; set; } = string.Empty; // Item description
   public string SortOrder { get; set; } = "0";// Sorting or ordering index
   public string Item { get; set; } = string.Empty; // Item identifier or name

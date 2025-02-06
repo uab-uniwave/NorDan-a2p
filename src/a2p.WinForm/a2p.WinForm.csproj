@@ -17,10 +17,15 @@
  <BaseOutputPath>..\..\Output</BaseOutputPath>
      <OutputPath>$(BaseOutputPath)\$(Configuration)\</OutputPath>
  <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+ <ApplicationIcon>Icon.ico</ApplicationIcon>
  </PropertyGroup>
 
  <ItemGroup>
  <Compile Remove="ThemeColor.cs" />
+ </ItemGroup>
+
+ <ItemGroup>
+   <Content Include="Icon.ico" />
  </ItemGroup>
 
     <ItemGroup>

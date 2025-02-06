@@ -1,6 +1,4 @@
 ﻿using a2p.WinForm.CustomControls;
-using System.Net;
-using a2p.WinForm.CustomControls;
 
 namespace a2p.WinForm
 {
@@ -32,141 +30,104 @@ namespace a2p.WinForm
         /// </summary>
         private void InitializeComponent()
         {
-            ToolStripStatusLabel toolStripStatusLabel1;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            lbHeader4 = new Label();
-            plNordanHeaderLogo = new Panel();
-            lbHeader3 = new Label();
-            plUniwaveHeaderLogo = new Panel();
-            lbHeader2 = new Label();
-            lbHeader1 = new Label();
+            toolStripStatusLabel1 = new ToolStripStatusLabel();
             tplHeader = new TableLayoutPanel();
-            plSBButtons = new Panel();
-            plTbSBInfo = new TableLayoutPanel();
-            lbInfoErrors = new Label();
-            lbInfoFiles = new Label();
-            lbErrorCount = new Label();
-            lbWarningCount = new Label();
-            lbInfoWarnings = new Label();
-            rowsCount = new Label();
-            lbWorksheetsCount = new Label();
-            lbOrdersCount = new Label();
-            lbFilesCount = new Label();
-            lbInfoRows = new Label();
-            lbInfoWorksheets = new Label();
-            lbInfoOrders = new Label();
-            tableLayoutPanel1 = new TableLayoutPanel();
-            btSideBar = new SideBarButton();
-            btLoadFiles = new SideBarButton();
-            btImport = new SideBarButton();
-            btLog = new SideBarButton();
-            btProperties = new SideBarButton();
-            btExit = new SideBarButton();
-            plSideBarMain = new Panel();
+            plNordanHeaderLogo = new Panel();
+            lbHeader1 = new Label();
+            lbHeader2 = new Label();
+            plUniwaveHeaderLogo = new Panel();
+            lbHeader3 = new Label();
+            lbHeader4 = new Label();
             tlpTitleBar = new TableLayoutPanel();
-            btMinimize = new Button();
-            btMaximize = new Button();
-            btClose = new SideBarButton();
+            btnMinimize = new Button();
+            btnClose = new Button();
+            btnMaximize = new Button();
             plMiniLogo = new Panel();
             plTitleBar = new Panel();
             plTitleBarAppName = new Label();
             plTBPanel = new Panel();
-            lbErrors = new Label();
             slbPath = new ToolStripStatusLabel();
             statusStrip = new StatusStrip();
+            plSideBarMain = new Panel();
+            btnProperties = new Button();
+            plTbSBInfo = new TableLayoutPanel();
+            lbInfoErrors = new Label();
+            lbInfoFiles = new Label();
+            lbInfoErrorCount = new Label();
+            lbInfoWarningCount = new Label();
+            lbInfoWarnings = new Label();
+            lbInfoRowsCount = new Label();
+            lbInfoWorksheetsCount = new Label();
+            lbInfoOrdersCount = new Label();
+            lbInfoFilesCount = new Label();
+            lbInfoRows = new Label();
+            lbInfoWorksheets = new Label();
+            lbInfoOrders = new Label();
+            btnExit = new Button();
+            btnLog = new Button();
+            btnImport = new Button();
+            btnLoad = new Button();
             plFormContainer = new Panel();
-            toolStripStatusLabel1 = new ToolStripStatusLabel();
             tplHeader.SuspendLayout();
-            plTbSBInfo.SuspendLayout();
-            tableLayoutPanel1.SuspendLayout();
-            plSideBarMain.SuspendLayout();
             tlpTitleBar.SuspendLayout();
             plTitleBar.SuspendLayout();
             plTBPanel.SuspendLayout();
             statusStrip.SuspendLayout();
+            plSideBarMain.SuspendLayout();
+            plTbSBInfo.SuspendLayout();
             SuspendLayout();
             // 
             // toolStripStatusLabel1
             // 
             toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             toolStripStatusLabel1.Size = new Size(72, 32);
-            toolStripStatusLabel1.Text = "Path: ";
+            toolStripStatusLabel1.Text = "FilePath: ";
             toolStripStatusLabel1.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // lbHeader4
+            // tplHeader
             // 
-            lbHeader4.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            lbHeader4.AutoSize = true;
-            lbHeader4.BackColor = Color.Transparent;
-            lbHeader4.Font = new Font("Segoe UI", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 10, true);
-            lbHeader4.ForeColor = Color.Transparent;
-            lbHeader4.ImageAlign = ContentAlignment.TopLeft;
-            lbHeader4.Location = new Point(1167, 4);
-            lbHeader4.Margin = new Padding(0);
-            lbHeader4.Name = "lbHeader4";
-            lbHeader4.Size = new Size(64, 40);
-            lbHeader4.TabIndex = 5;
-            lbHeader4.Text = "v2.0";
-            lbHeader4.TextAlign = ContentAlignment.BottomLeft;
-            lbHeader4.UseCompatibleTextRendering = true;
+            tplHeader.AutoSize = true;
+            tplHeader.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            tplHeader.BackColor = Color.FromArgb(239, 112, 32);
+            tplHeader.ColumnCount = 7;
+            tplHeader.ColumnStyles.Add(new ColumnStyle());
+            tplHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 60F));
+            tplHeader.ColumnStyles.Add(new ColumnStyle());
+            tplHeader.ColumnStyles.Add(new ColumnStyle());
+            tplHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tplHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
+            tplHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
+            tplHeader.Controls.Add(plNordanHeaderLogo, 6, 2);
+            tplHeader.Controls.Add(lbHeader1, 0, 0);
+            tplHeader.Controls.Add(lbHeader2, 1, 1);
+            tplHeader.Controls.Add(plUniwaveHeaderLogo, 6, 0);
+            tplHeader.Controls.Add(lbHeader3, 2, 0);
+            tplHeader.Controls.Add(lbHeader4, 4, 0);
+            tplHeader.Dock = DockStyle.Top;
+            tplHeader.Location = new Point(0, 50);
+            tplHeader.Margin = new Padding(4);
+            tplHeader.Name = "tplHeader";
+            tplHeader.Padding = new Padding(4);
+            tplHeader.RowCount = 3;
+            tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 41F));
+            tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 57F));
+            tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 22F));
+            tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tplHeader.Size = new Size(2072, 148);
+            tplHeader.TabIndex = 1;
             // 
             // plNordanHeaderLogo
             // 
-            plNordanHeaderLogo.BackgroundImage = (Image)resources.GetObject("plNordanHeaderLogo.BackgroundImage");
+            plNordanHeaderLogo.BackgroundImage = Properties.Resources.NordanLogoInversed;
             plNordanHeaderLogo.BackgroundImageLayout = ImageLayout.Zoom;
             plNordanHeaderLogo.Dock = DockStyle.Top;
-            plNordanHeaderLogo.Location = new Point(4, 4);
+            plNordanHeaderLogo.Location = new Point(1868, 102);
             plNordanHeaderLogo.Margin = new Padding(0);
             plNordanHeaderLogo.Name = "plNordanHeaderLogo";
             tplHeader.SetRowSpan(plNordanHeaderLogo, 2);
-            plNordanHeaderLogo.Size = new Size(200, 98);
-            plNordanHeaderLogo.TabIndex = 2;
-            // 
-            // lbHeader3
-            // 
-            lbHeader3.AutoSize = true;
-            lbHeader3.BackColor = Color.Transparent;
-            lbHeader3.Dock = DockStyle.Bottom;
-            lbHeader3.Font = new Font("Segoe UI", 16.125F, FontStyle.Bold);
-            lbHeader3.ForeColor = Color.FromArgb(248, 248, 249);
-            lbHeader3.ImageAlign = ContentAlignment.TopLeft;
-            lbHeader3.Location = new Point(961, 36);
-            lbHeader3.Margin = new Padding(0);
-            lbHeader3.Name = "lbHeader3";
-            tplHeader.SetRowSpan(lbHeader3, 2);
-            lbHeader3.Size = new Size(206, 66);
-            lbHeader3.TabIndex = 4;
-            lbHeader3.Text = "PrefSuite";
-            lbHeader3.UseCompatibleTextRendering = true;
-            // 
-            // plUniwaveHeaderLogo
-            // 
-            plUniwaveHeaderLogo.BackgroundImage = (Image)resources.GetObject("plUniwaveHeaderLogo.BackgroundImage");
-            plUniwaveHeaderLogo.BackgroundImageLayout = ImageLayout.Zoom;
-            plUniwaveHeaderLogo.Dock = DockStyle.Top;
-            plUniwaveHeaderLogo.Location = new Point(1864, 4);
-            plUniwaveHeaderLogo.Margin = new Padding(0);
-            plUniwaveHeaderLogo.Name = "plUniwaveHeaderLogo";
-            tplHeader.SetRowSpan(plUniwaveHeaderLogo, 2);
-            plUniwaveHeaderLogo.Size = new Size(204, 98);
-            plUniwaveHeaderLogo.TabIndex = 1;
-            // 
-            // lbHeader2
-            // 
-            lbHeader2.BackColor = Color.Transparent;
-            lbHeader2.Dock = DockStyle.Fill;
-            lbHeader2.FlatStyle = FlatStyle.Flat;
-            lbHeader2.Font = new Font("Segoe UI Black", 30F, FontStyle.Bold);
-            lbHeader2.ForeColor = Color.FromArgb(248, 248, 249);
-            lbHeader2.Location = new Point(901, 44);
-            lbHeader2.Margin = new Padding(0);
-            lbHeader2.Name = "lbHeader2";
-            tplHeader.SetRowSpan(lbHeader2, 2);
-            lbHeader2.Size = new Size(60, 80);
-            lbHeader2.TabIndex = 7;
-            lbHeader2.Text = "2";
-            lbHeader2.TextAlign = ContentAlignment.MiddleCenter;
-            lbHeader2.UseCompatibleTextRendering = true;
+            plNordanHeaderLogo.Size = new Size(200, 41);
+            plNordanHeaderLogo.TabIndex = 9;
             // 
             // lbHeader1
             // 
@@ -176,614 +137,220 @@ namespace a2p.WinForm
             lbHeader1.Font = new Font("Segoe UI", 20F);
             lbHeader1.ForeColor = Color.FromArgb(248, 248, 249);
             lbHeader1.ImageAlign = ContentAlignment.TopRight;
-            lbHeader1.Location = new Point(204, 4);
-            lbHeader1.Margin = new Padding(0);
+            lbHeader1.Location = new Point(10, 10);
+            lbHeader1.Margin = new Padding(6);
             lbHeader1.Name = "lbHeader1";
             tplHeader.SetRowSpan(lbHeader1, 3);
-            lbHeader1.Size = new Size(697, 120);
+            lbHeader1.Size = new Size(268, 108);
             lbHeader1.TabIndex = 6;
             lbHeader1.Text = "Aluminum";
             lbHeader1.TextAlign = ContentAlignment.MiddleRight;
             lbHeader1.UseCompatibleTextRendering = true;
             // 
-            // tplHeader
+            // lbHeader2
             // 
-            tplHeader.AutoSize = true;
-            tplHeader.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            tplHeader.BackColor = Color.FromArgb(239, 112, 32);
-            tplHeader.ColumnCount = 7;
-            tplHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
-            tplHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tplHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 60F));
-            tplHeader.ColumnStyles.Add(new ColumnStyle());
-            tplHeader.ColumnStyles.Add(new ColumnStyle());
-            tplHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tplHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 204F));
-            tplHeader.Controls.Add(lbHeader1, 1, 0);
-            tplHeader.Controls.Add(lbHeader2, 2, 1);
-            tplHeader.Controls.Add(plUniwaveHeaderLogo, 7, 0);
-            tplHeader.Controls.Add(lbHeader3, 3, 0);
-            tplHeader.Controls.Add(plNordanHeaderLogo, 0, 0);
-            tplHeader.Controls.Add(lbHeader4, 5, 0);
-            tplHeader.Dock = DockStyle.Top;
-            tplHeader.Location = new Point(0, 58);
-            tplHeader.Margin = new Padding(4, 4, 4, 4);
-            tplHeader.Name = "tplHeader";
-            tplHeader.Padding = new Padding(4, 4, 4, 4);
-            tplHeader.RowCount = 3;
-            tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 58F));
-            tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 22F));
-            tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            tplHeader.Size = new Size(2072, 128);
-            tplHeader.TabIndex = 1;
+            lbHeader2.BackColor = Color.Transparent;
+            lbHeader2.Dock = DockStyle.Fill;
+            lbHeader2.FlatStyle = FlatStyle.Flat;
+            lbHeader2.Font = new Font("Segoe UI Black", 30F, FontStyle.Bold);
+            lbHeader2.ForeColor = Color.FromArgb(248, 248, 249);
+            lbHeader2.Location = new Point(290, 51);
+            lbHeader2.Margin = new Padding(6);
+            lbHeader2.Name = "lbHeader2";
+            tplHeader.SetRowSpan(lbHeader2, 2);
+            lbHeader2.Size = new Size(48, 67);
+            lbHeader2.TabIndex = 7;
+            lbHeader2.Text = "2";
+            lbHeader2.TextAlign = ContentAlignment.MiddleCenter;
+            lbHeader2.UseCompatibleTextRendering = true;
             // 
-            // plSBButtons
+            // plUniwaveHeaderLogo
             // 
-            plSBButtons.AutoSize = true;
-            plSBButtons.BackColor = Color.Transparent;
-            plSBButtons.Dock = DockStyle.Top;
-            plSBButtons.Location = new Point(0, 0);
-            plSBButtons.Margin = new Padding(6, 6, 6, 6);
-            plSBButtons.Name = "plSBButtons";
-            plSBButtons.Size = new Size(400, 0);
-            plSBButtons.TabIndex = 11;
+            plUniwaveHeaderLogo.BackgroundImage = Properties.Resources.UniwaveLogoInversed;
+            plUniwaveHeaderLogo.BackgroundImageLayout = ImageLayout.Zoom;
+            plUniwaveHeaderLogo.Dock = DockStyle.Top;
+            plUniwaveHeaderLogo.Location = new Point(1868, 4);
+            plUniwaveHeaderLogo.Margin = new Padding(0);
+            plUniwaveHeaderLogo.Name = "plUniwaveHeaderLogo";
+            plUniwaveHeaderLogo.Size = new Size(200, 41);
+            plUniwaveHeaderLogo.TabIndex = 1;
             // 
-            // plTbSBInfo
+            // lbHeader3
             // 
-            plTbSBInfo.BackColor = Color.Transparent;
-            plTbSBInfo.ColumnCount = 2;
-            plTbSBInfo.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 176F));
-            plTbSBInfo.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            plTbSBInfo.Controls.Add(lbInfoErrors, 0, 6);
-            plTbSBInfo.Controls.Add(lbInfoFiles, 0, 0);
-            plTbSBInfo.Controls.Add(lbErrorCount, 1, 6);
-            plTbSBInfo.Controls.Add(lbWarningCount, 1, 5);
-            plTbSBInfo.Controls.Add(lbInfoWarnings, 0, 5);
-            plTbSBInfo.Controls.Add(rowsCount, 1, 3);
-            plTbSBInfo.Controls.Add(lbWorksheetsCount, 1, 2);
-            plTbSBInfo.Controls.Add(lbOrdersCount, 1, 1);
-            plTbSBInfo.Controls.Add(lbFilesCount, 1, 0);
-            plTbSBInfo.Controls.Add(lbInfoRows, 0, 3);
-            plTbSBInfo.Controls.Add(lbInfoWorksheets, 0, 2);
-            plTbSBInfo.Controls.Add(lbInfoOrders, 0, 1);
-            plTbSBInfo.Dock = DockStyle.Bottom;
-            plTbSBInfo.ForeColor = Color.FromArgb(248, 248, 249);
-            plTbSBInfo.Location = new Point(0, 636);
-            plTbSBInfo.Margin = new Padding(4, 2, 4, 2);
-            plTbSBInfo.Name = "plTbSBInfo";
-            plTbSBInfo.RowCount = 8;
-            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            plTbSBInfo.Size = new Size(400, 452);
-            plTbSBInfo.TabIndex = 12;
+            lbHeader3.AutoSize = true;
+            lbHeader3.BackColor = Color.Transparent;
+            lbHeader3.Dock = DockStyle.Bottom;
+            lbHeader3.Font = new Font("Segoe UI", 16.125F, FontStyle.Bold);
+            lbHeader3.ForeColor = Color.FromArgb(248, 248, 249);
+            lbHeader3.ImageAlign = ContentAlignment.TopLeft;
+            lbHeader3.Location = new Point(350, 30);
+            lbHeader3.Margin = new Padding(6);
+            lbHeader3.Name = "lbHeader3";
+            tplHeader.SetRowSpan(lbHeader3, 2);
+            lbHeader3.Size = new Size(206, 66);
+            lbHeader3.TabIndex = 4;
+            lbHeader3.Text = "PrefSuite";
+            lbHeader3.UseCompatibleTextRendering = true;
             // 
-            // lbInfoErrors
+            // lbHeader4
             // 
-            lbInfoErrors.AutoSize = true;
-            lbInfoErrors.Dock = DockStyle.Fill;
-            lbInfoErrors.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lbInfoErrors.ForeColor = Color.Crimson;
-            lbInfoErrors.Location = new Point(8, 344);
-            lbInfoErrors.Margin = new Padding(8, 8, 8, 8);
-            lbInfoErrors.Name = "lbInfoErrors";
-            lbInfoErrors.Size = new Size(160, 40);
-            lbInfoErrors.TabIndex = 9;
-            lbInfoErrors.Text = "Errors:";
-            lbInfoErrors.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // lbInfoFiles
-            // 
-            lbInfoFiles.AutoSize = true;
-            lbInfoFiles.Dock = DockStyle.Fill;
-            lbInfoFiles.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lbInfoFiles.ForeColor = SystemColors.ScrollBar;
-            lbInfoFiles.Location = new Point(8, 8);
-            lbInfoFiles.Margin = new Padding(8, 8, 8, 8);
-            lbInfoFiles.Name = "lbInfoFiles";
-            lbInfoFiles.Size = new Size(160, 40);
-            lbInfoFiles.TabIndex = 4;
-            lbInfoFiles.Text = "Files:";
-            lbInfoFiles.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // lbErrorCount
-            // 
-            lbErrorCount.AutoSize = true;
-            lbErrorCount.Dock = DockStyle.Fill;
-            lbErrorCount.Font = new Font("Segoe UI", 9F);
-            lbErrorCount.ForeColor = Color.Red;
-            lbErrorCount.Location = new Point(184, 344);
-            lbErrorCount.Margin = new Padding(8, 8, 8, 8);
-            lbErrorCount.Name = "lbErrorCount";
-            lbErrorCount.Size = new Size(208, 40);
-            lbErrorCount.TabIndex = 0;
-            lbErrorCount.Text = "0";
-            lbErrorCount.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lbWarningCount
-            // 
-            lbWarningCount.AutoSize = true;
-            lbWarningCount.Dock = DockStyle.Fill;
-            lbWarningCount.Font = new Font("Segoe UI", 9F);
-            lbWarningCount.ForeColor = Color.Coral;
-            lbWarningCount.Location = new Point(184, 288);
-            lbWarningCount.Margin = new Padding(8, 8, 8, 8);
-            lbWarningCount.Name = "lbWarningCount";
-            lbWarningCount.Size = new Size(208, 40);
-            lbWarningCount.TabIndex = 0;
-            lbWarningCount.Text = "0";
-            lbWarningCount.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lbInfoWarnings
-            // 
-            lbInfoWarnings.AutoSize = true;
-            lbInfoWarnings.Dock = DockStyle.Fill;
-            lbInfoWarnings.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lbInfoWarnings.ForeColor = Color.Coral;
-            lbInfoWarnings.Location = new Point(8, 288);
-            lbInfoWarnings.Margin = new Padding(8, 8, 8, 8);
-            lbInfoWarnings.Name = "lbInfoWarnings";
-            lbInfoWarnings.Size = new Size(160, 40);
-            lbInfoWarnings.TabIndex = 0;
-            lbInfoWarnings.Text = "Warnings:";
-            lbInfoWarnings.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // rowsCount
-            // 
-            rowsCount.AutoSize = true;
-            rowsCount.Dock = DockStyle.Fill;
-            rowsCount.Font = new Font("Segoe UI", 9F);
-            rowsCount.ForeColor = SystemColors.ScrollBar;
-            rowsCount.Location = new Point(184, 176);
-            rowsCount.Margin = new Padding(8, 8, 8, 8);
-            rowsCount.Name = "rowsCount";
-            rowsCount.Size = new Size(208, 40);
-            rowsCount.TabIndex = 0;
-            rowsCount.Text = "10";
-            rowsCount.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lbWorksheetsCount
-            // 
-            lbWorksheetsCount.AutoSize = true;
-            lbWorksheetsCount.Dock = DockStyle.Fill;
-            lbWorksheetsCount.Font = new Font("Segoe UI", 9F);
-            lbWorksheetsCount.ForeColor = SystemColors.ScrollBar;
-            lbWorksheetsCount.Location = new Point(184, 120);
-            lbWorksheetsCount.Margin = new Padding(8, 8, 8, 8);
-            lbWorksheetsCount.Name = "lbWorksheetsCount";
-            lbWorksheetsCount.Size = new Size(208, 40);
-            lbWorksheetsCount.TabIndex = 0;
-            lbWorksheetsCount.Text = "10";
-            lbWorksheetsCount.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lbOrdersCount
-            // 
-            lbOrdersCount.AutoSize = true;
-            lbOrdersCount.Dock = DockStyle.Fill;
-            lbOrdersCount.Font = new Font("Segoe UI", 9F);
-            lbOrdersCount.ForeColor = SystemColors.ScrollBar;
-            lbOrdersCount.Location = new Point(184, 64);
-            lbOrdersCount.Margin = new Padding(8, 8, 8, 8);
-            lbOrdersCount.Name = "lbOrdersCount";
-            lbOrdersCount.Size = new Size(208, 40);
-            lbOrdersCount.TabIndex = 0;
-            lbOrdersCount.Text = "10";
-            lbOrdersCount.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lbFilesCount
-            // 
-            lbFilesCount.AutoSize = true;
-            lbFilesCount.BackColor = UniwaveColors.a2pGreyDark;
-            lbFilesCount.Dock = DockStyle.Fill;
-            lbFilesCount.FlatStyle = FlatStyle.System;
-            lbFilesCount.Font = new Font("Segoe UI", 9F);
-            lbFilesCount.ForeColor = Color.FromArgb(248, 248, 249);
-            lbFilesCount.Location = new Point(184, 8);
-            lbFilesCount.Margin = new Padding(8, 8, 8, 8);
-            lbFilesCount.Name = "lbFilesCount";
-            lbFilesCount.Size = new Size(208, 40);
-            lbFilesCount.TabIndex = 0;
-            lbFilesCount.Text = "10";
-            lbFilesCount.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lbInfoRows
-            // 
-            lbInfoRows.AutoSize = true;
-            lbInfoRows.Dock = DockStyle.Fill;
-            lbInfoRows.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lbInfoRows.ForeColor = SystemColors.ScrollBar;
-            lbInfoRows.Location = new Point(8, 176);
-            lbInfoRows.Margin = new Padding(8, 8, 8, 8);
-            lbInfoRows.Name = "lbInfoRows";
-            lbInfoRows.Size = new Size(160, 40);
-            lbInfoRows.TabIndex = 0;
-            lbInfoRows.Text = "Rows:";
-            lbInfoRows.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // lbInfoWorksheets
-            // 
-            lbInfoWorksheets.AutoSize = true;
-            lbInfoWorksheets.Dock = DockStyle.Fill;
-            lbInfoWorksheets.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lbInfoWorksheets.ForeColor = SystemColors.ScrollBar;
-            lbInfoWorksheets.Location = new Point(8, 120);
-            lbInfoWorksheets.Margin = new Padding(8, 8, 8, 8);
-            lbInfoWorksheets.Name = "lbInfoWorksheets";
-            lbInfoWorksheets.Size = new Size(160, 40);
-            lbInfoWorksheets.TabIndex = 0;
-            lbInfoWorksheets.Text = "Worksheets:";
-            lbInfoWorksheets.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // lbInfoOrders
-            // 
-            lbInfoOrders.AutoSize = true;
-            lbInfoOrders.Dock = DockStyle.Fill;
-            lbInfoOrders.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lbInfoOrders.ForeColor = SystemColors.ScrollBar;
-            lbInfoOrders.Location = new Point(8, 64);
-            lbInfoOrders.Margin = new Padding(8, 8, 8, 8);
-            lbInfoOrders.Name = "lbInfoOrders";
-            lbInfoOrders.Size = new Size(160, 40);
-            lbInfoOrders.TabIndex = 3;
-            lbInfoOrders.Text = "Orders:";
-            lbInfoOrders.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // tableLayoutPanel1
-            // 
-            tableLayoutPanel1.ColumnCount = 3;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.Controls.Add(btSideBar, 0, 0);
-            tableLayoutPanel1.Dock = DockStyle.Top;
-            tableLayoutPanel1.Location = new Point(0, 0);
-            tableLayoutPanel1.Margin = new Padding(6, 6, 6, 6);
-            tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 1;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new Size(400, 80);
-            tableLayoutPanel1.TabIndex = 43;
-            // 
-            // btSideBar
-            // 
-            btSideBar.BackColor = Color.Transparent;
-            btSideBar.BackgroundImage = (Image)resources.GetObject("btSideBar.BackgroundImage");
-            btSideBar.BackgroundImageLayout = ImageLayout.Center;
-            btSideBar.Dock = DockStyle.Fill;
-            btSideBar.FlatAppearance.BorderColor =UniwaveColors.a2pGreyDark;
-            btSideBar.FlatAppearance.BorderSize = 0;
-            btSideBar.FlatStyle = FlatStyle.Flat;
-            btSideBar.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
-            btSideBar.ForeColor = Color.FromArgb(239, 112, 32);
-            btSideBar.ImageAlign = ContentAlignment.MiddleLeft;
-            btSideBar.Location = new Point(0, 0);
-            btSideBar.Margin = new Padding(0);
-            btSideBar.Name = "btSideBar";
-            btSideBar.SelectedOne = false;
-            btSideBar.Size = new Size(80, 80);
-            btSideBar.TabIndex = 22;
-            btSideBar.TextAlign = ContentAlignment.MiddleLeft;
-            btSideBar.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btSideBar.UseVisualStyleBackColor = false;
-            btSideBar.Click += btSideBar_Click;
-            // 
-            // btLoadFiles
-            // 
-            btLoadFiles.BackColor = Color.Transparent;
-            btLoadFiles.Dock = DockStyle.Top;
-            btLoadFiles.FlatAppearance.BorderColor =UniwaveColors.a2pGreyDark;
-            btLoadFiles.FlatAppearance.BorderSize = 0;
-            btLoadFiles.FlatStyle = FlatStyle.Flat;
-            btLoadFiles.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
-            btLoadFiles.ForeColor = Color.FromArgb(239, 112, 32);
-            btLoadFiles.Image = (Image)resources.GetObject("btLoadFiles.Image");
-            btLoadFiles.ImageAlign = ContentAlignment.MiddleLeft;
-            btLoadFiles.Location = new Point(0, 80);
-            btLoadFiles.Margin = new Padding(0);
-            btLoadFiles.Name = "btLoadFiles";
-            btLoadFiles.Padding = new Padding(24, 0, 0, 0);
-            btLoadFiles.SelectedOne = false;
-            btLoadFiles.Size = new Size(400, 80);
-            btLoadFiles.TabIndex = 44;
-            btLoadFiles.Text = "  Load &Files";
-            btLoadFiles.TextAlign = ContentAlignment.MiddleLeft;
-            btLoadFiles.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btLoadFiles.UseVisualStyleBackColor = false;
-            btLoadFiles.Click += BtFilesRefresh_Click;
-            // 
-            // btImport
-            // 
-            btImport.BackColor = Color.Transparent;
-            btImport.Dock = DockStyle.Top;
-            btImport.FlatAppearance.BorderColor =UniwaveColors.a2pGreyDark;
-            btImport.FlatAppearance.BorderSize = 0;
-            btImport.FlatStyle = FlatStyle.Flat;
-            btImport.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
-            btImport.ForeColor = Color.FromArgb(239, 112, 32);
-            btImport.Image = (Image)resources.GetObject("btImport.Image");
-            btImport.ImageAlign = ContentAlignment.MiddleLeft;
-            btImport.Location = new Point(0, 160);
-            btImport.Margin = new Padding(0);
-            btImport.Name = "btImport";
-            btImport.Padding = new Padding(24, 0, 0, 0);
-            btImport.SelectedOne = false;
-            btImport.Size = new Size(400, 80);
-            btImport.TabIndex = 45;
-            btImport.Text = "  &Import";
-            btImport.TextAlign = ContentAlignment.MiddleLeft;
-            btImport.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btImport.UseVisualStyleBackColor = false;
-            btImport.Click += BtFilesImport_Click;
-            // 
-            // btLog
-            // 
-            btLog.BackColor = Color.Transparent;
-            btLog.Dock = DockStyle.Top;
-            btLog.FlatAppearance.BorderColor =UniwaveColors.a2pGreyDark;
-            btLog.FlatAppearance.BorderSize = 0;
-            btLog.FlatStyle = FlatStyle.Flat;
-            btLog.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
-            btLog.ForeColor = Color.FromArgb(239, 112, 32);
-            btLog.Image = (Image)resources.GetObject("btLog.Image");
-            btLog.ImageAlign = ContentAlignment.MiddleLeft;
-            btLog.Location = new Point(0, 240);
-            btLog.Margin = new Padding(0);
-            btLog.Name = "btLog";
-            btLog.Padding = new Padding(24, 0, 0, 0);
-            btLog.SelectedOne = false;
-            btLog.Size = new Size(400, 80);
-            btLog.TabIndex = 46;
-            btLog.Text = "  &Log";
-            btLog.TextAlign = ContentAlignment.MiddleLeft;
-            btLog.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btLog.UseVisualStyleBackColor = true;
-            btLog.Click += BtLogRefresh_Click;
-            // 
-            // btProperties
-            // 
-            btProperties.BackColor = Color.Transparent;
-            btProperties.Dock = DockStyle.Top;
-            btProperties.FlatAppearance.BorderColor =UniwaveColors.a2pGreyDark;
-            btProperties.FlatAppearance.BorderSize = 0;
-            btProperties.FlatStyle = FlatStyle.Flat;
-            btProperties.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
-            btProperties.ForeColor = Color.FromArgb(239, 112, 32);
-            btProperties.Image = (Image)resources.GetObject("btProperties.Image");
-            btProperties.ImageAlign = ContentAlignment.MiddleLeft;
-            btProperties.Location = new Point(0, 320);
-            btProperties.Margin = new Padding(0);
-            btProperties.Name = "btProperties";
-            btProperties.Padding = new Padding(24, 0, 0, 0);
-            btProperties.SelectedOne = false;
-            btProperties.Size = new Size(400, 80);
-            btProperties.TabIndex = 47;
-            btProperties.Text = "  &Properties";
-            btProperties.TextAlign = ContentAlignment.MiddleLeft;
-            btProperties.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btProperties.UseVisualStyleBackColor = false;
-            btProperties.Click += BtSettings_Click;
-            // 
-            // btExit
-            // 
-            btExit.BackColor = Color.Transparent;
-            btExit.Dock = DockStyle.Top;
-            btExit.FlatAppearance.BorderColor =UniwaveColors.a2pGreyDark;
-            btExit.FlatAppearance.BorderSize = 0;
-            btExit.FlatStyle = FlatStyle.Flat;
-            btExit.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
-            btExit.ForeColor = Color.FromArgb(239, 112, 32);
-            btExit.Image = (Image)resources.GetObject("btExit.Image");
-            btExit.ImageAlign = ContentAlignment.MiddleLeft;
-            btExit.Location = new Point(0, 400);
-            btExit.Margin = new Padding(0);
-            btExit.Name = "btExit";
-            btExit.Padding = new Padding(24, 0, 0, 0);
-            btExit.SelectedOne = false;
-            btExit.Size = new Size(400, 80);
-            btExit.TabIndex = 48;
-            btExit.Text = "  E&xit";
-            btExit.TextAlign = ContentAlignment.MiddleLeft;
-            btExit.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btExit.UseVisualStyleBackColor = false;
-            btExit.Click += BtClose_Click;
-            // 
-            // plSideBarMain
-            // 
-            plSideBarMain.BackColor = Color.Transparent;
-            plSideBarMain.Controls.Add(btExit);
-            plSideBarMain.Controls.Add(btProperties);
-            plSideBarMain.Controls.Add(btLog);
-            plSideBarMain.Controls.Add(btImport);
-            plSideBarMain.Controls.Add(btLoadFiles);
-            plSideBarMain.Controls.Add(tableLayoutPanel1);
-            plSideBarMain.Controls.Add(plTbSBInfo);
-            plSideBarMain.Controls.Add(plSBButtons);
-            plSideBarMain.Dock = DockStyle.Left;
-            plSideBarMain.ForeColor = Color.Transparent;
-            plSideBarMain.Location = new Point(0, 186);
-            plSideBarMain.Margin = new Padding(0);
-            plSideBarMain.Name = "plSideBarMain";
-            plSideBarMain.Size = new Size(400, 1088);
-            plSideBarMain.TabIndex = 14;
+            lbHeader4.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            lbHeader4.AutoSize = true;
+            lbHeader4.BackColor = Color.Transparent;
+            lbHeader4.Font = new Font("Segoe UI", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 10, true);
+            lbHeader4.ForeColor = Color.Transparent;
+            lbHeader4.ImageAlign = ContentAlignment.TopLeft;
+            lbHeader4.Location = new Point(568, 10);
+            lbHeader4.Margin = new Padding(6);
+            lbHeader4.Name = "lbHeader4";
+            lbHeader4.Size = new Size(64, 29);
+            lbHeader4.TabIndex = 5;
+            lbHeader4.Text = "v2.0";
+            lbHeader4.TextAlign = ContentAlignment.BottomLeft;
+            lbHeader4.UseCompatibleTextRendering = true;
             // 
             // tlpTitleBar
             // 
             tlpTitleBar.AutoSize = true;
-            tlpTitleBar.BackColor = UniwaveColors.a2pGreyDark;
+            tlpTitleBar.BackColor = Color.FromArgb(56, 57, 60);
             tlpTitleBar.ColumnCount = 5;
             tlpTitleBar.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50F));
             tlpTitleBar.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tlpTitleBar.ColumnStyles.Add(new ColumnStyle());
-            tlpTitleBar.ColumnStyles.Add(new ColumnStyle());
-            tlpTitleBar.ColumnStyles.Add(new ColumnStyle());
-            tlpTitleBar.Controls.Add(btMinimize, 2, 0);
-            tlpTitleBar.Controls.Add(btMaximize, 3, 0);
-            tlpTitleBar.Controls.Add(btClose, 4, 0);
+            tlpTitleBar.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50F));
+            tlpTitleBar.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50F));
+            tlpTitleBar.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50F));
+            tlpTitleBar.Controls.Add(btnMinimize, 2, 0);
+            tlpTitleBar.Controls.Add(btnClose, 4, 0);
+            tlpTitleBar.Controls.Add(btnMaximize, 3, 0);
             tlpTitleBar.Controls.Add(plMiniLogo, 0, 0);
             tlpTitleBar.Controls.Add(plTitleBar, 1, 0);
-            tlpTitleBar.Dock = DockStyle.Top;
+            tlpTitleBar.Dock = DockStyle.Fill;
+            tlpTitleBar.ForeColor = Color.FromArgb(56, 57, 60);
             tlpTitleBar.Location = new Point(0, 0);
-            tlpTitleBar.Margin = new Padding(12, 12, 12, 12);
+            tlpTitleBar.Margin = new Padding(6);
             tlpTitleBar.MinimumSize = new Size(30, 30);
             tlpTitleBar.Name = "tlpTitleBar";
             tlpTitleBar.RowCount = 1;
-            tlpTitleBar.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tlpTitleBar.RowStyles.Add(new RowStyle(SizeType.Absolute, 58F));
-            tlpTitleBar.Size = new Size(2072, 58);
+            tlpTitleBar.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
+            tlpTitleBar.Size = new Size(2072, 50);
             tlpTitleBar.TabIndex = 0;
             // 
-            // btMinimize
+            // btnMinimize
             // 
-            btMinimize.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            btMinimize.AutoSize = true;
-            btMinimize.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            btMinimize.BackColor = Color.Transparent;
-            btMinimize.BackgroundImage = (Image)resources.GetObject("btMinimize.BackgroundImage");
-            btMinimize.BackgroundImageLayout = ImageLayout.Zoom;
-            btMinimize.FlatAppearance.BorderSize = 0;
-            btMinimize.FlatAppearance.MouseDownBackColor = Color.Transparent;
-            btMinimize.FlatAppearance.MouseOverBackColor = Color.Transparent;
-            btMinimize.FlatStyle = FlatStyle.Flat;
-            btMinimize.ForeColor = Color.Transparent;
-            btMinimize.Location = new Point(1942, 8);
-            btMinimize.Margin = new Padding(8, 8, 8, 8);
-            btMinimize.MaximumSize = new Size(50, 50);
-            btMinimize.MinimumSize = new Size(30, 30);
-            btMinimize.Name = "btMinimize";
-            btMinimize.Size = new Size(30, 42);
-            btMinimize.TabIndex = 1;
-            btMinimize.UseVisualStyleBackColor = false;
-            btMinimize.Click += btMinimize_Click;
-            btMinimize.MouseEnter += btMinimize_MouseEnter;
-            btMinimize.MouseLeave += btMinimize_MouseLeave;
+            btnMinimize.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            btnMinimize.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnMinimize.BackColor = Color.FromArgb(56, 57, 60);
+            btnMinimize.BackgroundImageLayout = ImageLayout.Stretch;
+            btnMinimize.FlatAppearance.BorderSize = 0;
+            btnMinimize.FlatAppearance.MouseDownBackColor = Color.Transparent;
+            btnMinimize.FlatStyle = FlatStyle.Flat;
+            btnMinimize.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
+            btnMinimize.ForeColor = Color.FromArgb(56, 57, 60);
+            btnMinimize.Location = new Point(1930, 8);
+            btnMinimize.Margin = new Padding(8);
+            btnMinimize.Name = "btnMinimize";
+            btnMinimize.Size = new Size(34, 34);
+            btnMinimize.TabIndex = 8;
+            btnMinimize.TextAlign = ContentAlignment.MiddleLeft;
+            btnMinimize.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btnMinimize.UseVisualStyleBackColor = false;
+            btnMinimize.Click += btMinimize_Click;
             // 
-            // btMaximize
+            // btnClose
             // 
-            btMaximize.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            btMaximize.AutoSize = true;
-            btMaximize.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            btMaximize.BackColor = Color.Transparent;
-            btMaximize.BackgroundImage = (Image)resources.GetObject("btMaximize.BackgroundImage");
-            btMaximize.BackgroundImageLayout = ImageLayout.Zoom;
-            btMaximize.FlatAppearance.BorderSize = 0;
-            btMaximize.FlatAppearance.MouseDownBackColor = Color.Transparent;
-            btMaximize.FlatAppearance.MouseOverBackColor = Color.Transparent;
-            btMaximize.FlatStyle = FlatStyle.Flat;
-            btMaximize.ForeColor = Color.Transparent;
-            btMaximize.Location = new Point(1988, 8);
-            btMaximize.Margin = new Padding(8, 8, 8, 8);
-            btMaximize.MaximumSize = new Size(50, 50);
-            btMaximize.MinimumSize = new Size(30, 30);
-            btMaximize.Name = "btMaximize";
-            btMaximize.Size = new Size(30, 42);
-            btMaximize.TabIndex = 1;
-            btMaximize.UseVisualStyleBackColor = false;
-            btMaximize.Click += btMaximize_Click;
-            btMaximize.MouseEnter += btMaximize_MouseEnter;
-            btMaximize.MouseLeave += btMaximize_MouseLeave;
+            btnClose.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            btnClose.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnClose.BackColor = Color.FromArgb(56, 57, 60);
+            btnClose.BackgroundImageLayout = ImageLayout.Stretch;
+            btnClose.FlatAppearance.BorderSize = 0;
+            btnClose.FlatAppearance.MouseDownBackColor = Color.Transparent;
+            btnClose.FlatStyle = FlatStyle.Flat;
+            btnClose.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
+            btnClose.ForeColor = Color.FromArgb(56, 57, 60);
+            btnClose.Location = new Point(2030, 8);
+            btnClose.Margin = new Padding(8);
+            btnClose.Name = "btnClose";
+            btnClose.Size = new Size(34, 34);
+            btnClose.TabIndex = 7;
+            btnClose.TextAlign = ContentAlignment.MiddleLeft;
+            btnClose.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btnClose.UseVisualStyleBackColor = false;
+            btnClose.Click += btClose_Click;
             // 
-            // btClose
+            // btnMaximize
             // 
-            btClose.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            btClose.AutoSize = true;
-            btClose.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            btClose.BackColor = Color.Transparent;
-            btClose.BackgroundImage = (Image)resources.GetObject("btClose.BackgroundImage");
-            btClose.BackgroundImageLayout = ImageLayout.Zoom;
-            btClose.FlatAppearance.BorderSize = 0;
-            btClose.FlatAppearance.MouseDownBackColor = Color.Transparent;
-            btClose.FlatStyle = FlatStyle.Flat;
-            btClose.Font = new Font("Segoe UI", 8.75F, FontStyle.Bold);
-            btClose.ForeColor = Color.Transparent;
-            btClose.ImageAlign = ContentAlignment.MiddleLeft;
-            btClose.Location = new Point(2034, 8);
-            btClose.Margin = new Padding(8, 8, 8, 8);
-            btClose.MaximumSize = new Size(50, 50);
-            btClose.MinimumSize = new Size(30, 30);
-            btClose.Name = "btClose";
-            btClose.SelectedOne = true;
-            btClose.Size = new Size(30, 42);
-            btClose.TabIndex = 2;
-            btClose.TextAlign = ContentAlignment.MiddleLeft;
-            btClose.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btClose.UseVisualStyleBackColor = false;
-            btClose.Click += BtClose_Click;
-            btClose.MouseEnter += btClose_MouseEnter;
-            btClose.MouseLeave += btClose_MouseLeave;
+            btnMaximize.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            btnMaximize.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnMaximize.BackColor = Color.FromArgb(56, 57, 60);
+            btnMaximize.BackgroundImageLayout = ImageLayout.Stretch;
+            btnMaximize.FlatAppearance.BorderSize = 0;
+            btnMaximize.FlatAppearance.MouseDownBackColor = Color.Transparent;
+            btnMaximize.FlatStyle = FlatStyle.Flat;
+            btnMaximize.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
+            btnMaximize.ForeColor = Color.FromArgb(56, 57, 60);
+            btnMaximize.Location = new Point(1980, 8);
+            btnMaximize.Margin = new Padding(8);
+            btnMaximize.Name = "btnMaximize";
+            btnMaximize.Size = new Size(34, 34);
+            btnMaximize.TabIndex = 6;
+            btnMaximize.TextAlign = ContentAlignment.MiddleLeft;
+            btnMaximize.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btnMaximize.UseVisualStyleBackColor = false;
+            btnMaximize.Click += btMaximize_Click;
             // 
             // plMiniLogo
             // 
+            plMiniLogo.BackColor = Color.FromArgb(56, 57, 60);
             plMiniLogo.BackgroundImage = (Image)resources.GetObject("plMiniLogo.BackgroundImage");
-            plMiniLogo.BackgroundImageLayout = ImageLayout.Zoom;
+            plMiniLogo.BackgroundImageLayout = ImageLayout.Stretch;
             plMiniLogo.Dock = DockStyle.Fill;
             plMiniLogo.Location = new Point(6, 6);
-            plMiniLogo.Margin = new Padding(6, 6, 6, 6);
+            plMiniLogo.Margin = new Padding(6);
             plMiniLogo.Name = "plMiniLogo";
-            plMiniLogo.Size = new Size(38, 46);
+            plMiniLogo.Size = new Size(38, 38);
             plMiniLogo.TabIndex = 3;
             // 
             // plTitleBar
             // 
-            plTitleBar.BackColor = Color.Transparent;
+            plTitleBar.BackColor = Color.FromArgb(56, 57, 60);
             plTitleBar.Controls.Add(plTitleBarAppName);
             plTitleBar.Dock = DockStyle.Fill;
             plTitleBar.ForeColor = Color.FromArgb(239, 112, 32);
             plTitleBar.Location = new Point(56, 6);
-            plTitleBar.Margin = new Padding(6, 6, 6, 6);
+            plTitleBar.Margin = new Padding(6);
             plTitleBar.Name = "plTitleBar";
-            plTitleBar.Size = new Size(1872, 46);
+            plTitleBar.Size = new Size(1860, 38);
             plTitleBar.TabIndex = 4;
             plTitleBar.Text = "Alu 2 PrefSuite v2.0";
             plTitleBar.MouseDown += PlTitleBar_MouseDown;
             // 
             // plTitleBarAppName
             // 
-            plTitleBarAppName.AutoSize = true;
+            plTitleBarAppName.Dock = DockStyle.Left;
             plTitleBarAppName.Enabled = false;
             plTitleBarAppName.FlatStyle = FlatStyle.Flat;
             plTitleBarAppName.ForeColor = Color.FromArgb(248, 248, 249);
-            plTitleBarAppName.Location = new Point(6, 2);
+            plTitleBarAppName.Location = new Point(0, 0);
             plTitleBarAppName.Margin = new Padding(6, 0, 6, 0);
             plTitleBarAppName.Name = "plTitleBarAppName";
-            plTitleBarAppName.Size = new Size(255, 32);
+            plTitleBarAppName.Size = new Size(255, 38);
             plTitleBarAppName.TabIndex = 0;
             plTitleBarAppName.Text = "Aluminum 2 PrefSuite ";
+            plTitleBarAppName.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // plTBPanel
             // 
             plTBPanel.AutoSize = true;
             plTBPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            plTBPanel.BackColor = Color.FromArgb(239, 112, 32);
+            plTBPanel.BackColor = Color.FromArgb(56, 57, 60);
             plTBPanel.Controls.Add(tlpTitleBar);
             plTBPanel.Dock = DockStyle.Top;
+            plTBPanel.ForeColor = Color.FromArgb(56, 57, 60);
             plTBPanel.Location = new Point(0, 0);
-            plTBPanel.Margin = new Padding(0);
+            plTBPanel.Margin = new Padding(6);
             plTBPanel.Name = "plTBPanel";
-            plTBPanel.Size = new Size(2072, 58);
+            plTBPanel.Size = new Size(2072, 50);
             plTBPanel.TabIndex = 8;
-            // 
-            // lbErrors
-            // 
-            lbErrors.AutoSize = true;
-            lbErrors.Dock = DockStyle.Fill;
-            lbErrors.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lbErrors.ForeColor = Color.Red;
-            lbErrors.Location = new Point(4, 200);
-            lbErrors.Margin = new Padding(4);
-            lbErrors.Name = "lbErrors";
-            lbErrors.Size = new Size(80, 20);
-            lbErrors.TabIndex = 0;
-            lbErrors.Text = "Errors:";
-            lbErrors.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // slbPath
             // 
@@ -804,25 +371,357 @@ namespace a2p.WinForm
             statusStrip.TabIndex = 0;
             statusStrip.Text = "statusStrip";
             // 
+            // plSideBarMain
+            // 
+            plSideBarMain.BackColor = Color.Transparent;
+            plSideBarMain.Controls.Add(btnProperties);
+            plSideBarMain.Controls.Add(plTbSBInfo);
+            plSideBarMain.Controls.Add(btnExit);
+            plSideBarMain.Controls.Add(btnLog);
+            plSideBarMain.Controls.Add(btnImport);
+            plSideBarMain.Controls.Add(btnLoad);
+            plSideBarMain.Dock = DockStyle.Left;
+            plSideBarMain.ForeColor = Color.Transparent;
+            plSideBarMain.Location = new Point(0, 198);
+            plSideBarMain.Margin = new Padding(6);
+            plSideBarMain.Name = "plSideBarMain";
+            plSideBarMain.Size = new Size(400, 1076);
+            plSideBarMain.TabIndex = 46;
+            // 
+            // btnProperties
+            // 
+            btnProperties.BackColor = Color.Transparent;
+            btnProperties.BackgroundImageLayout = ImageLayout.Zoom;
+            btnProperties.Dock = DockStyle.Top;
+            btnProperties.FlatAppearance.BorderSize = 0;
+            btnProperties.FlatStyle = FlatStyle.Flat;
+            btnProperties.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
+            btnProperties.ForeColor = Color.LightGray;
+            btnProperties.ImageAlign = ContentAlignment.MiddleLeft;
+            btnProperties.Location = new Point(0, 240);
+            btnProperties.Margin = new Padding(6);
+            btnProperties.Name = "btnProperties";
+            btnProperties.Size = new Size(400, 68);
+            btnProperties.TabIndex = 59;
+            btnProperties.Text = "Properties";
+            btnProperties.TextAlign = ContentAlignment.MiddleLeft;
+            btnProperties.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btnProperties.UseVisualStyleBackColor = false;
+            btnProperties.Click += BtnProperties_Click;
+            // 
+            // plTbSBInfo
+            // 
+            plTbSBInfo.BackColor = Color.Transparent;
+            plTbSBInfo.ColumnCount = 2;
+            plTbSBInfo.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
+            plTbSBInfo.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            plTbSBInfo.Controls.Add(lbInfoErrors, 0, 6);
+            plTbSBInfo.Controls.Add(lbInfoFiles, 0, 0);
+            plTbSBInfo.Controls.Add(lbInfoErrorCount, 1, 6);
+            plTbSBInfo.Controls.Add(lbInfoWarningCount, 1, 5);
+            plTbSBInfo.Controls.Add(lbInfoWarnings, 0, 5);
+            plTbSBInfo.Controls.Add(lbInfoRowsCount, 1, 3);
+            plTbSBInfo.Controls.Add(lbInfoWorksheetsCount, 1, 2);
+            plTbSBInfo.Controls.Add(lbInfoOrdersCount, 1, 1);
+            plTbSBInfo.Controls.Add(lbInfoFilesCount, 1, 0);
+            plTbSBInfo.Controls.Add(lbInfoRows, 0, 3);
+            plTbSBInfo.Controls.Add(lbInfoWorksheets, 0, 2);
+            plTbSBInfo.Controls.Add(lbInfoOrders, 0, 1);
+            plTbSBInfo.Dock = DockStyle.Bottom;
+            plTbSBInfo.ForeColor = Color.FromArgb(248, 248, 249);
+            plTbSBInfo.Location = new Point(0, 491);
+            plTbSBInfo.Margin = new Padding(6);
+            plTbSBInfo.Name = "plTbSBInfo";
+            plTbSBInfo.RowCount = 11;
+            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
+            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
+            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
+            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
+            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
+            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
+            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
+            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 300F));
+            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 80F));
+            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            plTbSBInfo.Size = new Size(400, 505);
+            plTbSBInfo.TabIndex = 58;
+            // 
+            // lbInfoErrors
+            // 
+            lbInfoErrors.AutoSize = true;
+            lbInfoErrors.Dock = DockStyle.Fill;
+            lbInfoErrors.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lbInfoErrors.ForeColor = Color.Crimson;
+            lbInfoErrors.Location = new Point(6, 342);
+            lbInfoErrors.Margin = new Padding(6);
+            lbInfoErrors.Name = "lbInfoErrors";
+            lbInfoErrors.Size = new Size(168, 44);
+            lbInfoErrors.TabIndex = 9;
+            lbInfoErrors.Text = "Errors:";
+            lbInfoErrors.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // lbInfoFiles
+            // 
+            lbInfoFiles.AutoSize = true;
+            lbInfoFiles.Dock = DockStyle.Fill;
+            lbInfoFiles.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lbInfoFiles.ForeColor = Color.DarkGray;
+            lbInfoFiles.Location = new Point(6, 6);
+            lbInfoFiles.Margin = new Padding(6);
+            lbInfoFiles.Name = "lbInfoFiles";
+            lbInfoFiles.Size = new Size(168, 44);
+            lbInfoFiles.TabIndex = 4;
+            lbInfoFiles.Text = "OrderFiles:";
+            lbInfoFiles.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // lbInfoErrorCount
+            // 
+            lbInfoErrorCount.AutoSize = true;
+            lbInfoErrorCount.Dock = DockStyle.Fill;
+            lbInfoErrorCount.Font = new Font("Segoe UI", 9F);
+            lbInfoErrorCount.ForeColor = Color.Red;
+            lbInfoErrorCount.Location = new Point(186, 342);
+            lbInfoErrorCount.Margin = new Padding(6);
+            lbInfoErrorCount.Name = "lbInfoErrorCount";
+            lbInfoErrorCount.Size = new Size(208, 44);
+            lbInfoErrorCount.TabIndex = 0;
+            lbInfoErrorCount.Text = "0";
+            lbInfoErrorCount.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lbInfoWarningCount
+            // 
+            lbInfoWarningCount.AutoSize = true;
+            lbInfoWarningCount.Dock = DockStyle.Fill;
+            lbInfoWarningCount.Font = new Font("Segoe UI", 9F);
+            lbInfoWarningCount.ForeColor = Color.Coral;
+            lbInfoWarningCount.Location = new Point(186, 286);
+            lbInfoWarningCount.Margin = new Padding(6);
+            lbInfoWarningCount.Name = "lbInfoWarningCount";
+            lbInfoWarningCount.Size = new Size(208, 44);
+            lbInfoWarningCount.TabIndex = 0;
+            lbInfoWarningCount.Text = "0";
+            lbInfoWarningCount.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lbInfoWarnings
+            // 
+            lbInfoWarnings.AutoSize = true;
+            lbInfoWarnings.Dock = DockStyle.Fill;
+            lbInfoWarnings.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lbInfoWarnings.ForeColor = Color.Coral;
+            lbInfoWarnings.Location = new Point(6, 286);
+            lbInfoWarnings.Margin = new Padding(6);
+            lbInfoWarnings.Name = "lbInfoWarnings";
+            lbInfoWarnings.Size = new Size(168, 44);
+            lbInfoWarnings.TabIndex = 0;
+            lbInfoWarnings.Text = "Warnings:";
+            lbInfoWarnings.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // lbInfoRowsCount
+            // 
+            lbInfoRowsCount.AutoSize = true;
+            lbInfoRowsCount.Dock = DockStyle.Fill;
+            lbInfoRowsCount.FlatStyle = FlatStyle.Flat;
+            lbInfoRowsCount.Font = new Font("Segoe UI", 9F);
+            lbInfoRowsCount.ForeColor = Color.DarkGray;
+            lbInfoRowsCount.Location = new Point(186, 174);
+            lbInfoRowsCount.Margin = new Padding(6);
+            lbInfoRowsCount.Name = "lbInfoRowsCount";
+            lbInfoRowsCount.Size = new Size(208, 44);
+            lbInfoRowsCount.TabIndex = 0;
+            lbInfoRowsCount.Text = "10";
+            lbInfoRowsCount.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lbInfoWorksheetsCount
+            // 
+            lbInfoWorksheetsCount.AutoSize = true;
+            lbInfoWorksheetsCount.Dock = DockStyle.Fill;
+            lbInfoWorksheetsCount.FlatStyle = FlatStyle.Flat;
+            lbInfoWorksheetsCount.Font = new Font("Segoe UI", 9F);
+            lbInfoWorksheetsCount.ForeColor = Color.DarkGray;
+            lbInfoWorksheetsCount.Location = new Point(186, 118);
+            lbInfoWorksheetsCount.Margin = new Padding(6);
+            lbInfoWorksheetsCount.Name = "lbInfoWorksheetsCount";
+            lbInfoWorksheetsCount.Size = new Size(208, 44);
+            lbInfoWorksheetsCount.TabIndex = 0;
+            lbInfoWorksheetsCount.Text = "10";
+            lbInfoWorksheetsCount.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lbInfoOrdersCount
+            // 
+            lbInfoOrdersCount.AutoSize = true;
+            lbInfoOrdersCount.Dock = DockStyle.Fill;
+            lbInfoOrdersCount.FlatStyle = FlatStyle.Flat;
+            lbInfoOrdersCount.Font = new Font("Segoe UI", 9F);
+            lbInfoOrdersCount.ForeColor = Color.DarkGray;
+            lbInfoOrdersCount.Location = new Point(186, 62);
+            lbInfoOrdersCount.Margin = new Padding(6);
+            lbInfoOrdersCount.Name = "lbInfoOrdersCount";
+            lbInfoOrdersCount.Size = new Size(208, 44);
+            lbInfoOrdersCount.TabIndex = 0;
+            lbInfoOrdersCount.Text = "10";
+            lbInfoOrdersCount.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lbInfoFilesCount
+            // 
+            lbInfoFilesCount.AutoSize = true;
+            lbInfoFilesCount.BackColor = Color.FromArgb(56, 57, 60);
+            lbInfoFilesCount.Dock = DockStyle.Fill;
+            lbInfoFilesCount.FlatStyle = FlatStyle.Flat;
+            lbInfoFilesCount.Font = new Font("Segoe UI", 9F);
+            lbInfoFilesCount.ForeColor = Color.DarkGray;
+            lbInfoFilesCount.Location = new Point(186, 6);
+            lbInfoFilesCount.Margin = new Padding(6);
+            lbInfoFilesCount.Name = "lbInfoFilesCount";
+            lbInfoFilesCount.Size = new Size(208, 44);
+            lbInfoFilesCount.TabIndex = 0;
+            lbInfoFilesCount.Text = "10";
+            lbInfoFilesCount.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lbInfoRows
+            // 
+            lbInfoRows.AutoSize = true;
+            lbInfoRows.Dock = DockStyle.Fill;
+            lbInfoRows.FlatStyle = FlatStyle.Flat;
+            lbInfoRows.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lbInfoRows.ForeColor = Color.DarkGray;
+            lbInfoRows.Location = new Point(6, 174);
+            lbInfoRows.Margin = new Padding(6);
+            lbInfoRows.Name = "lbInfoRows";
+            lbInfoRows.Size = new Size(168, 44);
+            lbInfoRows.TabIndex = 0;
+            lbInfoRows.Text = "Rows:";
+            lbInfoRows.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // lbInfoWorksheets
+            // 
+            lbInfoWorksheets.AutoSize = true;
+            lbInfoWorksheets.Dock = DockStyle.Fill;
+            lbInfoWorksheets.FlatStyle = FlatStyle.Flat;
+            lbInfoWorksheets.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lbInfoWorksheets.ForeColor = Color.DarkGray;
+            lbInfoWorksheets.Location = new Point(6, 118);
+            lbInfoWorksheets.Margin = new Padding(6);
+            lbInfoWorksheets.Name = "lbInfoWorksheets";
+            lbInfoWorksheets.Size = new Size(168, 44);
+            lbInfoWorksheets.TabIndex = 0;
+            lbInfoWorksheets.Text = "Worksheets:";
+            lbInfoWorksheets.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // lbInfoOrders
+            // 
+            lbInfoOrders.AutoSize = true;
+            lbInfoOrders.Dock = DockStyle.Fill;
+            lbInfoOrders.FlatStyle = FlatStyle.Flat;
+            lbInfoOrders.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lbInfoOrders.ForeColor = Color.DarkGray;
+            lbInfoOrders.Location = new Point(6, 62);
+            lbInfoOrders.Margin = new Padding(6);
+            lbInfoOrders.Name = "lbInfoOrders";
+            lbInfoOrders.Size = new Size(168, 44);
+            lbInfoOrders.TabIndex = 3;
+            lbInfoOrders.Text = "Orders:";
+            lbInfoOrders.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // btnExit
+            // 
+            btnExit.BackColor = Color.Transparent;
+            btnExit.Dock = DockStyle.Bottom;
+            btnExit.FlatAppearance.BorderSize = 0;
+            btnExit.FlatStyle = FlatStyle.Flat;
+            btnExit.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
+            btnExit.ForeColor = Color.LightGray;
+            btnExit.ImageAlign = ContentAlignment.MiddleLeft;
+            btnExit.Location = new Point(0, 996);
+            btnExit.Margin = new Padding(6);
+            btnExit.Name = "btnExit";
+            btnExit.Size = new Size(400, 80);
+            btnExit.TabIndex = 57;
+            btnExit.Text = "Exit Application";
+            btnExit.TextAlign = ContentAlignment.MiddleLeft;
+            btnExit.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btnExit.UseVisualStyleBackColor = false;
+            btnExit.Click += BtnExit_Click;
+            // 
+            // btnLog
+            // 
+            btnLog.BackColor = Color.Transparent;
+            btnLog.Dock = DockStyle.Top;
+            btnLog.FlatAppearance.BorderSize = 0;
+            btnLog.FlatStyle = FlatStyle.Flat;
+            btnLog.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
+            btnLog.ForeColor = Color.LightGray;
+            btnLog.ImageAlign = ContentAlignment.MiddleLeft;
+            btnLog.Location = new Point(0, 160);
+            btnLog.Margin = new Padding(6);
+            btnLog.Name = "btnLog";
+            btnLog.Size = new Size(400, 80);
+            btnLog.TabIndex = 56;
+            btnLog.Text = "Log Recods";
+            btnLog.TextAlign = ContentAlignment.MiddleLeft;
+            btnLog.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btnLog.UseVisualStyleBackColor = false;
+            btnLog.Click += BtnLog_Click;
+            // 
+            // btnImport
+            // 
+            btnImport.BackColor = Color.Transparent;
+            btnImport.Dock = DockStyle.Top;
+            btnImport.FlatAppearance.BorderSize = 0;
+            btnImport.FlatStyle = FlatStyle.Flat;
+            btnImport.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
+            btnImport.ForeColor = Color.LightGray;
+            btnImport.ImageAlign = ContentAlignment.MiddleLeft;
+            btnImport.Location = new Point(0, 80);
+            btnImport.Margin = new Padding(6);
+            btnImport.Name = "btnImport";
+            btnImport.Size = new Size(400, 80);
+            btnImport.TabIndex = 55;
+            btnImport.Text = "Import Files";
+            btnImport.TextAlign = ContentAlignment.MiddleLeft;
+            btnImport.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btnImport.UseVisualStyleBackColor = false;
+            btnImport.Click += BtnImport_Click;
+            // 
+            // btnLoad
+            // 
+            btnLoad.BackColor = Color.Transparent;
+            btnLoad.Dock = DockStyle.Top;
+            btnLoad.FlatAppearance.BorderSize = 0;
+            btnLoad.FlatStyle = FlatStyle.Flat;
+            btnLoad.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
+            btnLoad.ForeColor = Color.LightGray;
+            btnLoad.ImageAlign = ContentAlignment.MiddleLeft;
+            btnLoad.Location = new Point(0, 0);
+            btnLoad.Margin = new Padding(6);
+            btnLoad.Name = "btnLoad";
+            btnLoad.Size = new Size(400, 80);
+            btnLoad.TabIndex = 54;
+            btnLoad.Text = "Load Files";
+            btnLoad.TextAlign = ContentAlignment.MiddleLeft;
+            btnLoad.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btnLoad.UseVisualStyleBackColor = false;
+            btnLoad.Click += BtnLoad_Click;
+            // 
             // plFormContainer
             // 
             plFormContainer.AutoScroll = true;
             plFormContainer.BackColor = Color.Transparent;
             plFormContainer.Dock = DockStyle.Fill;
             plFormContainer.ForeColor = Color.Transparent;
-            plFormContainer.Location = new Point(400, 186);
-            plFormContainer.Margin = new Padding(0);
+            plFormContainer.Location = new Point(400, 198);
+            plFormContainer.Margin = new Padding(6);
+            plFormContainer.MinimumSize = new Size(10, 10);
             plFormContainer.Name = "plFormContainer";
-            plFormContainer.Size = new Size(1672, 1088);
-            plFormContainer.TabIndex = 15;
+            plFormContainer.Size = new Size(1672, 1076);
+            plFormContainer.TabIndex = 47;
             // 
             // MainForm
             // 
-            AcceptButton = btProperties;
             AutoScaleDimensions = new SizeF(192F, 192F);
             AutoScaleMode = AutoScaleMode.Dpi;
             AutoValidate = AutoValidate.Disable;
-            BackColor = UniwaveColors.a2pGreyDark;
+            BackColor = Color.FromArgb(56, 57, 60);
             ClientSize = new Size(2072, 1316);
             Controls.Add(plFormContainer);
             Controls.Add(plSideBarMain);
@@ -830,6 +729,7 @@ namespace a2p.WinForm
             Controls.Add(plTBPanel);
             Controls.Add(statusStrip);
             DoubleBuffered = true;
+            ForeColor = Color.FromArgb(56, 57, 60);
             FormBorderStyle = FormBorderStyle.None;
             Margin = new Padding(4, 2, 4, 2);
             MaximizeBox = false;
@@ -843,67 +743,69 @@ namespace a2p.WinForm
             FormClosed += MainForm_FormClosed;
             Load += MainForm_Load;
             Shown += MainForm_Shown;
+            DpiChanged += MainForm_DpiChanged;
             tplHeader.ResumeLayout(false);
             tplHeader.PerformLayout();
-            plTbSBInfo.ResumeLayout(false);
-            plTbSBInfo.PerformLayout();
-            tableLayoutPanel1.ResumeLayout(false);
-            plSideBarMain.ResumeLayout(false);
-            plSideBarMain.PerformLayout();
             tlpTitleBar.ResumeLayout(false);
-            tlpTitleBar.PerformLayout();
             plTitleBar.ResumeLayout(false);
-            plTitleBar.PerformLayout();
             plTBPanel.ResumeLayout(false);
             plTBPanel.PerformLayout();
             statusStrip.ResumeLayout(false);
             statusStrip.PerformLayout();
+            plSideBarMain.ResumeLayout(false);
+            plTbSBInfo.ResumeLayout(false);
+            plTbSBInfo.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
+
         }
+
+
 
         #endregion
 
-        private Label lbHeader4;
-        private Panel plNordanHeaderLogo;
-        private TableLayoutPanel tplHeader;
-        private Label lbHeader1;
-        private Label lbHeader2;
-        private Panel plUniwaveHeaderLogo;
-        private Label lbHeader3;
-        private Panel plSBButtons;
-        private TableLayoutPanel plTbSBInfo;
-        private Label lbInfoErrors;
-        private Label lbInfoFiles;
-        private Label lbErrorCount;
-        private Label lbWarningCount;
-        private Label lbInfoWarnings;
-        private Label rowsCount;
-        private Label lbWorksheetsCount;
-        private Label lbOrdersCount;
-        private Label lbFilesCount;
-        private Label lbInfoRows;
-        private Label lbInfoWorksheets;
-        private Label lbInfoOrders;
-        private TableLayoutPanel tableLayoutPanel1;
-        private SideBarButton btSideBar;
-        private SideBarButton btLoadFiles;
-        private SideBarButton btImport;
-        private SideBarButton btLog;
-        private SideBarButton btProperties;
-        private SideBarButton btExit;
-        private Panel plSideBarMain;
         private TableLayoutPanel tlpTitleBar;
-        private Button btMinimize;
-        private Button btMaximize;
-        private SideBarButton btClose;
         private Panel plMiniLogo;
         private Panel plTitleBar;
         private Label plTitleBarAppName;
+        private TableLayoutPanel tplHeader;
+        private Label lbHeader1;
+        private Label lbHeader2;
+        private Label lbHeader3;
+        private Label lbHeader4;
+        private Panel plUniwaveHeaderLogo;
+
+    
+
+  
         private Panel plTBPanel;
-        private Label lbErrors;
         private ToolStripStatusLabel slbPath;
         private StatusStrip statusStrip;
+
+        private Panel plSideBarMain;
         private Panel plFormContainer;
+        private Button btnMaximize;
+        private Button btnClose;
+        private Button btnMinimize;
+        private ToolStripStatusLabel toolStripStatusLabel1;
+        private Button btnLoad;
+        private Button btnLog;
+        private Button btnImport;
+        private Button btnExit;
+        private TableLayoutPanel plTbSBInfo;
+        private Label lbInfoErrors;
+        private Label lbInfoFiles;
+        private Label lbInfoErrorCount;
+        private Label lbInfoWarningCount;
+        private Label lbInfoWarnings;
+        private Label lbInfoRowsCount;
+        private Label lbInfoWorksheetsCount;
+        private Label lbInfoOrdersCount;
+        private Label lbInfoFilesCount;
+        private Label lbInfoRows;
+        private Label lbInfoWorksheets;
+        private Label lbInfoOrders;
+        private Button btnProperties;
+        private Panel plNordanHeaderLogo;
     }
 }

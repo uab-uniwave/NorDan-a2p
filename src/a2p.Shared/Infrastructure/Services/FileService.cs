@@ -129,10 +129,10 @@ namespace a2p.Shared.Infrastructure.Services
 
 
         // Get files for a specific order asynchronously
-        private async Task<List<A2POrderFile>> GetSingleOrderFilesAsync(string orderNumber, List<string> files, IProgress<ProgressValue>? progress = null)
+        private async Task<List<A2PFile>> GetSingleOrderFilesAsync(string orderNumber, List<string> files, IProgress<ProgressValue>? progress = null)
         {
             List<string>? matchingFiles = files.Where(file => file.Contains(orderNumber)).ToList();
-            List<A2POrderFile> a2pFileList = [];
+            List<A2PFile> a2pFileList = [];
 
             //progress Found files
             // 
@@ -162,7 +162,7 @@ namespace a2p.Shared.Infrastructure.Services
                 //Task.Delay(3000).Wait();
 
 
-                A2POrderFile a2pFile = new()
+                A2PFile a2pFile = new()
                 {
 
 
@@ -173,13 +173,13 @@ namespace a2p.Shared.Infrastructure.Services
                     FileName = fileName ?? string.Empty,
                 };
 
-                List<A2POrderFile> a2pFileListTemp = [a2pFile];
+                List<A2PFile> a2pFileListTemp = [a2pFile];
 
 
 
                 //Task.Delay(2000).Wait();
 
-                List<A2POrderFileWorksheet> wr = await _readService.GetWorksheetListAsync(a2pFileListTemp, _progressValue, progress);
+                List<A2PWorksheet> wr = await _readService.GetWorksheetListAsync(a2pFileListTemp, _progressValue, progress);
 
 
                 a2pFile.OrderFileWorksheets = wr;

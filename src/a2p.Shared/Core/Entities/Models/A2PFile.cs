@@ -1,6 +1,6 @@
 ﻿namespace a2p.Shared.Core.Entities.Models
 {
-    public class A2POrderFile
+    public class A2PFile
     {
         public string Order { get; set; } = string.Empty;
 
@@ -13,6 +13,6 @@
 
         public bool IsOrderItemsFile { get; set; } = false;
 
-        public List<A2POrderFileWorksheet> OrderFileWorksheets { get; set; } = [];
+        public List<A2PWorksheet> OrderFileWorksheets { get; set; } = [];
     }
 }

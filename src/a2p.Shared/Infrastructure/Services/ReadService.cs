@@ -30,7 +30,7 @@ namespace a2p.Shared.Infrastructure.Services
 
 
 
-        public async Task<List<A2POrderFileWorksheet>> GetWorksheetListAsync(List<A2POrderFile> a2pFiles, ProgressValue progressValue, IProgress<ProgressValue>? progress)
+        public async Task<List<A2PWorksheet>> GetWorksheetListAsync(List<A2PFile> a2pFiles, ProgressValue progressValue, IProgress<ProgressValue>? progress)
         {
             try
             {
@@ -41,11 +41,11 @@ namespace a2p.Shared.Infrastructure.Services
                     return [];
                 }
 
-                List<A2POrderFileWorksheet> a2pWorksheetList = [];
+                List<A2PWorksheet> a2pWorksheetList = [];
 
 
                 int fileCount = 0;
-                foreach (A2POrderFile a2pFile in a2pFiles)
+                foreach (A2PFile a2pFile in a2pFiles)
                 {
 
                     try
@@ -84,7 +84,7 @@ namespace a2p.Shared.Infrastructure.Services
                                 continue;
                             }
 
-                            A2POrderFileWorksheet a2pWorksheet = await GetWorksheetAsync(worksheet, [], progress);
+                            A2PWorksheet a2pWorksheet = await GetWorksheetAsync(worksheet, [], progress);
 
                             if (a2pWorksheet == null)
                             {
@@ -135,10 +135,10 @@ namespace a2p.Shared.Infrastructure.Services
 
             }
         }
-        private async Task<A2POrderFileWorksheet> GetWorksheetAsync(IXLWorksheet ixlWorksheet, List<List<object>> values, IProgress<ProgressValue>? progress)
+        private async Task<A2PWorksheet> GetWorksheetAsync(IXLWorksheet ixlWorksheet, List<List<object>> values, IProgress<ProgressValue>? progress)
         {
 
-            A2POrderFileWorksheet a2pWorksheet = new();
+            A2PWorksheet a2pWorksheet = new();
 
             if (ixlWorksheet == null)
             {

@@ -7,7 +7,7 @@
         public string Order { get; set; } = string.Empty;
         public int SalesDocNumber { get; set; } = 0;
         public int SalesDocVersion { get; set; } = 0;
-        public List<A2POrderFile> OrderFiles { get; set; } = [];
+        public List<A2PFile> OrderFiles { get; set; } = [];
 
 
 

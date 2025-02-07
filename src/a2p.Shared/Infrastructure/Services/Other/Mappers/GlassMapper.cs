@@ -15,7 +15,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
             _logService = logService;
         }
 
-        public async Task<List<GlassDTO>> GetSapa_v1Async(A2POrderFileWorksheet wr)
+        public async Task<List<GlassDTO>> GetSapa_v1Async(A2PWorksheet wr)
         {
 
             if (wr == null)
@@ -68,7 +68,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
             }
         }
 
-        public async Task<List<GlassDTO>> GetSapa_v2Async(A2POrderFileWorksheet wr)
+        public async Task<List<GlassDTO>> GetSapa_v2Async(A2PWorksheet wr)
         {
             if (wr == null)
             {
@@ -165,7 +165,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
             }
         }
 
-        public async Task<List<GlassDTO>> GetSchucoAsync(A2POrderFileWorksheet wr)
+        public async Task<List<GlassDTO>> GetSchucoAsync(A2PWorksheet wr)
         {
             int lineNumber = 0;
             string worksheetName = wr.Worksheet;

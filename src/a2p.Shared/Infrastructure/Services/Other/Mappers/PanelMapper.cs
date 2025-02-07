@@ -15,7 +15,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
         {
             _logService = logService;
         }
-        public async Task<List<PanelDTO>> GetSapa_v1Async(A2POrderFileWorksheet wr)
+        public async Task<List<PanelDTO>> GetSapa_v1Async(A2PWorksheet wr)
         {
             int lineNumber = 0;
             string worksheetName = wr.Worksheet;
@@ -63,7 +63,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
                 return [];
             }
         }
-        public async Task<List<PanelDTO>> GetSapa_v2Async(A2POrderFileWorksheet wr)
+        public async Task<List<PanelDTO>> GetSapa_v2Async(A2PWorksheet wr)
         {
 
             int lineNumber = 0;

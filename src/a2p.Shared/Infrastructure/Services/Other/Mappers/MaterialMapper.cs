@@ -21,7 +21,7 @@ namespace a2p.Shared.Infrastructure.Mappers
 
 
         // Maps a Sapa v1 AppWorksheet to a list of MaterialDTO objects asynchronously
-        public async Task<List<MaterialDTO>> GetSapa_v1Async(A2POrderFileWorksheet wr)
+        public async Task<List<MaterialDTO>> GetSapa_v1Async(A2PWorksheet wr)
         {
             int lineNumber = 0;
             string worksheetName = wr.Worksheet;
@@ -72,7 +72,7 @@ namespace a2p.Shared.Infrastructure.Mappers
         }
 
         // Maps a Sapa v2 AppWorksheet to a list of MaterialDTO objects asynchronously
-        public async Task<List<MaterialDTO>> GetSapa_v2Async(A2POrderFileWorksheet wr)
+        public async Task<List<MaterialDTO>> GetSapa_v2Async(A2PWorksheet wr)
         {
 
             int lineNumber = 0;
@@ -260,7 +260,7 @@ namespace a2p.Shared.Infrastructure.Mappers
         }
 
         // Maps a Schuco AppWorksheet to a list of MaterialDTO objects asynchronously
-        public async Task<List<MaterialDTO>> GetSchucoAsync(A2POrderFileWorksheet wr)
+        public async Task<List<MaterialDTO>> GetSchucoAsync(A2PWorksheet wr)
         {
             int lineNumber = 0;
             string worksheetName = wr.Worksheet;

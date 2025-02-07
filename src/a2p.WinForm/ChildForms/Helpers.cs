@@ -29,7 +29,7 @@ namespace a2p.WinForm.ChildForms
             }
         }
 
-        public A2POrderFile? FindFile(List<A2POrder> orders, string orderNumber, string file)
+        public A2PFile? FindFile(List<A2POrder> orders, string orderNumber, string file)
         {
             try
             {
@@ -44,7 +44,7 @@ namespace a2p.WinForm.ChildForms
             }
         }
 
-        public A2POrderFileWorksheet? FindWorksheet(List<A2POrder> orders, string orderNumber, string file, string worksheet)
+        public A2PWorksheet? FindWorksheet(List<A2POrder> orders, string orderNumber, string file, string worksheet)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace a2p.WinForm.ChildForms
             }
         }
 
-        public A2POrderFileWorksheet? FindWorksheetByType(List<A2POrder> orders, string orderNumber, string file, WorksheetType Type)
+        public A2PWorksheet? FindWorksheetByType(List<A2POrder> orders, string orderNumber, string file, WorksheetType Type)
         {
             try
             {
@@ -76,7 +76,7 @@ namespace a2p.WinForm.ChildForms
             }
         }
 
-        public List<A2POrder> UpdateOrderFiles(List<A2POrder> orderList, string orderNumber, List<A2POrderFile> files)
+        public List<A2POrder> UpdateOrderFiles(List<A2POrder> orderList, string orderNumber, List<A2PFile> files)
         {
             try
             {

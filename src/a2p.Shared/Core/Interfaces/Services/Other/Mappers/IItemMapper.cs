@@ -5,8 +5,8 @@ namespace a2p.Shared.Core.Interfaces.Services.Other.Mappers
 {
     public interface IItemMapper
     {
-        Task<List<ItemDTO>> GetSapa_v1Async(A2POrderFileWorksheet wr);
-        Task<List<ItemDTO>> GetSapa_v2Async(A2POrderFileWorksheet wr);
-        Task<List<ItemDTO>> GetSchucoAsync(A2POrderFileWorksheet wr);
+        Task<List<ItemDTO>> GetSapa_v1Async(A2PWorksheet wr);
+        Task<List<ItemDTO>> GetSapa_v2Async(A2PWorksheet wr);
+        Task<List<ItemDTO>> GetSchucoAsync(A2PWorksheet wr);
     }
 }

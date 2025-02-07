@@ -2,7 +2,7 @@
 
 namespace a2p.Shared.Core.Entities.Models
 {
-    public class A2POrderFileWorksheet
+    public class A2PWorksheet
     {
         public string OrderNumber { get; set; } = string.Empty;
         public string Currency { get; set; } = string.Empty;

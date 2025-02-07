@@ -79,7 +79,7 @@ namespace a2p.Shared.Infrastructure.Services
                     }
                     int fileCount = 0;
 
-                    foreach (A2POrderFile file in order.OrderFiles)
+                    foreach (A2PFile file in order.OrderFiles)
                     {
 
                         _progressValue.ProgressTask1 = $"Importing file {file.FileName}. File {fileCount + 1} of {order?.OrderFiles.Count}.";
@@ -100,7 +100,7 @@ namespace a2p.Shared.Infrastructure.Services
                         }
 
                         int worksheetCount = 0;
-                        foreach (A2POrderFileWorksheet worksheet in file.OrderFileWorksheets)
+                        foreach (A2PWorksheet worksheet in file.OrderFileWorksheets)
 
                         {
                             _progressValue.ProgressTask2 = $"Processing Worksheet {worksheet.Worksheet}. Worksheet {worksheetCount + 1} of {file.OrderFileWorksheets.Count}.";

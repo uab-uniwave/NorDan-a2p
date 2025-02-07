@@ -487,7 +487,7 @@ namespace a2p.WinForm.ChildForms
                         }
                     }
                 }
-                // await _mappingService.MapDataAsync(a2pOrderList, progress);
+                await _mappingService.MapDataAsync(a2pOrderList, progress);
                 dataGridViewFiles.ResumeLayout(false);
             }
             catch (Exception ex)

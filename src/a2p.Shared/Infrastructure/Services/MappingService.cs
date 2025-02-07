@@ -16,12 +16,11 @@ namespace a2p.Shared.Infrastructure.Services
         private ProgressValue _progressValue;
 
         public MappingService(ILogService logService,
-              IMaterialMapper _writeService,
+              IWriteService writeService,
               IItemMapper itemMapper,
               IMaterialMapper materialMapper,
               IGlassMapper glassMapper,
-              IPanelMapper panelMapper,
-              IWriteService writeService
+              IPanelMapper panelMapper
 
               )
         {
@@ -30,6 +29,7 @@ namespace a2p.Shared.Infrastructure.Services
             _materialMapper = materialMapper;
             _glassMapper = glassMapper;
             _panelMapper = panelMapper;
+            _writeService = writeService;
             _progressValue = new ProgressValue();
         }
 

@@ -96,11 +96,13 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
                         lineNumber = i + 1;
                         GlassDTO glass = new()
                         {
-                            WorksheetName = wr.Worksheet ?? string.Empty,
+                            Worksheet = wr.Worksheet ?? string.Empty,
                             Order = wr.OrderNumber ?? string.Empty,
                             Item = wr.WorksheetData[i][1].ToString() ?? string.Empty,
                             SortOrder = i - 3,
                             Reference = string.Empty,
+                            SourceReference = string.Empty,
+                            SourceDescription = string.Empty,
                             Description = wr.WorksheetData[i][2].ToString() ?? string.Empty,
                             Quantity = int.TryParse(wr.WorksheetData[i][3].ToString(), out int quantity) ? quantity : 0,
                             Width = double.TryParse(wr.WorksheetData[i][4].ToString(), out double width) ? width : 0,
@@ -112,7 +114,8 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
 
                         glass.TotalArea = glass.Area * glass.Quantity;
                         glass.AreaUsed = glass.Area * glass.Quantity;
-                        glass.AreaOrdered = glass.Area * glass.Quantity;
+                        glass.Ordered = glass.Area * glass.Quantity;
+                        glass.Waste = glass.Ordered - glass.AreaUsed;
                         glass.Price = decimal.TryParse(wr.WorksheetData[i][7].ToString(), out decimal price) ? price : 0;
                         glass.SquareMeterPrice = decimal.TryParse(wr.WorksheetData[i][6].ToString(), out decimal squareMeterPrice) ? squareMeterPrice : 0;
                         glass.TotalPrice = decimal.TryParse(wr.WorksheetData[i][11].ToString(), out decimal totalPrice) ? totalPrice : 0;
@@ -122,32 +125,62 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
                         }
                         catch
                         {
-                            _logService.Error("MGDTO: Sapa v.2. Order: {$Order}, worksheet: {$FileName}, line number {$Line} pallet column is missing!", new { order, worksheetName, lineNumber });
+                            _logService.Error("MGDTO: Sapa v.2. Order: {$Order}, Worksheet: {$Worksheet}, Line {$Line} pallet column is missing!", new { order, worksheetName, lineNumber });
                             glass.Pallet = string.Empty;
                         }
 
 
 
-                        _logService.Debug("GLASS: | Order: {$Order} | FileName: {$Worksheet} | Line Order: {$Line} | Item: {$Item} | SortOrder: {$SortOrder} | Reference: {$Reference} | Description: {$Description} | Quantity: {$Quantity} | Width: {$Width} | Height: {$Height} | Weight: {$Weight} | TotalWeight: {$TotalWeight} | Area: {$Area} | TotalArea: {$TotalArea} | Price: {$Price} | SquareMeterPrice: {$SquareMeterPrice} | TotalPrice: {$TotalPrice} | Palett: {$Palett}",
-                         worksheetName,
-                         lineNumber,
-                         order,
-                         glass.Item,
-                         glass.SortOrder,
-                         glass.Reference,
-                         glass.Description,
-                         glass.Quantity,
-                         glass.Width,
-                         glass.Height,
-                         glass.Weight,
-                         glass.TotalWeight,
-                         glass.Area,
-                         glass.TotalArea,
-                         glass.Price,
-                         glass.SquareMeterPrice,
-                         glass.TotalPrice,
-                         glass.Pallet);
-                        glass.Type = WorksheetType.Glasses_Sapa_v2;
+                        _logService.Debug("GLASS: | Order: {$Order}" +
+                                                 "| Worksheet: {$Worksheet} " +
+                                                 "| Line: {$Line} " +
+                                                 "| Item: {$Item} " +
+                                                 "| SortOrder: {$SortOrder} " +
+                                                 "| Reference: {$Reference} " +
+                                                 "| Description: {$Description} " +
+                                                 "| Quantity: {$Quantity} " +
+                                                 "| Width: {$Width} " +
+                                                 "| Height: {$Height} " +
+                                                 "| Weight: {$Weight} " +
+                                                 "| Area: {$Area} " +
+                                                 "| Price: {$Price} " +
+                                                 "| TotalPrice: {$TotalPrice} " +
+                                                 "| SquareMeterPrice: {$SquareMeterPrice} " +
+                                                 "| TotalWeight: {$TotalWeight} " +
+                                                 "| TotalArea: {$TotalArea} " +
+                                                 "| AreaUsed: {$AreaUsed} " +
+                                                 "| Ordered: {$Ordered} ",
+                                                 "| Waste: {$Waste} ",
+                                                 "| Pallet: {$Pallet}",
+                                                 "| SourceReference: {$SourceReference} " +
+                                                 "| SourceDescription: {$SourceDescription} ",
+                                                 "| Type: {$Type}",
+
+                                                    order,
+                                                    worksheetName,
+                                                    lineNumber,
+                                                    glass.Item,
+                                                    glass.SortOrder,
+                                                    glass.Reference,
+                                                    glass.Description,
+                                                    glass.Quantity,
+                                                    glass.Width,
+                                                    glass.Height,
+                                                    glass.Weight,
+                                                    glass.Area,
+                                                    glass.Price,
+                                                    glass.TotalPrice,
+                                                    glass.SquareMeterPrice,
+                                                    glass.TotalWeight,
+                                                    glass.TotalArea,
+                                                    glass.AreaUsed,
+                                                    glass.Ordered,
+                                                    glass.Waste,
+                                                    glass.Pallet,
+                                                    glass.SourceReference,
+                                                    glass.SourceDescription,
+                                                    glass.Type.ToString());
+
                         glasses.Add(glass);
                     }
                     catch (Exception ex)

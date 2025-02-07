@@ -24,6 +24,137 @@
 For more information, visit [Our Website](https://dummyimage.com).
 
 
+##Data transformation objects
+
+Current version used common data transformation objects.
+
+Material transformatio (internally called MaterialDTO). Material data from different materials excel worksheets are unified before storing it into database. 
+
+As input will be used all Sapa V2 material worksheets:
+
+using a2p.Shared.Core.Enums;
+
+namespace a2p.Shared.Core.DTO
+{
+    public class MaterialDTO : BaseDTO
+    {
+        public string Worksheet { get; set; } = string.Empty;
+        public string Order { get; set; } = string.Empty;
+        public int Line { get; set; } = 0;
+        public int Column { get; set; } = 0;
+        public string Item { get; set; } = string.Empty;  // used just for glass and panels
+        public int SortOrder { get; set; } = 0; // used just for glass and panels
+        public string Reference { get; set; } = string.Empty;
+        public string ColorDescription { get; set; } = string.Empty; //Color description 
+        public string Color { get; set; } = string.Empty;//
+        public string Description { get; set; } = string.Empty;
+        public double Width { get; set; } = 0; // used just for glass and panels 
+        public double Height { get; set; } = 0; // used just for glass and panels 
+        public double Weight { get; set; } = 0; // used just for glass and panels 
+        public double Area { get; set; } = 0; // used just for glass and panels, could be used for other materials painting surface calculatiuon 
+        public int Quantity { get; set; } = 0;
+        public double QuantityPerPackage { get; set; } = 0; //Not used for panells and glasses in case of Bars. Barr Lenght 
+        public double QuantityOrdered { get; set; } = 0; //Total Area in case of glass / 
+        public double QuantityRequired { get; set; } = 0; //in caes glasses normally will be the same as QuantityOrdered value
+        public double QuantityLeftover { get; set; } = 0; //in caes glasses normally will 0, in case of panels or bar materials will some specific value
+        public double WeightOrdered { get; set; } = 0;
+        public double WeightRequired { get; set; } = 0;
+        public double WeightLeftover { get; set; } = 0;
+        public decimal Price { get; set; } = 0; //Default price per unit (In case of glass, per piece) 
+        public decimal PriceOrderd { get; set; } = 0;
+        public decimal PriceRequired { get; set; } = 0;
+        public decimal PriceLeftover { get; set; } = 0;
+        public string Pallet { get; set; } = string.Empty;
+        public string CustomField1 { get; set; } = string.Empty; //Custom field (used for color just SapaV1 materials and panels)
+        public string CustomField2 { get; set; } = string.Empty; //Custom field (used for color just SapaV1  materials and panels)
+        public string CustomField3 { get; set; } = string.Empty; //Custom field (used for color just SapaV1  materials and panels)
+        public string CustomField4 { get; set; } = string.Empty; //Custom field 
+        public string CustomField5 { get; set; } = string.Empty; //Custom field 
+        
+
+
+        public decimal SquareMeterPrice { get; set; } = 0; // used just for glass and for panels not cosnider waste for panels. 
+        public string SourceReference { get; set; } = string.Empty;
+        public string SourceColor { get; set; } = string.Empty;
+        public string SourceDescription { get; set; } = string.Empty;
+
+        public WorksheetType Type { get; set; } = WorksheetType.Unknown;
+
+
+
+
+
+
+
+    }
+}
+
+
+
+   - Sapa
+    -Worksheet ND_Profiles 
+    -Worksheet ND_Hardware
+    -Worksheet ND_Accessories
+    -Worksheet ND_Panels 
+    -Worksheet ND_Glasses
+    -Worksheet ND_Gaskets
+    -Worksheet ND_Other 
+
+   - Sapa Leggacy 
+    -Worksheet ND_Profiles 
+    -Worksheet ND_Hardware
+    -Worksheet ND_Accessories
+    -Worksheet ND_Panels 
+    -Worksheet ND_Glasses
+    -Worksheet ND_Gaskets
+    -Worksheet ND_Other
+
+  - Schuco 
+    WorkSheet
+
+
+##Item (positions) transformation object.
+UNified transformation class (internally called ItemDTO) transform items data from:
+- Sapa Legacy 
+- Sapa
+- Schuco 
+
+export excel files worksheets and store to database using common format 
+
+
+
+As output will be used single object called MaterialDTO 
+
+
+
+
+
+
+
+
+
+##Sapa legacy
+###Materials procssing
+
+In Previouse version of application, materials files exported from Sapa *legacy* and Schuco application where processed and imported in 3 different ways. Processes where distinct based on material kind. 
+    -Material (consider all non square materials) - records processed and imported into PrefSuite database, table  `[dbo].[SAPA_RecordsMaterials]`
+    -Glass - records processed and imported into  PrefSuite database, table `[dbo].[SAPA_RecordsGlasses]` 
+    -Panels - records processed and imported into PrefSuite database, table `[dbo].[SAPA_RecordsPanels]`
+###Items (Position)
+Items are process and stored in database table `[dbo].[SAPA_RecordsItems]`. 
+
+### Orders 
+Orders are mapped and mapping data stored within PrefSuite database in table  `[dbo].[SAPA_OrdersMapping]`.
+
+
+##Items (Position)
+
+##Schuco
+In Previouse version of application, materials files exported from Schuco application where processed and imported in 2 different ways. Processes where distinct based on material kind. 
+    -Material (consider all non square materials) - records processed and imported into PrefSuite database, table  `[dbo].[Schuco_RecordsMaterials]`
+    -Glass and Panels - records processed and imported into PrefSuite database, table `[dbo].[Schuco_RecordsGlasses]` 
+
+
 
 
 ```PowerShell

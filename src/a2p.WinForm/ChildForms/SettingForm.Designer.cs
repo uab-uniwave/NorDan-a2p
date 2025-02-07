@@ -3,7 +3,7 @@
  partial class SettingForm
  {
   /// <summary> 
-  /// Required designer variable.
+  /// QuantityRequired designer variable.
   /// </summary>
   private System.ComponentModel.IContainer components = null;
 

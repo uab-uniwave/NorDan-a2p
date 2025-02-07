@@ -5,7 +5,7 @@ namespace a2p.WinForm
     partial class MainForm
     {
         /// <summary>
-        /// Required designer variable.
+        /// QuantityRequired designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
@@ -25,7 +25,7 @@ namespace a2p.WinForm
         #region Windows Form Designer generated code
 
         /// <summary>
-        /// Required method for Designer support - do not modify
+        /// QuantityRequired method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()

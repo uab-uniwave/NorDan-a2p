@@ -21,6 +21,7 @@ namespace a2p.Shared.Infrastructure.Mappers
 
 
         // Maps a Sapa v1 AppWorksheet to a list of MaterialDTO objects asynchronously
+        //=================================================================================
         public async Task<List<MaterialDTO>> GetSapa_v1Async(A2PWorksheet wr)
         {
             int lineNumber = 0;
@@ -72,6 +73,7 @@ namespace a2p.Shared.Infrastructure.Mappers
         }
 
         // Maps a Sapa v2 AppWorksheet to a list of MaterialDTO objects asynchronously
+        //=================================================================================
         public async Task<List<MaterialDTO>> GetSapa_v2Async(A2PWorksheet wr)
         {
 
@@ -113,10 +115,6 @@ namespace a2p.Shared.Infrastructure.Mappers
                     return []; ;
                 }
 
-
-
-
-
                 List<MaterialDTO> materials = [];
                 lineNumber = 0;
 
@@ -127,8 +125,6 @@ namespace a2p.Shared.Infrastructure.Mappers
                     {
                         try
                         {
-
-
                             if (string.IsNullOrEmpty(wr.Worksheet))
                             {
                                 _logService.Error("MMDTO Sapa v.2. Worksheet is null. Line will be skipped. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}.", wr.OrderNumber ?? string.Empty, wr.Worksheet ?? string.Empty, lineNumber);
@@ -139,8 +135,6 @@ namespace a2p.Shared.Infrastructure.Mappers
                                 _logService.Error("MMDTO Sapa v.2. Order is null. Line will be skipped. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}.", wr.OrderNumber ?? string.Empty, wr.Worksheet ?? string.Empty, lineNumber);
                                 continue;
                             }
-
-
 
                             if (wr.WorksheetData.Count == 0)
                             {
@@ -156,31 +150,21 @@ namespace a2p.Shared.Infrastructure.Mappers
 
                             MaterialDTO material = new()
                             {
-                                WorksheetName = wr.Worksheet ?? string.Empty,
+                                Worksheet = wr.Worksheet ?? string.Empty,
                                 Order = wr.OrderNumber ?? string.Empty,
 
-
-
-
                                 Reference = wr.Worksheet == "ND_Others"
-                  ? "ASSA_" + wr.WorksheetData[i][1].ToString() ?? string.Empty
-                  : GetSapaCode(wr.WorksheetData[i][1].ToString() ?? string.Empty, wr.WorksheetData[i][2].ToString() ?? string.Empty, wr.OrderNumber ?? string.Empty, wr.Worksheet ?? string.Empty, lineNumber),
-
-
-
-
-
-
-
+                                ? "ASSA_" + wr.WorksheetData[i][1].ToString() ?? string.Empty
+                                : GetSapa_V2Code(wr.WorksheetData[i][1].ToString() ?? string.Empty, wr.WorksheetData[i][2].ToString() ?? string.Empty, wr.OrderNumber ?? string.Empty, wr.Worksheet ?? string.Empty, lineNumber),
+                                SourceReference = wr.WorksheetData[i][1].ToString() ?? string.Empty,
+                                SourceColor = wr.WorksheetData[i][2].ToString() ?? string.Empty,
                                 ColorDescription = wr.WorksheetData[i][3].ToString() ?? string.Empty,
                                 Description = wr.WorksheetData[i][4]?.ToString() ?? string.Empty,
-
                                 Quantity = wr.WorksheetData[i][5] == null ? 1 : int.TryParse(wr.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 1,
                                 PackageUnit = double.TryParse(wr.WorksheetData[i][6].ToString(), out double packageUnit) ? packageUnit : throw new Exception($"SortOrder is not a number. LineNumber: {lineNumber}, Value: {wr.WorksheetData[i][6]}"),
                                 QuantityOrdered = double.TryParse(wr.WorksheetData[i][7].ToString(), out double quantityOrdered) ? quantityOrdered : throw new Exception($"QuantityOrdered is not a number. LineNumber: {lineNumber}, Value: {wr.WorksheetData[i][7]}"),
                                 QuantityRequired = double.TryParse(wr.WorksheetData[i][8].ToString(), out double quantityRequired) ? quantityRequired : throw new Exception($"QuantityRequired is not a number. LineNumber: {lineNumber}, Value: {wr.WorksheetData[i][8]}")
                             };
-
                             if (wr.Worksheet == "ND_Profiles")
                             {
                                 material.Waste = double.TryParse(wr.WorksheetData[i][9].ToString(), out double waste) ? waste : 0;
@@ -201,41 +185,40 @@ namespace a2p.Shared.Infrastructure.Mappers
                             }
 
                             material.Type = WorksheetType.Materials_Sapa_v2;
-
                             _logService.Debug("MMDTO Sapa v.2. MATERIAL:" +
-                 " Order: {$Order} |" +
-                 " FileName: {$WorkSheet} |" +
-                 " LineNumber: {$Line} |" +
-                 " Reference: {$Reference} |" +
-                 " Color: {$Color} |" +
-                 " ColorDescription: {$ColorDescription} |" +
-                 " Description: {$Description} |" +
-                 " Quantity: {$Quantity} |" +
-                 " PackageUnit: {$PackageUnit} |" +
-                 " QuantityOrdered: {$QuantityOrdered} |" +
-                 " QuantityRequired: {$QuantityRequired} |" +
-                 " Waste: {$Waste} |" +
-                 " Area: {$Area} |" +
-                 " Weight: {$Weight} |" +
-                 " Price: {$Price} |" +
-                 " TotalPrice: {$TotalPrice} |",
+                                              " Order: {$Order} |" +
+                                              " FileName: {$WorkSheet} |" +
+                                              " LineNumber: {$Line} |" +
+                                              " Reference: {$Reference} |" +
+                                              " Color: {$Color} |" +
+                                              " ColorDescription: {$ColorDescription} |" +
+                                              " Description: {$Description} |" +
+                                              " Quantity: {$Quantity} |" +
+                                              " PackageUnit: {$PackageUnit} |" +
+                                              " QuantityOrdered: {$QuantityOrdered} |" +
+                                              " QuantityRequired: {$QuantityRequired} |" +
+                                              " Waste: {$Waste} |" +
+                                              " Area: {$Area} |" +
+                                              " Weight: {$Weight} |" +
+                                              " Price: {$Price} |" +
+                                              " TotalPrice: {$TotalPrice} |",
 
-                 material.Order,
-                 material.WorksheetName,
-                 lineNumber,
-                 material.Reference,
-                 material.Color,
-                 material.ColorDescription,
-                 material.Description,
-                 material.Quantity,
-                 material.PackageUnit,
-                 material.QuantityOrdered,
-                 material.QuantityRequired,
-                 material.Waste,
-                 material.Area,
-                 material.Weight,
-                 material.Price,
-                 material.TotalPrice
+                                                 material.Order,
+                                                 material.Worksheet,
+                                                 lineNumber,
+                                                 material.Reference,
+                                                 material.Color,
+                                                 material.ColorDescription,
+                                                 material.Description,
+                                                 material.Quantity,
+                                                 material.PackageUnit,
+                                                 material.QuantityOrdered,
+                                                 material.QuantityRequired,
+                                                 material.Waste,
+                                                 material.Area,
+                                                 material.Weight,
+                                                 material.Price,
+                                                 material.TotalPrice
                );
                             materials.Add(material);
                         }
@@ -260,6 +243,7 @@ namespace a2p.Shared.Infrastructure.Mappers
         }
 
         // Maps a Schuco AppWorksheet to a list of MaterialDTO objects asynchronously
+        //=================================================================================
         public async Task<List<MaterialDTO>> GetSchucoAsync(A2PWorksheet wr)
         {
             int lineNumber = 0;
@@ -317,7 +301,8 @@ namespace a2p.Shared.Infrastructure.Mappers
         }
 
         // Generates a Sapa code by merging article and color fields
-        private string GetSapaCode(string sapaArticle_v2, string sapaColor_v2, string order, string worksheetName, int lineNumber)
+        //=================================================================================
+        private string GetSapa_V2Code(string sapaArticle_v2, string sapaColor_v2, string order, string worksheetName, int lineNumber)
         {
             try
             {

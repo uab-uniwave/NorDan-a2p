@@ -95,7 +95,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
 
                              PanelDTO panel = new()
                              {
-                                 WorksheetName = wr.Worksheet,
+                                 Worksheet = wr.Worksheet,
                                  Order = wr.OrderNumber,
                                  Item = wr.WorksheetData[i][1]?.ToString() ?? "",
                                  SortOrder = i - 3,
@@ -114,7 +114,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
                              panel.Type = WorksheetType.Panels_Sapa_v2;
                              _logService.Debug("MPDTO Sapa v.2. PANEL: | FileName: {$Worksheet} | LineNumber {$Line} | Order: {$Order} | Item: {$Item} | SortOrder: {$SortOrder} | Reference: {$Reference} | Description: {$Description} | Quantity: {$Quantity} | Width: {$Width} | Height: {$Height} | Area: {$Area} | TotalArea: {$TotalArea} | Price: {$Price} | SquareMeterPrice: {$SquareMeterPrice} | TotalPrice: {$TotalPrice} |",
 
-                      panel.WorksheetName,
+                      panel.Worksheet,
                       lineNumber,
                       panel.Order,
                       panel.Item,

@@ -1,17 +1,22 @@
-﻿
-using a2p.Shared.Core.Enums;
-
-public class BaseDTO
+﻿public class BaseDTO
 {
- public string WorksheetName { get; set; } = string.Empty; // WorkSheet name
- public string Order { get; set; } = string.Empty;
- public string Item { get; set; } = string.Empty;
- public string Reference { get; set; } = string.Empty; //SapaArticle or color (SapaV1 full Sheet - Color exists curtting sepc; SapaArticle - no cutting Soec) 
- public string Description { get; set; } = string.Empty; //SapaArticle or color (SapaV1 full Sheet - Color exists curtting sepc; SapaArticle - no cutting Soec) 
- public double Area { get; set; } = 0;
- public decimal Price { get; set; } = 0;
- public int Quantity { get; set; } = 0;
- public decimal TotalPrice { get; set; } = 0;
+    public int SalesDocumentNumber { get; set; } = 0;
+    public int SalesDocumentVersion { get; set; } = 0;
+    public string Worksheet { get; set; } = string.Empty;
+    public string Order { get; set; } = string.Empty;
+    public int Line { get; set; } = 0;
+    public int Column { get; set; } = 0;
+    public string Item { get; set; } = string.Empty;
+    public string Reference { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public double Area { get; set; } = 0;
+    public int Quantity { get; set; } = 0;
+    public decimal Price { get; set; } = 0;
+    public decimal TotalPrice { get; set; } = 0;
+    public string SourceReference { get; set; } = string.Empty;
+    public string SourceColor { get; set; } = string.Empty;
+    public string SourceDescription { get; set; } = string.Empty;
 
- public WorksheetType Type { get; set; } = WorksheetType.Unknown;
+
+
 }

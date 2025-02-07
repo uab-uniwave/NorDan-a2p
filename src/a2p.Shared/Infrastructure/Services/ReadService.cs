@@ -20,7 +20,7 @@ namespace a2p.Shared.Infrastructure.Services
         private int _item = 0;
 
 
-        public ReadService( ILogService logService)
+        public ReadService(ILogService logService)
         {
             _logService = logService;
             _progressValue = new ProgressValue();
@@ -90,26 +90,29 @@ namespace a2p.Shared.Infrastructure.Services
                             {
                                 continue;
                             }
-                            if (a2pWorksheet.WorkSheetRowCount == 0)
+                            if (a2pWorksheet.RowCount == 0)
                             {
                                 continue;
                             }
 
-                            a2pWorksheet.WorksheetName = worksheet.Name;
-                            a2pWorksheet.FileName = a2pFile.FileName;
-                            a2pWorksheet.OrderNumber = a2pFile.OrderNumber;
-                            a2pWorksheet.WorkSheetRowCount = worksheet.RowsUsed().Count() - 4;
-                            a2pWorksheet.WorksheetType = GetWorksheetType(a2pFile.FileName, worksheet.Name);
-                            if (a2pWorksheet.WorksheetType.ToString().ToLower().Contains("item"))
-                            {
 
-                                if (_item == 0)
-                                {
-                                    _item = worksheet.RowsUsed().Count() - 4;
-                                    a2pWorksheet.Items = _item;
-                                }
+                            a2pWorksheet.OrderNumber = a2pFile.Order;
+                            a2pWorksheet.FileName = a2pFile.FileName;
+                            a2pWorksheet.Worksheet = worksheet.Name;
+                            a2pWorksheet.RowCount = worksheet.RowsUsed().Count() - 4;
+                            a2pWorksheet.Type = GetWorksheetType(a2pFile.FileName, worksheet.Name);
+
+                            if (a2pWorksheet.Type == WorksheetType.Items_Sapa_v2)
+                            {
+                                a2pWorksheet.Items = worksheet.RowsUsed().Count() - 2;
+                                a2pWorksheet.RowCount = worksheet.RowsUsed().Count() - 2;
 
                             }
+
+
+
+
+
                             a2pWorksheetList.Add(a2pWorksheet);
                             worksheetCount++;
 
@@ -142,8 +145,8 @@ namespace a2p.Shared.Infrastructure.Services
                 _logService.Error("ES: Error getting worksheet. Worksheet is null!");
                 throw new ArgumentNullException(nameof(ixlWorksheet), "Error getting worksheet. Worksheet is null!");
             }
-            a2pWorksheet.WorksheetName = ixlWorksheet.Name;
-            a2pWorksheet.WorkSheetRowCount = ixlWorksheet.RowCount();
+            a2pWorksheet.Worksheet = ixlWorksheet.Name;
+            a2pWorksheet.RowCount = ixlWorksheet.RowCount();
             a2pWorksheet.WorksheetData = values;
 
 
@@ -180,9 +183,9 @@ namespace a2p.Shared.Infrastructure.Services
                     if (cell != null && !cell.IsEmpty())
                     {
 
-                        if (string.IsNullOrEmpty(a2pWorksheet.OrderCurrency.Trim()))
+                        if (string.IsNullOrEmpty(a2pWorksheet.Currency.Trim()))
                         {
-                            a2pWorksheet.OrderCurrency = GetCurrency(cell.Style.NumberFormat.Format);
+                            a2pWorksheet.Currency = GetCurrency(cell.Style.NumberFormat.Format);
                         }
 
                         // Attempt to parse numeric values
@@ -211,7 +214,6 @@ namespace a2p.Shared.Infrastructure.Services
                 a2pWorksheet.WorksheetData.Add(rowValues);
                 rowCount++;
             }
-
             return a2pWorksheet;
 
         }

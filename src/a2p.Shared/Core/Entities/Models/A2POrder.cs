@@ -4,10 +4,9 @@
     {
 
 
-        public string OrderNumber { get; set; } = string.Empty;
+        public string Order { get; set; } = string.Empty;
         public int SalesDocNumber { get; set; } = 0;
         public int SalesDocVersion { get; set; } = 0;
-        public string OrderCurrency { get; set; } = string.Empty;
         public List<A2POrderFile> OrderFiles { get; set; } = [];
 
 

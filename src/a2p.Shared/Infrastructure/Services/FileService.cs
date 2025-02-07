@@ -12,18 +12,19 @@ namespace a2p.Shared.Infrastructure.Services
         private readonly IConfiguration _configuration;
         private readonly ILogService _logService;
         private readonly IReadService _readService;
+        private readonly IPrefService _prefService;
         private ProgressValue _progressValue;
 
 
 
 
-        public FileService(IConfiguration configuration, ILogService logService, IReadService excelService)
+        public FileService(IConfiguration configuration, ILogService logService, IReadService excelService, IPrefService prefService)
         {
             _configuration = configuration;
             _logService = logService;
             _readService = excelService;
             _progressValue = new ProgressValue();
-
+            _prefService = prefService;
         }
 
         // Get orders and files asynchronously
@@ -88,7 +89,7 @@ namespace a2p.Shared.Infrastructure.Services
 
 
                 {
-                    _progressValue.ProgressTitle = $"Processing OrderNumber # {orderNumber}. OrderNumber {count + 1} / {orderNumbers.Count()}";
+                    _progressValue.ProgressTitle = $"Processing Order # {orderNumber}. Order {count + 1} / {orderNumbers.Count()}";
                     _progressValue.MaxValue = orderNumbers.Count();
                     _progressValue.Value = count + 1;
                     _progressValue.ProgressTask1 = $"Searching OrderFiles...";
@@ -99,16 +100,25 @@ namespace a2p.Shared.Infrastructure.Services
                 }
                 A2POrder a2pOrder = new()
                 {
-                    OrderNumber = orderNumber,
-
-
+                    Order = orderNumber,
                     OrderFiles = await GetSingleOrderFilesAsync(orderNumber, files, progress)
                 };
+
+                var salesDoc = await _prefService.GetSalesDocAsync(orderNumber);
+                a2pOrder.SalesDocNumber = salesDoc.Item1;
+                a2pOrder.SalesDocVersion = salesDoc.Item2;
+
+
+
+
+
 
 
 
 
                 _ = await A2POrderAgregator.AddOrUpdateOrderAsync(a2pOrderList, a2pOrder);
+
+
                 count++;
 
             }
@@ -131,7 +141,7 @@ namespace a2p.Shared.Infrastructure.Services
                 progress?.Report(_progressValue);
                 //Task.Delay(2000).Wait();
             }
-            _logService.Information("FS. OrderNumber # {OrderNumber}. Found {FileCount} files.", orderNumber, files.Count);
+            _logService.Information("FS. Order # {Order}. Found {FileCount} files.", orderNumber, files.Count);
 
 
 
@@ -157,7 +167,7 @@ namespace a2p.Shared.Infrastructure.Services
 
 
                     File = file.Trim(),
-                    OrderNumber = orderNumber,
+                    Order = orderNumber,
                     IsLocked = await IsLockedAsync(file.Trim()),
                     FilePath = Path.GetDirectoryName(file) ?? string.Empty,
                     FileName = fileName ?? string.Empty,
@@ -170,7 +180,15 @@ namespace a2p.Shared.Infrastructure.Services
                 //Task.Delay(2000).Wait();
 
                 List<A2POrderFileWorksheet> wr = await _readService.GetWorksheetListAsync(a2pFileListTemp, _progressValue, progress);
+
+
                 a2pFile.OrderFileWorksheets = wr;
+                if (wr == null || !wr.Any())
+                {
+                    _logService.Warning("FS: No worksheets found in {FileName}", fileName);
+                    continue;
+                }
+
 
                 a2pFileList.Add(a2pFile);
                 count++;

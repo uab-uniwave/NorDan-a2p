@@ -24,7 +24,7 @@ namespace a2p.Shared.Infrastructure.Mappers
         public async Task<List<MaterialDTO>> GetSapa_v1Async(A2POrderFileWorksheet wr)
         {
             int lineNumber = 0;
-            string worksheetName = wr.WorksheetName;
+            string worksheetName = wr.Worksheet;
             string order = wr.OrderNumber;
             try
             {
@@ -42,7 +42,7 @@ namespace a2p.Shared.Infrastructure.Mappers
                 }
 
                 List<MaterialDTO> materials = [];
-                for (int i = 0; i < wr.WorkSheetRowCount; i++)
+                for (int i = 0; i < wr.RowCount; i++)
                 {
                     try
                     {
@@ -57,7 +57,7 @@ namespace a2p.Shared.Infrastructure.Mappers
                     }
                     catch (Exception ex)
                     {
-                        _logService.Error(ex.Message, "MMDTO Sapa v.1. For each. Unhandled Error. Last known success action. OrderNumber: {$OrderNumber}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
+                        _logService.Error(ex.Message, "MMDTO Sapa v.1. For each. Unhandled Error. Last known success action. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
                         continue;
                     }
                 }
@@ -66,7 +66,7 @@ namespace a2p.Shared.Infrastructure.Mappers
             }
             catch (Exception ex)
             {
-                _logService.Error(ex.Message, "MMDTO Sapa v.1. Unhandled Error. Last known success action. OrderNumber: {$OrderNumber}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
+                _logService.Error(ex.Message, "MMDTO Sapa v.1. Unhandled Error. Last known success action. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
                 return [];
             }
         }
@@ -90,7 +90,7 @@ namespace a2p.Shared.Infrastructure.Mappers
                 }
 
 
-                if (string.IsNullOrEmpty(wr.WorksheetName))
+                if (string.IsNullOrEmpty(wr.Worksheet))
                 {
 
                     _logService.Error("MMDTO Sapa v.2. Worksheet FileName is empty OR null.");
@@ -101,15 +101,15 @@ namespace a2p.Shared.Infrastructure.Mappers
                 if (string.IsNullOrEmpty(wr.OrderNumber))
                 {
 
-                    _logService.Error("MMDTO Sapa v.2. Worksheet {$Worksheet} OrderNumber number is empty OR null", wr.WorksheetName);
+                    _logService.Error("MMDTO Sapa v.2. Worksheet {$Worksheet} Order number is empty OR null", wr.Worksheet);
                     return []; ;
                 }
 
 
-                if (wr.WorkSheetRowCount == 0)
+                if (wr.RowCount == 0)
                 {
 
-                    _logService.Error("MMDTO Sapa v.2.Error at OrderNumber: {$OrderNumber}, Worksheet: {$Worksheet). Worksheet has no rows!", wr.WorksheetName, wr.OrderNumber);
+                    _logService.Error("MMDTO Sapa v.2.Error at Order: {$Order}, Worksheet: {$Worksheet). Worksheet has no rows!", wr.Worksheet, wr.OrderNumber);
                     return []; ;
                 }
 
@@ -123,20 +123,20 @@ namespace a2p.Shared.Infrastructure.Mappers
                 return materials = await Task.Run(() =>
                 {
                     List<MaterialDTO> materials = [];
-                    for (int i = 4; i < wr.WorkSheetRowCount; i++)
+                    for (int i = 4; i < wr.RowCount; i++)
                     {
                         try
                         {
 
 
-                            if (string.IsNullOrEmpty(wr.WorksheetName))
+                            if (string.IsNullOrEmpty(wr.Worksheet))
                             {
-                                _logService.Error("MMDTO Sapa v.2. WorksheetName is null. Line will be skipped. OrderNumber: {$OrderNumber}, FileName: {$Worksheet}, LineNumber: {$Line}.", wr.OrderNumber ?? string.Empty, wr.WorksheetName ?? string.Empty, lineNumber);
+                                _logService.Error("MMDTO Sapa v.2. Worksheet is null. Line will be skipped. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}.", wr.OrderNumber ?? string.Empty, wr.Worksheet ?? string.Empty, lineNumber);
                                 continue;
                             }
                             if (string.IsNullOrEmpty(wr.OrderNumber))
                             {
-                                _logService.Error("MMDTO Sapa v.2. OrderNumber is null. Line will be skipped. OrderNumber: {$OrderNumber}, FileName: {$Worksheet}, LineNumber: {$Line}.", wr.OrderNumber ?? string.Empty, wr.WorksheetName ?? string.Empty, lineNumber);
+                                _logService.Error("MMDTO Sapa v.2. Order is null. Line will be skipped. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}.", wr.OrderNumber ?? string.Empty, wr.Worksheet ?? string.Empty, lineNumber);
                                 continue;
                             }
 
@@ -144,27 +144,27 @@ namespace a2p.Shared.Infrastructure.Mappers
 
                             if (wr.WorksheetData.Count == 0)
                             {
-                                _logService.Error("MMDTO Sapa v.2.Error at , OrderNumber: {$OrderNumber}, Worksheet: {$Worksheet). Worksheet has no data!", wr.OrderNumber ?? string.Empty, wr.WorksheetName ?? string.Empty);
+                                _logService.Error("MMDTO Sapa v.2.Error at , Order: {$Order}, Worksheet: {$Worksheet). Worksheet has no data!", wr.OrderNumber ?? string.Empty, wr.Worksheet ?? string.Empty);
                                 continue;
                             }
 
                             if (string.IsNullOrEmpty(wr.WorksheetData[i][1].ToString()))
                             {
-                                _logService.Error("MMDTO Sapa v.2. Article field empty. Line will be skipped. OrderNumber: {$OrderNumber}, FileName: {$Worksheet}, LineNumber: {$Line}.", wr.OrderNumber ?? string.Empty, wr.WorksheetName ?? string.Empty, lineNumber);
+                                _logService.Error("MMDTO Sapa v.2. Article field empty. Line will be skipped. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}.", wr.OrderNumber ?? string.Empty, wr.Worksheet ?? string.Empty, lineNumber);
                                 continue;
                             }
 
                             MaterialDTO material = new()
                             {
-                                WorksheetName = wr.WorksheetName ?? string.Empty,
+                                WorksheetName = wr.Worksheet ?? string.Empty,
                                 Order = wr.OrderNumber ?? string.Empty,
 
 
 
 
-                                Reference = wr.WorksheetName == "ND_Others"
+                                Reference = wr.Worksheet == "ND_Others"
                   ? "ASSA_" + wr.WorksheetData[i][1].ToString() ?? string.Empty
-                  : GetSapaCode(wr.WorksheetData[i][1].ToString() ?? string.Empty, wr.WorksheetData[i][2].ToString() ?? string.Empty, wr.OrderNumber ?? string.Empty, wr.WorksheetName ?? string.Empty, lineNumber),
+                  : GetSapaCode(wr.WorksheetData[i][1].ToString() ?? string.Empty, wr.WorksheetData[i][2].ToString() ?? string.Empty, wr.OrderNumber ?? string.Empty, wr.Worksheet ?? string.Empty, lineNumber),
 
 
 
@@ -181,7 +181,7 @@ namespace a2p.Shared.Infrastructure.Mappers
                                 QuantityRequired = double.TryParse(wr.WorksheetData[i][8].ToString(), out double quantityRequired) ? quantityRequired : throw new Exception($"QuantityRequired is not a number. LineNumber: {lineNumber}, Value: {wr.WorksheetData[i][8]}")
                             };
 
-                            if (wr.WorksheetName == "ND_Profiles")
+                            if (wr.Worksheet == "ND_Profiles")
                             {
                                 material.Waste = double.TryParse(wr.WorksheetData[i][9].ToString(), out double waste) ? waste : 0;
                                 material.Area = double.TryParse(wr.WorksheetData[i][10].ToString(), out double area) ? area : 0;
@@ -189,12 +189,12 @@ namespace a2p.Shared.Infrastructure.Mappers
                                 material.Price = decimal.TryParse(wr.WorksheetData[i][12].ToString(), out decimal price) ? price : 0;
                                 material.TotalPrice = decimal.TryParse(wr.WorksheetData[i][13].ToString(), out decimal totalPrice) ? totalPrice : 0;
                             }
-                            else if (wr.WorksheetName is "ND_Others" or "ND_Accessories")
+                            else if (wr.Worksheet is "ND_Others" or "ND_Accessories")
                             {
                                 material.Price = decimal.TryParse(wr.WorksheetData[i][9].ToString(), out decimal price) ? price : 0;
                                 material.TotalPrice = decimal.TryParse(wr.WorksheetData[i][10].ToString(), out decimal totalPrice) ? totalPrice : 0;
                             }
-                            else if ((wr.WorksheetName ?? "Unknown").Trim() is "ND_Gaskets")
+                            else if ((wr.Worksheet ?? "Unknown").Trim() is "ND_Gaskets")
                             {
                                 material.Price = decimal.TryParse(wr.WorksheetData[i][10].ToString(), out decimal price) ? price : 0;
                                 material.TotalPrice = decimal.TryParse(wr.WorksheetData[i][11].ToString(), out decimal totalPrice) ? totalPrice : 0;
@@ -203,7 +203,7 @@ namespace a2p.Shared.Infrastructure.Mappers
                             material.Type = WorksheetType.Materials_Sapa_v2;
 
                             _logService.Debug("MMDTO Sapa v.2. MATERIAL:" +
-                 " OrderNumber: {$OrderNumber} |" +
+                 " Order: {$Order} |" +
                  " FileName: {$WorkSheet} |" +
                  " LineNumber: {$Line} |" +
                  " Reference: {$Reference} |" +
@@ -241,7 +241,7 @@ namespace a2p.Shared.Infrastructure.Mappers
                         }
                         catch (Exception ex)
                         {
-                            _logService.Error("MMDTO Sapa v.2. For Each. Unhandled Error. Last known success action. OrderNumber: {$OrderNumber}, FileName: {$Worksheet}, LineNumber: {$Line} + ${Exception}", wr.OrderNumber ?? string.Empty, wr.WorksheetName ?? string.Empty, lineNumber, ex.Message);
+                            _logService.Error("MMDTO Sapa v.2. For Each. Unhandled Error. Last known success action. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line} + ${Exception}", wr.OrderNumber ?? string.Empty, wr.Worksheet ?? string.Empty, lineNumber, ex.Message);
                             continue;
                         }
 
@@ -252,7 +252,7 @@ namespace a2p.Shared.Infrastructure.Mappers
             }
             catch (Exception ex)
             {
-                _logService.Error("MMDTO Sapa v.2. Unhandled Error. Last known success action. OrderNumber: {$OrderNumber}, FileName: {$Worksheet}, LineNumber: {$Line}+ ${Exception}", wr.OrderNumber ?? string.Empty, wr.WorksheetName ?? string.Empty, lineNumber, ex.Message);
+                _logService.Error("MMDTO Sapa v.2. Unhandled Error. Last known success action. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}+ ${Exception}", wr.OrderNumber ?? string.Empty, wr.Worksheet ?? string.Empty, lineNumber, ex.Message);
                 return [];
             }
 
@@ -263,19 +263,19 @@ namespace a2p.Shared.Infrastructure.Mappers
         public async Task<List<MaterialDTO>> GetSchucoAsync(A2POrderFileWorksheet wr)
         {
             int lineNumber = 0;
-            string worksheetName = wr.WorksheetName;
+            string worksheetName = wr.Worksheet;
             string order = wr.OrderNumber;
             try
             {
                 if (wr.WorksheetData == null)
                 {
-                    _logService.Warning("MMDTO Schuco. AppWorksheet is null. OrderNumber: {$OrderNumber}", new { order });
+                    _logService.Warning("MMDTO Schuco. AppWorksheet is null. Order: {$Order}", new { order });
                     return [];
                 }
 
                 if (wr.WorksheetData.Count() == 0)
                 {
-                    _logService.Warning("MMDTO Schuco. AppWorksheet is empty. OrderNumber: {$OrderNumber}", new { order });
+                    _logService.Warning("MMDTO Schuco. AppWorksheet is empty. Order: {$Order}", new { order });
                     return [];
                 }
 
@@ -286,7 +286,7 @@ namespace a2p.Shared.Infrastructure.Mappers
 
                     List<MaterialDTO> materials = [];
 
-                    for (int i = 0; i < wr.WorkSheetRowCount; i++)
+                    for (int i = 0; i < wr.RowCount; i++)
                     {
                         try
                         {
@@ -301,7 +301,7 @@ namespace a2p.Shared.Infrastructure.Mappers
                         }
                         catch (Exception ex)
                         {
-                            _logService.Error(ex.Message, "MMDTO Schuco. For each. Unhandled Error. Last known success action. OrderNumber: {$OrderNumber}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
+                            _logService.Error(ex.Message, "MMDTO Schuco. For each. Unhandled Error. Last known success action. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
                             continue;
                         }
                     }
@@ -311,7 +311,7 @@ namespace a2p.Shared.Infrastructure.Mappers
             }
             catch (Exception ex)
             {
-                _logService.Error(ex.Message, "MMDTO Schuco. Last known success action. OrderNumber: {$OrderNumber}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
+                _logService.Error(ex.Message, "MMDTO Schuco. Last known success action. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
                 return [];
             }
         }
@@ -325,7 +325,7 @@ namespace a2p.Shared.Infrastructure.Mappers
 
                 if (string.IsNullOrEmpty(sapaArticle_v2) && string.IsNullOrEmpty(sapaColor_v2))
                 {
-                    _logService.Error("MMDTO Sapa v.2. Article and Color fields are empty. Line will be skipped. OrderNumber: {$OrderNumber}, FileName: {$Worksheet}, LineNumber: {$Line}.", order ?? string.Empty, worksheetName ?? string.Empty, lineNumber);
+                    _logService.Error("MMDTO Sapa v.2. Article and Color fields are empty. Line will be skipped. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}.", order ?? string.Empty, worksheetName ?? string.Empty, lineNumber);
                 }
 
                 if (string.IsNullOrEmpty(sapaColor_v2) && (worksheetName == "ND_Gaskets" || worksheetName == "ND_Accessories"))

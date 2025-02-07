@@ -24,24 +24,24 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
                 return [];
             }
 
-            if (string.IsNullOrEmpty(wr.WorksheetName))
+            if (string.IsNullOrEmpty(wr.Worksheet))
             {
-                _logService.Error("MGDTO: Sapa v.1. AppWorksheet is empty. OrderNumber: {$OrderNumber}", wr.OrderNumber);
+                _logService.Error("MGDTO: Sapa v.1. AppWorksheet is empty. Order: {$Order}", wr.OrderNumber);
                 return [];
             }
             int lineNumber = 0;
-            string worksheetName = wr.WorksheetName ?? "Unknown";
+            string worksheetName = wr.Worksheet ?? "Unknown";
             string order = wr.OrderNumber ?? "Unknown";
             try
             {
                 if (wr.WorksheetData == null || wr.WorksheetData.Count == 0)
                 {
-                    _logService.Error("MGDTO: Sapa v.1. AppWorksheet is empty. OrderNumber: {$OrderNumber}", order);
+                    _logService.Error("MGDTO: Sapa v.1. AppWorksheet is empty. Order: {$Order}", order);
                     return [];
                 }
 
                 List<GlassDTO> glasses = [];
-                for (int i = 0; i < wr.WorkSheetRowCount; i++)
+                for (int i = 0; i < wr.RowCount; i++)
                 {
                     try
                     {
@@ -55,7 +55,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
                     }
                     catch (Exception ex)
                     {
-                        _logService.Error(ex.Message, "MGDTO: Sapa v.1. For each. Unhandled Error. Last known success action. OrderNumber: {$OrderNumber}, Worksheet: {$FileName}, LineNumber: {$Line}", order, worksheetName, lineNumber);
+                        _logService.Error(ex.Message, "MGDTO: Sapa v.1. For each. Unhandled Error. Last known success action. Order: {$Order}, Worksheet: {$FileName}, LineNumber: {$Line}", order, worksheetName, lineNumber);
                         continue;
                     }
                 }
@@ -63,7 +63,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
             }
             catch (Exception ex)
             {
-                _logService.Error(ex.Message, "MGDTO: Sapa v.1. Last known success action. OrderNumber: {$OrderNumber}, Worksheet: {$FileName}, LineNumber: {$Line}", order, worksheetName, lineNumber);
+                _logService.Error(ex.Message, "MGDTO: Sapa v.1. Last known success action. Order: {$Order}, Worksheet: {$FileName}, LineNumber: {$Line}", order, worksheetName, lineNumber);
                 return [];
             }
         }
@@ -77,26 +77,26 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
             }
 
             int lineNumber = 0;
-            string worksheetName = wr.WorksheetName ?? "Unknown";
+            string worksheetName = wr.Worksheet ?? "Unknown";
             string order = wr.OrderNumber ?? "Unknown";
 
             try
             {
                 if (wr.WorksheetData == null || wr.WorksheetData.Count == 0)
                 {
-                    _logService.Error("MGDTO: Sapa v.2. AppWorksheet is empty. OrderNumber: {$OrderNumber}", order);
+                    _logService.Error("MGDTO: Sapa v.2. AppWorksheet is empty. Order: {$Order}", order);
                     return [];
                 }
 
                 List<GlassDTO> glasses = [];
-                for (int i = 4; i < wr.WorkSheetRowCount - 1; i++)
+                for (int i = 4; i < wr.RowCount - 1; i++)
                 {
                     try
                     {
                         lineNumber = i + 1;
                         GlassDTO glass = new()
                         {
-                            WorksheetName = wr.WorksheetName ?? string.Empty,
+                            WorksheetName = wr.Worksheet ?? string.Empty,
                             Order = wr.OrderNumber ?? string.Empty,
                             Item = wr.WorksheetData[i][1].ToString() ?? string.Empty,
                             SortOrder = i - 3,
@@ -122,13 +122,13 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
                         }
                         catch
                         {
-                            _logService.Error("MGDTO: Sapa v.2. OrderNumber: {$OrderNumber}, worksheet: {$FileName}, line number {$Line} pallet column is missing!", new { order, worksheetName, lineNumber });
+                            _logService.Error("MGDTO: Sapa v.2. Order: {$Order}, worksheet: {$FileName}, line number {$Line} pallet column is missing!", new { order, worksheetName, lineNumber });
                             glass.Pallet = string.Empty;
                         }
 
 
 
-                        _logService.Debug("GLASS: | OrderNumber: {$OrderNumber} | FileName: {$Worksheet} | Line OrderNumber: {$Line} | Item: {$Item} | SortOrder: {$SortOrder} | Reference: {$Reference} | Description: {$Description} | Quantity: {$Quantity} | Width: {$Width} | Height: {$Height} | Weight: {$Weight} | TotalWeight: {$TotalWeight} | Area: {$Area} | TotalArea: {$TotalArea} | Price: {$Price} | SquareMeterPrice: {$SquareMeterPrice} | TotalPrice: {$TotalPrice} | Palett: {$Palett}",
+                        _logService.Debug("GLASS: | Order: {$Order} | FileName: {$Worksheet} | Line Order: {$Line} | Item: {$Item} | SortOrder: {$SortOrder} | Reference: {$Reference} | Description: {$Description} | Quantity: {$Quantity} | Width: {$Width} | Height: {$Height} | Weight: {$Weight} | TotalWeight: {$TotalWeight} | Area: {$Area} | TotalArea: {$TotalArea} | Price: {$Price} | SquareMeterPrice: {$SquareMeterPrice} | TotalPrice: {$TotalPrice} | Palett: {$Palett}",
                          worksheetName,
                          lineNumber,
                          order,
@@ -152,7 +152,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
                     }
                     catch (Exception ex)
                     {
-                        _logService.Error(ex.Message, "MGDTO: Sapa v.2. OrderNumber: {$OrderNumber}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
+                        _logService.Error(ex.Message, "MGDTO: Sapa v.2. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
                     }
                 }
 
@@ -160,7 +160,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
             }
             catch (Exception ex)
             {
-                _logService.Error(ex.Message, "MGDTO: Sapa v.2. Last known success action. OrderNumber: {$OrderNumber}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
+                _logService.Error(ex.Message, "MGDTO: Sapa v.2. Last known success action. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
                 return [];
             }
         }
@@ -168,24 +168,24 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
         public async Task<List<GlassDTO>> GetSchucoAsync(A2POrderFileWorksheet wr)
         {
             int lineNumber = 0;
-            string worksheetName = wr.WorksheetName;
+            string worksheetName = wr.Worksheet;
             string order = wr.OrderNumber;
             try
             {
                 if (wr == null)
 
                 {
-                    _logService.Error("MGDTO: Schuco. Worksheet is empty. OrderNumber: {$OrderNumber}", order);
+                    _logService.Error("MGDTO: Schuco. Worksheet is empty. Order: {$Order}", order);
                     return await Task.Run(() => new List<GlassDTO>());
                 }
-                if (wr.WorkSheetRowCount == 0)
+                if (wr.RowCount == 0)
                 {
-                    _logService.Error("MGDTO: Schuco. AppWorksheet is empty. OrderNumber: {$OrderNumber}", order);
+                    _logService.Error("MGDTO: Schuco. AppWorksheet is empty. Order: {$Order}", order);
                     return await Task.Run(() => new List<GlassDTO>());
                 }
 
                 List<GlassDTO> glasses = [];
-                for (int i = 0; i < wr.WorkSheetRowCount; i++)
+                for (int i = 0; i < wr.RowCount; i++)
                 {
                     try
                     {
@@ -198,7 +198,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
                     }
                     catch (Exception ex)
                     {
-                        _logService.Error(ex.Message, "MGDTO: Schuco. For each. Unhandled Error. Last known success action. OrderNumber: {$OrderNumber}, Worksheet: {$FileName}, LineNumber: {$Line}", order, worksheetName, lineNumber);
+                        _logService.Error(ex.Message, "MGDTO: Schuco. For each. Unhandled Error. Last known success action. Order: {$Order}, Worksheet: {$FileName}, LineNumber: {$Line}", order, worksheetName, lineNumber);
                         continue;
                     }
 
@@ -208,7 +208,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
             }
             catch (Exception ex)
             {
-                _logService.Error(ex.Message, "MGDTO: Schuco. Unhandled Error. Last known success action. OrderNumber: {$OrderNumber}, Worksheet: {$FileName}, LineNumber: {$Line}", order, worksheetName, lineNumber);
+                _logService.Error(ex.Message, "MGDTO: Schuco. Unhandled Error. Last known success action. Order: {$Order}, Worksheet: {$FileName}, LineNumber: {$Line}", order, worksheetName, lineNumber);
                 return await Task.Run(() => new List<GlassDTO>());
             }
         }

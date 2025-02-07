@@ -31,7 +31,7 @@ namespace a2p.Shared.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                _logService.Error(ex.Message, "PS: Unhandled error getting OrderNumber: {$OrderNumber} sales document number and version");
+                _logService.Error(ex.Message, "PS: Unhandled error getting Order: {$Order} sales document number and version");
                 return (0, 0);
             }
 

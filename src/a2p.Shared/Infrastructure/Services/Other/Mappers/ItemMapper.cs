@@ -26,7 +26,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
 
                 if (wr.WorksheetData.Count == 0)
                 {
-                    _logService.Error("MIDTO Sapa v.1. AppWorksheet is empty. OrderNumber: {$OrderNumber}", order);
+                    _logService.Error("MIDTO Sapa v.1. AppWorksheet is empty. Order: {$Order}", order);
                     return [];
                 }
                 List<ItemDTO> items = [];
@@ -35,7 +35,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
                 return items = await Task.Run(() =>
                 {
                     List<ItemDTO> items = [];
-                    for (int i = 1; i < wr.WorkSheetRowCount - 1; i++)
+                    for (int i = 1; i < wr.RowCount - 1; i++)
                     {
 
                         try
@@ -44,14 +44,14 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
                             ItemDTO item = new()
                             {
 
-                                WorksheetName = wr.WorksheetName,
+                                WorksheetName = wr.Worksheet,
                                 WorksheetType = WorksheetType.Items_Sapa_v1
                             };
                             items.Add(item);
                         }
                         catch (Exception ex)
                         {
-                            _logService.Error(ex.Message, "MIDTO Sapa v.1. For Each. Unhandled Error. Last known success action. OrderNumber: {$OrderNumber}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
+                            _logService.Error(ex.Message, "MIDTO Sapa v.1. For Each. Unhandled Error. Last known success action. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
                             continue;
                         }
                     }
@@ -62,7 +62,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
             }
             catch (Exception ex)
             {
-                _logService.Error(ex.Message, "MIDTO Sapa v.1. Last known success action. OrderNumber: {$OrderNumber}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
+                _logService.Error(ex.Message, "MIDTO Sapa v.1. Last known success action. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
                 return [];
             }
 
@@ -80,13 +80,13 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
                 if (wr.WorksheetData.Count == 0)
                 {
                     order = wr.OrderNumber;
-                    _logService.Error("MIDTO Sapa v.2. AppWorksheet is empty. OrderNumber: {$OrderNumber}", order);
+                    _logService.Error("MIDTO Sapa v.2. AppWorksheet is empty. Order: {$Order}", order);
                     return [];
                 }
 
 
                 List<ItemDTO> items = [];
-                for (int i = 1; i < wr.WorkSheetRowCount - 1; i++)
+                for (int i = 1; i < wr.RowCount - 1; i++)
                 {
                     try
                     {
@@ -108,7 +108,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
 
                         ItemDTO item = new()
                         {
-                            WorksheetName = wr.WorksheetName,
+                            WorksheetName = wr.Worksheet,
                             Order = wr.OrderNumber,
 
                             Description = wr.WorksheetData[i][0]?.ToString() ?? string.Empty,
@@ -131,9 +131,9 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
                         item.Price = decimal.TryParse(wr.WorksheetData[i][21].ToString(), out decimal price) ? price : throw new Exception($"Price is not a number LineNumber: {lineNumber}, Value: {wr.WorksheetData[i][21]}");
                         item.TotalPrice = item.Quantity * item.Price;
                         item.WorksheetType = WorksheetType.Items_Sapa_v2;
-                        //item.CurrencyCode = wr.OrderCurrency;
+                        //item.CurrencyCode = wr.Currency;
 
-                        _logService.Debug("MIDTO Sapa v.2. ITEM: | FileName: {$Worksheet} | Line OrderNumber: {$Line} | OrderNumber: {$OrderNumber} | Description: {$Description} | SortOrder: {$SortOrder} | Item: {$Item} | Width: {$Width} | Height: {$Height} | Quantity: {$Quantity} | Weight: {$Weight} | WeightGlass: {$WeightGlass} | WeightWithoutGlass: {$WeightWithoutGlass} | WeightTotal: {$WeightTotal} | Area: {$Area} | TotalArea: {$TotalArea} | Hours: {$Hours} | Price: {$Price} | TotalPrice: {$TotalPrice} | LaborCost: {$LaborCost} | MaterialCost: {$MaterialCost} | Cost: {$Cost} | WorksheetType: {$WorksheetType} | Profiles: {$Profiles} | Fittings: {$Fittings} | GasketsAccessories: {$GasketsAccessories} | AluminumSheets: {$AluminumSheets} | SurchargesAluminum: {$SurchargesAluminum} | SurfaceTreatment: {$SurfaceTreatment} | Client: {$Client} | Glass: {$Glass} | Panels: {$Panels} | Wages: {$Wages} | SpecialCosts: {$SpecialCosts} |",
+                        _logService.Debug("MIDTO Sapa v.2. ITEM: | FileName: {$Worksheet} | Line Order: {$Line} | Order: {$Order} | Description: {$Description} | SortOrder: {$SortOrder} | Item: {$Item} | Width: {$Width} | Height: {$Height} | Quantity: {$Quantity} | Weight: {$Weight} | WeightGlass: {$WeightGlass} | WeightWithoutGlass: {$WeightWithoutGlass} | WeightTotal: {$WeightTotal} | Area: {$Area} | TotalArea: {$TotalArea} | Hours: {$Hours} | Price: {$Price} | TotalPrice: {$TotalPrice} | LaborCost: {$LaborCost} | MaterialCost: {$MaterialCost} | Cost: {$Cost} | Type: {$Type} | Profiles: {$Profiles} | Fittings: {$Fittings} | GasketsAccessories: {$GasketsAccessories} | AluminumSheets: {$AluminumSheets} | SurchargesAluminum: {$SurchargesAluminum} | SurfaceTreatment: {$SurfaceTreatment} | Client: {$Client} | Glass: {$Glass} | Panels: {$Panels} | Wages: {$Wages} | SpecialCosts: {$SpecialCosts} |",
                         item.WorksheetName ?? "Unknown",
                         lineNumber,
                         item.Order ?? "Unknown",
@@ -172,7 +172,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
                     }
                     catch (Exception ex)
                     {
-                        _logService.Error(ex.Message, "MIDTO Sapa v.2. For Each. Unhandled Error. Last known success action. OrderNumber: {$OrderNumber}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
+                        _logService.Error(ex.Message, "MIDTO Sapa v.2. For Each. Unhandled Error. Last known success action. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
                         continue;
                     }
                 }
@@ -180,7 +180,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
             }
             catch (Exception ex)
             {
-                _logService.Error(ex.Message, "MIDTO Sapa v.2 . Last known success action. OrderNumber: {$OrderNumber}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
+                _logService.Error(ex.Message, "MIDTO Sapa v.2 . Last known success action. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
                 return [];
             }
         }
@@ -193,7 +193,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
             {
                 if (wr.WorksheetData.Count == 0)
                 {
-                    _logService.Error("MIDTO Schuco. AppWorksheet is empty. OrderNumber: {$OrderNumber}", order);
+                    _logService.Error("MIDTO Schuco. AppWorksheet is empty. Order: {$Order}", order);
                     return [];
                 }
                 List<ItemDTO> items = [];
@@ -203,7 +203,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
                     List<ItemDTO> items = [];
 
 
-                    for (int i = 0; i < wr.WorkSheetRowCount; i++)
+                    for (int i = 0; i < wr.RowCount; i++)
                     {
                         try
                         {
@@ -212,14 +212,14 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
                             {
                                 item.WorksheetType = WorksheetType.Items_Schuco;
                                 item.Order = wr.OrderNumber;
-                                item.WorksheetName = wr.WorksheetName;
+                                item.WorksheetName = wr.Worksheet;
                             }
              ;
                             items.Add(item);
                         }
                         catch (Exception ex)
                         {
-                            _logService.Error(ex.Message, "MIDTO Schuco. For Each. Unhandled Error. Last known success action. OrderNumber: {$OrderNumber}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
+                            _logService.Error(ex.Message, "MIDTO Schuco. For Each. Unhandled Error. Last known success action. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
                             continue;
                         }
                     }
@@ -229,7 +229,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
             }
             catch (Exception ex)
             {
-                _logService.Error(ex.Message, "MIDTO Schuco. Last known success action. OrderNumber: {$OrderNumber}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
+                _logService.Error(ex.Message, "MIDTO Schuco. Last known success action. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}", order, worksheetName, lineNumber);
                 return [];
             }
 

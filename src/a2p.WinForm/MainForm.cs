@@ -590,40 +590,40 @@ namespace a2p.WinForm
               () => new LogForm(_configuration, _logService));
 
 
-            _processType = ProcessType.LogRefresh;
-            if (_progressValue != null)
-            {
-                _progressValue.ProgressTitle = "Refreshing Log ...";
-                _progressValue.MinValue = 0;
-                _progressValue.MaxValue = 100;
-                _progressValue.Value = 0;
-            }
-            else
-            {
-                _progressValue = new ProgressValue();
-                _progressValue.ProgressTitle = "Refreshing Log ...";
-                _progressValue.MinValue = 0;
-                _progressValue.MaxValue = 100;
-                _progressValue.Value = 0;
+            //_processType = ProcessType.LogRefresh;
+            //if (_progressValue != null)
+            //{
+            //    _progressValue.ProgressTitle = "Refreshing Log ...";
+            //    _progressValue.MinValue = 0;
+            //    _progressValue.MaxValue = 100;
+            //    _progressValue.Value = 0;
+            //}
+            //else
+            //{
+            //    _progressValue = new ProgressValue();
+            //    _progressValue.ProgressTitle = "Refreshing Log ...";
+            //    _progressValue.MinValue = 0;
+            //    _progressValue.MaxValue = 100;
+            //    _progressValue.Value = 0;
 
-            }
+            //}
 
 
-            using ProgressBarForm progressBarForm = new();
+            //using ProgressBarForm progressBarForm = new();
 
-            progressBarForm.Load += (sender, args) =>
-            {
-                progressBarForm.Location = new Point(
-                    this.Location.X + ((this.Width - progressBarForm.Width) / 2),
-                    this.Location.Y + ((this.Height - progressBarForm.Height) / 2)
-                );
-            };
+            //progressBarForm.Load += (sender, args) =>
+            //{
+            //    progressBarForm.Location = new Point(
+            //        this.Location.X + ((this.Width - progressBarForm.Width) / 2),
+            //        this.Location.Y + ((this.Height - progressBarForm.Height) / 2)
+            //    );
+            //};
 
-            await Task.Run(progressBarForm.Show);
+            //await Task.Run(progressBarForm.Show);
 
-            Progress<ProgressValue> progress = new(progressBarForm.UpdateProgress);
-            _progress = progress;
-            await Task.Run(() => _progress?.Report(_progressValue));
+            //Progress<ProgressValue> progress = new(progressBarForm.UpdateProgress);
+            //_progress = progress;
+            //await Task.Run(() => _progress?.Report(_progressValue));
 
             try
             {
@@ -640,21 +640,21 @@ namespace a2p.WinForm
                 _processType = ProcessType.None;
 
                 await Task.Run(EnableButtons);
-                if (InvokeRequired)
-                {
-                    Invoke(new Action(() =>
-                    {
+                //if (InvokeRequired)
+                //{
+                //    Invoke(new Action(() =>
+                //    {
 
-                        progressBarForm.Close();
-                        plSideBarMain.PerformLayout();
-                    }));
-                }
-                else
-                {
-                    progressBarForm.Close();
-                    plSideBarMain.PerformLayout();
+                //        progressBarForm.Close();
+                //        plSideBarMain.PerformLayout();
+                //    }));
+                //}
+                //else
+                //{
+                //    progressBarForm.Close();
+                //    plSideBarMain.PerformLayout();
 
-                }
+                //}
 
             }
 

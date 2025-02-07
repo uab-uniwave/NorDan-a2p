@@ -12,6 +12,7 @@ namespace a2p.Shared.Infrastructure.Services
         private readonly IPanelMapper _panelMapper;
         private readonly IItemMapper _itemMapper;
         private readonly IMaterialMapper _materialMapper;
+        private readonly IWriteService _writeService;
         private ProgressValue _progressValue;
 
         public MappingService(ILogService logService,
@@ -19,7 +20,10 @@ namespace a2p.Shared.Infrastructure.Services
               IItemMapper itemMapper,
               IMaterialMapper materialMapper,
               IGlassMapper glassMapper,
-              IPanelMapper panelMapper)
+              IPanelMapper panelMapper,
+              IWriteService writeService
+
+              )
         {
             _logService = logService;
             _itemMapper = itemMapper;
@@ -35,7 +39,7 @@ namespace a2p.Shared.Infrastructure.Services
             {
                 if (a2POrderList.Count() == 0)
                 {
-                    _logService.Error("Import Service: OrderNumber list is null");
+                    _logService.Error("Import Service: Order list is null");
                     throw new ArgumentNullException(nameof(a2POrderList));
                 }
 
@@ -52,23 +56,29 @@ namespace a2p.Shared.Infrastructure.Services
 
                 foreach (A2POrder order in a2POrderList)
                 {
-                    _progressValue.ProgressTitle = $"Importing OrderNumber # {order.OrderNumber}. OrderNumber {orderCount + 1} of {a2POrderList.Count()}";
+                    _progressValue.ProgressTitle = $"Importing Order # {order.Order}. Order {orderCount + 1} of {a2POrderList.Count()}";
                     _progressValue.Value = orderCount + 1;
                     _progressValue.ProgressTask1 = $"Processing OrderFiles...";
                     progress?.Report(_progressValue);
 
                     if (order == null)
                     {
-                        _logService.Error("Import Service: OrderNumber is null");
+                        _logService.Error("MS: Order is null");
+                        continue;
+                    }
+                    if (order.SalesDocVersion == 0)
+                    {
+                        _logService.Error("MS: SalesDocVersion is null");
                         continue;
                     }
 
                     if (order.OrderFiles == null)
                     {
-                        _logService.Error($"Import Service: OrderFiles of OrderNumber # {order.OrderNumber} are null!");
+                        _logService.Error($"Import Service: OrderFiles of Order # {order.Order} are null!");
                         continue;
                     }
                     int fileCount = 0;
+
                     foreach (A2POrderFile file in order.OrderFiles)
                     {
 
@@ -93,7 +103,7 @@ namespace a2p.Shared.Infrastructure.Services
                         foreach (A2POrderFileWorksheet worksheet in file.OrderFileWorksheets)
 
                         {
-                            _progressValue.ProgressTask2 = $"Processing Worksheet {worksheet.WorksheetName}. Worksheet {worksheetCount + 1} of {file.OrderFileWorksheets.Count}.";
+                            _progressValue.ProgressTask2 = $"Processing Worksheet {worksheet.Worksheet}. Worksheet {worksheetCount + 1} of {file.OrderFileWorksheets.Count}.";
                             _progressValue.ProgressTask3 = $"Processing Rows...";
                             progress?.Report(_progressValue);
 
@@ -103,69 +113,80 @@ namespace a2p.Shared.Infrastructure.Services
                                 continue;
                             }
 
-                            if (worksheet.WorkSheetRowCount == 0)
+                            if (worksheet.RowCount == 0)
                             {
-                                _logService.Error("MS: Error in file {File}, worksheet {$Worksheet} row count is 0.", file.FileName, worksheet.WorksheetName);
+                                _logService.Error("MS: Error in file {File}, worksheet {$Worksheet} row count is 0.", file.FileName, worksheet.Worksheet);
                                 continue;
                             }
 
 
 
-                            _logService.Debug("MS. Start importing order {$OrderNumber}, {$WorksheetType}", worksheet.OrderNumber ?? "Unknown", worksheet.WorksheetType.ToString());
+                            _logService.Debug("MS. Start importing order {$Order}, {$Type}", worksheet.OrderNumber ?? "Unknown", worksheet.Type.ToString());
 
 
-                            if (worksheet.WorksheetType == WorksheetType.Items_Sapa_v1)
+                            if (worksheet.Type == WorksheetType.Items_Sapa_v1)
                             {
                                 var result = await _itemMapper.GetSapa_v1Async(worksheet);
                             }
-                            else if (worksheet.WorksheetType == WorksheetType.Items_Sapa_v2)
+                            else if (worksheet.Type == WorksheetType.Items_Sapa_v2)
                             {
                                 var result = await _itemMapper.GetSapa_v2Async(worksheet);
+                                if (result != null)
+                                {
+                                    foreach (var item in result)
+                                    {
+                                        await _writeService.InsertItemAsync(item);
+                                    }
+
+                                }
                             }
-                            else if (worksheet.WorksheetType == WorksheetType.Items_Schuco)
+                            else if (worksheet.Type == WorksheetType.Items_Schuco)
                             {
                                 var result = await _itemMapper.GetSchucoAsync(worksheet);
                             }
-                            else if (worksheet.WorksheetType == WorksheetType.Materials_Sapa_v1)
+                            else if (worksheet.Type == WorksheetType.Materials_Sapa_v1)
                             {
                                 var result = await _materialMapper.GetSapa_v1Async(worksheet);
                             }
-                            else if (worksheet.WorksheetType == WorksheetType.Materials_Sapa_v2)
+                            else if (worksheet.Type == WorksheetType.Materials_Sapa_v2)
                             {
                                 var result = await _materialMapper.GetSapa_v2Async(worksheet);
                             }
-                            else if (worksheet.WorksheetType == WorksheetType.Materials_Schuco)
+                            else if (worksheet.Type == WorksheetType.Materials_Schuco)
                             {
                                 var result = await _materialMapper.GetSchucoAsync(worksheet);
                             }
-                            else if (worksheet.WorksheetType == WorksheetType.Glasses_Sapa_v1)
+                            else if (worksheet.Type == WorksheetType.Glasses_Sapa_v1)
                             {
                                 var result = await _glassMapper.GetSapa_v1Async(worksheet);
                             }
-                            else if (worksheet.WorksheetType == WorksheetType.Glasses_Sapa_v2)
+                            else if (worksheet.Type == WorksheetType.Glasses_Sapa_v2)
                             {
                                 var result = await _glassMapper.GetSapa_v2Async(worksheet);
                             }
-                            else if (worksheet.WorksheetType == WorksheetType.Glasses_Schuco)
+                            else if (worksheet.Type == WorksheetType.Glasses_Schuco)
                             {
                                 var result = await _glassMapper.GetSchucoAsync(worksheet);
                             }
-                            else if (worksheet.WorksheetType == WorksheetType.Panels_Sapa_v1)
+                            else if (worksheet.Type == WorksheetType.Panels_Sapa_v1)
                             {
                                 var result = await _panelMapper.GetSapa_v1Async(worksheet);
                             }
-                            else if (worksheet.WorksheetType == WorksheetType.Panels_Sapa_v2)
+                            else if (worksheet.Type == WorksheetType.Panels_Sapa_v2)
                             {
                                 var result = await _panelMapper.GetSapa_v2Async(worksheet);
                             }
                             else
                             {
-                                _logService.Error("MS: Error  in file {File}, worksheet {$Worksheet} type is Unknown", file.FileName, worksheet.WorksheetName);
+                                _logService.Error("MS: Error  in file {File}, worksheet {$Worksheet} type is Unknown", file.FileName, worksheet.Worksheet);
                                 continue;
                             }
 
-                            _logService.Debug("Import Service. Finish importing order {$OrderNumber}, {WorksheetType}", worksheet.OrderNumber ?? "Unknown", worksheet.WorksheetType.ToString());
-                            worksheetCount++;
+                            _logService.Debug("Import Service. Finish importing order {$Order}, {Type}", worksheet.OrderNumber ?? "Unknown", worksheet.Type.ToString());
+                            //     _progressValue.ProgressTask3 = $"Imported {recordCount} records.";
+                            //                            progress?.Report(_progressValue);
+                            //                          Task.Delay(2000).Wait();
+                            //                        worksheetCount++;
                         }
 
 

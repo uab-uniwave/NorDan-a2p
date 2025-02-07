@@ -93,9 +93,9 @@ namespace a2p.WinForm.ChildForms
                 });
                 _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
                 {
-                    HeaderText = "OrderNumber",
-                    DataPropertyName = "OrderNumber",
-                    Name = "OrderNumber",
+                    HeaderText = "Order",
+                    DataPropertyName = "Order",
+                    Name = "Order",
                     ReadOnly = true,
                     Visible = true,
                     MinimumWidth = 100,
@@ -254,7 +254,7 @@ namespace a2p.WinForm.ChildForms
                 _ = _dataTableLog.Columns.Add("Timestamp", typeof(string));
                 _ = _dataTableLog.Columns.Add("Level", typeof(string));
                 _ = _dataTableLog.Columns.Add("Message", typeof(string));
-                _ = _dataTableLog.Columns.Add("OrderNumber", typeof(string));
+                _ = _dataTableLog.Columns.Add("Order", typeof(string));
                 _ = _dataTableLog.Columns.Add("Worksheet", typeof(string));
                 _ = _dataTableLog.Columns.Add("Line", typeof(string));
                 _ = _dataTableLog.Columns.Add("Exception", typeof(string));
@@ -300,6 +300,7 @@ namespace a2p.WinForm.ChildForms
 
         private void LogForm_Shown(object sender, EventArgs e)
         {
+
             this.ResumeLayout(true);
         }
 
@@ -361,12 +362,12 @@ namespace a2p.WinForm.ChildForms
                 //  Use a dictionary to map log levels to styles for better maintainability
                 Dictionary<string, (Color ForeColor, Color BackColor)> logLevelStyles = new()
                    {
-                     { "Verbose", (System.Drawing.Color.LightGray,  _backColor) },
-                     { "Debug", (System.Drawing.Color.LightBlue,   _backColor ) },
-                     { "Information", (System.Drawing.Color.LightGreen,  _backColor) },
-                     { "Warning", (System.Drawing.Color.Yellow, _backColor)},
-                     { "Error", (System.Drawing.Color.Red,  _backColor)},
-                     { "Fatal", (System.Drawing.Color.DarkRed,  _backColor)}
+                     { "Verbose", (System.Drawing.Color.LightGray,  BackColor) },
+                     { "Debug", (System.Drawing.Color.LightBlue,   BackColor ) },
+                     { "Information", (System.Drawing.Color.LightGreen,  BackColor) },
+                     { "Warning", (System.Drawing.Color.Yellow, BackColor)},
+                     { "Error", (System.Drawing.Color.Red,  BackColor)},
+                     { "Fatal", (System.Drawing.Color.DarkRed,  BackColor)}
                    };
 
                 // Apply the style if the log level matches
@@ -483,7 +484,7 @@ namespace a2p.WinForm.ChildForms
                     Timestamp = root["Timestamp"]?.ToString() ?? string.Empty,
                     Level = root["Level"]?.ToString() ?? string.Empty,
                     Message = propertiesNode["RenderedMessage"]?.ToString() ?? string.Empty,
-                    Order = propertiesNode["OrderNumber"]?.ToString() ?? string.Empty,
+                    Order = propertiesNode["Order"]?.ToString() ?? string.Empty,
                     Worksheet = propertiesNode["Worksheet"]?.ToString() ?? string.Empty,
                     Line = propertiesNode["Line"]?.ToString() ?? string.Empty,
                     Exception = propertiesNode["Exception"]?.ToString() ?? string.Empty
@@ -599,9 +600,12 @@ namespace a2p.WinForm.ChildForms
                 }
                 else
                 {
-                    await Task.Run(_dataTableLog.Rows.Clear);
-                    await Task.Run(dataGridViewLog.Rows.Clear);
-                    await Task.Run(dataGridViewProperties.Rows.Clear);
+
+                    if (_dataTableLog.Rows.Count > 0)
+                    {
+                        await Task.Run(_dataTableLog.Rows.Clear);
+                    }
+
                 }
             }
             catch (Exception ex)
@@ -741,6 +745,7 @@ namespace a2p.WinForm.ChildForms
             }
         }
         #endregion -== Log Level Filters ==-
+
 
     }
 }

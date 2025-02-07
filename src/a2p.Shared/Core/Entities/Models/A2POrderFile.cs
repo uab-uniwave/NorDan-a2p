@@ -2,7 +2,8 @@
 {
     public class A2POrderFile
     {
-        public string OrderNumber { get; set; } = string.Empty;
+        public string Order { get; set; } = string.Empty;
+
         public string File { get; set; } = string.Empty;
         public string FilePath { get; set; } = string.Empty;
 

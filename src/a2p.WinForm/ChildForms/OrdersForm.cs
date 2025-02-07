@@ -1,4 +1,5 @@
-﻿using a2p.Shared.Core.Entities.Models;
+﻿using a2p.Shared.Core.DTO.a2p.Shared.Core.DTO;
+using a2p.Shared.Core.Entities.Models;
 using a2p.Shared.Core.Interfaces.Services;
 
 using System.Data;
@@ -45,24 +46,24 @@ namespace a2p.WinForm.ChildForms
                 if (dataGridViewFiles != null)
                 {
                     #region -== DataGrid Columns ==-
-                    if (!dataGridViewFiles.Columns.Contains("OrderNumber"))
+                    if (!dataGridViewFiles.Columns.Contains("Order"))
                     {
                         _ = dataGridViewFiles.Columns.Add(new DataGridViewTextBoxColumn
                         {
-                            HeaderText = "OrderNumber",
-                            DataPropertyName = "OrderNumber",
-                            Name = "OrderNumber",
+                            HeaderText = "Order",
+                            DataPropertyName = "Order",
+                            Name = "Order",
                             ReadOnly = true,
                             AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
                         });
                     }
-                    if (!dataGridViewFiles.Columns.Contains("OrderCurrency"))
+                    if (!dataGridViewFiles.Columns.Contains("Currency"))
                     {
                         _ = dataGridViewFiles.Columns.Add(new DataGridViewTextBoxColumn
                         {
-                            HeaderText = "OrderCurrency",
-                            DataPropertyName = "OrderCurrency",
-                            Name = "OrderCurrency",
+                            HeaderText = "Currency",
+                            DataPropertyName = "Currency",
+                            Name = "Currency",
                             ReadOnly = true,
                             AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
                         });
@@ -82,7 +83,7 @@ namespace a2p.WinForm.ChildForms
                     {
                         _ = dataGridViewFiles.Columns.Add(new DataGridViewTextBoxColumn
                         {
-                            HeaderText = "OrderNumber List",
+                            HeaderText = "Order List",
                             DataPropertyName = "FileList",
                             Name = "FileList",
                             Visible = false
@@ -131,13 +132,13 @@ namespace a2p.WinForm.ChildForms
                             Visible = false
                         });
                     }
-                    if (!dataGridViewFiles.Columns.Contains("ItemCount"))
+                    if (!dataGridViewFiles.Columns.Contains("Items"))
                     {
                         _ = dataGridViewFiles.Columns.Add(new DataGridViewTextBoxColumn
                         {
                             HeaderText = "Items",
-                            DataPropertyName = "ItemCount",
-                            Name = "ItemCount",
+                            DataPropertyName = "Items",
+                            Name = "Items",
                             ReadOnly = true,
                             AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
                         });
@@ -242,15 +243,15 @@ namespace a2p.WinForm.ChildForms
             try
             {
                 dataGridViewFiles.SuspendLayout();
-                _ = _dataTable.Columns.Add("OrderNumber", typeof(string));
-                _ = _dataTable.Columns.Add("OrderCurrency", typeof(string));
+                _ = _dataTable.Columns.Add("Order", typeof(string));
+                _ = _dataTable.Columns.Add("Currency", typeof(string));
                 _ = _dataTable.Columns.Add("FileCount", typeof(int));
                 _ = _dataTable.Columns.Add("FileList", typeof(string));
                 _ = _dataTable.Columns.Add("LockedFileCount", typeof(int));
                 _ = _dataTable.Columns.Add("LockedFileList", typeof(string));
                 _ = _dataTable.Columns.Add("WorksheetCount", typeof(int));
                 _ = _dataTable.Columns.Add("WorksheetList", typeof(string));
-                _ = _dataTable.Columns.Add("ItemCount", typeof(int));
+                _ = _dataTable.Columns.Add("Items", typeof(int));
                 _ = _dataTable.Columns.Add("Import", typeof(bool));
                 _ = _dataTable.Columns.Add("ErrorCount", typeof(string));
                 _ = _dataTable.Columns.Add("ErrorList", typeof(string));
@@ -416,7 +417,7 @@ namespace a2p.WinForm.ChildForms
                 {
                     try
                     {
-                        Shared.Core.DTO.a2p.Shared.Core.DTO.OrderDTO order = await _orderMapper.MapToOrderDTOAsync(a2pOrder);
+                        OrderDTO order = await _orderMapper.MapToOrderDTOAsync(a2pOrder);
 
                         _ = _dataTable.Rows.Add(
                          order.Order,
@@ -472,10 +473,10 @@ namespace a2p.WinForm.ChildForms
                 {
                     if (row.Cells["Import"].Value != null && (bool)row.Cells["Import"].Value)
                     {
-                        string? orderNumber = row.Cells["OrderNumber"].Value.ToString();
+                        string? orderNumber = row.Cells["Order"].Value.ToString();
                         if (!string.IsNullOrEmpty(orderNumber))
                         {
-                            A2POrder? readOrder = _orderList.FirstOrDefault(o => o.OrderNumber == orderNumber);
+                            A2POrder? readOrder = _orderList.FirstOrDefault(o => o.Order == orderNumber);
 
                             if (readOrder != null)
                             {
@@ -486,7 +487,7 @@ namespace a2p.WinForm.ChildForms
                         }
                     }
                 }
-                await _mappingService.MapDataAsync(a2pOrderList, progress);
+                // await _mappingService.MapDataAsync(a2pOrderList, progress);
                 dataGridViewFiles.ResumeLayout(false);
             }
             catch (Exception ex)

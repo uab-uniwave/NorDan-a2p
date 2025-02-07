@@ -20,11 +20,11 @@ namespace a2p.WinForm.ChildForms
         {
             try
             {
-                return orders.FirstOrDefault(o => o.OrderNumber == orderNumber);
+                return orders.FirstOrDefault(o => o.Order == orderNumber);
             }
             catch (Exception ex)
             {
-                _logService.Error(ex, "Error finding order with number {OrderNumber}", orderNumber);
+                _logService.Error(ex, "Error finding order with number {Order}", orderNumber);
                 return null;
             }
         }
@@ -34,12 +34,12 @@ namespace a2p.WinForm.ChildForms
             try
             {
                 return orders
-                    .FirstOrDefault(o => o.OrderNumber == orderNumber)?
+                    .FirstOrDefault(o => o.Order == orderNumber)?
                     .OrderFiles.FirstOrDefault(f => f.File == file);
             }
             catch (Exception ex)
             {
-                _logService.Error(ex, "Error finding file {File} in order {OrderNumber}", file, orderNumber);
+                _logService.Error(ex, "Error finding file {File} in order {Order}", file, orderNumber);
                 return null;
             }
         }
@@ -49,13 +49,13 @@ namespace a2p.WinForm.ChildForms
             try
             {
                 return orders
-                    .FirstOrDefault(o => o.OrderNumber == orderNumber)?
+                    .FirstOrDefault(o => o.Order == orderNumber)?
                     .OrderFiles.FirstOrDefault(f => f.File == file)?
-                    .OrderFileWorksheets.FirstOrDefault(w => w.WorksheetName == worksheet);
+                    .OrderFileWorksheets.FirstOrDefault(w => w.Worksheet == worksheet);
             }
             catch (Exception ex)
             {
-                _logService.Error(ex, "Error finding worksheet {Worksheet} in file {File} of order {OrderNumber}", worksheet, file, orderNumber);
+                _logService.Error(ex, "Error finding worksheet {Worksheet} in file {File} of order {Order}", worksheet, file, orderNumber);
                 return null;
             }
         }
@@ -65,9 +65,9 @@ namespace a2p.WinForm.ChildForms
             try
             {
                 return orders
-                    .FirstOrDefault(o => o.OrderNumber == orderNumber)?
+                    .FirstOrDefault(o => o.Order == orderNumber)?
                     .OrderFiles.FirstOrDefault(f => f.File == file)?
-                    .OrderFileWorksheets.FirstOrDefault(w => w.WorksheetType == Type);
+                    .OrderFileWorksheets.FirstOrDefault(w => w.Type == Type);
             }
             catch (Exception ex)
             {
@@ -91,7 +91,7 @@ namespace a2p.WinForm.ChildForms
             }
             catch (Exception ex)
             {
-                _logService.Error(ex, "Error updating files for order {OrderNumber}", orderNumber);
+                _logService.Error(ex, "Error updating files for order {Order}", orderNumber);
                 return orderList;
             }
         }

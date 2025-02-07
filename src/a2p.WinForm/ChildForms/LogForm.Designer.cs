@@ -252,6 +252,7 @@ namespace a2p.WinForm.ChildForms
             Name = "LogForm";
             Text = "LogForm";
             WindowState = FormWindowState.Maximized;
+       
             Shown += LogForm_Shown;
             DpiChanged += LogForm_DpiChanged;
             ResizeBegin += LogForm_ResizeBegin;

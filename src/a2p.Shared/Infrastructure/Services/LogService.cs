@@ -176,7 +176,7 @@ namespace a2p.Shared.Infrastructure.Services
                                 Level = jsonNode["Level"]?.ToString() ?? string.Empty,
                                 Message = propertiesNode["RenderedMessage"]?.ToString() ?? string.Empty,
                                 Exception = propertiesNode["Exception"]?.ToString() ?? string.Empty,
-                                Order = propertiesNode["OrderNumber"]?.ToString() ?? string.Empty,
+                                Order = propertiesNode["Order"]?.ToString() ?? string.Empty,
                                 Worksheet = propertiesNode["Worksheet"]?.ToString() ?? string.Empty,
                                 Line = propertiesNode["Line"]?.ToString() ?? string.Empty,
                                 // Convert Properties node to a Dictionary

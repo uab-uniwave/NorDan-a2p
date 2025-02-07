@@ -8,7 +8,7 @@ namespace a2p.Shared.Infrastructure.Services.Other
         // Find Methods
         public static async Task<A2POrder?> FindOrderAsync(List<A2POrder> orders, string orderNumber)
         {
-            return await Task.FromResult(orders.FirstOrDefault(o => o.OrderNumber == orderNumber));
+            return await Task.FromResult(orders.FirstOrDefault(o => o.Order == orderNumber));
         }
 
         public static async Task<A2POrderFile?> FindFileAsync(List<A2POrder> orders, string orderNumber, string fileName)
@@ -18,22 +18,21 @@ namespace a2p.Shared.Infrastructure.Services.Other
 
         public static async Task<A2POrderFileWorksheet?> FindWorksheetAsync(List<A2POrder> orders, string orderNumber, string fileName, string worksheetName)
         {
-            return (await FindFileAsync(orders, orderNumber, fileName))?.OrderFileWorksheets.FirstOrDefault(w => w.WorksheetName == worksheetName);
+            return (await FindFileAsync(orders, orderNumber, fileName))?.OrderFileWorksheets.FirstOrDefault(w => w.Worksheet == worksheetName);
         }
 
         public static async Task<A2POrderFileWorksheet?> FindWorksheetByTypeAsync(List<A2POrder> orders, string orderNumber, string fileName, WorksheetType type)
         {
-            return (await FindFileAsync(orders, orderNumber, fileName))?.OrderFileWorksheets.FirstOrDefault(w => w.WorksheetType == type);
+            return (await FindFileAsync(orders, orderNumber, fileName))?.OrderFileWorksheets.FirstOrDefault(w => w.Type == type);
         }
 
         // Add or Update Methods
         public static async Task<List<A2POrder>> AddOrUpdateOrderAsync(List<A2POrder> orders, A2POrder newOrder)
         {
-            A2POrder? existingOrder = await FindOrderAsync(orders, newOrder.OrderNumber);
+            A2POrder? existingOrder = await FindOrderAsync(orders, newOrder.Order);
             if (existingOrder != null)
             {
                 // Update existing order
-                existingOrder.OrderCurrency = newOrder.OrderCurrency;
                 existingOrder.OrderFiles = newOrder.OrderFiles;
             }
             else
@@ -77,13 +76,13 @@ namespace a2p.Shared.Infrastructure.Services.Other
             {
                 foreach (A2POrderFileWorksheet worksheet in worksheets)
                 {
-                    A2POrderFileWorksheet? existingWorksheet = fileToUpdate.OrderFileWorksheets.FirstOrDefault(w => w.WorksheetName == worksheet.WorksheetName);
+                    A2POrderFileWorksheet? existingWorksheet = fileToUpdate.OrderFileWorksheets.FirstOrDefault(w => w.Worksheet == worksheet.Worksheet);
                     if (existingWorksheet != null)
                     {
                         // Update worksheet properties
-                        existingWorksheet.WorkSheetRowCount = worksheet.WorkSheetRowCount;
+                        existingWorksheet.RowCount = worksheet.RowCount;
                         existingWorksheet.WorksheetData = worksheet.WorksheetData;
-                        existingWorksheet.WorksheetType = worksheet.WorksheetType;
+                        existingWorksheet.Type = worksheet.Type;
                     }
                     else
                     {
@@ -125,7 +124,7 @@ namespace a2p.Shared.Infrastructure.Services.Other
             A2POrderFile? file = await FindFileAsync(orders, orderNumber, fileName);
             if (file != null)
             {
-                A2POrderFileWorksheet? worksheetToRemove = file.OrderFileWorksheets.FirstOrDefault(w => w.WorksheetName == worksheetName);
+                A2POrderFileWorksheet? worksheetToRemove = file.OrderFileWorksheets.FirstOrDefault(w => w.Worksheet == worksheetName);
                 if (worksheetToRemove != null)
                     _ = file.OrderFileWorksheets.Remove(worksheetToRemove);
             }

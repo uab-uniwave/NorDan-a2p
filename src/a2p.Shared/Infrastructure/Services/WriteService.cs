@@ -66,7 +66,7 @@ namespace a2p.Shared.Infrastructure.Services
                 _ = cmd.Parameters.AddWithValue("@TotalPriceEUR", item.TotalPriceEUR);
                 _ = cmd.Parameters.AddWithValue("@MaterialCostEUR", item.MaterialCostEUR);
                 _ = cmd.Parameters.AddWithValue("@LaborCostEUR", item.LaborCostEUR);
-                _ = cmd.Parameters.AddWithValue("@Number", "");
+                _ = cmd.Parameters.AddWithValue("@Order", "");
                 _ = cmd.Parameters.AddWithValue("@Version", "");
                 _ = cmd.Parameters.AddWithValue("@SortOrder", item.SortOrder);
                 _ = cmd.Parameters.AddWithValue("@Modified", DateTime.UtcNow);

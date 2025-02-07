@@ -18,24 +18,24 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
         public async Task<List<PanelDTO>> GetSapa_v1Async(A2POrderFileWorksheet wr)
         {
             int lineNumber = 0;
-            string worksheetName = wr.WorksheetName;
+            string worksheetName = wr.Worksheet;
             string order = wr.OrderNumber;
             try
             {
                 if (wr.WorksheetData.Count == 0)
                 {
-                    _logService.Error("MPDTO Sapa v.1. Worksheet is empty. OrderNumber: {$OrderNumber}", order);
+                    _logService.Error("MPDTO Sapa v.1. Worksheet is empty. Order: {$Order}", order);
 
                     return [];
                 }
-                worksheetName = wr.WorksheetName;
+                worksheetName = wr.Worksheet;
                 order = wr.OrderNumber;
 
                 List<PanelDTO> panels = [];
                 await Task.Run(() =>
                 {
 
-                    for (int i = 0; i < wr.WorkSheetRowCount; i++)
+                    for (int i = 0; i < wr.RowCount; i++)
                     {
                         try
                         {
@@ -48,7 +48,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
                         }
                         catch (Exception ex)
                         {
-                            _logService.Error(ex.Message, "MPDTO Sapa v.1. For each Panel. Unhandled Error. Last known success action. OrderNumber: {$OrderNumber}, Worksheet: {$FileName}, LineNumber: {$Line}", order, worksheetName, lineNumber);
+                            _logService.Error(ex.Message, "MPDTO Sapa v.1. For each Panel. Unhandled Error. Last known success action. Order: {$Order}, Worksheet: {$FileName}, LineNumber: {$Line}", order, worksheetName, lineNumber);
                             continue;
 
                         }
@@ -59,7 +59,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
             }
             catch (Exception ex)
             {
-                _logService.Error(ex.Message, "MPDTO Sapa v.1. Unhandled Error. Last known success action. OrderNumber: {$OrderNumber}, Worksheet: {$FileName}, LineNumber: {$Line}", order, worksheetName, lineNumber);
+                _logService.Error(ex.Message, "MPDTO Sapa v.1. Unhandled Error. Last known success action. Order: {$Order}, Worksheet: {$FileName}, LineNumber: {$Line}", order, worksheetName, lineNumber);
                 return [];
             }
         }
@@ -67,16 +67,16 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
         {
 
             int lineNumber = 0;
-            string worksheetName = wr.WorksheetName;
+            string worksheetName = wr.Worksheet;
             string order = wr.OrderNumber;
             try
             {
                 if (wr.WorksheetData.Count == 0)
                 {
-                    _logService.Error("MPDTO Sapa v.2. Worksheet is empty. OrderNumber: {$OrderNumber}", new { order });
+                    _logService.Error("MPDTO Sapa v.2. Worksheet is empty. Order: {$Order}", new { order });
                     return [];
                 }
-                worksheetName = wr.WorksheetName;
+                worksheetName = wr.Worksheet;
                 order = wr.OrderNumber;
 
                 List<PanelDTO> panelsResult = [];
@@ -87,7 +87,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
 
 
                      List<PanelDTO> panels = [];
-                     for (int i = 4; i < wr.WorkSheetRowCount; i++)
+                     for (int i = 4; i < wr.RowCount; i++)
                      {
                          try
                          {
@@ -95,7 +95,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
 
                              PanelDTO panel = new()
                              {
-                                 WorksheetName = wr.WorksheetName,
+                                 WorksheetName = wr.Worksheet,
                                  Order = wr.OrderNumber,
                                  Item = wr.WorksheetData[i][1]?.ToString() ?? "",
                                  SortOrder = i - 3,
@@ -112,7 +112,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
                              panel.SquareMeterPrice = decimal.TryParse(wr.WorksheetData[i][8].ToString(), out decimal squareMeterPrice) ? squareMeterPrice : 0;
                              panel.TotalPrice = decimal.TryParse(wr.WorksheetData[i][11].ToString(), out decimal totalPrice) ? totalPrice : 0;
                              panel.Type = WorksheetType.Panels_Sapa_v2;
-                             _logService.Debug("MPDTO Sapa v.2. PANEL: | FileName: {$Worksheet} | LineNumber {$Line} | OrderNumber: {$OrderNumber} | Item: {$Item} | SortOrder: {$SortOrder} | Reference: {$Reference} | Description: {$Description} | Quantity: {$Quantity} | Width: {$Width} | Height: {$Height} | Area: {$Area} | TotalArea: {$TotalArea} | Price: {$Price} | SquareMeterPrice: {$SquareMeterPrice} | TotalPrice: {$TotalPrice} |",
+                             _logService.Debug("MPDTO Sapa v.2. PANEL: | FileName: {$Worksheet} | LineNumber {$Line} | Order: {$Order} | Item: {$Item} | SortOrder: {$SortOrder} | Reference: {$Reference} | Description: {$Description} | Quantity: {$Quantity} | Width: {$Width} | Height: {$Height} | Area: {$Area} | TotalArea: {$TotalArea} | Price: {$Price} | SquareMeterPrice: {$SquareMeterPrice} | TotalPrice: {$TotalPrice} |",
 
                       panel.WorksheetName,
                       lineNumber,
@@ -134,7 +134,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
                          }
                          catch (Exception ex)
                          {
-                             _logService.Error("MPDTO Sapa v.2. For each Panel. Unhandled Error. Last known success action. OrderNumber: {$OrderNumber}, Worksheet: {$FileName}, LineNumber: {$Line},${Exception}", order, worksheetName, lineNumber, ex.Message);
+                             _logService.Error("MPDTO Sapa v.2. For each Panel. Unhandled Error. Last known success action. Order: {$Order}, Worksheet: {$FileName}, LineNumber: {$Line},${Exception}", order, worksheetName, lineNumber, ex.Message);
                              continue;
 
                          }
@@ -149,7 +149,7 @@ namespace a2p.Shared.Infrastructure.Services.Other.Mappers
 
             catch (Exception ex)
             {
-                _logService.Error(ex.Message, "MPDTO Sapa v.2. For each Panel. Unhandled Error. Last known success action. OrderNumber: {$OrderNumber}, Worksheet: {$FileName}, LineNumber: {$LineNumber, ${Exception}", order, worksheetName, lineNumber, ex.Message);
+                _logService.Error(ex.Message, "MPDTO Sapa v.2. For each Panel. Unhandled Error. Last known success action. Order: {$Order}, Worksheet: {$FileName}, LineNumber: {$LineNumber, ${Exception}", order, worksheetName, lineNumber, ex.Message);
                 return [];
             }
         }

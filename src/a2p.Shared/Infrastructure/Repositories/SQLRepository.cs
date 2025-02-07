@@ -47,7 +47,7 @@ namespace a2p.Shared.Infrastructure.Repositories
             return dataTable;
         }
         /// <summary>
-        /// Executes a SQL command and returns two values (document OrderNumber,document version)
+        /// Executes a SQL command and returns two values (document Order,document version)
         /// </summary>
         public async Task<(T1, T2)> ExecuteQueryTupleValuesAsync<T1, T2>(string sqlCommand, CommandType commandType, params SqlParameter[] parameters)
         {
@@ -76,7 +76,7 @@ namespace a2p.Shared.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logService.Error(ex.Message, "SS: Unhandled error Executing : {OrderNumber} sales document number and version");
+                _logService.Error(ex.Message, "SS: Unhandled error Executing : {Order} sales document number and version");
             }
 
             return (default!, default!);

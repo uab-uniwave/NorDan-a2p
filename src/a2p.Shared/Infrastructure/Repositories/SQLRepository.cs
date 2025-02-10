@@ -29,24 +29,32 @@ namespace a2p.Shared.Infrastructure.Repositories
         /// </summary>
         public async Task<DataTable> ExecuteQueryAsync(string sqlCommand, CommandType commandType, params SqlParameter[] parameters)
         {
-            using SqlConnection connection = new(_connectionString);
-            using SqlCommand command = new(sqlCommand, connection)
+            try
             {
-                CommandType = commandType
-            };
+                using SqlConnection connection = new(_connectionString);
+                using SqlCommand command = new(sqlCommand, connection)
+                {
+                    CommandType = commandType
+                };
 
-            if (parameters != null)
-            {
-                command.Parameters.AddRange(parameters);
+                if (parameters != null)
+                {
+                    command.Parameters.AddRange(parameters);
+                }
+
+                await connection.OpenAsync();
+                using SqlDataReader reader = await command.ExecuteReaderAsync();
+
+                DataTable dataTable = new();
+                dataTable.Load(reader);
+
+                return dataTable;
             }
-
-            await connection.OpenAsync();
-            using SqlDataReader reader = await command.ExecuteReaderAsync();
-
-            DataTable dataTable = new();
-            dataTable.Load(reader);
-
-            return dataTable;
+            catch (Exception ex)
+            {
+                _logService.Error(ex.Message, "SQL Repository: Unhandled error Executing query {$sqlCommand}", sqlCommand);
+                return new DataTable();
+            }
         }
         /// <summary>
         /// Executes a SQL command and returns two values (document Order,document version)
@@ -55,7 +63,7 @@ namespace a2p.Shared.Infrastructure.Repositories
         {
             int value1;
             int value2;
-
+            (int, int) result = (-1, -1);
 
 
             try
@@ -73,89 +81,118 @@ namespace a2p.Shared.Infrastructure.Repositories
 
                 await connection.OpenAsync();
                 using SqlDataReader reader = await command.ExecuteReaderAsync();
-                var result = await reader.ReadAsync();
-
-                if (await reader.ReadAsync()) // Ensure we have data to read
+                bool readerResult = await reader.ReadAsync();
+                if (readerResult)
                 {
                     value1 = reader.IsDBNull(0) ? -1 : reader.GetInt32(0);
                     value2 = reader.IsDBNull(1) ? -1 : reader.GetInt32(1);
-
+                    result = (value1, value2);
                 }
-                else
-                {
-                    value1 = -1;
-                    value2 = -1;
-                }
-
-
-
-
-
-                return (value1, value2);
+                return result;
 
                 // Return default values if no data is present
             }
             catch (Exception ex)
             {
-                _logService.Error(ex.Message, "SS: Unhandled error Executing : {Order} sales document number and version");
-                return (-1, -1);
+                _logService.Error(ex.Message, "SQL Repository: Unhandled error Executing query for tuple values. {$sqlCommand}", sqlCommand);
+                return result;
             }
         }
-
-
-
-
-
-
 
         /// <summary>
         /// Executes a SQL command that does not return data (useful for INSERT, UPDATE, DELETE, etc.).
         /// </summary>
         public async Task<int> ExecuteNonQueryAsync(string sqlCommand, CommandType commandType, params SqlParameter[] parameters)
         {
-            using SqlConnection connection = new(_connectionString);
-            using SqlCommand command = new(sqlCommand, connection)
+            try
             {
-                CommandType = commandType
-            };
-
-            if (parameters != null)
-            {
-                foreach (var param in parameters)
+                using SqlConnection connection = new(_connectionString);
+                using SqlCommand command = new(sqlCommand, connection)
                 {
-                    command.Parameters.Add(new SqlParameter(param.ParameterName, param.Value)
-                    {
-                        SqlDbType = param.SqlDbType,
-                        Direction = param.Direction,
-                        Size = param.Size
-                    });
-                }
-            }
+                    CommandType = commandType
+                };
 
-            await connection.OpenAsync();
-            var result = await command.ExecuteNonQueryAsync();
-            return result;
+                if (parameters != null)
+                {
+                    foreach (SqlParameter param in parameters)
+                    {
+                        _ = command.Parameters.Add(new SqlParameter(param.ParameterName, param.Value)
+                        {
+                            SqlDbType = param.SqlDbType,
+                            Direction = param.Direction,
+                            Size = param.Size
+                        });
+                    }
+                }
+
+                await connection.OpenAsync();
+                int result = await command.ExecuteNonQueryAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logService.Error(ex.Message, "SQL Repository: Unhandled error Executing non query {$sqlCommand}", sqlCommand);
+                return -1;
+            }
         }
         /// </summary>
         public async Task<object> ExecuteScalarAsync(string sqlCommand, CommandType commandType, params SqlParameter[] parameters)
         {
-            using SqlConnection connection = new(_connectionString);
-            using SqlCommand command = new(sqlCommand, connection)
+            try
             {
-                CommandType = commandType
-            };
+                using SqlConnection connection = new(_connectionString);
+                using SqlCommand command = new(sqlCommand, connection)
+                {
+                    CommandType = commandType
+                };
 
-            if (parameters != null)
-            {
-                command.Parameters.AddRange(parameters);
+                if (parameters != null)
+                {
+                    command.Parameters.AddRange(parameters);
+                }
+
+                await connection.OpenAsync();
+                object? result = await command.ExecuteScalarAsync();
+                return result ?? DBNull.Value;
             }
-
-            await connection.OpenAsync();
-            object? result = await command.ExecuteScalarAsync();
-            return result ?? throw new InvalidOperationException("Query did not return any result.");
+            catch (Exception ex)
+            {
+                _logService.Error(ex.Message, "SQL Repository: Unhandled error Executing scalar query {$sqlCommand}", sqlCommand);
+                return DBNull.Value;
+            }
         }
+        /// <summary>
+        /// Executes a stored procedure and returns a DataTable (useful for SELECT queries).
+        /// </summary>
+        public async Task<DataTable> ExecuteStoredProcedureAsync(string storedProcedureName, params SqlParameter[] parameters)
+        {
+            try
+            {
+                using SqlConnection connection = new(_connectionString);
+                using SqlCommand command = new(storedProcedureName, connection)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
 
+                if (parameters != null)
+                {
+                    command.Parameters.AddRange(parameters);
+                }
+
+                await connection.OpenAsync();
+                using SqlDataReader reader = await command.ExecuteReaderAsync();
+
+                DataTable dataTable = new();
+                dataTable.Load(reader);
+
+                return dataTable;
+            }
+            catch (Exception ex)
+            {
+                _logService.Error(ex.Message, "SQL Repository: Unhandled error executing stored procedure {storedProcedureName}", storedProcedureName);
+                return new DataTable();
+            }
+        }
 
     }
 }
-

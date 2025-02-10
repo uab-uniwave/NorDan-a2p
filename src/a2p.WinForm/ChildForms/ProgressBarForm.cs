@@ -15,7 +15,7 @@ namespace a2p.WinForm.CustomControls
             //    this.AutoScaleDimensions = new SizeF(96F, 96F);
             InitializeComponent();
             this.PerformAutoScale(); // Ensure everything is scaled correctly (optional)
-            this.ResumeLayout(true); //                this.DpiChanged+=SplashScreenForm_DpiChanged;
+            this.ResumeLayout(true); // this.DpiChanged+=SplashScreenForm_DpiChanged;
                                      // Attach events before setting DPI to catch any initial changes
 
 

@@ -39,11 +39,9 @@ namespace a2p.WinForm
             IFileService fileService = _services.GetRequiredService<IFileService>();
             IReadService readService = _services.GetRequiredService<IReadService>();
 
-            IMappingService mappingService = _services.GetRequiredService<IMappingService>();
-            IMaterialMapper materialMapper = _services.GetRequiredService<IMaterialMapper>();
-            IGlassMapper glassMapper = _services.GetRequiredService<IGlassMapper>();
-            IPanelMapper panelMapper = _services.GetRequiredService<IPanelMapper>();
-            IItemMapper itemMapper = _services.GetRequiredService<IItemMapper>();
+            IMappingHandlerService mappingHandlerService = _services.GetRequiredService<IMappingHandlerService>();
+            IMapperServiceSapa_V2 materialMapper = _services.GetRequiredService<IMapperServiceSapa_V2>();
+
             IA2POrderMapper orderMapper = _services.GetRequiredService<IA2POrderMapper>();
 
             logService.Information("Application started.");
@@ -54,7 +52,7 @@ namespace a2p.WinForm
 
             Task.Delay(2000).Wait(); // Ensure splash screen is shown for at least 4 seconds
 
-            MainForm mainWindow = new(fileService, readService, mappingService, configuration, logService, orderMapper);
+            MainForm mainWindow = new(fileService, readService, mappingHandlerService, configuration, logService, orderMapper);
 
             splashScreen.FadeOut();
             splashScreen.Close();

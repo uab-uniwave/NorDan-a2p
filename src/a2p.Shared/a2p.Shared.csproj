@@ -16,11 +16,12 @@
 
  <ItemGroup>
  <None Include="Core\Entities\ConcreteEntity\ItemSchuco.cs" />
- <None Include="Core\Entities\Models\A2PRecordLog.cs" />
+ <None Include="Core\Entities\Models\A2PLogRecord.cs" />
  </ItemGroup>
 
  <ItemGroup>
  <PackageReference Include="ClosedXML" Version="0.104.2" />
+ <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
  <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.0-preview3.24332.3" />
 	 <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.0" />
 	 <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
@@ -78,7 +79,7 @@
 
 
  <ItemGroup>
-   <Folder Include="Core\Interfaces\Services\Read\" />
+   <Folder Include="Core\Entities\BaseEntities\" />
    <Folder Include="Core\Utils\" />
  </ItemGroup>
 

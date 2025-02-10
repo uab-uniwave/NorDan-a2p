@@ -16,7 +16,7 @@ namespace a2p.Shared.Infrastructure.Services
         private readonly ILogger _logService = Log.Logger;
         private readonly IConfiguration _configuration;
         private string _file;
-        private readonly ConcurrentQueue<A2PRecordLog> Records = new();
+        private readonly ConcurrentQueue<A2PLogRecord> Records = new();
         private readonly object FileLock = new(); // Lock for thread-safe writes
 
         public LogService(IConfiguration configuration)
@@ -119,10 +119,10 @@ namespace a2p.Shared.Infrastructure.Services
         {
             _logService.Verbose("{@Exception}", ex);
         }
-        public async Task<List<A2PRecordLog>> GetRepository(string fileName)
+        public async Task<List<A2PLogRecord>> GetRepository(string fileName)
         {
 
-            List<A2PRecordLog> logEntries = [];
+            List<A2PLogRecord> logEntries = [];
             if (!string.IsNullOrEmpty(fileName))
             {
                 _file = fileName;
@@ -170,7 +170,7 @@ namespace a2p.Shared.Infrastructure.Services
                             }
 
 
-                            A2PRecordLog logEntry = new()
+                            A2PLogRecord logEntry = new()
                             {
                                 Timestamp = jsonNode["Timestamp"]?.ToString() ?? string.Empty,
                                 Level = jsonNode["Level"]?.ToString() ?? string.Empty,

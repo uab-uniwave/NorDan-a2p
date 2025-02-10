@@ -5,7 +5,7 @@ namespace a2p.WinForm.ChildForms
  partial class OrdersForm
  {
   /// <summary>
-  /// QuantityRequired designer variable.
+  /// RequiredQuantity designer variable.
   /// </summary>
   private System.ComponentModel.IContainer components = null;
 

@@ -17,6 +17,8 @@ namespace a2p.Shared.Infrastructure.Repositories
         public SQLRepository(IConfiguration configuration, ILogService logService)
         {
 
+
+
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _logService = logService ?? throw new ArgumentNullException(nameof(logService));
             _connectionString = _configuration.GetConnectionString("DefaultConnection")
@@ -49,8 +51,13 @@ namespace a2p.Shared.Infrastructure.Repositories
         /// <summary>
         /// Executes a SQL command and returns two values (document Order,document version)
         /// </summary>
-        public async Task<(T1, T2)> ExecuteQueryTupleValuesAsync<T1, T2>(string sqlCommand, CommandType commandType, params SqlParameter[] parameters)
+        public async Task<(int, int)> ExecuteQueryTupleValuesAsync(string sqlCommand, CommandType commandType, params SqlParameter[] parameters)
         {
+            int value1;
+            int value2;
+
+
+
             try
             {
                 using SqlConnection connection = new(_connectionString);
@@ -66,21 +73,35 @@ namespace a2p.Shared.Infrastructure.Repositories
 
                 await connection.OpenAsync();
                 using SqlDataReader reader = await command.ExecuteReaderAsync();
-                if (await reader.ReadAsync())
+                var result = await reader.ReadAsync();
+
+                if (await reader.ReadAsync()) // Ensure we have data to read
                 {
-                    // Read the first and second values and convert them to the specified types
-                    T1? value1 = reader.IsDBNull(0) ? default! : reader.GetFieldValue<T1>(0);
-                    T2? value2 = reader.IsDBNull(1) ? default! : reader.GetFieldValue<T2>(1);
-                    return (value1, value2);
+                    value1 = reader.IsDBNull(0) ? -1 : reader.GetInt32(0);
+                    value2 = reader.IsDBNull(1) ? -1 : reader.GetInt32(1);
+
                 }
+                else
+                {
+                    value1 = -1;
+                    value2 = -1;
+                }
+
+
+
+
+
+                return (value1, value2);
+
+                // Return default values if no data is present
             }
             catch (Exception ex)
             {
                 _logService.Error(ex.Message, "SS: Unhandled error Executing : {Order} sales document number and version");
+                return (-1, -1);
             }
-
-            return (default!, default!);
         }
+
 
 
 
@@ -100,11 +121,20 @@ namespace a2p.Shared.Infrastructure.Repositories
 
             if (parameters != null)
             {
-                command.Parameters.AddRange(parameters);
+                foreach (var param in parameters)
+                {
+                    command.Parameters.Add(new SqlParameter(param.ParameterName, param.Value)
+                    {
+                        SqlDbType = param.SqlDbType,
+                        Direction = param.Direction,
+                        Size = param.Size
+                    });
+                }
             }
 
             await connection.OpenAsync();
-            return await command.ExecuteNonQueryAsync();
+            var result = await command.ExecuteNonQueryAsync();
+            return result;
         }
         /// </summary>
         public async Task<object> ExecuteScalarAsync(string sqlCommand, CommandType commandType, params SqlParameter[] parameters)

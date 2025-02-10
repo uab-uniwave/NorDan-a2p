@@ -5,7 +5,7 @@ namespace a2p.WinForm
     partial class MainForm
     {
         /// <summary>
-        /// QuantityRequired designer variable.
+        /// RequiredQuantity designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
@@ -25,7 +25,7 @@ namespace a2p.WinForm
         #region Windows Form Designer generated code
 
         /// <summary>
-        /// QuantityRequired method for Designer support - do not modify
+        /// RequiredQuantity method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
@@ -472,7 +472,7 @@ namespace a2p.WinForm
             lbInfoFiles.Name = "lbInfoFiles";
             lbInfoFiles.Size = new Size(168, 44);
             lbInfoFiles.TabIndex = 4;
-            lbInfoFiles.Text = "OrderFiles:";
+            lbInfoFiles.Text = "Files:";
             lbInfoFiles.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // lbInfoErrorCount

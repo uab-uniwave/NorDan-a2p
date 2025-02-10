@@ -1,53 +1,68 @@
 ﻿using a2p.Shared.Core.Enums;
 
+using System.ComponentModel.DataAnnotations;
+
 namespace a2p.Shared.Core.DTO
 {
- public class ItemDTO
- {
+    public class ItemDTO
+    {
+        [Required, MaxLength(50)] required public string Order { get; set; } = string.Empty;
+        [Required, MaxLength(255)] required public string Worksheet { get; set; } = string.Empty;
+        [Required] required public int Line { get; set; } = -1;
+        [Required] required public int Column { get; set; } = -1;
 
-  public string WorksheetName { get; set; } = string.Empty;// WorkSheet name
-  public string Order { get; set; } = string.Empty; // From SapaItemV1, Items_Schuco
-  public string Project { get; set; } = string.Empty; // From SapaItemV1, Items_Schuco
-  public string Item { get; set; } = string.Empty; // From SapaItemV 
-  public int SortOrder { get; set; } = 0;// From SapaItemV1, Items_Schuco
+        //============================================================================================================================
+        [MaxLength(50)] public string? Project { get; set; }
+        [Required, MaxLength(50)] required public string Item { get; set; } = string.Empty;
+        [Required] required public int SortOrder { get; set; } = -1;
+        [MaxLength(255)] public string? Description { get; set; }
+        //============================================================================================================================
+        [Required] required public int Quantity { get; set; } = 1;
+        //============================================================================================================================
+        public double? Width { get; set; } = 0;
+        public double? Height { get; set; } = 0;
+        //============================================================================================================================                                
+        public double? Weight { get; set; } = 0;
+        public double? WeightWithoutGlass { get; set; } = 0;
+        public double? WeightGlass { get; set; } = 0;
+        //============================================================================================================================
+        public double? TotalWeight { get; set; } = 0;
+        public double? TotalWeightWithoutGlass { get; set; } = 0;
+        public double? TotalWeightGlass { get; set; } = 0;
+        //============================================================================================================================
+        public double? Area { get; set; } = 0;
+        public double? TotalArea { get; set; } = 0;
+        //============================================================================================================================
+        public double? Hours { get; set; } = 0;
+        public double? TotalHours { get; set; } = 0;
+        //============================================================================================================================
+        public decimal? MaterialCost { get; set; } = 0;
+        public decimal? LaborCost { get; set; } = 0;
+        public decimal? Cost { get; set; } = 0;
+        //============================================================================================================================
+        public decimal? TotalMaterialCost { get; set; } = 0;
+        public decimal? TotalLaborCost { get; set; } = 0;
+        public decimal? TotalCost { get; set; } = 0;
+        //============================================================================================================================
+        public decimal? Price { get; set; } = 0;
+        public decimal? TotalPrice { get; set; } = 0;
+        //============================================================================================================================
+        public string? CurrencyCode { get; set; }
+        public decimal? ExchangeRateEUR { get; set; }
 
-  public string Description { get; set; } = string.Empty; // From Items_Schuco
+        //============================================================================================================================
+        public decimal? MaterialCostEUR { get; set; } = 0;
+        public decimal? LaborCostEUR { get; set; } = 0;
+        public decimal? CostEUR { get; set; } = 0;
+        //============================================================================================================================
+        public decimal? TotalMaterialCostEUR { get; set; } = 0;
+        public decimal? TotalLaborCostEUR { get; set; } = 0;
+        public decimal? TotalCostEUR { get; set; } = 0;
+        //============================================================================================================================
+        public decimal? PriceEUR { get; set; } = 0;
+        public decimal? TotalPriceEUR { get; set; } = 0;
+        //============================================================================================================================
+        [Required] required public WorksheetType WorksheetType { get; set; } = 0;
 
-  public int Quantity { get; set; } = 0; // From SapaItemV1, Items_Schuco, Item_Sapa_v2
-  public double Width { get; set; } = 0;// From SapaItemV1, Items_Schuco, Item_Sapa_v2
-  public double Height { get; set; } = 0; // From SapaItemV1, Items_Schuco, Item_Sapa_v2
-  public double Weight { get; set; } = 0;// From SapaItemV1, Items_Schuco
-  public double WeightWithoutGlass { get; set; } = 0;// From SapaItemV1 
-  public double WeightGlass { get; set; } = 0;// 
-  public double WeightTotal { get; set; } = 0;// 
-  public double Area { get; set; } = 0; // From SapaItemV1, Items_Schuco, Item_Sapa_v2
-  public double TotalArea { get; set; } = 0; // From SapaItemV1, Items_Schuco, Item_Sapa_v2
-  public double Hours { get; set; } = 0;
-
-  //Local cost
-  //===========================================================
-  public decimal MaterialCost { get; set; } = 0; // From SapaItemV1, Item_Sapa_v2 
-  public decimal LaborCost { get; set; } = 0; // From SapaItemV1, Items_Schuco, Item_Sapa_v2 (Wages),
-  public decimal Cost { get; set; } = 0; // From SapaItemV1, Item_Sapa_v2 SapaPositionsV2 (General Cost) Or From Item_Sapa_v2 (Profiles,Fittings, GasketsAccessories, AluminiumSheet, SetupCostSurfaceTreatment, ClientProfilesAccessories, SortOrder, Panel, SpecialCost, SellingPrice, GeneralCosts, OfferPrice, PriceAdjustage)
-
-  //Price Local and EURO
-  //===========================================================
-  public decimal Price { get; set; } = 0;// From SapaItemV1, Items_Schuco, Item_Sapa_v2
-  public decimal TotalPrice { get; set; } = 0; // From SapaItemV1, Items_Schuco, Item_Sapa_v2
-
-  public string CurrencyCode { get; set; } = string.Empty;
-  public decimal EurExchangeRate { get; set; } = 1;
-
-  //EUR cost
-  //===========================================================
-  public decimal MaterialCostEUR { get; set; } = 0; // From SapaItemV1
-  public decimal LaborCostEUR { get; set; } = 0; // From SapaItemV1
-  public decimal TotalCostEUR { get; set; } = 0;// From SapaItemV1pub
-
-  public decimal PriceEUR { get; set; } = 0;// From SapaItemV1
-  public decimal TotalPriceEUR { get; set; } = 0; // From SapaItemV1
-
-  public WorksheetType WorksheetType { get; set; } = WorksheetType.Unknown;
-
- }
+    }
 }

@@ -1,6 +1,6 @@
 ﻿namespace a2p.Shared.Core.Entities.Models
 {
-    public class A2PRecordOrder
+    public class A2POrderRecord
     {
         public string Order { get; set; } = string.Empty;
 

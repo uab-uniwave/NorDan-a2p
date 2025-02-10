@@ -12,7 +12,7 @@ namespace a2p.Shared.Core.Interfaces.Repository
         Task<int> ExecuteNonQueryAsync(string sqlCommand, CommandType commandType, params SqlParameter[] parameters);
         Task<object> ExecuteScalarAsync(string sqlCommand, CommandType commandType, params SqlParameter[] parameters);
 
-        Task<(T1, T2)> ExecuteQueryTupleValuesAsync<T1, T2>(string sqlCommand, CommandType commandType, params SqlParameter[] parameters);
+        Task<(int, int)> ExecuteQueryTupleValuesAsync(string sqlCommand, CommandType commandType, params SqlParameter[] parameters);
 
 
         //  Task<string> GetConnectionAsync(bool useOleProvider = false);

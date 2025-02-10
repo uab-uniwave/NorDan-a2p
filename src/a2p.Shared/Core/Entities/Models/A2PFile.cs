@@ -13,6 +13,6 @@
 
         public bool IsOrderItemsFile { get; set; } = false;
 
-        public List<A2PWorksheet> OrderFileWorksheets { get; set; } = [];
+        public List<A2PWorksheet> Worksheets { get; set; } = [];
     }
 }

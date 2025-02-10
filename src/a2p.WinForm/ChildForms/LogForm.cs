@@ -166,7 +166,7 @@ namespace a2p.WinForm.ChildForms
 
 
                 //DataGrid Header Style 
-                //=======================================================================================
+                //===================================================================================================================
                 DataGridViewCellStyle ColumnHeadersDefaultCellStyle = new()
                 {
                     BackColor = Color.FromArgb(56, 57, 60),
@@ -183,7 +183,7 @@ namespace a2p.WinForm.ChildForms
                 dataGridViewProperties.ColumnHeadersDefaultCellStyle = ColumnHeadersDefaultCellStyle;
 
                 //DataGrid Cell and Alternative Rows default Cells Style 
-                //=======================================================================================
+                //===================================================================================================================
                 DataGridViewCellStyle DefaultCellStyle = new()
                 {
 
@@ -449,7 +449,7 @@ namespace a2p.WinForm.ChildForms
                 if (!string.IsNullOrEmpty(line))
                 {
                     // Parse the JSON line
-                    A2PRecordLog logEntry = await LogParseLineAsync(line);
+                    A2PLogRecord logEntry = await LogParseLineAsync(line);
                     // Add the parsed data to the DataTable
                     await Task.Run(() => LogAddAsync(logEntry));
                 }
@@ -457,7 +457,7 @@ namespace a2p.WinForm.ChildForms
 
             }
         }
-        private async Task<A2PRecordLog> LogParseLineAsync(string jsonLine)
+        private async Task<A2PLogRecord> LogParseLineAsync(string jsonLine)
         {
             try
             {
@@ -469,7 +469,7 @@ namespace a2p.WinForm.ChildForms
                 if (root == null || root["Properties"] is not JsonObject propertiesNode)
                 {
                     _logService.Warning("LF: Invalid log entry or missing Properties.");
-                    return new A2PRecordLog();
+                    return new A2PLogRecord();
                 }
 
                 // Convert Properties to a dictionary
@@ -479,7 +479,7 @@ namespace a2p.WinForm.ChildForms
                 );
 
 
-                A2PRecordLog logRecord = new()
+                A2PLogRecord logRecord = new()
                 {
                     Timestamp = root["Timestamp"]?.ToString() ?? string.Empty,
                     Level = root["Level"]?.ToString() ?? string.Empty,
@@ -514,10 +514,10 @@ namespace a2p.WinForm.ChildForms
             catch (Exception ex)
             {
                 _logService.Error(ex, "LF: Error parsing log entry: {ex.Message}");
-                return new A2PRecordLog();
+                return new A2PLogRecord();
             }
         }
-        private void LogAddAsync(A2PRecordLog logEntry)
+        private void LogAddAsync(A2PLogRecord logEntry)
         {
             try
             {
@@ -551,12 +551,12 @@ namespace a2p.WinForm.ChildForms
             {
 
 
-                List<A2PRecordLog> logEntries = await _logService.GetRepository(string.Empty);
+                List<A2PLogRecord> logEntries = await _logService.GetRepository(string.Empty);
 
                 if (logEntries != null)
                 {
                     // Remove duplicates based on unique properties (e.g., Timestamp, Message, etc.)
-                    List<A2PRecordLog> distinctLogEntries = logEntries
+                    List<A2PLogRecord> distinctLogEntries = logEntries
                      .GroupBy(entry => new
                      {
                          entry.Timestamp,
@@ -575,7 +575,7 @@ namespace a2p.WinForm.ChildForms
                     // Bind the distinct entries to the grid
 
 
-                    foreach (A2PRecordLog? logEntry in distinctLogEntries)
+                    foreach (A2PLogRecord? logEntry in distinctLogEntries)
                     {
                         _ = _dataTableLog.Rows.Add(logEntry.Timestamp, logEntry.Level, logEntry.Message, logEntry.Order, logEntry.Worksheet, logEntry.Line, logEntry.Exception, logEntry.Properties);
                     }

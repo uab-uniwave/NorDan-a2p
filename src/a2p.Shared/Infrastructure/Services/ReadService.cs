@@ -17,7 +17,7 @@ namespace a2p.Shared.Infrastructure.Services
         private ProgressValue _progressValue;
 
         private string _currency = string.Empty;
-        private int _item = 0;
+        //   private int _item = 0;
 
 
         public ReadService(ILogService logService)
@@ -96,7 +96,7 @@ namespace a2p.Shared.Infrastructure.Services
                             }
 
 
-                            a2pWorksheet.OrderNumber = a2pFile.Order;
+                            a2pWorksheet.Order = a2pFile.Order;
                             a2pWorksheet.FileName = a2pFile.FileName;
                             a2pWorksheet.Worksheet = worksheet.Name;
                             a2pWorksheet.RowCount = worksheet.RowsUsed().Count() - 4;

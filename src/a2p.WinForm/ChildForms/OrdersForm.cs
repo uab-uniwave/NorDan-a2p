@@ -11,7 +11,7 @@ namespace a2p.WinForm.ChildForms
     public partial class OrdersForm : Form
     {
         private readonly IFileService _fileService;
-        private readonly IMappingService _mappingService;
+        private readonly IMappingHandlerService _mappingHandlerService;
         private readonly ILogService _logService;
         private readonly IA2POrderMapper _orderMapper;
         private ProgressValue _progressValue;
@@ -19,10 +19,10 @@ namespace a2p.WinForm.ChildForms
         private BindingSource _bindingSource;
         private List<A2POrder> _orderList;
 
-        public OrdersForm(IFileService fileService, IMappingService mappingService, ILogService logService, IA2POrderMapper orderMapper)
+        public OrdersForm(IFileService fileService, IMappingHandlerService mappingService, ILogService logService, IA2POrderMapper orderMapper)
         {
             _fileService = fileService;
-            _mappingService = mappingService;
+            _mappingHandlerService = mappingService;
             _logService = logService;
             _orderMapper = orderMapper;
             _orderList = [];
@@ -72,7 +72,7 @@ namespace a2p.WinForm.ChildForms
                     {
                         _ = dataGridViewFiles.Columns.Add(new DataGridViewTextBoxColumn
                         {
-                            HeaderText = "OrderFiles",
+                            HeaderText = "Files",
                             DataPropertyName = "FileCount",
                             Name = "FileCount",
                             ReadOnly = true,
@@ -298,7 +298,6 @@ namespace a2p.WinForm.ChildForms
             Console.WriteLine($"GridViewFiles Error in column {e.ColumnIndex}, row {e.RowIndex}: {e.Exception?.Message ?? "Exception details missing."}");
             e.ThrowException = false;
         }
-
         private void dataGridViewFiles_CellFormatting(object? sender, DataGridViewCellFormattingEventArgs e)
         {
             try
@@ -379,12 +378,13 @@ namespace a2p.WinForm.ChildForms
             }
         }
 
+
         #endregion -== Data Grid Events ==-
 
         #region -== File Form Methods ==-
         public async Task OrdersLoad(IProgress<ProgressValue>? progress = null)
         {
-            _progressValue.ProgressTitle = "Refreshing OrderFiles ...";
+            _progressValue.ProgressTitle = "Refreshing Files ...";
 
             if (_dataTable.Rows.Count > 0)
             {
@@ -418,21 +418,20 @@ namespace a2p.WinForm.ChildForms
                     try
                     {
                         OrderDTO order = await _orderMapper.MapToOrderDTOAsync(a2pOrder);
-
-                        _ = _dataTable.Rows.Add(
-                         order.Order,
-                         order.Currency,
-                         order.FileCount,
-                         order.FileList,
-                         order.LockedFileCount,
-                         order.LockedFileList,
-                         order.WorksheetCount,
-                         order.WorksheetList,
-                         order.ItemCount,
-                         order.Import,
-                         order.ErrorCount,
-                         order.ErrorList
-                        );
+                        _ = _dataTable.Rows.Add
+                            (order.Order,
+                              order.Currency,
+                              order.FileCount,
+                              order.FileList,
+                              order.LockedFileCount,
+                              order.LockedFileList,
+                              order.WorksheetCount,
+                              order.WorksheetList,
+                              order.ItemCount,
+                              order.Import,
+                              order.ErrorCount,
+                              order.ErrorList
+                            );
                     }
                     catch (Exception ex)
                     {
@@ -473,21 +472,41 @@ namespace a2p.WinForm.ChildForms
                 {
                     if (row.Cells["Import"].Value != null && (bool)row.Cells["Import"].Value)
                     {
+
+
                         string? orderNumber = row.Cells["Order"].Value.ToString();
                         if (!string.IsNullOrEmpty(orderNumber))
                         {
-                            A2POrder? readOrder = _orderList.FirstOrDefault(o => o.Order == orderNumber);
+                            A2POrder a2pOrder = _orderList.FirstOrDefault(o => o.Order == orderNumber)!;
 
-                            if (readOrder != null)
+
+
+                            DateTime localDateTime;
+
+                            if (a2pOrder != null && a2pOrder.OrderExists.HasValue)
                             {
-                                a2pOrderList.Add(readOrder);
+                                localDateTime = a2pOrder.OrderExists.Value.ToLocalTime();
 
+                                MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+                                DialogResult result = MessageBox.Show(
+                                    $"Order {orderNumber} already exists in the database.\nLast known import date: {localDateTime}.\nDo you want to import it again?\nKeep attention! Existing data will be removed!",
+                                    "Order Exists",
+                                    buttons
+                                );
+
+                                a2pOrder.OverwriteOrder = result == DialogResult.Yes;
 
                             }
+
+                            if ((a2pOrder!.OverwriteOrder && a2pOrder.OrderExists.HasValue) || !a2pOrder.OrderExists.HasValue)
+                            {
+                                a2pOrderList.Add(a2pOrder);
+                            }
+
                         }
                     }
                 }
-                await _mappingService.MapDataAsync(a2pOrderList, progress);
+                await _mappingHandlerService.MapDataAsync(a2pOrderList, progress);
                 dataGridViewFiles.ResumeLayout(false);
             }
             catch (Exception ex)

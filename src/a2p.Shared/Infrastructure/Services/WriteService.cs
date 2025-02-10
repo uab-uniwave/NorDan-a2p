@@ -18,205 +18,184 @@ namespace a2p.Shared.Infrastructure.Services
             _sqlRepository = sqlRepository;
             _logService = logService;
         }
-        //public async Task<string?>? GetColorAsync(string color)
-        //{
-        // try
-        // {
-        //  string sql = "SELECT Color FROM Colors WHERE Color = '" + color + "'";
 
-        //  string? result = await _sqlService.ExecuteScalarAsync(sql);
-        //  return result;//TODO: fix this
-        // }
-        // catch (Exception ex)
-        // {
-        //  _logService.Debug(ex.Message, "Unhandled error: getting color from DB");
-        //  return null;
-        // }
-        //}
 
-        public async Task<int> InsertItemAsync(ItemDTO item)
+        public async Task<int> InsertItemAsync(ItemDTO itemDTO, int salesDocumentNumber, int salesDocumentVersion, DateTime dateTime)
         {
             try
             {
-                if (item == null)
+                if (itemDTO == null)
                 {
-                    _logService.Debug("Error Inserting Sapa v2 Item to DB, item is null");
-                    throw new ArgumentNullException(nameof(item));
+                    _logService.Debug("Error inserting itemDTO to DB: itemDTO is null");
+                    return -1;
                 }
 
                 SqlCommand cmd = new()
                 {
-                    CommandText = "Uniwave_SAPAInsertPositions",
+                    CommandText = "[dbo].[Uniwave_a2p_InsertItem]",
                     CommandType = CommandType.StoredProcedure
                 };
 
-                _ = cmd.Parameters.AddWithValue("@Order", item.Order);
-                _ = cmd.Parameters.AddWithValue("@Phase", "no phase "); // TODO: Add phase
-                _ = cmd.Parameters.AddWithValue("@Item", item.Item);
-                _ = cmd.Parameters.AddWithValue("@Quantity", item.Quantity);
-                _ = cmd.Parameters.AddWithValue("@Width", item.Width);
-                _ = cmd.Parameters.AddWithValue("@Height", item.Height);
-                _ = cmd.Parameters.AddWithValue("@Weight", item.Weight);
-                _ = cmd.Parameters.AddWithValue("@WeightWithoutGlass", item.WeightWithoutGlass);
-                _ = cmd.Parameters.AddWithValue("@MaterialCost", item.MaterialCost);
-                _ = cmd.Parameters.AddWithValue("@LaborCost", item.LaborCost);
-                _ = cmd.Parameters.AddWithValue("@Price", item.Price);
-                _ = cmd.Parameters.AddWithValue("@TotalPrice", item.TotalPrice);
-                _ = cmd.Parameters.AddWithValue("@PriceEUR", item.PriceEUR);
-                _ = cmd.Parameters.AddWithValue("@TotalPriceEUR", item.TotalPriceEUR);
-                _ = cmd.Parameters.AddWithValue("@MaterialCostEUR", item.MaterialCostEUR);
-                _ = cmd.Parameters.AddWithValue("@LaborCostEUR", item.LaborCostEUR);
-                _ = cmd.Parameters.AddWithValue("@Order", "");
-                _ = cmd.Parameters.AddWithValue("@Version", "");
-                _ = cmd.Parameters.AddWithValue("@SortOrder", item.SortOrder);
-                _ = cmd.Parameters.AddWithValue("@Modified", DateTime.UtcNow);
+                cmd.Parameters.AddWithValue("@SalesDocumentNumber", salesDocumentNumber);                       //required
+                cmd.Parameters.AddWithValue("@SalesDocumentVersion", salesDocumentVersion);                     //required
+                //========================================================================================================
+                cmd.Parameters.AddWithValue("@Order", itemDTO.Order);                                              //required
+                cmd.Parameters.AddWithValue("@Worksheet", itemDTO.Worksheet);                                      //required
+                cmd.Parameters.AddWithValue("@Line", itemDTO.Line);                                                //required
+                cmd.Parameters.AddWithValue("@Column", itemDTO.Column);                                            //required
+                //========================================================================================================
+                cmd.Parameters.AddWithValue("@Project", itemDTO.Project ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Item", itemDTO.Item);                                                //required
+                cmd.Parameters.AddWithValue("@SortOrder", itemDTO.SortOrder);                                      //required
+                cmd.Parameters.AddWithValue("@Description", itemDTO.Description ?? (object)DBNull.Value);
+                //========================================================================================================
+                cmd.Parameters.AddWithValue("@Quantity", itemDTO.Quantity);                                        //required
+                //========================================================================================================
+                cmd.Parameters.AddWithValue("@Width", itemDTO.Width ?? 0);
+                cmd.Parameters.AddWithValue("@Height", itemDTO.Height ?? 0);
+                //========================================================================================================
+                cmd.Parameters.AddWithValue("@Weight", itemDTO.Weight ?? (object)DBNull.Value ?? 0);
+                cmd.Parameters.AddWithValue("@WeightWithoutGlass", itemDTO.WeightWithoutGlass ?? 0);
+                cmd.Parameters.AddWithValue("@WeightGlass", itemDTO.WeightGlass ?? 0);
+                //========================================================================================================
+                cmd.Parameters.AddWithValue("@TotalWeight", itemDTO.TotalWeight ?? 0);
+                cmd.Parameters.AddWithValue("@TotalWeightWithoutGlass", itemDTO.TotalWeightWithoutGlass ?? 0);
+                cmd.Parameters.AddWithValue("@TotalWeightGlass", itemDTO.TotalWeightGlass ?? 0);
+                //========================================================================================================
+                cmd.Parameters.AddWithValue("@Area", itemDTO.Area ?? 0);
+                cmd.Parameters.AddWithValue("@TotalArea", itemDTO.TotalArea ?? 0);
+                //========================================================================================================
+                cmd.Parameters.AddWithValue("@Hours", itemDTO.Hours ?? 0);
+                cmd.Parameters.AddWithValue("@TotalHours", itemDTO.Hours ?? 0);
+                //========================================================================================================
+                cmd.Parameters.AddWithValue("@MaterialCost", itemDTO.MaterialCost ?? 0);
+                cmd.Parameters.AddWithValue("@LaborCost", itemDTO.LaborCost ?? 0);
+                cmd.Parameters.AddWithValue("@Cost", itemDTO.Cost ?? 0);
+                //========================================================================================================
+                cmd.Parameters.AddWithValue("@TotalMaterialCost", itemDTO.MaterialCost ?? 0);
+                cmd.Parameters.AddWithValue("@TotalLaborCost", itemDTO.LaborCost ?? 0);
+                cmd.Parameters.AddWithValue("@TotalCost", itemDTO.Cost ?? 0);
+                //========================================================================================================
+                cmd.Parameters.AddWithValue("@Price", itemDTO.Price ?? 0);
+                cmd.Parameters.AddWithValue("@TotalPrice", itemDTO.TotalPrice ?? 0);
+                //========================================================================================================
+                cmd.Parameters.AddWithValue("@CurrencyCode", itemDTO.CurrencyCode);
+                cmd.Parameters.AddWithValue("@ExchangeRateEUR", itemDTO.ExchangeRateEUR);
+                //========================================================================================================
+                cmd.Parameters.AddWithValue("@MaterialCostEUR", itemDTO.MaterialCostEUR ?? 0);
+                cmd.Parameters.AddWithValue("@LaborCostEUR", itemDTO.LaborCostEUR ?? 0);
+                cmd.Parameters.AddWithValue("@CostEUR", itemDTO.TotalCostEUR ?? 0);
+                //========================================================================================================
+                cmd.Parameters.AddWithValue("@TotalMaterialCostEUR", itemDTO.MaterialCostEUR ?? 0);
+                cmd.Parameters.AddWithValue("@TotalLaborCostEUR", itemDTO.LaborCostEUR ?? 0);
+                cmd.Parameters.AddWithValue("@TotalCostEUR", itemDTO.TotalCostEUR ?? 0);
+                //========================================================================================================              
+                cmd.Parameters.AddWithValue("@PriceEUR", itemDTO.PriceEUR ?? 0);
+                cmd.Parameters.AddWithValue("@TotalPriceEUR", itemDTO.TotalPriceEUR ?? 0);
+                //========================================================================================================
+                cmd.Parameters.AddWithValue("@WorksheetType", itemDTO.WorksheetType);                              //Required
+                //========================================================================================================
+                cmd.Parameters.AddWithValue("@CreatedUTCDateTime", dateTime);                                   //Required
+                cmd.Parameters.AddWithValue("@ModifiedUTCDateTime", dateTime);                                  //Required
+
 
                 int result = await _sqlRepository.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
-
                 return result;
             }
             catch (Exception ex)
             {
-                _logService.Debug(ex.Message, "Unhandled error: inserting Sapa v2 item to DB");
+                _logService.Debug(ex.Message, "Unhandled error: inserting Sapa v2 itemDTO to DB");
                 return -1;
             }
         }
-
-        public async Task<int> InsertMaterialAsync(MaterialDTO materialDTO)
+        public async Task<int> InsertMaterialAsync(MaterialDTO materialDTO, int salesDocumentNumber, int salesDocumentVersion, DateTime dateTime)
         {
             try
             {
                 if (materialDTO == null)
                 {
+
                     _logService.Debug("Error Inserting Sapa v2 Material to DB, material is null");
-                    throw new ArgumentNullException(nameof(materialDTO));
+                    return -1;
+
                 }
 
                 SqlCommand cmd = new()
                 {
-                    CommandText = "Uniwave_a2pInsertMNRecord",
+                    CommandText = "[dbo].[Uniwave_a2p_InsertMaterial]",
                     CommandType = CommandType.StoredProcedure
                 };
-                _ = cmd.Parameters.AddWithValue("@SalesDocumentNumber", DateTime.UtcNow);
-                _ = cmd.Parameters.AddWithValue("@SalesDocumentVersion", DateTime.UtcNow);
-                _ = cmd.Parameters.AddWithValue("@Order", materialDTO.Order);
-
+                _ = cmd.Parameters.AddWithValue("@SalesDocumentNumber", salesDocumentNumber);               //required
+                _ = cmd.Parameters.AddWithValue("@SalesDocumentVersion", salesDocumentVersion);             //required
+                //========================================================================================================
+                _ = cmd.Parameters.AddWithValue("@Order", materialDTO.Order);                               //required
+                _ = cmd.Parameters.AddWithValue("@Worksheet", materialDTO.Worksheet);                       //required
+                _ = cmd.Parameters.AddWithValue("@Line", materialDTO.Line);                                 //required
+                _ = cmd.Parameters.AddWithValue("@Column", materialDTO.Column);                             //required 
+                //========================================================================================================
+                _ = cmd.Parameters.AddWithValue("@Item", materialDTO.Item ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@SortOrder", materialDTO.SortOrder ?? -1);
+                //========================================================================================================
                 _ = cmd.Parameters.AddWithValue("@Reference", materialDTO.Reference);
-                _ = cmd.Parameters.AddWithValue("@Description", materialDTO.Description);
+                _ = cmd.Parameters.AddWithValue("@Description", materialDTO.Description ?? (object)DBNull.Value);
                 _ = cmd.Parameters.AddWithValue("@Color", materialDTO.Color);
-                _ = cmd.Parameters.AddWithValue("@ColorDescription", materialDTO.ColorDescription);
+                _ = cmd.Parameters.AddWithValue("@ColorDescription", materialDTO.ColorDescription ?? (object)DBNull.Value);
+                //========================================================================================================
+                _ = cmd.Parameters.AddWithValue("@Width", materialDTO.Width);
+                _ = cmd.Parameters.AddWithValue("@Height", materialDTO.Height);
+                //========================================================================================================
                 _ = cmd.Parameters.AddWithValue("@Quantity", materialDTO.Quantity);
-                _ = cmd.Parameters.AddWithValue("@PackageUnit", materialDTO.PackageUnit);
-                _ = cmd.Parameters.AddWithValue("@Price", materialDTO.Price);
-                _ = cmd.Parameters.AddWithValue("@TotalPrice", materialDTO.TotalPrice);
-                _ = cmd.Parameters.AddWithValue("@QuantityOrdered", materialDTO.QuantityOrdered);
-                _ = cmd.Parameters.AddWithValue("@QuantityRequired", materialDTO.QuantityRequired);
-                _ = cmd.Parameters.AddWithValue("@Waste", materialDTO.Waste);
-                _ = cmd.Parameters.AddWithValue("@Area", materialDTO.Area);
-                _ = cmd.Parameters.AddWithValue("@Weight", materialDTO.Weight);
-                _ = cmd.Parameters.AddWithValue("@CustomField1", materialDTO.CustomField1);
-                _ = cmd.Parameters.AddWithValue("@CustomField2", materialDTO.CustomField2);
-                _ = cmd.Parameters.AddWithValue("@CustomField3", materialDTO.CustomField3);
-                _ = cmd.Parameters.AddWithValue("@SourceWorksheet", materialDTO.Worksheet);
-                _ = cmd.Parameters.AddWithValue("@SourceWorkSheetLine", materialDTO.Line);
-                _ = cmd.Parameters.AddWithValue("@SourceWorkSheetColumn", materialDTO.Column);
-                _ = cmd.Parameters.AddWithValue("@SourceReference", materialDTO.SourceReference);
-                _ = cmd.Parameters.AddWithValue("@SourceDescription", materialDTO.SourceDescription);
-                _ = cmd.Parameters.AddWithValue("@SourceColor", materialDTO.SourceColor);
-                _ = cmd.Parameters.AddWithValue("@SourceType", materialDTO.Type.ToString());
-                _ = cmd.Parameters.AddWithValue("@ModifiedUTCDateTime", DateTime.UtcNow);
-                int result = await _sqlRepository.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
-                return result;
-            }
-            catch (Exception ex)
-            {
-                _logService.Debug(ex.Message, "Unhandled error: inserting Sapa v2 item to DB");
-                return -1;
-            }
-        }
-        public async Task<int> InsertGlassAsync(GlassDTO glassDTO)
-        {
-            try
-            {
-                if (glassDTO == null)
-                {
-                    _logService.Debug("Error Inserting Sapa v2 Glass to DB, glass is null");
-                    throw new ArgumentNullException(nameof(glassDTO));
-                }
-
-                SqlCommand cmd = new()
-                {
-                    CommandText = "Uniwave_a2pInsertMNRecordGlass",
-                    CommandType = CommandType.StoredProcedure
-                };
-
-
-                _ = cmd.Parameters.AddWithValue("@Order", glassDTO.Order);
-                _ = cmd.Parameters.AddWithValue("@Item", glassDTO.Item);
-                _ = cmd.Parameters.AddWithValue("@SortOrder", glassDTO.SortOrder);
-                _ = cmd.Parameters.AddWithValue("@Reference", glassDTO.Reference);
-                _ = cmd.Parameters.AddWithValue("@Description", glassDTO.Description);
+                _ = cmd.Parameters.AddWithValue("@PackageQuantity", materialDTO.PackageQuantity ?? 1);
+                _ = cmd.Parameters.AddWithValue("@TotalQuantity", materialDTO.TotalQuantity ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@RequiredQuantity", materialDTO.RequiredQuantity);
+                _ = cmd.Parameters.AddWithValue("@LeftOverQuantity", materialDTO.LeftOverQuantity ?? (object)DBNull.Value);
+                //========================================================================================================
+                _ = cmd.Parameters.AddWithValue("@Weight", materialDTO.Weight ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@TotalWeight", materialDTO.TotalWeight ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@RequiredWeight", materialDTO.RequiredWeight ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@LeftOverWeight", materialDTO.LeftOverWeight ?? (object)DBNull.Value);
+                //========================================================================================================
+                _ = cmd.Parameters.AddWithValue("@Area", materialDTO.Area ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@TotalArea", materialDTO.TotalArea ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@RequiredArea", materialDTO.RequiredArea ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@LeftOverArea", materialDTO.LeftOverArea ?? (object)DBNull.Value);
+                //========================================================================================================
+                _ = cmd.Parameters.AddWithValue("@Waste", materialDTO.Waste ?? (object)DBNull.Value);
+                //========================================================================================================
+                _ = cmd.Parameters.AddWithValue("@Price", materialDTO.Price ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@TotalPrice", materialDTO.TotalPrice ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@RequiredPrice", materialDTO.RequiredPrice ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@LeftOverPrice", materialDTO.LeftOverPrice ?? (object)DBNull.Value);
+                //========================================================================================================
+                _ = cmd.Parameters.AddWithValue("@SquareMeterPrice", materialDTO.SquareMeterPrice ?? (object)DBNull.Value);
+                //========================================================================================================
+                _ = cmd.Parameters.AddWithValue("@Pallet", materialDTO.Pallet ?? (object)DBNull.Value);
+                //========================================================================================================
+                _ = cmd.Parameters.AddWithValue("@MaterialType", materialDTO.MaterialType);
+                //========================================================================================================
+                _ = cmd.Parameters.AddWithValue("@WorksheetType", materialDTO.WorksheetType);
+                //========================================================================================================
+                _ = cmd.Parameters.AddWithValue("@CustomField1", materialDTO.CustomField1 ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@CustomField2", materialDTO.CustomField2 ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@CustomField3", materialDTO.CustomField3 ?? (object)DBNull.Value);
+                //========================================================================================================;
+                _ = cmd.Parameters.AddWithValue("@CustomField4", materialDTO.CustomField4 ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@CustomField5", materialDTO.CustomField5 ?? (object)DBNull.Value);
+                //========================================================================================================              
+                _ = cmd.Parameters.AddWithValue("@SourceReference", materialDTO.SourceReference ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@SourceDescription", materialDTO.SourceDescription ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@SourceColor", materialDTO.SourceColor ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@SourceColorDescription", materialDTO.SourceColorDescription ?? (object)DBNull.Value);
+                //========================================================================================================              
+                _ = cmd.Parameters.AddWithValue("@CreatedUTCDateTime", dateTime);
+                _ = cmd.Parameters.AddWithValue("@ModifiedUTCDateTime", dateTime);
 
 
-
-
-
-                _ = cmd.Parameters.AddWithValue("@Quantity", glassDTO.Quantity);
-                _ = cmd.Parameters.AddWithValue("@Width", glassDTO.Width);
-                _ = cmd.Parameters.AddWithValue("@Height", glassDTO.Height);
-                _ = cmd.Parameters.AddWithValue("@Weight", glassDTO.Weight);
-                _ = cmd.Parameters.AddWithValue("@Area", glassDTO.Area);
-                _ = cmd.Parameters.AddWithValue("@Price", glassDTO.Price);
-                _ = cmd.Parameters.AddWithValue("@TotalPrice", glassDTO.TotalPrice);
-                _ = cmd.Parameters.AddWithValue("@SquareMeterPrice", glassDTO.SquareMeterPrice);
-                _ = cmd.Parameters.AddWithValue("@TotalWeight", glassDTO.TotalArea);
-                _ = cmd.Parameters.AddWithValue("@TotalArea", glassDTO.TotalArea);
-                _ = cmd.Parameters.AddWithValue("@AreaUsed", glassDTO.AreaUsed);
-                _ = cmd.Parameters.AddWithValue("@Ordered", glassDTO.Ordered);
-                _ = cmd.Parameters.AddWithValue("@Waste", glassDTO.Waste);
-                _ = cmd.Parameters.AddWithValue("@Pallet", glassDTO.Pallet);
-                _ = cmd.Parameters.AddWithValue("@SourceWorksheet", glassDTO.Worksheet);
-                _ = cmd.Parameters.AddWithValue("@SourceWorksheetLine", glassDTO.Line);
-                _ = cmd.Parameters.AddWithValue("@SourceWorksheetColumn", glassDTO.Column);
-                _ = cmd.Parameters.AddWithValue("@Modified", DateTime.UtcNow);
-                _ = cmd.Parameters.AddWithValue("@SourceReference", glassDTO.SourceReference);
-                _ = cmd.Parameters.AddWithValue("@SourceDescription", glassDTO.SourceDescription);
-                _ = cmd.Parameters.AddWithValue("@SourceColor", glassDTO.SourceColor);
-                _ = cmd.Parameters.AddWithValue("@SourceType", glassDTO.Type.ToString());
-                _ = cmd.Parameters.AddWithValue("@ModifiedUTCDateTime", DateTime.UtcNow);
-
-                /*
-                  order,
-                                                    worksheetName,
-                                                    lineNumber,
-                                                    glass.Item,
-                                                    glass.SortOrder,
-                                                    glass.Reference,
-                                                    glass.Description,
-                                                    glass.Quantity,
-                                                    glass.Width,
-                                                    glass.Height,
-                                                    glass.Weight,
-                                                    glass.Area,
-                                                    glass.Price,
-                                                    glass.TotalPrice,
-                                                    glass.SquareMeterPrice,
-                                                    glass.TotalWeight,
-                                                    glass.TotalArea,
-                                                    glass.AreaUsed,
-                                                    glass.Ordered,
-                                                    glass.Waste,
-                                                    glass.Pallet,
-                                                    glass.SourceReference,
-                                                    glass.SourceDescription,
-                                                    glass.Type.ToString());
-                                                    
-                 */
 
 
                 int result = await _sqlRepository.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
-
                 return result;
+
             }
             catch (Exception ex)
             {
@@ -224,59 +203,73 @@ namespace a2p.Shared.Infrastructure.Services
                 return -1;
             }
         }
-
-        public async Task<int> InsertPanelAsync(PanelDTO panelDTO)
+        public async Task<int> DeleteMaterialsAsync(string order)
         {
             try
             {
-                if (panelDTO == null)
+                if (order == null)
                 {
-                    _logService.Debug("Error Inserting Sapa v2 panelDTO to DB, panelDTO is null");
-                    throw new ArgumentNullException(nameof(panelDTO));
+
+                    _logService.Error("WS:Error deleting (Update DeletedUTCDateTime) materials from DB. Order is null");
+                    return -1;
+
                 }
 
+                DateTime dateTime = DateTime.UtcNow;
 
                 SqlCommand cmd = new()
                 {
-                    CommandText = "Uniwave_a2pInsertMNRecordPanels",
+                    CommandText = "[dbo].[Uniwave_a2p_DeleteMaterials]",
+                    CommandType = CommandType.StoredProcedure
+                };
+                _ = cmd.Parameters.AddWithValue("@Order", order);
+                _ = cmd.Parameters.AddWithValue("@DeletedUTCDateTime", dateTime);
+                int result = await _sqlRepository.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
+
+
+                _logService.Debug("WS: Delete Materials. {$result} material records of order: {$Order} deleted from db.", result, order);
+
+                return result;
+
+            }
+            catch (Exception ex)
+            {
+                _logService.Error(ex.Message, "WS: Unhandled error: deleting Sapa v2 order: {$Order} materials from DB", order);
+                return -1;
+            }
+        }
+        public async Task<int> DeleteItemsAsync(string order)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(order))
+                {
+                    _logService.Error("WS: Error deleting (updating DeletedUTCDateTime) items from DB. Order is null or empty.");
+                    return -1;
+                }
+
+                DateTime dateTime = DateTime.UtcNow;
+
+                SqlCommand cmd = new()
+                {
+                    CommandText = "[dbo].[Uniwave_a2p_DeleteItems]",
                     CommandType = CommandType.StoredProcedure
                 };
 
-
-                _ = cmd.Parameters.AddWithValue("@Order", panelDTO.Order);
-                _ = cmd.Parameters.AddWithValue("@Item", panelDTO.Item);
-                _ = cmd.Parameters.AddWithValue("@SortOrder", panelDTO.SortOrder);
-                _ = cmd.Parameters.AddWithValue("@Reference", panelDTO.Reference);
-                _ = cmd.Parameters.AddWithValue("@Color", panelDTO.Color);
-                _ = cmd.Parameters.AddWithValue("@CustomField1", panelDTO.CustomField1);
-                _ = cmd.Parameters.AddWithValue("@CustomField2", panelDTO.CustomField2);
-                _ = cmd.Parameters.AddWithValue("@CustomField3", panelDTO.CustomField3);
-                _ = cmd.Parameters.AddWithValue("@Width", panelDTO.Width);
-                _ = cmd.Parameters.AddWithValue("@Height", panelDTO.Height);
-                _ = cmd.Parameters.AddWithValue("@Quantity", panelDTO.Quantity);
-                _ = cmd.Parameters.AddWithValue("@Ordered", panelDTO.Ordered);
-                _ = cmd.Parameters.AddWithValue("@AreaUsed", panelDTO.AreaUsed);
-                _ = cmd.Parameters.AddWithValue("@Waste", panelDTO.Waste);
-                _ = cmd.Parameters.AddWithValue("@Price", panelDTO.Price);
-                _ = cmd.Parameters.AddWithValue("@CutSpecification", "Double Check");
-                _ = cmd.Parameters.AddWithValue("@Modified", DateTime.UtcNow);
-
-
+                cmd.Parameters.AddWithValue("@Order", order);
+                cmd.Parameters.AddWithValue("@DeletedUTCDateTime", dateTime);
 
                 int result = await _sqlRepository.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
+
+                _logService.Debug($"WS: Delete Items. {result} itemDTO records of order: {order} marked as deleted in the database.");
 
                 return result;
             }
             catch (Exception ex)
             {
-                _logService.Debug(ex.Message, "Unhandled error: inserting Sapa v2 Panel to DB");
+                _logService.Error(ex.Message, $"WS: Unhandled error: deleting items of order: {order} from DB.");
                 return -1;
             }
-        }
-
-        public Task<int> ReadMaterialAsync(MaterialDTO materialDTO)
-        {
-            throw new NotImplementedException();
         }
     }
 }

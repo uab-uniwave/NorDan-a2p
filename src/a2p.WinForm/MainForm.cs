@@ -23,7 +23,7 @@ namespace a2p.WinForm
 
         private readonly IFileService _fileService;
         private readonly IReadService _readService;
-        private readonly IMappingService _mappingService;
+        private readonly IMappingHandlerService _mappingHandlerService;
         private readonly IConfiguration _configuration;
         private readonly ILogService _logService;
         private readonly IA2POrderMapper _orderMapper;
@@ -55,12 +55,12 @@ namespace a2p.WinForm
 
         #endregion -== Custom Form Design Componenets ==-
 
-        public MainForm(IFileService fileService, IReadService excelService, IMappingService mappingService,
+        public MainForm(IFileService fileService, IReadService excelService, IMappingHandlerService mappingHandlerService,
             IConfiguration configuration, ILogService logService, IA2POrderMapper orderMapper)
         {
             _fileService = fileService;
             _readService = excelService;
-            _mappingService = mappingService;
+            _mappingHandlerService = mappingHandlerService;
             _configuration = configuration;
             _logService = logService;
             _orderMapper = orderMapper;
@@ -69,7 +69,7 @@ namespace a2p.WinForm
             _progress = new Progress<ProgressValue>();
 
             _toolTip = new ToolTip();
-            _fileForm = new OrdersForm(_fileService, _mappingService, _logService, _orderMapper);
+            _fileForm = new OrdersForm(_fileService, _mappingHandlerService, _logService, _orderMapper);
             _logForm = new LogForm(_configuration, _logService);
             _settingForm = new SettingForm(_configuration, _logService);
 
@@ -102,8 +102,8 @@ namespace a2p.WinForm
 
             // Set tooltips for buttons
 
-            _toolTip.SetToolTip(btnLoad, "Refresh OrderFiles");
-            _toolTip.SetToolTip(btnImport, "Import OrderFiles");
+            _toolTip.SetToolTip(btnLoad, "Refresh Files");
+            _toolTip.SetToolTip(btnImport, "Import Files");
             _toolTip.SetToolTip(btnLog, "Refresh Logs");
             _toolTip.SetToolTip(btnProperties, "Settings");
             _toolTip.SetToolTip(btnExit, "Exit");
@@ -181,7 +181,7 @@ namespace a2p.WinForm
             try
             {
                 await ShowFormAsync(_fileForm,
-                    () => new OrdersForm(_fileService, _mappingService, _logService, _orderMapper));
+                    () => new OrdersForm(_fileService, _mappingHandlerService, _logService, _orderMapper));
                 if (bool.Parse(_configuration["AppSettings:RefreshFilesOnStartup"] ?? "true"))
                 {
 
@@ -480,29 +480,30 @@ namespace a2p.WinForm
             }
 
 
-            using ProgressBarForm progressBarForm = new()
-            {
-                StartPosition = FormStartPosition.CenterParent // Set to center relative to parent
-            };
-            progressBarForm.Load += (sender, args) =>
-            {
-                progressBarForm.Location = new Point(
-                    this.Location.X + ((this.Width - progressBarForm.Width) / 2),
-                    this.Location.Y + ((this.Height - progressBarForm.Height) / 2)
-                );
-            };
-
-            progressBarForm.Show(this);
-
-            Progress<ProgressValue> progress = new(progressBarForm.UpdateProgress);
-            _progress = progress;
-            _progress?.Report(_progressValue);
-
             try
             {
                 await ShowFormAsync(_fileForm,
-                    () => new OrdersForm(_fileService, _mappingService, _logService, _orderMapper));
+                    () => new OrdersForm(_fileService, _mappingHandlerService, _logService, _orderMapper));
+
+                using ProgressBarForm progressBarForm = new()
+                {
+                    StartPosition = FormStartPosition.CenterParent // Set to center relative to parent
+                };
+                progressBarForm.Load += (sender, args) =>
+                {
+                    progressBarForm.Location = new Point(
+                        this.Location.X + ((this.Width - progressBarForm.Width) / 2),
+                        this.Location.Y + ((this.Height - progressBarForm.Height) / 2)
+                    );
+                };
+                progressBarForm.Show(this);
+
+                Progress<ProgressValue> progress = new(progressBarForm.UpdateProgress);
+                _progress = progress;
+                _progress?.Report(_progressValue);
+
                 await _fileForm.OrdersLoad(_progress);
+                progressBarForm.Close();
             }
             catch (Exception ex)
             {
@@ -511,9 +512,6 @@ namespace a2p.WinForm
             }
             finally
             {
-                _processType = ProcessType.None;
-
-                progressBarForm.Close();
                 await Task.Run(EnableButtons);  // Enable buttons at the end
                 plSideBarMain.PerformLayout(); // Resume layout after expanding
             }
@@ -522,13 +520,16 @@ namespace a2p.WinForm
 
         private async void BtnImport_Click(object sender, EventArgs e)
         {
+
+
+
             await Task.Run(DisableButtons); // Disable buttons at the beginning
             plSideBarMain.SuspendLayout(); // Suspend layout before expanding
 
             _processType = ProcessType.FileImport;
             if (_progressValue != null)
             {
-                _progressValue.ProgressTitle = "Importing OrderFiles ...";
+                _progressValue.ProgressTitle = "Importing Files ...";
                 _progressValue.MinValue = 0;
                 _progressValue.MaxValue = 100;
                 _progressValue.Value = 0;
@@ -536,7 +537,7 @@ namespace a2p.WinForm
             else
             {
                 _progressValue = new ProgressValue();
-                _progressValue.ProgressTitle = "Importing OrderFiles ...";
+                _progressValue.ProgressTitle = "Importing Files ...";
                 _progressValue.MinValue = 0;
                 _progressValue.MaxValue = 100;
                 _progressValue.Value = 0;

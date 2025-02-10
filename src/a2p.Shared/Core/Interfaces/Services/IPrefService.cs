@@ -6,6 +6,12 @@
 
         Task<(int, int)> GetSalesDocAsync(string order);
 
+        Task<DateTime?> MaterialsExistsAsync(string order);
+        Task<DateTime?> ItemsExistsAsync(string order);
 
+        Task<string?> GetColorAsync(string color);
     }
 }
+
+
+

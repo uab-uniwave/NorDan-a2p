@@ -6,7 +6,7 @@ using a2p.Shared.Infrastructure.Repositories;
 using a2p.Shared.Infrastructure.Services;
 using a2p.Shared.Infrastructure.Services.Other;
 using a2p.Shared.Infrastructure.Services.Other.Logger;
-using a2p.Shared.Infrastructure.Services.Other.Mappers;
+
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -77,13 +77,12 @@ namespace a2p.Shared
             _ = services.AddSingleton<IReadService, ReadService>();
             _ = services.AddSingleton<IPrefService, PrefService>();
             _ = services.AddSingleton<IFileService, FileService>();
-            _ = services.AddSingleton<IItemMapper, ItemMapper>();
-            _ = services.AddSingleton<IMaterialMapper, MaterialMapper>();
-            _ = services.AddSingleton<IA2POrderMapper, A2POrderMapper>();
-            _ = services.AddSingleton<IGlassMapper, GlassMapper>();
-            _ = services.AddSingleton<IPanelMapper, PanelMapper>();
+
+            _ = services.AddSingleton<IMapperServiceSapa_V2, MapperServiceSapa_V2>();
+            _ = services.AddSingleton<IA2POrderMapper, A2POrderRecordMapper>();
+
             _ = services.AddSingleton<IWriteService, WriteService>();
-            _ = services.AddSingleton<IMappingService, MappingService>();
+            _ = services.AddSingleton<IMappingHandlerService, MappingHandlerService>();
             _ = services.AddSingleton<ISqlRepoitory, SQLRepository>();
 
 

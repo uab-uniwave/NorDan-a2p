@@ -4,10 +4,13 @@ namespace a2p.Shared.Core.Interfaces.Services
 {
     public interface IWriteService
     {
-        Task<int> InsertItemAsync(ItemDTO itemsDTO);
-        Task<int> InsertMaterialAsync(MaterialDTO materialsDTO);
-        Task<int> InsertGlassAsync(GlassDTO glassesDTO);
-        Task<int> InsertPanelAsync(PanelDTO panelsDTO);
+        Task<int> InsertItemAsync(ItemDTO itemDTO, int salesDocumentNumber, int salesDocumentVersion, DateTime dateTime);
+        Task<int> InsertMaterialAsync(MaterialDTO materialsDTO, int salesDocumentNumber, int salesDocumentVersion, DateTime dateTime);
+
+        Task<int> DeleteMaterialsAsync(string order);
+
+        Task<int> DeleteItemsAsync(string order);
+
 
     }
 }

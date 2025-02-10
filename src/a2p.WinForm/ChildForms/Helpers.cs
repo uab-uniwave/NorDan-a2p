@@ -35,7 +35,7 @@ namespace a2p.WinForm.ChildForms
             {
                 return orders
                     .FirstOrDefault(o => o.Order == orderNumber)?
-                    .OrderFiles.FirstOrDefault(f => f.File == file);
+                    .Files.FirstOrDefault(f => f.File == file);
             }
             catch (Exception ex)
             {
@@ -50,8 +50,8 @@ namespace a2p.WinForm.ChildForms
             {
                 return orders
                     .FirstOrDefault(o => o.Order == orderNumber)?
-                    .OrderFiles.FirstOrDefault(f => f.File == file)?
-                    .OrderFileWorksheets.FirstOrDefault(w => w.Worksheet == worksheet);
+                    .Files.FirstOrDefault(f => f.File == file)?
+                    .Worksheets.FirstOrDefault(w => w.Worksheet == worksheet);
             }
             catch (Exception ex)
             {
@@ -66,12 +66,12 @@ namespace a2p.WinForm.ChildForms
             {
                 return orders
                     .FirstOrDefault(o => o.Order == orderNumber)?
-                    .OrderFiles.FirstOrDefault(f => f.File == file)?
-                    .OrderFileWorksheets.FirstOrDefault(w => w.Type == Type);
+                    .Files.FirstOrDefault(f => f.File == file)?
+                    .Worksheets.FirstOrDefault(w => w.Type == Type);
             }
             catch (Exception ex)
             {
-                _logService.Error(ex, "Unhandled error finding worksheets by Type");
+                _logService.Error(ex, "Unhandled error finding worksheets by WorksheetType");
                 return null;
             }
         }
@@ -84,7 +84,7 @@ namespace a2p.WinForm.ChildForms
                 A2POrder? orderToUpdate = FindOrder(orderList, orderNumber);
 
                 // Update the files list for the found order
-                orderToUpdate?.OrderFiles.AddRange(files); // AddRange is more concise for adding multiple items
+                orderToUpdate?.Files.AddRange(files); // AddRange is more concise for adding multiple items
 
                 // Return the updated list
                 return orderList;

@@ -2,7 +2,6 @@
 using a2p.Shared.Core.Enums;
 using a2p.Shared.Core.Interfaces.Services;
 using a2p.WinForm.ChildForms;
-using a2p.WinForm.CustomControls;
 
 using Microsoft.Extensions.Configuration;
 
@@ -32,7 +31,7 @@ namespace a2p.WinForm
         private IProgress<ProgressValue> _progress;
         private static ProcessType _processType = ProcessType.None;
         private ToolTip _toolTip;
-        private readonly OrdersForm _fileForm;
+        private readonly OrdersForm _orderForm;
         private readonly LogForm _logForm;
         private readonly SettingForm _settingForm;
 
@@ -69,7 +68,7 @@ namespace a2p.WinForm
             _progress = new Progress<ProgressValue>();
 
             _toolTip = new ToolTip();
-            _fileForm = new OrdersForm(_fileService, _mappingHandlerService, _logService, _orderMapper);
+            _orderForm = new OrdersForm(_configuration, _fileService, _mappingHandlerService, _logService, _orderMapper);
             _logForm = new LogForm(_configuration, _logService);
             _settingForm = new SettingForm(_configuration, _logService);
 
@@ -111,7 +110,57 @@ namespace a2p.WinForm
 
         #endregion -== Initialization ==-
 
-        #region --== Main Form Events ==-
+        #region --== Form Events ==-
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            SetRoundedCorners(20); // Set the radius for rounded corners
+            try
+            {
+
+
+                slbPath.Text = _configuration.GetValue<string>("AppSettings:RootFolder") ?? string.Empty;
+                statusStrip.SizingGrip = true;
+                this.PerformAutoScale(); // Ensure everything is scaled correctly (optional)
+            }
+
+
+            catch (Exception ex)
+            {
+                _logService.Error(ex, "MF: Unhanded Error while loading main form");
+
+            }
+        }
+
+        private async void MainForm_Shown(object? sender, EventArgs? e)
+        {
+            this.SuspendLayout(); // Suspend layout updates
+            try
+            {
+                await ShowFormAsync(_orderForm,
+                    () => new OrdersForm(_configuration, _fileService, _mappingHandlerService, _logService, _orderMapper));
+                if (bool.Parse(_configuration["AppSettings:RefreshFilesOnStartup"] ?? "true"))
+                {
+
+                    BtnLoad_Click(btnLoad, e);
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logService.Error(ex, "MF: Unhanded Error while showing main form");
+            }
+            finally
+            {
+
+                PerformLayout(); // Resume layout updates
+            }
+        }
+        private void MainForm_DpiChanged(object? sender, DpiChangedEventArgs e)
+        {
+            this.PerformAutoScale();
+            this.PerformLayout();
+        }
 
         private void MainForm_KeyDown(object? sender, KeyEventArgs e)
         {
@@ -149,63 +198,6 @@ namespace a2p.WinForm
             }
         }
 
-        private void MainForm_DpiChanged(object? sender, DpiChangedEventArgs e)
-        {
-            this.PerformAutoScale();
-        }
-
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-            SetRoundedCorners(20); // Set the radius for rounded corners
-            try
-            {
-
-
-                slbPath.Text = _configuration.GetValue<string>("AppSettings:RootFolder") ?? string.Empty;
-                statusStrip.SizingGrip = true;
-                this.PerformAutoScale(); // Ensure everything is scaled correctly (optional)
-                ResumeLayout(true); // Resume layout
-            }
-
-
-            catch (Exception ex)
-            {
-                _logService.Error(ex, "MF: Unhanded Error while loading main form");
-
-            }
-        }
-
-        private async void MainForm_Shown(object? sender, EventArgs? e)
-        {
-            this.SuspendLayout(); // Suspend layout updates
-            try
-            {
-                await ShowFormAsync(_fileForm,
-                    () => new OrdersForm(_fileService, _mappingHandlerService, _logService, _orderMapper));
-                if (bool.Parse(_configuration["AppSettings:RefreshFilesOnStartup"] ?? "true"))
-                {
-
-                    BtnLoad_Click(btnLoad, e);
-
-                }
-
-            }
-            catch (Exception ex)
-            {
-                _logService.Error(ex, "MF: Unhanded Error while showing main form");
-            }
-            finally
-            {
-                PerformLayout(); // Resume layout updates
-            }
-        }
-
-        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            _logService.DeleteLogFiles();
-        }
-
-
         private void SetRoundedCorners(int radius)
         {
             GraphicsPath path = new();
@@ -231,6 +223,21 @@ namespace a2p.WinForm
             }
         }
 
+
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            _logService.DeleteLogFiles();
+        }
+
+        private void MainForm_ResizeBegin(object sender, EventArgs e)
+        {
+            this.SuspendLayout();
+        }
+        private void MainForm_ResizeEnd(object sender, EventArgs e)
+        {
+
+            this.PerformLayout();
+        }
 
         #endregion -== Main Form Events ==-
 
@@ -388,15 +395,8 @@ namespace a2p.WinForm
             try
             {
 
-                var image = (Image?)Properties.Resources.ResourceManager.GetObject(imageName);
-                if (image == null)
-                {
-
-                    return null;
-                }
-
-                return image;
-
+                Image? image = (Image?)Properties.Resources.ResourceManager.GetObject(imageName);
+                return image ?? null;
             }
             catch
             {
@@ -462,48 +462,19 @@ namespace a2p.WinForm
             await Task.Run(DisableButtons); // Disable buttons at the beginning
             plSideBarMain.SuspendLayout(); // Suspend layout before expanding
             _processType = ProcessType.FileImport;
-            if (_progressValue != null)
-            {
-                _progressValue.ProgressTitle = "Loading Order Files ...";
-                _progressValue.MinValue = 0;
-                _progressValue.MaxValue = 100;
-                _progressValue.Value = 0;
-            }
-            else
-            {
-                _progressValue = new ProgressValue();
-                _progressValue.ProgressTitle = "Loading Order Files ...";
-                _progressValue.MinValue = 0;
-                _progressValue.MaxValue = 100;
-                _progressValue.Value = 0;
 
-            }
 
 
             try
             {
-                await ShowFormAsync(_fileForm,
-                    () => new OrdersForm(_fileService, _mappingHandlerService, _logService, _orderMapper));
+                await ShowFormAsync(_orderForm,
+                    () => new OrdersForm(_configuration, _fileService, _mappingHandlerService, _logService, _orderMapper));
 
-                using ProgressBarForm progressBarForm = new()
-                {
-                    StartPosition = FormStartPosition.CenterParent // Set to center relative to parent
-                };
-                progressBarForm.Load += (sender, args) =>
-                {
-                    progressBarForm.Location = new Point(
-                        this.Location.X + ((this.Width - progressBarForm.Width) / 2),
-                        this.Location.Y + ((this.Height - progressBarForm.Height) / 2)
-                    );
-                };
-                progressBarForm.Show(this);
 
-                Progress<ProgressValue> progress = new(progressBarForm.UpdateProgress);
-                _progress = progress;
-                _progress?.Report(_progressValue);
 
-                await _fileForm.OrdersLoad(_progress);
-                progressBarForm.Close();
+                await _orderForm.OrdersLoad();
+
+
             }
             catch (Exception ex)
             {
@@ -522,50 +493,14 @@ namespace a2p.WinForm
         {
 
 
-
-            await Task.Run(DisableButtons); // Disable buttons at the beginning
-            plSideBarMain.SuspendLayout(); // Suspend layout before expanding
-
-            _processType = ProcessType.FileImport;
-            if (_progressValue != null)
-            {
-                _progressValue.ProgressTitle = "Importing Files ...";
-                _progressValue.MinValue = 0;
-                _progressValue.MaxValue = 100;
-                _progressValue.Value = 0;
-            }
-            else
-            {
-                _progressValue = new ProgressValue();
-                _progressValue.ProgressTitle = "Importing Files ...";
-                _progressValue.MinValue = 0;
-                _progressValue.MaxValue = 100;
-                _progressValue.Value = 0;
-
-            }
-
-
-            using ProgressBarForm progressBarForm = new()
-            {
-                StartPosition = FormStartPosition.CenterParent // Set to center relative to parent
-            };
-            progressBarForm.Load += (sender, args) =>
-            {
-                progressBarForm.Location = new Point(
-                    this.Location.X + ((this.Width - progressBarForm.Width) / 2),
-                    this.Location.Y + ((this.Height - progressBarForm.Height) / 2)
-                );
-            };
-
-            progressBarForm.Show();
-
-            Progress<ProgressValue> progress = new(progressBarForm.UpdateProgress);
-            _progress = progress;
-            _progress?.Report(_progressValue);
-
             try
             {
-                await _fileForm.ImportFilesAsync(_progress);
+                await Task.Run(DisableButtons); // Disable buttons at the beginning
+                _processType = ProcessType.LogRefresh;
+
+                await ShowFormAsync(_orderForm,
+                     () => new OrdersForm(_configuration, _fileService, _mappingHandlerService, _logService, _orderMapper));
+                await _orderForm.ImportFilesAsync();
             }
             catch (Exception ex)
             {
@@ -575,61 +510,28 @@ namespace a2p.WinForm
             finally
             {
                 _processType = ProcessType.None;
+                await Task.Run(EnableButtons); // Enable buttons at the end 
 
-                progressBarForm.Close();
-                await Task.Run(EnableButtons);  // Enable buttons at the end
-                plSideBarMain.PerformLayout(); // Resume layout after expanding
+
             }
         }
 
         private async void BtnLog_Click(object sender, EventArgs e)
         {
-            await Task.Run(DisableButtons); // Disable buttons at the beginning
-
-
-            await ShowFormAsync(_logForm,
-              () => new LogForm(_configuration, _logService));
-
-
-            //_processType = ProcessType.LogRefresh;
-            //if (_progressValue != null)
-            //{
-            //    _progressValue.ProgressTitle = "Refreshing Log ...";
-            //    _progressValue.MinValue = 0;
-            //    _progressValue.MaxValue = 100;
-            //    _progressValue.Value = 0;
-            //}
-            //else
-            //{
-            //    _progressValue = new ProgressValue();
-            //    _progressValue.ProgressTitle = "Refreshing Log ...";
-            //    _progressValue.MinValue = 0;
-            //    _progressValue.MaxValue = 100;
-            //    _progressValue.Value = 0;
-
-            //}
-
-
-            //using ProgressBarForm progressBarForm = new();
-
-            //progressBarForm.Load += (sender, args) =>
-            //{
-            //    progressBarForm.Location = new Point(
-            //        this.Location.X + ((this.Width - progressBarForm.Width) / 2),
-            //        this.Location.Y + ((this.Height - progressBarForm.Height) / 2)
-            //    );
-            //};
-
-            //await Task.Run(progressBarForm.Show);
-
-            //Progress<ProgressValue> progress = new(progressBarForm.UpdateProgress);
-            //_progress = progress;
-            //await Task.Run(() => _progress?.Report(_progressValue));
 
             try
             {
-                await _logForm.LogClearAsync();
+
+                await Task.Run(DisableButtons); // Disable buttons at the beginning
+
+
+                await ShowFormAsync(_logForm,
+                  () => new LogForm(_configuration, _logService));
+                _processType = ProcessType.LogRefresh;
+
+
                 await _logForm.LogRefreshAsync();
+
             }
             catch (Exception ex)
             {
@@ -641,21 +543,7 @@ namespace a2p.WinForm
                 _processType = ProcessType.None;
 
                 await Task.Run(EnableButtons);
-                //if (InvokeRequired)
-                //{
-                //    Invoke(new Action(() =>
-                //    {
 
-                //        progressBarForm.Close();
-                //        plSideBarMain.PerformLayout();
-                //    }));
-                //}
-                //else
-                //{
-                //    progressBarForm.Close();
-                //    plSideBarMain.PerformLayout();
-
-                //}
 
             }
 
@@ -719,26 +607,28 @@ namespace a2p.WinForm
 
             if (InvokeRequired)
             {
-                Invoke(new Action(() =>
-                {
-                    foreach (Control control in plSideBarMain.Controls)
-                    {
-                        if (control is Button button)
-                        {
-                            button.Enabled = true;
-                        }
-                    }
-                }));
+                Invoke(new Action(() => EnableButtons()));
+
+
             }
             else
             {
-                foreach (Control control in plSideBarMain.Controls)
+
+                btnLoad.Enabled = true;
+                if (_orderForm.dataGridViewFiles.Rows.Count > 0)
                 {
-                    if (control is Button button)
-                    {
-                        button.Enabled = true;
-                    }
+                    btnImport.Enabled = true;
                 }
+                else
+                {
+                    btnImport.Enabled = false;
+                    _ = btnLoad.Focus();
+                    SelectButton(btnLoad);
+                }
+                btnLog.Enabled = true;
+                btnProperties.Enabled = true;
+                btnExit.Enabled = true;
+
             }
         }
 
@@ -818,8 +708,6 @@ namespace a2p.WinForm
             statusStrip.PerformLayout();
             plSideBarMain.ResumeLayout(false);
             plSideBarMain.PerformLayout();
-            plTbSBInfo.ResumeLayout(false);
-            plTbSBInfo.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }

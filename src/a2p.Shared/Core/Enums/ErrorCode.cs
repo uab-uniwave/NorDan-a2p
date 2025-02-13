@@ -22,8 +22,8 @@
         MappingService_MapMaterial = 5101,
         MappingService_MapItem = 5102,
         //======================================
-        SQLRepository_ItemWrite = 6101,
-        SQLRepository_MaterialWrite = 6201,
-
+        SQLRepository_ItemWrite = 8101,
+        SQLRepository_MaterialWrite = 8201,
+        SQLRepository_OrderAlreadyExistsInDB = 8301
     }
 }

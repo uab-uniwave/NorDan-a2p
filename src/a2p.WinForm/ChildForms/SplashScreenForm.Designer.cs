@@ -251,6 +251,9 @@ namespace a2p.WinForm
             Margin = new Padding(6);
             Name = "SplashScreenForm";
             StartPosition = FormStartPosition.CenterScreen;
+            Load += SplashScreenForm_Load;
+            Shown += SplashScreenForm_Shown;
+            DpiChanged += SplashScreenForm_DpiChanged;
             panel1.ResumeLayout(false);
             tplHeader.ResumeLayout(false);
             tplHeader.PerformLayout();

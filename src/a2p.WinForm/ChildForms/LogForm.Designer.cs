@@ -55,8 +55,6 @@ namespace a2p.WinForm.ChildForms
             // 
             chxVerbose.AutoSize = true;
             chxVerbose.BackColor = Color.FromArgb(56, 57, 60);
-            chxVerbose.Checked = true;
-            chxVerbose.CheckState = CheckState.Checked;
             chxVerbose.FlatAppearance.BorderColor = Color.FromArgb(239, 112, 32);
             chxVerbose.FlatAppearance.CheckedBackColor = Color.FromArgb(239, 112, 32);
             chxVerbose.FlatAppearance.MouseDownBackColor = Color.FromArgb(248, 248, 249);
@@ -76,8 +74,6 @@ namespace a2p.WinForm.ChildForms
             // 
             chxDebug.AutoSize = true;
             chxDebug.BackColor = Color.FromArgb(56, 57, 60);
-            chxDebug.Checked = true;
-            chxDebug.CheckState = CheckState.Checked;
             chxDebug.FlatAppearance.BorderColor = Color.FromArgb(239, 112, 32);
             chxDebug.FlatAppearance.CheckedBackColor = Color.FromArgb(239, 112, 32);
             chxDebug.FlatAppearance.MouseDownBackColor = Color.FromArgb(248, 248, 249);
@@ -183,10 +179,11 @@ namespace a2p.WinForm.ChildForms
             // 
             plGridPropertiesPanel.Controls.Add(dataGridViewProperties);
             plGridPropertiesPanel.Dock = DockStyle.Right;
-            plGridPropertiesPanel.Location = new Point(1506, 78);
+            plGridPropertiesPanel.Location = new Point(1606, 78);
             plGridPropertiesPanel.Margin = new Padding(6);
+            plGridPropertiesPanel.MinimumSize = new Size(600, 1175);
             plGridPropertiesPanel.Name = "plGridPropertiesPanel";
-            plGridPropertiesPanel.Size = new Size(700, 1175);
+            plGridPropertiesPanel.Size = new Size(600, 1175);
             plGridPropertiesPanel.TabIndex = 8;
             // 
             // dataGridViewProperties
@@ -209,7 +206,7 @@ namespace a2p.WinForm.ChildForms
             dataGridViewProperties.RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
             dataGridViewProperties.RowHeadersVisible = false;
             dataGridViewProperties.RowHeadersWidth = 82;
-            dataGridViewProperties.Size = new Size(700, 1175);
+            dataGridViewProperties.Size = new Size(600, 1175);
             dataGridViewProperties.TabIndex = 1;
             dataGridViewProperties.VirtualMode = true;
             dataGridViewProperties.DataError += dataGridViewProperties_DataError;
@@ -217,6 +214,7 @@ namespace a2p.WinForm.ChildForms
             // dataGridViewLog
             // 
             dataGridViewLog.AllowUserToAddRows = false;
+            dataGridViewLog.AllowUserToDeleteRows = false;
             dataGridViewLog.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridViewLog.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dataGridViewLog.BackgroundColor = Color.DimGray;
@@ -234,10 +232,12 @@ namespace a2p.WinForm.ChildForms
             dataGridViewLog.RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
             dataGridViewLog.RowHeadersVisible = false;
             dataGridViewLog.RowHeadersWidth = 82;
-            dataGridViewLog.Size = new Size(1506, 1175);
+            dataGridViewLog.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridViewLog.Size = new Size(1606, 1175);
             dataGridViewLog.TabIndex = 9;
             dataGridViewLog.VirtualMode = true;
             dataGridViewLog.DataError += dataGridViewLog_DataError;
+            dataGridViewLog.SelectionChanged += dataGridViewLog_SelectionChanged;
             // 
             // LogForm
             // 
@@ -252,7 +252,7 @@ namespace a2p.WinForm.ChildForms
             Name = "LogForm";
             Text = "LogForm";
             WindowState = FormWindowState.Maximized;
-       
+            Load += LogForm_Load;
             Shown += LogForm_Shown;
             DpiChanged += LogForm_DpiChanged;
             ResizeBegin += LogForm_ResizeBegin;

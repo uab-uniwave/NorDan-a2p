@@ -28,7 +28,7 @@
             cbxLoadOnStart = new CheckBox();
             btnSave = new Button();
             btnFailed = new Button();
-            btnSucess = new Button();
+            btnSuccess = new Button();
             btnWorkingFolder = new Button();
             tbxSuccess = new TextBox();
             tbxWorkingFolder = new TextBox();
@@ -39,8 +39,8 @@
             lbWorkingFolder = new Label();
             lblStaging = new Label();
             lbLoadOnStart = new Label();
-            tbplSettings = new TableLayoutPanel();
-            tbplSettings.SuspendLayout();
+            tlpSettings = new TableLayoutPanel();
+            tlpSettings.SuspendLayout();
             SuspendLayout();
             // 
             // cbxLoadOnStart
@@ -66,7 +66,7 @@
             btnSave.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             btnSave.BackColor = Color.FromArgb(224, 224, 224);
             btnSave.BackgroundImageLayout = ImageLayout.Center;
-            tbplSettings.SetColumnSpan(btnSave, 2);
+            tlpSettings.SetColumnSpan(btnSave, 2);
             btnSave.FlatAppearance.BorderColor = Color.FromArgb(239, 112, 32);
             btnSave.FlatAppearance.CheckedBackColor = Color.FromArgb(239, 112, 32);
             btnSave.FlatAppearance.MouseDownBackColor = Color.FromArgb(248, 248, 249);
@@ -106,27 +106,27 @@
             btnFailed.UseVisualStyleBackColor = false;
             btnFailed.Click += btnFailed_Click;
             // 
-            // btnSucess
+            // btnSuccess
             // 
-            btnSucess.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            btnSucess.BackColor = Color.FromArgb(224, 224, 224);
-            btnSucess.BackgroundImageLayout = ImageLayout.Center;
-            btnSucess.FlatAppearance.BorderColor = Color.FromArgb(239, 112, 32);
-            btnSucess.FlatAppearance.CheckedBackColor = Color.FromArgb(239, 112, 32);
-            btnSucess.FlatAppearance.MouseDownBackColor = Color.FromArgb(248, 248, 249);
-            btnSucess.FlatAppearance.MouseOverBackColor = Color.FromArgb(239, 112, 32);
-            btnSucess.FlatStyle = FlatStyle.Flat;
-            btnSucess.ForeColor = Color.Black;
-            btnSucess.Location = new Point(873, 118);
-            btnSucess.Margin = new Padding(6);
-            btnSucess.MaximumSize = new Size(48, 48);
-            btnSucess.MinimumSize = new Size(48, 48);
-            btnSucess.Name = "btnSucess";
-            btnSucess.Size = new Size(48, 48);
-            btnSucess.TabIndex = 35;
-            btnSucess.Text = "...";
-            btnSucess.UseVisualStyleBackColor = false;
-            btnSucess.Click += btnSucess_Click;
+            btnSuccess.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            btnSuccess.BackColor = Color.FromArgb(224, 224, 224);
+            btnSuccess.BackgroundImageLayout = ImageLayout.Center;
+            btnSuccess.FlatAppearance.BorderColor = Color.FromArgb(239, 112, 32);
+            btnSuccess.FlatAppearance.CheckedBackColor = Color.FromArgb(239, 112, 32);
+            btnSuccess.FlatAppearance.MouseDownBackColor = Color.FromArgb(248, 248, 249);
+            btnSuccess.FlatAppearance.MouseOverBackColor = Color.FromArgb(239, 112, 32);
+            btnSuccess.FlatStyle = FlatStyle.Flat;
+            btnSuccess.ForeColor = Color.Black;
+            btnSuccess.Location = new Point(873, 118);
+            btnSuccess.Margin = new Padding(6);
+            btnSuccess.MaximumSize = new Size(48, 48);
+            btnSuccess.MinimumSize = new Size(48, 48);
+            btnSuccess.Name = "btnSuccess";
+            btnSuccess.Size = new Size(48, 48);
+            btnSuccess.TabIndex = 35;
+            btnSuccess.Text = "...";
+            btnSuccess.UseVisualStyleBackColor = false;
+            btnSuccess.Click += btnSuccess_Click;
             // 
             // btnWorkingFolder
             // 
@@ -307,47 +307,47 @@
             lbLoadOnStart.Text = "Load Files on Start:";
             lbLoadOnStart.TextAlign = ContentAlignment.MiddleRight;
             // 
-            // tbplSettings
+            // tlpSettings
             // 
-            tbplSettings.AutoSize = true;
-            tbplSettings.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            tbplSettings.BackColor = Color.DimGray;
-            tbplSettings.ColumnCount = 5;
-            tbplSettings.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 56F));
-            tbplSettings.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
-            tbplSettings.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
-            tbplSettings.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 56F));
-            tbplSettings.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 56F));
-            tbplSettings.Controls.Add(lbLoadOnStart, 1, 5);
-            tbplSettings.Controls.Add(lblStaging, 1, 4);
-            tbplSettings.Controls.Add(lbWorkingFolder, 1, 1);
-            tbplSettings.Controls.Add(tbxFailed, 2, 3);
-            tbplSettings.Controls.Add(lbSuccessFolder, 1, 3);
-            tbplSettings.Controls.Add(lbFailFolder, 1, 2);
-            tbplSettings.Controls.Add(cbxStaging, 2, 4);
-            tbplSettings.Controls.Add(tbxSuccess, 2, 2);
-            tbplSettings.Controls.Add(btnWorkingFolder, 3, 1);
-            tbplSettings.Controls.Add(btnSucess, 3, 2);
-            tbplSettings.Controls.Add(btnFailed, 3, 3);
-            tbplSettings.Controls.Add(cbxLoadOnStart, 2, 5);
-            tbplSettings.Controls.Add(btnSave, 2, 6);
-            tbplSettings.Controls.Add(tbxWorkingFolder, 2, 1);
-            tbplSettings.Dock = DockStyle.Fill;
-            tbplSettings.Location = new Point(0, 0);
-            tbplSettings.Margin = new Padding(6);
-            tbplSettings.MinimumSize = new Size(640, 640);
-            tbplSettings.Name = "tbplSettings";
-            tbplSettings.RowCount = 8;
-            tbplSettings.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            tbplSettings.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            tbplSettings.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            tbplSettings.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            tbplSettings.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            tbplSettings.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            tbplSettings.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            tbplSettings.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tbplSettings.Size = new Size(980, 640);
-            tbplSettings.TabIndex = 29;
+            tlpSettings.AutoSize = true;
+            tlpSettings.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            tlpSettings.BackColor = Color.DimGray;
+            tlpSettings.ColumnCount = 5;
+            tlpSettings.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 56F));
+            tlpSettings.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
+            tlpSettings.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
+            tlpSettings.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 56F));
+            tlpSettings.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 56F));
+            tlpSettings.Controls.Add(lbLoadOnStart, 1, 5);
+            tlpSettings.Controls.Add(lblStaging, 1, 4);
+            tlpSettings.Controls.Add(lbWorkingFolder, 1, 1);
+            tlpSettings.Controls.Add(tbxFailed, 2, 3);
+            tlpSettings.Controls.Add(lbSuccessFolder, 1, 3);
+            tlpSettings.Controls.Add(lbFailFolder, 1, 2);
+            tlpSettings.Controls.Add(cbxStaging, 2, 4);
+            tlpSettings.Controls.Add(tbxSuccess, 2, 2);
+            tlpSettings.Controls.Add(btnWorkingFolder, 3, 1);
+            tlpSettings.Controls.Add(btnSuccess, 3, 2);
+            tlpSettings.Controls.Add(btnFailed, 3, 3);
+            tlpSettings.Controls.Add(cbxLoadOnStart, 2, 5);
+            tlpSettings.Controls.Add(btnSave, 2, 6);
+            tlpSettings.Controls.Add(tbxWorkingFolder, 2, 1);
+            tlpSettings.Dock = DockStyle.Fill;
+            tlpSettings.Location = new Point(0, 0);
+            tlpSettings.Margin = new Padding(6);
+            tlpSettings.MinimumSize = new Size(640, 640);
+            tlpSettings.Name = "tlpSettings";
+            tlpSettings.RowCount = 8;
+            tlpSettings.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
+            tlpSettings.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
+            tlpSettings.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
+            tlpSettings.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
+            tlpSettings.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
+            tlpSettings.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
+            tlpSettings.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
+            tlpSettings.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tlpSettings.Size = new Size(980, 640);
+            tlpSettings.TabIndex = 29;
             // 
             // SettingForm
             // 
@@ -355,7 +355,7 @@
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
             BackColor = Color.DimGray;
             ClientSize = new Size(980, 640);
-            Controls.Add(tbplSettings);
+            Controls.Add(tlpSettings);
             ForeColor = Color.FromArgb(248, 248, 249);
             FormBorderStyle = FormBorderStyle.None;
             Margin = new Padding(20, 108, 20, 20);
@@ -363,8 +363,8 @@
             Name = "SettingForm";
             Load += SettingForm_Load;
             Shown += SettingForm_Shown;
-            tbplSettings.ResumeLayout(false);
-            tbplSettings.PerformLayout();
+            tlpSettings.ResumeLayout(false);
+            tlpSettings.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -372,7 +372,7 @@
         #endregion
 
         private CheckBox cbxLoadOnStart;
-		private TableLayoutPanel tbplSettings;
+		private TableLayoutPanel tlpSettings;
 		private Label lbLoadOnStart;
 		private Label lblStaging;
 		private Label lbWorkingFolder;
@@ -383,7 +383,7 @@
 		private TextBox tbxWorkingFolder;
 		private TextBox tbxSuccess;
 		private Button btnWorkingFolder;
-		private Button btnSucess;
+		private Button btnSuccess;
 		private Button btnFailed;
 		private Button btnSave;
 	}

@@ -32,30 +32,27 @@ namespace a2p.WinForm
 
             ILogService logService = _services.GetRequiredService<ILogService>();
             Console.SetOut(new DebugTextWriter());
-
-
-            IWriteService writeService = _services.GetRequiredService<IWriteService>();
-            IPrefService prefService = _services.GetRequiredService<IPrefService>();
+            _ = _services.GetRequiredService<IWriteService>();
+            _ = _services.GetRequiredService<IPrefService>();
             IFileService fileService = _services.GetRequiredService<IFileService>();
             IReadService readService = _services.GetRequiredService<IReadService>();
 
             IMappingHandlerService mappingHandlerService = _services.GetRequiredService<IMappingHandlerService>();
-            IMapperServiceSapa_V2 materialMapper = _services.GetRequiredService<IMapperServiceSapa_V2>();
+            _ = _services.GetRequiredService<IMapperServiceSapa_V2>();
 
             IA2POrderMapper orderMapper = _services.GetRequiredService<IA2POrderMapper>();
 
             logService.Information("Application started.");
 
-            using SplashScreenForm splashScreen = new();
-            splashScreen.Show();
-            splashScreen.FadeIn();
-
-            Task.Delay(2000).Wait(); // Ensure splash screen is shown for at least 4 seconds
+            //using SplashScreenForm splashScreen = new();
+            //splashScreen.Show();
+            //splashScreen.FadeIn();
+            //Task.Delay(2000).Wait(); // Ensure splash screen is shown for at least 4 seconds
 
             MainForm mainWindow = new(fileService, readService, mappingHandlerService, configuration, logService, orderMapper);
 
-            splashScreen.FadeOut();
-            splashScreen.Close();
+            //splashScreen.FadeOut();
+            //splashScreen.Close();
 
 
 

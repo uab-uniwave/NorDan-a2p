@@ -39,7 +39,16 @@ namespace a2p.Shared.Infrastructure.Repositories
 
                 if (parameters != null)
                 {
-                    command.Parameters.AddRange(parameters);
+
+                    foreach (SqlParameter param in parameters)
+                    {
+                        _ = command.Parameters.Add(new SqlParameter(param.ParameterName, param.Value)
+                        {
+                            SqlDbType = param.SqlDbType,
+                            Direction = param.Direction,
+                            Size = param.Size
+                        });
+                    }
                 }
 
                 await connection.OpenAsync();
@@ -148,7 +157,16 @@ namespace a2p.Shared.Infrastructure.Repositories
 
                 if (parameters != null)
                 {
-                    command.Parameters.AddRange(parameters);
+
+                    foreach (SqlParameter param in parameters)
+                    {
+                        _ = command.Parameters.Add(new SqlParameter(param.ParameterName, param.Value)
+                        {
+                            SqlDbType = param.SqlDbType,
+                            Direction = param.Direction,
+                            Size = param.Size
+                        });
+                    }
                 }
 
                 await connection.OpenAsync();
@@ -176,7 +194,16 @@ namespace a2p.Shared.Infrastructure.Repositories
 
                 if (parameters != null)
                 {
-                    command.Parameters.AddRange(parameters);
+
+                    foreach (SqlParameter param in parameters)
+                    {
+                        _ = command.Parameters.Add(new SqlParameter(param.ParameterName, param.Value)
+                        {
+                            SqlDbType = param.SqlDbType,
+                            Direction = param.Direction,
+                            Size = param.Size
+                        });
+                    }
                 }
 
                 await connection.OpenAsync();

@@ -27,8 +27,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{DE026394-5BA8-42AB-B7EF-A3E0779D8D40}"
 	ProjectSection(SolutionItems) = preProject
-		Procedures.sql = Procedures.sql
-		Tables.sql = Tables.sql
+		Items\SQLScripts\a2p\Procedures.sql = Items\SQLScripts\a2p\Procedures.sql
+		Items\SQLScripts\a2p\Tables.sql = Items\SQLScripts\a2p\Tables.sql
+		Items\SQLScripts\a2p\Test.sql = Items\SQLScripts\a2p\Test.sql
 	EndProjectSection
 EndProject
 Global
@@ -58,7 +59,7 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {02931AC6-E3AF-4E96-A144-EE9EE4BE10E7}
-		BuildVersion_StartDate = 2000/1/1
 		BuildVersion_BuildVersioningStyle = None.None.None.Increment
+		BuildVersion_StartDate = 2000/1/1
 	EndGlobalSection
 EndGlobal

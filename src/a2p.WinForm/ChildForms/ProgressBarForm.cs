@@ -1,5 +1,7 @@
 ﻿using a2p.Shared.Core.Entities.Models;
 
+using System.Drawing.Drawing2D;
+
 namespace a2p.WinForm.CustomControls
 {
     public partial class ProgressBarForm : Form
@@ -7,24 +9,36 @@ namespace a2p.WinForm.CustomControls
         public ProgressBarForm()
         {
 
-
-
-
             this.SuspendLayout();
             this.AutoScaleMode = AutoScaleMode.Dpi;
-            //    this.AutoScaleDimensions = new SizeF(96F, 96F);
+            this.AutoScaleDimensions = new SizeF(96F, 96F);
+            this.PerformAutoScale();
             InitializeComponent();
-            this.PerformAutoScale(); // Ensure everything is scaled correctly (optional)
-            this.ResumeLayout(true); // this.DpiChanged+=SplashScreenForm_DpiChanged;
-                                     // Attach events before setting DPI to catch any initial changes
-
-
-
-            // Set DPI mode and dimensions after attaching events
-
-
-            this.ResumeLayout(true);
         }
+
+        private void ProgressBarForm_Load(object? sender, EventArgs e)
+        {
+
+            UpdateProgressBar();
+            SetRoundedCorners(20);
+            this.PerformAutoScale();
+
+        }
+
+
+        private void ProgressBarForm_Shown(object? sender, EventArgs e)
+        {
+            this.ResumeLayout(false);
+            this.PerformLayout();
+        }
+        private void ProgressBarForm_DpiChanged(object sender, DpiChangedEventArgs e)
+        {
+            this.PerformAutoScale();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+        #region -== Form Evenets ==-
 
         public void UpdateProgress(ProgressValue progressValue)
         {
@@ -54,54 +68,65 @@ namespace a2p.WinForm.CustomControls
         }
 
 
-        private void ProgressBarForm_Load(object? sender, EventArgs e)
+
+        private void Timer1_Tick(object sender, EventArgs e)
         {
+            ResumeLayout(false);
+            PerformLayout();
+        }
 
-            UpdateProgressBar();
-            SuspendLayout();
 
+
+
+        public void Timer1Tick_timer1_Tick(object sender, EventArgs e)
+        {
+            //progressBar.Value = (progressBar.Value + 1) % (progressBar.Maximum + 1);
+
+        }
+
+
+        #endregion -== Form Evenets ==-
+
+
+
+        private void SetRoundedCorners(int radius)
+        {
+            GraphicsPath path = new();
+            path.StartFigure();
+            path.AddArc(new Rectangle(0, 0, radius, radius), 180, 90);
+            path.AddArc(new Rectangle(this.Width - radius, 0, radius, radius), 270, 90);
+            path.AddArc(new Rectangle(this.Width - radius, this.Height - radius, radius, radius), 0, 90);
+            path.AddArc(new Rectangle(0, this.Height - radius, radius, radius), 90, 90);
+            path.CloseFigure();
+            this.Region = new Region(path);
+        }
+
+        public Task FormReadyAsync()
+        {
+            TaskCompletionSource tcs = new();
+            this.Shown += (s, e) => tcs.SetResult();
+            return tcs.Task;
         }
 
 
         private void UpdateProgressBar()
         {
             // Example update logic
-            lbProgressBarTitle.Text = "Loading Files ...";
+            lbProgressBarTitle.Text = "Initializing ...";
             lbProgressBarTask1.Text = "";
             lbProgressBarTask2.Text = "";
             lbProgressBarTask3.Text = "";
-            progressBar.Value = 50; // Example progress value
-        }
-
-        private void ProgressBarForm_Shown(object? sender, EventArgs e)
-        {
-            ResumeLayout(false);
-
-        }
-        protected override void WndProc(ref Message m)
-        {
-
-            const int WM_DPICHANGED = 0x02E0;
-
-            if (m.Msg == WM_DPICHANGED)
-            {
-                int newDpi = m.WParam.ToInt32() & 0xFFFF; // Extract DPI value
-                float scaleFactor = newDpi / 96f;
-
-                // Resize form properly based on new DPI
-                this.Scale(new SizeF(scaleFactor, scaleFactor));
-            }
-            base.WndProc(ref m);
+            progressBar.Value = 0; // Example progress value
+            progressBar.Maximum = 100; // Example max value
+            progressBar.Minimum = 0;
 
         }
 
 
 
 
-        private void ProgressBarForm_DpiChanged(object sender, DpiChangedEventArgs e)
-        {
-            this.PerformAutoScale();
 
-        }
+
+
     }
 }

@@ -1,12 +1,11 @@
 ﻿using a2p.Shared.Core.Interfaces.Repository;
 using a2p.Shared.Core.Interfaces.Services;
 using a2p.Shared.Core.Interfaces.Services.Other.Mappers;
-using a2p.Shared.Infrastructure.Mappers;
 using a2p.Shared.Infrastructure.Repositories;
 using a2p.Shared.Infrastructure.Services;
 using a2p.Shared.Infrastructure.Services.Other;
 using a2p.Shared.Infrastructure.Services.Other.Logger;
-
+using a2p.Shared.Infrastructure.Services.Other.Mappers;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

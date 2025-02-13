@@ -230,7 +230,7 @@ CREATE PROCEDURE [dbo].[Uniwave_a2p_DeleteMaterials]
 
 AS
 BEGIN
-    UPDATE [dbo].[Uniwave_a2p_Materials] SET @DeletedUTCDateTime = GETDATE() WHERE [Order] = @Order and [DeletedUTCDateTime] is null;
+    UPDATE [dbo].[Uniwave_a2p_Materials] SET DeletedUTCDateTime = GETDATE() WHERE [Order] = @Order and [DeletedUTCDateTime] is null;
 END;
 GO
 
@@ -478,7 +478,7 @@ CREATE PROCEDURE [dbo].[Uniwave_a2p_DeleteItems]
 
 AS
 BEGIN
-    UPDATE [dbo].[Uniwave_a2p_Items] SET @DeletedUTCDateTime = GETDATE() WHERE [Order] = @Order and [DeletedUTCDateTime] is null;
+    UPDATE [dbo].[Uniwave_a2p_Items] SET DeletedUTCDateTime = GETDATE() WHERE [Order] = @Order and [DeletedUTCDateTime] is null;
 END;
 GO
 

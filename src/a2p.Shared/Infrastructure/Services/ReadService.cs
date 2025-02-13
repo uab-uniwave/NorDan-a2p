@@ -57,7 +57,7 @@ namespace a2p.Shared.Infrastructure.Services
                         {
                             _progressValue.ProgressTask2 = $"Found {workbook.Worksheets.Count + 1} worksheets.";
                             progress?.Report(_progressValue);
-                            //Task.Delay(1000).Wait();
+
                         }
 
 
@@ -72,7 +72,7 @@ namespace a2p.Shared.Infrastructure.Services
                                 _progressValue.ProgressTask3 = $"Searching rows...";
                                 progress?.Report(_progressValue);
                             }
-                            //Task.Delay(1000).Wait();
+
 
                             if (worksheet == null)
                             {
@@ -118,9 +118,9 @@ namespace a2p.Shared.Infrastructure.Services
 
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
-                        _logService.Error(ex, "ES. Unhandled error: Reading worksheet list from file ${FileName}", a2pFile.FileName);
+                        _logService.Error("Read Service: Unhandled Error reading worksheet from worksheet list. Order {$Order}, file {$File}.", a2pFile.Order, a2pFile.FileName);
                         continue;
                     }
 
@@ -130,7 +130,7 @@ namespace a2p.Shared.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                _logService.Error(ex, "ES. Unhandled error: reading worksheet list from workbook)");
+                _logService.Error(ex, "Read Service: Unhandled error: reading worksheet list from workbook)");
                 return [];
 
             }
@@ -142,8 +142,8 @@ namespace a2p.Shared.Infrastructure.Services
 
             if (ixlWorksheet == null)
             {
-                _logService.Error("ES: Error getting worksheet. Worksheet is null!");
-                throw new ArgumentNullException(nameof(ixlWorksheet), "Error getting worksheet. Worksheet is null!");
+                _logService.Error("Read Service: Error reading worksheet.Order {$Order}, file {$File} worksheet is null.", a2pWorksheet.Order, a2pWorksheet.FileName);
+                return new A2PWorksheet();
             }
             a2pWorksheet.Worksheet = ixlWorksheet.Name;
             a2pWorksheet.RowCount = ixlWorksheet.RowCount();
@@ -179,9 +179,13 @@ namespace a2p.Shared.Infrastructure.Services
                 List<object> rowValues = [];
                 for (int col = 1; col <= totalColumns; col++) // Iterate through all columns
                 {
+
+
                     IXLCell cell = row.Cell(col); // Access the cell by column index
                     if (cell != null && !cell.IsEmpty())
                     {
+                        _progressValue.ProgressTask3 = $"Processing row {rowCount + 1} of {totalCount} - cell {cell.Address}";
+                        progress?.Report(_progressValue);
 
                         if (string.IsNullOrEmpty(a2pWorksheet.Currency.Trim()))
                         {
@@ -193,19 +197,23 @@ namespace a2p.Shared.Infrastructure.Services
 
                         if (numericValue != 0)
                         {
-                            _logService.Verbose("Extracting from cell {Cell} Numeric Value: {Double}", cell.Address.ToString() ?? "", numericValue);
-                            cell.Value = numericValue.ToString(culture);
+                            _logService.Verbose("Read Service. Cell is Empty. Order {$Order}, " +
+                                                                             "worksheet {$Worksheet}, " +
+                                                                             "line  {$Line}, " +
+                                                                             "cell {$Cell}." +
+                                                                             " Extracting numeric value: {$Value}", a2pWorksheet.Order, a2pWorksheet.Worksheet, rowCount + 1, cell!.Address.ToString() ?? "", numericValue);
+                            cell!.Value = numericValue.ToString(culture);
                             rowValues.Add(cell.Value);
                         }
                         else
                         {
-                            _logService.Verbose("Extracted from cell {Cell} Text: {Text}", cell.Address.ToString() ?? "", cell.Value.ToString());
+                            _logService.Verbose("Read Service. Extracted from cell {Cell} Text: {Text}", cell.Address.ToString() ?? "", cell.Value.ToString());
                             rowValues.Add(cell.Value.ToString());
                         }
                     }
                     else
                     {
-                        _logService.Debug("Cell at column {Col} is empty!", col);
+                        _logService.Verbose("Read Service. Cell is Empty. Order {$Order}, worksheet {$Worksheet}, line  {$Line}, cell {$Cell}", a2pWorksheet.Order, a2pWorksheet.Worksheet, row.RowNumber() + 1, cell!.Address.ToString() ?? "");
                         rowValues.Add(string.Empty); // Add empty string for empty cells
                     }
 
@@ -282,42 +290,38 @@ namespace a2p.Shared.Infrastructure.Services
             {
                 worksheetType = WorksheetType.Items_Sapa_v2;
             }
-            else if ((worksheetName.Trim().Contains("Accessories") ||
-               worksheetName.Trim().Contains("Others") ||
-               worksheetName.Trim().Contains("Gaskets") ||
-               worksheetName.Trim().Contains("Profiles")) &&
-               (fileName?.Contains("SumList")) == true &&
-               worksheetType == WorksheetType.Unknown)
-            {
-                worksheetType = WorksheetType.Materials_Sapa_v2;
-            }
             else
             {
-                worksheetType = worksheetName.Trim().Contains("Glasses") &&
-                      fileName?.Contains("SumList") == true &&
-                      worksheetType == WorksheetType.Unknown
-                    ? WorksheetType.Glasses_Sapa_v2
-                    : worksheetName.Trim().Contains("ND_Panel") &&
-                         worksheetType == WorksheetType.Unknown
-                     ? WorksheetType.Panels_Sapa_v2
-                     : worksheetName.Trim().Contains("1")
-                            && worksheetType == WorksheetType.Unknown
-                         ? WorksheetType.Items_Schuco
-                         : worksheetName.Trim().Contains("2") && fileName?.Contains("Profile_summary") == true && worksheetType == WorksheetType.Unknown
-                                 ||
-                                 worksheetName.Trim().Contains("1") && fileName?.Contains("Accessory_summary") == true && worksheetType == WorksheetType.Unknown
-                             ? WorksheetType.Materials_Schuco
-                             : worksheetName.Trim().Contains("1") && fileName?.Contains("Glass_panel") == true &&
-                                   worksheetType == WorksheetType.Unknown
-                                 ? WorksheetType.Glasses_Schuco
-                                 : WorksheetType.Unknown;
+                worksheetType = (worksheetName.Trim().Contains("Accessories") ||
+                               worksheetName.Trim().Contains("Others") ||
+                               worksheetName.Trim().Contains("Gaskets") ||
+                               worksheetName.Trim().Contains("Profiles")) &&
+                               (fileName?.Contains("SumList")) == true &&
+                               worksheetType == WorksheetType.Unknown
+                    ? WorksheetType.Materials_Sapa_v2
+                    : worksheetName.Trim().Contains("Glasses") &&
+                                      fileName?.Contains("SumList") == true &&
+                                      worksheetType == WorksheetType.Unknown
+                                    ? WorksheetType.Glasses_Sapa_v2
+                                    : worksheetName.Trim().Contains("ND_Panel") &&
+                                         worksheetType == WorksheetType.Unknown
+                                     ? WorksheetType.Panels_Sapa_v2
+                                     : worksheetName.Trim().Contains("1")
+                                            && worksheetType == WorksheetType.Unknown
+                                         ? WorksheetType.Items_Schuco
+                                         : (worksheetName.Trim().Contains("2") && fileName?.Contains("Profile_summary") == true && worksheetType == WorksheetType.Unknown)
+                                                 ||
+                                                 (worksheetName.Trim().Contains("1") && fileName?.Contains("Accessory_summary") == true && worksheetType == WorksheetType.Unknown)
+                                             ? WorksheetType.Materials_Schuco
+                                             : worksheetName.Trim().Contains("1") && fileName?.Contains("Glass_panel") == true &&
+                                                   worksheetType == WorksheetType.Unknown
+                                                 ? WorksheetType.Glasses_Schuco
+                                                 : WorksheetType.Unknown;
             }
 
             return worksheetType;
 
         }
-
-
         private static async Task<double> GetRawNumericValueAsDoubleAsync(IXLCell cell, IXLWorksheet worksheet, CultureInfo culture)
         {
             // Get the raw value as a string

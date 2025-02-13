@@ -51,19 +51,6 @@ namespace a2p.WinForm
             statusStrip = new StatusStrip();
             plSideBarMain = new Panel();
             btnProperties = new Button();
-            plTbSBInfo = new TableLayoutPanel();
-            lbInfoErrors = new Label();
-            lbInfoFiles = new Label();
-            lbInfoErrorCount = new Label();
-            lbInfoWarningCount = new Label();
-            lbInfoWarnings = new Label();
-            lbInfoRowsCount = new Label();
-            lbInfoWorksheetsCount = new Label();
-            lbInfoOrdersCount = new Label();
-            lbInfoFilesCount = new Label();
-            lbInfoRows = new Label();
-            lbInfoWorksheets = new Label();
-            lbInfoOrders = new Label();
             btnExit = new Button();
             btnLog = new Button();
             btnImport = new Button();
@@ -75,13 +62,12 @@ namespace a2p.WinForm
             plTBPanel.SuspendLayout();
             statusStrip.SuspendLayout();
             plSideBarMain.SuspendLayout();
-            plTbSBInfo.SuspendLayout();
             SuspendLayout();
             // 
             // toolStripStatusLabel1
             // 
             toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            toolStripStatusLabel1.Size = new Size(72, 32);
+            toolStripStatusLabel1.Size = new Size(109, 32);
             toolStripStatusLabel1.Text = "FilePath: ";
             toolStripStatusLabel1.TextAlign = ContentAlignment.MiddleLeft;
             // 
@@ -375,7 +361,6 @@ namespace a2p.WinForm
             // 
             plSideBarMain.BackColor = Color.Transparent;
             plSideBarMain.Controls.Add(btnProperties);
-            plSideBarMain.Controls.Add(plTbSBInfo);
             plSideBarMain.Controls.Add(btnExit);
             plSideBarMain.Controls.Add(btnLog);
             plSideBarMain.Controls.Add(btnImport);
@@ -409,220 +394,6 @@ namespace a2p.WinForm
             btnProperties.UseVisualStyleBackColor = false;
             btnProperties.Click += BtnProperties_Click;
             // 
-            // plTbSBInfo
-            // 
-            plTbSBInfo.BackColor = Color.Transparent;
-            plTbSBInfo.ColumnCount = 2;
-            plTbSBInfo.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
-            plTbSBInfo.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            plTbSBInfo.Controls.Add(lbInfoErrors, 0, 6);
-            plTbSBInfo.Controls.Add(lbInfoFiles, 0, 0);
-            plTbSBInfo.Controls.Add(lbInfoErrorCount, 1, 6);
-            plTbSBInfo.Controls.Add(lbInfoWarningCount, 1, 5);
-            plTbSBInfo.Controls.Add(lbInfoWarnings, 0, 5);
-            plTbSBInfo.Controls.Add(lbInfoRowsCount, 1, 3);
-            plTbSBInfo.Controls.Add(lbInfoWorksheetsCount, 1, 2);
-            plTbSBInfo.Controls.Add(lbInfoOrdersCount, 1, 1);
-            plTbSBInfo.Controls.Add(lbInfoFilesCount, 1, 0);
-            plTbSBInfo.Controls.Add(lbInfoRows, 0, 3);
-            plTbSBInfo.Controls.Add(lbInfoWorksheets, 0, 2);
-            plTbSBInfo.Controls.Add(lbInfoOrders, 0, 1);
-            plTbSBInfo.Dock = DockStyle.Bottom;
-            plTbSBInfo.ForeColor = Color.FromArgb(248, 248, 249);
-            plTbSBInfo.Location = new Point(0, 491);
-            plTbSBInfo.Margin = new Padding(6);
-            plTbSBInfo.Name = "plTbSBInfo";
-            plTbSBInfo.RowCount = 11;
-            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 300F));
-            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 80F));
-            plTbSBInfo.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            plTbSBInfo.Size = new Size(400, 505);
-            plTbSBInfo.TabIndex = 58;
-            // 
-            // lbInfoErrors
-            // 
-            lbInfoErrors.AutoSize = true;
-            lbInfoErrors.Dock = DockStyle.Fill;
-            lbInfoErrors.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lbInfoErrors.ForeColor = Color.Crimson;
-            lbInfoErrors.Location = new Point(6, 342);
-            lbInfoErrors.Margin = new Padding(6);
-            lbInfoErrors.Name = "lbInfoErrors";
-            lbInfoErrors.Size = new Size(168, 44);
-            lbInfoErrors.TabIndex = 9;
-            lbInfoErrors.Text = "Errors:";
-            lbInfoErrors.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // lbInfoFiles
-            // 
-            lbInfoFiles.AutoSize = true;
-            lbInfoFiles.Dock = DockStyle.Fill;
-            lbInfoFiles.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lbInfoFiles.ForeColor = Color.DarkGray;
-            lbInfoFiles.Location = new Point(6, 6);
-            lbInfoFiles.Margin = new Padding(6);
-            lbInfoFiles.Name = "lbInfoFiles";
-            lbInfoFiles.Size = new Size(168, 44);
-            lbInfoFiles.TabIndex = 4;
-            lbInfoFiles.Text = "Files:";
-            lbInfoFiles.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // lbInfoErrorCount
-            // 
-            lbInfoErrorCount.AutoSize = true;
-            lbInfoErrorCount.Dock = DockStyle.Fill;
-            lbInfoErrorCount.Font = new Font("Segoe UI", 9F);
-            lbInfoErrorCount.ForeColor = Color.Red;
-            lbInfoErrorCount.Location = new Point(186, 342);
-            lbInfoErrorCount.Margin = new Padding(6);
-            lbInfoErrorCount.Name = "lbInfoErrorCount";
-            lbInfoErrorCount.Size = new Size(208, 44);
-            lbInfoErrorCount.TabIndex = 0;
-            lbInfoErrorCount.Text = "0";
-            lbInfoErrorCount.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lbInfoWarningCount
-            // 
-            lbInfoWarningCount.AutoSize = true;
-            lbInfoWarningCount.Dock = DockStyle.Fill;
-            lbInfoWarningCount.Font = new Font("Segoe UI", 9F);
-            lbInfoWarningCount.ForeColor = Color.Coral;
-            lbInfoWarningCount.Location = new Point(186, 286);
-            lbInfoWarningCount.Margin = new Padding(6);
-            lbInfoWarningCount.Name = "lbInfoWarningCount";
-            lbInfoWarningCount.Size = new Size(208, 44);
-            lbInfoWarningCount.TabIndex = 0;
-            lbInfoWarningCount.Text = "0";
-            lbInfoWarningCount.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lbInfoWarnings
-            // 
-            lbInfoWarnings.AutoSize = true;
-            lbInfoWarnings.Dock = DockStyle.Fill;
-            lbInfoWarnings.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lbInfoWarnings.ForeColor = Color.Coral;
-            lbInfoWarnings.Location = new Point(6, 286);
-            lbInfoWarnings.Margin = new Padding(6);
-            lbInfoWarnings.Name = "lbInfoWarnings";
-            lbInfoWarnings.Size = new Size(168, 44);
-            lbInfoWarnings.TabIndex = 0;
-            lbInfoWarnings.Text = "Warnings:";
-            lbInfoWarnings.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // lbInfoRowsCount
-            // 
-            lbInfoRowsCount.AutoSize = true;
-            lbInfoRowsCount.Dock = DockStyle.Fill;
-            lbInfoRowsCount.FlatStyle = FlatStyle.Flat;
-            lbInfoRowsCount.Font = new Font("Segoe UI", 9F);
-            lbInfoRowsCount.ForeColor = Color.DarkGray;
-            lbInfoRowsCount.Location = new Point(186, 174);
-            lbInfoRowsCount.Margin = new Padding(6);
-            lbInfoRowsCount.Name = "lbInfoRowsCount";
-            lbInfoRowsCount.Size = new Size(208, 44);
-            lbInfoRowsCount.TabIndex = 0;
-            lbInfoRowsCount.Text = "10";
-            lbInfoRowsCount.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lbInfoWorksheetsCount
-            // 
-            lbInfoWorksheetsCount.AutoSize = true;
-            lbInfoWorksheetsCount.Dock = DockStyle.Fill;
-            lbInfoWorksheetsCount.FlatStyle = FlatStyle.Flat;
-            lbInfoWorksheetsCount.Font = new Font("Segoe UI", 9F);
-            lbInfoWorksheetsCount.ForeColor = Color.DarkGray;
-            lbInfoWorksheetsCount.Location = new Point(186, 118);
-            lbInfoWorksheetsCount.Margin = new Padding(6);
-            lbInfoWorksheetsCount.Name = "lbInfoWorksheetsCount";
-            lbInfoWorksheetsCount.Size = new Size(208, 44);
-            lbInfoWorksheetsCount.TabIndex = 0;
-            lbInfoWorksheetsCount.Text = "10";
-            lbInfoWorksheetsCount.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lbInfoOrdersCount
-            // 
-            lbInfoOrdersCount.AutoSize = true;
-            lbInfoOrdersCount.Dock = DockStyle.Fill;
-            lbInfoOrdersCount.FlatStyle = FlatStyle.Flat;
-            lbInfoOrdersCount.Font = new Font("Segoe UI", 9F);
-            lbInfoOrdersCount.ForeColor = Color.DarkGray;
-            lbInfoOrdersCount.Location = new Point(186, 62);
-            lbInfoOrdersCount.Margin = new Padding(6);
-            lbInfoOrdersCount.Name = "lbInfoOrdersCount";
-            lbInfoOrdersCount.Size = new Size(208, 44);
-            lbInfoOrdersCount.TabIndex = 0;
-            lbInfoOrdersCount.Text = "10";
-            lbInfoOrdersCount.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lbInfoFilesCount
-            // 
-            lbInfoFilesCount.AutoSize = true;
-            lbInfoFilesCount.BackColor = Color.FromArgb(56, 57, 60);
-            lbInfoFilesCount.Dock = DockStyle.Fill;
-            lbInfoFilesCount.FlatStyle = FlatStyle.Flat;
-            lbInfoFilesCount.Font = new Font("Segoe UI", 9F);
-            lbInfoFilesCount.ForeColor = Color.DarkGray;
-            lbInfoFilesCount.Location = new Point(186, 6);
-            lbInfoFilesCount.Margin = new Padding(6);
-            lbInfoFilesCount.Name = "lbInfoFilesCount";
-            lbInfoFilesCount.Size = new Size(208, 44);
-            lbInfoFilesCount.TabIndex = 0;
-            lbInfoFilesCount.Text = "10";
-            lbInfoFilesCount.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lbInfoRows
-            // 
-            lbInfoRows.AutoSize = true;
-            lbInfoRows.Dock = DockStyle.Fill;
-            lbInfoRows.FlatStyle = FlatStyle.Flat;
-            lbInfoRows.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lbInfoRows.ForeColor = Color.DarkGray;
-            lbInfoRows.Location = new Point(6, 174);
-            lbInfoRows.Margin = new Padding(6);
-            lbInfoRows.Name = "lbInfoRows";
-            lbInfoRows.Size = new Size(168, 44);
-            lbInfoRows.TabIndex = 0;
-            lbInfoRows.Text = "Rows:";
-            lbInfoRows.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // lbInfoWorksheets
-            // 
-            lbInfoWorksheets.AutoSize = true;
-            lbInfoWorksheets.Dock = DockStyle.Fill;
-            lbInfoWorksheets.FlatStyle = FlatStyle.Flat;
-            lbInfoWorksheets.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lbInfoWorksheets.ForeColor = Color.DarkGray;
-            lbInfoWorksheets.Location = new Point(6, 118);
-            lbInfoWorksheets.Margin = new Padding(6);
-            lbInfoWorksheets.Name = "lbInfoWorksheets";
-            lbInfoWorksheets.Size = new Size(168, 44);
-            lbInfoWorksheets.TabIndex = 0;
-            lbInfoWorksheets.Text = "Worksheets:";
-            lbInfoWorksheets.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // lbInfoOrders
-            // 
-            lbInfoOrders.AutoSize = true;
-            lbInfoOrders.Dock = DockStyle.Fill;
-            lbInfoOrders.FlatStyle = FlatStyle.Flat;
-            lbInfoOrders.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lbInfoOrders.ForeColor = Color.DarkGray;
-            lbInfoOrders.Location = new Point(6, 62);
-            lbInfoOrders.Margin = new Padding(6);
-            lbInfoOrders.Name = "lbInfoOrders";
-            lbInfoOrders.Size = new Size(168, 44);
-            lbInfoOrders.TabIndex = 3;
-            lbInfoOrders.Text = "Orders:";
-            lbInfoOrders.TextAlign = ContentAlignment.MiddleLeft;
-            // 
             // btnExit
             // 
             btnExit.BackColor = Color.Transparent;
@@ -647,6 +418,7 @@ namespace a2p.WinForm
             // 
             btnLog.BackColor = Color.Transparent;
             btnLog.Dock = DockStyle.Top;
+            btnLog.Enabled = false;
             btnLog.FlatAppearance.BorderSize = 0;
             btnLog.FlatStyle = FlatStyle.Flat;
             btnLog.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
@@ -667,6 +439,7 @@ namespace a2p.WinForm
             // 
             btnImport.BackColor = Color.Transparent;
             btnImport.Dock = DockStyle.Top;
+            btnImport.Enabled = false;
             btnImport.FlatAppearance.BorderSize = 0;
             btnImport.FlatStyle = FlatStyle.Flat;
             btnImport.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
@@ -707,14 +480,13 @@ namespace a2p.WinForm
             // 
             plFormContainer.AutoScroll = true;
             plFormContainer.BackColor = Color.Transparent;
-            plFormContainer.Dock = DockStyle.Fill;
             plFormContainer.ForeColor = Color.Transparent;
             plFormContainer.Location = new Point(400, 198);
             plFormContainer.Margin = new Padding(6);
             plFormContainer.MinimumSize = new Size(10, 10);
             plFormContainer.Name = "plFormContainer";
             plFormContainer.Size = new Size(1672, 1076);
-            plFormContainer.TabIndex = 47;
+            plFormContainer.TabIndex = 60;
             // 
             // MainForm
             // 
@@ -744,6 +516,8 @@ namespace a2p.WinForm
             Load += MainForm_Load;
             Shown += MainForm_Shown;
             DpiChanged += MainForm_DpiChanged;
+            ResizeBegin += MainForm_ResizeBegin;
+            ResizeEnd += MainForm_ResizeEnd;
             tplHeader.ResumeLayout(false);
             tplHeader.PerformLayout();
             tlpTitleBar.ResumeLayout(false);
@@ -753,8 +527,6 @@ namespace a2p.WinForm
             statusStrip.ResumeLayout(false);
             statusStrip.PerformLayout();
             plSideBarMain.ResumeLayout(false);
-            plTbSBInfo.ResumeLayout(false);
-            plTbSBInfo.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
 
@@ -783,7 +555,6 @@ namespace a2p.WinForm
         private StatusStrip statusStrip;
 
         private Panel plSideBarMain;
-        private Panel plFormContainer;
         private Button btnMaximize;
         private Button btnClose;
         private Button btnMinimize;
@@ -807,5 +578,6 @@ namespace a2p.WinForm
         private Label lbInfoOrders;
         private Button btnProperties;
         private Panel plNordanHeaderLogo;
+        private Panel plFormContainer;
     }
 }

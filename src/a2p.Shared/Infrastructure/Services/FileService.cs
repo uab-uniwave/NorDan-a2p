@@ -45,7 +45,7 @@ namespace a2p.Shared.Infrastructure.Services
             {
                 _progressValue.ProgressTitle = $"Searching Files in {rootFolder}...";
                 progress?.Report(_progressValue);
-                //Task.Delay(2000).Wait();
+
             }
             List<string> files = (await Task.Run(() => Directory.GetFiles(rootFolder))).ToList(); // Get all files in the root folder
 
@@ -55,7 +55,7 @@ namespace a2p.Shared.Infrastructure.Services
                 _progressValue.ProgressTitle = "Searching Orders...";
                 _progressValue.ProgressTask1 = $"Found {files.Count}) file in {rootFolder}.";
                 progress?.Report(_progressValue);
-                //Task.Delay(2000).Wait();
+
 
             }
 
@@ -65,7 +65,7 @@ namespace a2p.Shared.Infrastructure.Services
             //=======================================================================================================================================
             if (files == null || !files.Any())
             {
-                _logService.Warning("FS: No files found in {RootFolder}", rootFolder);
+                _logService.Information("File Service: No files found in {RootFolder}", rootFolder);
                 return a2pOrderList;
             }
             IEnumerable<string?> fileNames = files.Select(Path.GetFileName).ToList();
@@ -81,20 +81,22 @@ namespace a2p.Shared.Infrastructure.Services
                 _progressValue.ProgressTask1 = $"Found {orderNumbers.Count()} Orders in files...";
 
                 progress?.Report(_progressValue);
-                //Task.Delay(2000).Wait();
             }
             int count = 0;
+            int progresValueCount = 0;
             foreach (string orderNumber in orderNumbers)
             {
+
+                progresValueCount += 1;
+
                 {
                     _progressValue.ProgressTitle = $"Processing Order # {orderNumber}. Order {count + 1} / {orderNumbers.Count()}";
-                    _progressValue.MaxValue = orderNumbers.Count();
-                    _progressValue.Value = count + 1;
+                    _progressValue.MaxValue = orderNumbers.Count() * 2;
+                    _progressValue.Value = progresValueCount;
                     _progressValue.ProgressTask1 = $"Searching Files...";
                     _progressValue.ProgressTask2 = string.Empty;
                     _progressValue.ProgressTask3 = string.Empty;
                     progress?.Report(_progressValue);
-                    //Task.Delay(2000).Wait();
                 }
                 A2POrder a2pOrder = new()
                 {
@@ -107,7 +109,7 @@ namespace a2p.Shared.Infrastructure.Services
 
                     if (file.IsLocked)
                     {
-                        _logService.Error("FS: Order: {$Order}, file {$FileName} is locked.", a2pOrder.Order, file.FileName);
+                        _logService.Error("File Service : Order: {$Order}, file {$FileName} is locked.", a2pOrder.Order, file.FileName);
                         a2pOrder.ReadErrors.Add(new A2POrderError
                         {
                             Order = a2pOrder.Order,
@@ -121,7 +123,7 @@ namespace a2p.Shared.Infrastructure.Services
 
                     if (file.Worksheets == null || !file.Worksheets.Any())
                     {
-                        _logService.Warning("FS: No worksheets found in {FileName}", file.FileName);
+                        _logService.Warning("File Seervice: No worksheets found in {FileName}", file.FileName);
 
                         a2pOrder.ReadErrors.Add(new A2POrderError
                         {
@@ -137,13 +139,13 @@ namespace a2p.Shared.Infrastructure.Services
 
                 //get sales doc number and version if order exists
                 //===================================================================
-                var salesDoc = await _prefService.GetSalesDocAsync(orderNumber);
+                (int, int) salesDoc = await _prefService.GetSalesDocAsync(orderNumber);
                 a2pOrder.SalesDocNumber = salesDoc.Item1;
                 a2pOrder.SalesDocVersion = salesDoc.Item2;
 
                 if (a2pOrder.SalesDocNumber <= 0 || a2pOrder.SalesDocVersion <= 0)
                 {
-                    _logService.Warning("FS: Order # {Order} not exists in PrefSuite.", orderNumber);
+                    _logService.Warning("File Service : Order # {Order} not exists in PrefSuite.", orderNumber);
                     a2pOrder.ReadErrors.Add(new A2POrderError
                     {
                         Order = a2pOrder.Order,
@@ -155,27 +157,47 @@ namespace a2p.Shared.Infrastructure.Services
 
                 // Check if materials already exists
                 //===================================================================
-                var materialExistsInDB = await _prefService.MaterialsExistsAsync(orderNumber);
-                var itemsExistsInDB = await _prefService.MaterialsExistsAsync(orderNumber);
 
-                if (materialExistsInDB != null)
-                {
-                    _logService.Warning("FS: Order # {Order} materials already imported on {Date}.", orderNumber, materialExistsInDB);
-                    a2pOrder.OrderExists = (DateTime)materialExistsInDB;
-                }
-                if (itemsExistsInDB != null)
-                {
-                    _logService.Warning("FS: Order # {Order} items already imported on {Date}.", orderNumber, materialExistsInDB);
 
-                    if (itemsExistsInDB > materialExistsInDB)
+                string? itemsExistsInDB = await _prefService.MaterialsExistsAsync(orderNumber);
+                if (!string.IsNullOrEmpty(itemsExistsInDB))
+                {
+                    _logService.Warning("File Service: Order {$Order} items already imported on {$Date}.", orderNumber, itemsExistsInDB);
+                    if (DateTime.TryParse(itemsExistsInDB, out DateTime itemsExistsDate))
                     {
-                        a2pOrder.OrderExists = (DateTime)itemsExistsInDB;
+                        a2pOrder.OrderExists = itemsExistsDate;
+                    }
+
+
+                }
+                string? materialsExistsInDB = await _prefService.MaterialsExistsAsync(orderNumber);
+                if (!string.IsNullOrEmpty(materialsExistsInDB))
+                {
+                    _logService.Warning("File Service: Order {$Order} items already imported on {$Date}.", orderNumber, materialsExistsInDB);
+
+                    if (DateTime.TryParse(materialsExistsInDB, out DateTime materialsExistsDate))
+                    {
+                        a2pOrder.OrderExists = materialsExistsDate;
                     }
                 }
 
+                if (!string.IsNullOrEmpty(a2pOrder.OrderExists.ToString()))
+                {
+                    a2pOrder.ReadErrors.Add(new A2POrderError
+                    {
+                        Order = a2pOrder.Order,
+                        Level = ErrorLevel.Error,
+                        Code = ErrorCode.SQLRepository_OrderAlreadyExistsInDB,
+                        Description = $"Order with same number {orderNumber} already exists in SQL DB. Last import known date  {a2pOrder.OrderExists}"
+                    });
+                }
 
 
                 _ = await A2POrderAgregator.AddOrUpdateOrderAsync(a2pOrderList, a2pOrder);
+
+                progresValueCount += 1;
+                _progressValue.Value = progresValueCount;
+                progress?.Report(_progressValue);
                 count++;
 
             }
@@ -199,7 +221,7 @@ namespace a2p.Shared.Infrastructure.Services
                 progress?.Report(_progressValue);
 
             }
-            _logService.Information("FS. Order # {Order}. Found {FileCount} files.", orderNumber, files.Count);
+            _logService.Information("File Service: Order # {Order}. Found {FileCount} files.", orderNumber, files.Count);
 
 
 
@@ -214,11 +236,7 @@ namespace a2p.Shared.Infrastructure.Services
                     _progressValue.ProgressTask1 = $"Processing {Path.GetFileName(fileName)}. File {count + 1} of {matchingFiles.Count}.";
                     _progressValue.ProgressTask2 = $"Searching worksheets...";
                     _progressValue.ProgressTask3 = string.Empty;
-                    progress?.Report(_progressValue);
-
                 }
-
-
                 A2PFile a2pFile = new()
                 {
 
@@ -230,21 +248,13 @@ namespace a2p.Shared.Infrastructure.Services
                 };
 
                 List<A2PFile> a2pFileListTemp = [a2pFile];
-
-
-
-                //Task.Delay(2000).Wait();
-
                 List<A2PWorksheet> wr = await _readService.GetWorksheetListAsync(a2pFileListTemp, _progressValue, progress);
-
-
                 a2pFile.Worksheets = wr;
                 if (wr == null || !wr.Any())
                 {
-                    _logService.Warning("FS: No worksheets found in {FileName}", fileName);
+                    _logService.Warning("File Service: No worksheets found in {FileName}", fileName);
                     continue;
                 }
-
 
                 a2pFileList.Add(a2pFile);
                 count++;
@@ -264,24 +274,28 @@ namespace a2p.Shared.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                _logService.Warning("FS: File Locked: ${FilePath}. Reason: ${Exception}", filePath, ex.Message);
+                _logService.Warning("File Service: File locked ${FilePath}. Reason: ${Exception}", filePath, ex.Message);
             }
             return true;
         }
         // Move files asynchronously
-        public void MoveFilesAsync(string order, string fileName, bool? failed = false)
+        public void MoveFilesAsync(string source, string destination)
         {
             try
             {
-                string rootFolder = _configuration["AppSettings:RootFolder"] ?? "C:\\Temp\\Import";
-                string importSuccessFolder = _configuration["AppSettings:Import_Success"] ?? Path.Combine(rootFolder, "SC");
-                string importFailedFolder = _configuration["AppSettings:Import_Failed"] ?? Path.Combine(rootFolder, "US");
+                if (File.Exists(destination))
+                {
+                    File.Delete(destination);
+                }
 
-                // Implement file move logic here as needed (e.g., File.Move)
+
+                File.Move(source, destination);
+
             }
+
             catch (Exception ex)
             {
-                _logService.Fatal(ex, "FS: Unhandled error moving files");
+                _logService.Fatal(ex, "File Service: Unhandled error moving files");
             }
         }
 

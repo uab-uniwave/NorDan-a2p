@@ -1,8 +1,6 @@
 ﻿using a2p.Shared.Core.Interfaces.Repository;
 using a2p.Shared.Core.Interfaces.Services;
 
-using Microsoft.Data.SqlClient;
-
 using System.Data;
 
 
@@ -26,8 +24,8 @@ namespace a2p.Shared.Infrastructure.Services
             {
 
                 string sqlCommand = "SELECT Numero, Version FROM PAF WHERE Referencia = " + "'" + order + "'";
-                var commandType = System.Data.CommandType.Text;
-                var result = await _sqlRepository.ExecuteQueryTupleValuesAsync(sqlCommand, commandType);
+                CommandType commandType = System.Data.CommandType.Text;
+                (int, int) result = await _sqlRepository.ExecuteQueryTupleValuesAsync(sqlCommand, commandType);
 
                 return result;
 
@@ -41,96 +39,137 @@ namespace a2p.Shared.Infrastructure.Services
 
 
         }
-
-        public async Task<DateTime?> MaterialsExistsAsync(string order)
+        public async Task<string?> MaterialsExistsAsync(string order)
         {
             try
             {
-                if (order == null)
-                {
-                    _logService.Error("WS:Error deleting (Update DeletedUTCDateTime) materials from DB. Order is null");
-                    return null;
-                }
-
-                SqlCommand cmd = new()
-                {
-                    CommandText = "[dbo].[Uniwave_a2p_MaterialsExists]",
-                    CommandType = CommandType.StoredProcedure
-                };
-                _ = cmd.Parameters.AddWithValue("@Order", order);
-
-                var outputParam = new SqlParameter("@ModifiedUTCDateTime", SqlDbType.DateTime)
-                {
-                    Direction = ParameterDirection.Output
-                };
-                cmd.Parameters.Add(outputParam);
-
-                var result = await _sqlRepository.ExecuteScalarAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
-
-
-
-                if (!string.IsNullOrEmpty(result.ToString()))
-                {
-                    _logService.Warning("WS: Order: {$Order} materials already imported on.", order);
-                    return (DateTime?)outputParam.Value;
-                }
-                _logService.Debug("WS: Did not found any existing materials of Order: {$Order}.", order);
-                return null;
-
+                string sqlCommand = $"SELECT MAX ([ModifiedUTCDateTime]) FROM  [dbo].[Uniwave_a2p_Materials] WHERE [Order] = '{order}' and [DeletedUTCDateTime] is null";
+                object? result = await _sqlRepository.ExecuteScalarAsync(sqlCommand, CommandType.Text);
+                return result.ToString();
             }
             catch (Exception ex)
             {
-                _logService.Error(ex.Message, "WS: Unhandled error: deleting Sapa v2 order: {$Order} materials from DB", order);
+                _logService.Error(ex.Message, "PrefSuite Service:: Unhandled error while checking materials for Order: {$Order}");
                 return null;
             }
         }
-        public async Task<DateTime?> ItemsExistsAsync(string order)
+
+
+
+        public async Task<string?> ItemsExistsAsync(string order)
         {
             try
             {
-                if (order == null)
-                {
-                    _logService.Error("WS:Error deleting (Update DeletedUTCDateTime) items from DB. Order is null");
-                    return null;
-                }
-
-                SqlCommand cmd = new()
-                {
-                    CommandText = "[dbo].[Uniwave_a2p_ItemsExists]",
-                    CommandType = CommandType.StoredProcedure
-                };
-                _ = cmd.Parameters.AddWithValue("@Order", order);
-
-                var outputParam = new SqlParameter("@ModifiedUTCDateTime", SqlDbType.DateTime)
-                {
-                    Direction = ParameterDirection.Output
-                };
-                cmd.Parameters.Add(outputParam);
-
-                var result = await _sqlRepository.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
-
-                if (result > 0)
-                {
-                    _logService.Warning("WS: Order: {$Order} materials already imported on.", order);
-                    return (DateTime?)outputParam.Value;
-                }
-
-                _logService.Debug("WS: Did not found any existing materials of Order: {$Order}.", order);
-                return null;
+                string sqlCommand = $"SELECT MAX ([ModifiedUTCDateTime]) FROM  [dbo].[Uniwave_a2p_Items] WHERE [Order] = '{order}' and [DeletedUTCDateTime] is null";
+                object? result = await _sqlRepository.ExecuteScalarAsync(sqlCommand, CommandType.Text);
+                return result.ToString();
             }
             catch (Exception ex)
             {
-                _logService.Error(ex.Message, "WS: Unhandled error: deleting Sapa v2 order: {$Order} materials from DB", order);
+                _logService.Error(ex.Message, "PrefSuite Service: Unhandled error while checking Items for Order: {$Order}");
                 return null;
             }
         }
+
+        //public async Task<DateTime?> MaterialsExistsAsync(string order)
+        //{
+        //    try
+        //    {
+        //        if (order == null)
+        //        {
+        //            _logService.Error("WS: Error checking materials in DB. Order is null");
+        //            return null;
+        //        }
+
+        //        SqlCommand cmd = new()
+        //        {
+        //            CommandText = "[dbo].[Uniwave_a2p_MaterialsExists]",
+        //            CommandType = CommandType.StoredProcedure
+        //        };
+
+        //        SqlParameter orderParam = new("@Order", SqlDbType.NVarChar, 50)
+        //        {
+        //            Value = order
+        //        };
+
+        //        SqlParameter outputParam = new("@ModifiedUTCDateTime", SqlDbType.DateTime)
+        //        {
+        //            Direction = ParameterDirection.Output
+        //        };
+
+        //        object result = await _sqlRepository.ExecuteScalarAsync("[dbo].[Uniwave_a2p_MaterialsExists]", CommandType.StoredProcedure, orderParam, outputParam);
+
+        //        if (result != null)
+        //        {
+        //            DateTime modifiedDate = (DateTime)result;
+
+        //            if (outputParam.Value != DBNull.Value)
+        //            {
+        //                _logService.Warning($"WS: Order: {order} materials already imported on {outputParam.Value}.");
+        //                return (DateTime?)outputParam.Value;
+        //            }
+
+
+
+
+        //        }
+        //        _logService.Debug($"WS: Did not find any existing materials for Order: {order}.");
+        //        return null;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logService.Error(ex, $"WS: Unhandled error while checking materials for Order: {order}");
+        //        return null;
+        //    }
+        //}
+        //public async Task<DateTime?> ItemsExistsAsync(string order)
+        //{
+        //    try
+        //    {
+        //        if (order == null)
+        //        {
+        //            _logService.Error("WS: Error checking items in DB. Order is null");
+        //            return null;
+        //        }
+
+        //        SqlCommand cmd = new()
+        //        {
+        //            CommandText = "[dbo].[Uniwave_a2p_ItemsExists]",
+        //            CommandType = CommandType.StoredProcedure
+        //        };
+        //        _ = cmd.Parameters.AddWithValue("@Order", order);
+
+        //        SqlParameter outputParam = new("@ModifiedUTCDateTime", SqlDbType.DateTime)
+        //        {
+        //            Direction = ParameterDirection.Output
+        //        };
+        //        _ = cmd.Parameters.Add(outputParam);
+
+        //        // Execute the command and read the output parameter
+        //        _ = await _sqlRepository.ExecuteScalarAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
+
+        //        if (outputParam.Value != DBNull.Value)
+        //        {
+        //            _logService.Warning($"WS: Order: {order} items already imported on {outputParam.Value}.");
+        //            return (DateTime?)outputParam.Value;
+        //        }
+
+        //        _logService.Debug($"WS: Did not find any existing items for Order: {order}.");
+        //        return null;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logService.Error(ex, $"WS: Unhandled error while checking items for Order: {order}");
+        //        return null;
+        //    }
+        //}
         public async Task<string?> GetColorAsync(string color)
         {
             try
             {
                 string sqlCommand = "SELECT Color FROM Colors WHERE Color = '" + color + "'";
-                var commandType = System.Data.CommandType.Text;
-                var result = await _sqlRepository.ExecuteScalarAsync(sqlCommand, commandType);
+                CommandType commandType = System.Data.CommandType.Text;
+                object result = await _sqlRepository.ExecuteScalarAsync(sqlCommand, commandType);
 
                 return result?.ToString();
             }
@@ -140,6 +179,8 @@ namespace a2p.Shared.Infrastructure.Services
                 return null;
             }
         }
+
+
     }
 
 

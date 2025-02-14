@@ -196,7 +196,7 @@ namespace a2p.Shared.Infrastructure.Services
                                 {
                                     try
                                     {
-                                        int writeResult = await _writeService.InsertMaterialAsync(materialDTO, a2pOrder.SalesDocNumber, a2pOrder.SalesDocVersion, dateTime);
+                                        int writeResult = await _writeService.InsertMaterialListAsync(materialDTO, a2pOrder.SalesDocNumber, a2pOrder.SalesDocVersion, dateTime);
                                         if (writeResult > 0)
                                         {
                                             _logService.Debug("Mapping handler service: Material of Order :{$Order}, worksheet {$Worksheet}, line {$Line}, material {$material} - inserted successfully. Inserted record count {$Records}", materialDTO.Order, materialDTO.Worksheet, materialDTO, materialDTO.Reference ?? "Unknown", writeResult);

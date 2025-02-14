@@ -26,7 +26,7 @@ namespace a2p.Shared.Infrastructure.Services
             {
                 if (itemDTO == null)
                 {
-                    _logService.Debug("Error inserting itemDTO to DB: itemDTO is null");
+                    _logService.Debug("Write Service: Error inserting itemDTO to DB: itemDTO is null");
                     return -1;
                 }
 
@@ -104,18 +104,18 @@ namespace a2p.Shared.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                _logService.Debug(ex.Message, "Unhandled error: inserting Sapa v2 itemDTO to DB");
+                _logService.Debug(ex.Message, "Write Service: Unhandled error: inserting Sapa v2 itemDTO to DB");
                 return -1;
             }
         }
-        public async Task<int> InsertMaterialAsync(MaterialDTO materialDTO, int salesDocumentNumber, int salesDocumentVersion, DateTime dateTime)
+        public async Task<int> InsertMaterialListAsync(MaterialDTO materialDTO, int salesDocumentNumber, int salesDocumentVersion, DateTime dateTime)
         {
             try
             {
                 if (materialDTO == null)
                 {
 
-                    _logService.Debug("Error Inserting Sapa v2 Material to DB, material is null");
+                    _logService.Debug("Write Service: Error Inserting Sapa v2 Material to DB, material is null");
                     return -1;
 
                 }
@@ -194,82 +194,110 @@ namespace a2p.Shared.Infrastructure.Services
 
 
                 int result = await _sqlRepository.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
+
+
+                if (result > 0)
+                {
+
+                    _ = await CreatePrefSuiteMaterialAsync(materialDTO);
+                }
+
+
                 return result;
 
             }
             catch (Exception ex)
             {
-                _logService.Debug(ex.Message, "Unhandled error: inserting Sapa v2 Material to DB");
+                _logService.Debug(ex.Message, "Write Service: Unhandled error: inserting Sapa v2 Material to DB");
                 return -1;
             }
         }
-        public async Task<int> DeleteMaterialsAsync(string order)
+        private async Task<int> CreatePrefSuiteMaterialAsync(MaterialDTO materialDTO)
         {
             try
             {
-                if (order == null)
-                {
-
-                    _logService.Error("WS:Error deleting (Update DeletedUTCDateTime) materials from DB. Order is null");
-                    return -1;
-
-                }
-
-                DateTime dateTime = DateTime.UtcNow;
+                _ = await CreatePrefSuiteColorAsync(materialDTO);
 
                 SqlCommand cmd = new()
                 {
-                    CommandText = "[dbo].[Uniwave_a2p_DeleteMaterials]",
+                    CommandText = "[dbo].[Uniwave_a2pCreate_Material]",
                     CommandType = CommandType.StoredProcedure
                 };
-                _ = cmd.Parameters.AddWithValue("@Order", order);
-                _ = cmd.Parameters.AddWithValue("@DeletedUTCDateTime", dateTime);
+                _ = cmd.Parameters.AddWithValue("@Reference", materialDTO.Reference);
+                _ = cmd.Parameters.AddWithValue("@Description", materialDTO.Description ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@Color", materialDTO.Color);
+                //=======================================================================================
+                _ = cmd.Parameters.AddWithValue("@PackageQuantity", materialDTO.PackageQuantity);
+                _ = cmd.Parameters.AddWithValue("@MaterialType", materialDTO.MaterialType);
+
+
                 int result = await _sqlRepository.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
+                if (result > 0)
+                {
+                    _logService.Debug("Write Service: PrefSuite {$Reference} Material created successfully", materialDTO.Reference);
 
-
-                _logService.Debug("WS: Delete Materials. {$result} material records of order: {$Order} deleted from db.", result, order);
-
+                }
                 return result;
-
             }
             catch (Exception ex)
+
             {
-                _logService.Error(ex.Message, "WS: Unhandled error: deleting Sapa v2 order: {$Order} materials from DB", order);
+
+                _logService.Error(ex, "Unhandled error: inserting Sapa v2 Material to DB");
                 return -1;
+
+
             }
+
+
+
         }
-        public async Task<int> DeleteItemsAsync(string order)
+        private async Task<int> CreatePrefSuiteColorAsync(MaterialDTO materialDTO)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(order))
-                {
-                    _logService.Error("WS: Error deleting (updating DeletedUTCDateTime) items from DB. Order is null or empty.");
-                    return -1;
-                }
-
-                DateTime dateTime = DateTime.UtcNow;
-
                 SqlCommand cmd = new()
                 {
-                    CommandText = "[dbo].[Uniwave_a2p_DeleteItems]",
+                    CommandText = "[dbo].[Uniwave_a2pCreate_Color]",
                     CommandType = CommandType.StoredProcedure
                 };
-
-                _ = cmd.Parameters.AddWithValue("@Order", order);
-                _ = cmd.Parameters.AddWithValue("@DeletedUTCDateTime", dateTime);
+                _ = cmd.Parameters.AddWithValue("@Color", materialDTO.Color);
+                _ = cmd.Parameters.AddWithValue("@ColorDescription", materialDTO.ColorDescription ?? (object)DBNull.Value);
 
                 int result = await _sqlRepository.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
+                if (result > 0)
+                {
+                    _logService.Debug("Write Service: PrefSuite {$Color} Material created successfully", materialDTO.Color);
 
-                _logService.Debug($"WS: Delete Items. {result} itemDTO records of order: {order} marked as deleted in the database.");
-
+                }
                 return result;
+
             }
             catch (Exception ex)
+
             {
-                _logService.Error(ex.Message, $"WS: Unhandled error: deleting items of order: {order} from DB.");
+
+                _logService.Error(ex, "Unhandled error: inserting Sapa v2 Material to DB");
                 return -1;
+
+
             }
+
+
+
+        }
+
+        public Task<int> DeleteMaterialsAsync(string order)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> DeleteItemsAsync(string order)
+        {
+            throw new NotImplementedException();
         }
     }
+
+
+
 }

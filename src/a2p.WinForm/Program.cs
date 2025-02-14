@@ -44,10 +44,10 @@ namespace a2p.WinForm
 
             logService.Information("Application started.");
 
-            //using SplashScreenForm splashScreen = new();
-            //splashScreen.Show();
-            //splashScreen.FadeIn();
-            //Task.Delay(2000).Wait(); // Ensure splash screen is shown for at least 4 seconds
+            using SplashScreenForm splashScreen = new();
+            splashScreen.Show();
+            splashScreen.FadeIn();
+            Task.Delay(2000).Wait();
 
             MainForm mainWindow = new(fileService, readService, mappingHandlerService, configuration, logService, orderMapper);
 

@@ -105,12 +105,14 @@ namespace a2p.WinForm.CustomControls
         {
             TaskCompletionSource tcs = new();
             this.Shown += (s, e) => tcs.SetResult();
+            plTaskLabelsPanel.Visible = true;
             return tcs.Task;
         }
 
 
         private void UpdateProgressBar()
         {
+
             // Example update logic
             lbProgressBarTitle.Text = "Initializing ...";
             lbProgressBarTask1.Text = "";

@@ -112,8 +112,8 @@ namespace a2p.WinForm.ChildForms
                     DataPropertyName = "Line",
                     Name = "Line",
                     ReadOnly = true,
-                    Visible = true,
-                    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                    Visible = false,
+
 
 
                 });
@@ -323,6 +323,7 @@ namespace a2p.WinForm.ChildForms
 
         private void LogForm_ResizeEnd(object sender, EventArgs e)
         {
+            this.PerformAutoScale();
             this.ResumeLayout(false);
             this.PerformLayout();
         }
@@ -450,7 +451,7 @@ namespace a2p.WinForm.ChildForms
             _ = PropertiesAddAsync(dataGridViewLog.Rows.IndexOf(dataGridViewLog.CurrentRow));
         }
 
-        #endregion -== Grids events
+        #endregion -== Grids events == -
 
         #region -== Log Level Filter Method and Controls Events ==-
 
@@ -745,11 +746,11 @@ namespace a2p.WinForm.ChildForms
             if (InvokeRequired)
             {
                 Invoke(new Action(async () => await PropertiesAddAsync(index)));
+                return;
             }
 
             try
             {
-
                 // Ensure the index is within bounds
                 if (index < 0 || index >= dataGridViewLog.Rows.Count)
                 {
@@ -757,37 +758,39 @@ namespace a2p.WinForm.ChildForms
                     return;
                 }
 
-                // Get the selected row
-                DataRow selectedRow = _dataTableLog.Rows[index];
-
-                // Get the dictionary from the "Properties" column
-                if (selectedRow["Properties"] is not Dictionary<string, object> properties || properties.Count == 0)
+                // Get the DataRow from the DataGridView's DataBoundItem
+                if (dataGridViewLog.Rows[index].DataBoundItem is DataRowView rowView)
                 {
-                    _logService.Warning("LF: Selected row has no valid properties.");
-                    return;
+                    DataRow selectedRow = rowView.Row;
+
+                    // Get the dictionary from the "Properties" column
+                    if (selectedRow["Properties"] is not Dictionary<string, object> properties || properties.Count == 0)
+                    {
+                        _logService.Warning("LF: Selected row has no valid properties.");
+                        return;
+                    }
+
+                    // Clear the previous properties
+                    if (_dataTableProperties.Rows.Count > 0)
+                    {
+                        _dataTableProperties.Rows.Clear();
+                    }
+
+                    // Add each property to the _dataTableProperties
+                    foreach (KeyValuePair<string, object> property in properties)
+                    {
+                        _ = await Task.Run(() => _dataTableProperties.Rows.Add(property.Key, property.Value?.ToString()));
+                    }
                 }
-
-                // Clear the previous properties
-
-                if (_dataTableProperties.Rows.Count > 0)
+                else
                 {
-                    _dataTableProperties.Rows.Clear();
+                    _logService.Warning("LF: Failed to retrieve the DataRow for the selected index.");
                 }
-
-                // Add each property to the _dataTableProperties
-                foreach (KeyValuePair<string, object> property in properties)
-                {
-                    _ = await Task.Run(
-                        () => _dataTableProperties.Rows.Add(property.Key, property.Value?.ToString()));
-                }
-
             }
-
             catch (Exception ex)
             {
                 _logService.Error($"LF: Error processing log entry properties: {ex.Message}");
             }
-
         }
 
         #endregion -== Data Table methods ==-

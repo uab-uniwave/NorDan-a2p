@@ -220,7 +220,7 @@ namespace a2p.Shared.Infrastructure.Services
 
                 SqlCommand cmd = new()
                 {
-                    CommandText = "[dbo].[Uniwave_a2pCreate_Material]",
+                    CommandText = "[dbo].[Uniwave_a2p_CreateMaterial]",
                     CommandType = CommandType.StoredProcedure
                 };
                 _ = cmd.Parameters.AddWithValue("@Reference", materialDTO.Reference);
@@ -258,7 +258,7 @@ namespace a2p.Shared.Infrastructure.Services
             {
                 SqlCommand cmd = new()
                 {
-                    CommandText = "[dbo].[Uniwave_a2pCreate_Color]",
+                    CommandText = "[dbo].[Uniwave_a2p_CreateColor]",
                     CommandType = CommandType.StoredProcedure
                 };
                 _ = cmd.Parameters.AddWithValue("@Color", materialDTO.Color);

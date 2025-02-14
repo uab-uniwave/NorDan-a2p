@@ -437,9 +437,10 @@ namespace a2p.WinForm.ChildForms
                 _progress?.Report(_progressValue);
 
 
+                progressBarForm.Cursor = Cursors.WaitCursor;
                 progressBarForm.Show();
                 await progressBarForm.FormReadyAsync();
-
+    
 
                 _progress?.Report(_progressValue);
 
@@ -582,7 +583,8 @@ namespace a2p.WinForm.ChildForms
                 _progress = progress;
                 _progress?.Report(_progressValue);
 
-
+                progressBarForm.Cursor = Cursors.WaitCursor;
+                progressBarForm.Cursor = Cursors.WaitCursor;
                 progressBarForm.Show();
                 await progressBarForm.FormReadyAsync();
 

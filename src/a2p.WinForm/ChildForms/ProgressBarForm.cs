@@ -28,6 +28,8 @@ namespace a2p.WinForm.CustomControls
 
         private void ProgressBarForm_Shown(object? sender, EventArgs e)
         {
+            plMainPanel.Visible = true;
+            this.Cursor = Cursors.WaitCursor;
             this.ResumeLayout(false);
             this.PerformLayout();
         }
@@ -105,7 +107,6 @@ namespace a2p.WinForm.CustomControls
         {
             TaskCompletionSource tcs = new();
             this.Shown += (s, e) => tcs.SetResult();
-            plTaskLabelsPanel.Visible = true;
             return tcs.Task;
         }
 
@@ -124,11 +125,9 @@ namespace a2p.WinForm.CustomControls
 
         }
 
-
-
-
-
-
-
+        private void ProgressBarForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            this.Cursor = Cursors.Default;
+        }
     }
 }

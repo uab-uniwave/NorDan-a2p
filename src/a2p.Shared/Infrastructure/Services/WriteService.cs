@@ -12,11 +12,13 @@ namespace a2p.Shared.Infrastructure.Services
     {
         private readonly ILogService _logService;
         private readonly ISqlRepoitory _sqlRepository;
+        private readonly IPrefService _prefService;
 
-        public WriteService(ISqlRepoitory sqlRepository, ILogService logService)
+        public WriteService(ISqlRepoitory sqlRepository, ILogService logService,IPrefService prefService )
         {
             _sqlRepository = sqlRepository;
             _logService = logService;
+            _prefService = prefService;
         }
 
 
@@ -30,6 +32,9 @@ namespace a2p.Shared.Infrastructure.Services
                     return -1;
                 }
 
+                var salesDocIdPos = _prefService.AddItem(itemDTO, salesDocumentNumber, salesDocumentVersion);
+
+
                 SqlCommand cmd = new()
                 {
                     CommandText = "[dbo].[Uniwave_a2p_InsertItem]",
@@ -38,6 +43,7 @@ namespace a2p.Shared.Infrastructure.Services
 
                 _ = cmd.Parameters.AddWithValue("@SalesDocumentNumber", salesDocumentNumber);                       //required
                 _ = cmd.Parameters.AddWithValue("@SalesDocumentVersion", salesDocumentVersion);                     //required
+                _ = cmd.Parameters.AddWithValue("@SalesDocIdPos", salesDocIdPos);                                                   //required
                 //========================================================================================================
                 _ = cmd.Parameters.AddWithValue("@Order", itemDTO.Order);                                             //required
                 _ = cmd.Parameters.AddWithValue("@Worksheet", itemDTO.Worksheet);                                      //require
@@ -99,7 +105,20 @@ namespace a2p.Shared.Infrastructure.Services
                 _ = cmd.Parameters.AddWithValue("@ModifiedUTCDateTime", dateTime);                                  //Required
 
 
+
+
+
+
+
+                //salesDoc.ConnectionString = "Provider=SQLOLEDB.1;Persist Security Info=False;Data Source=COSMOS;Initial Catalog=Reproduction.2018.2.Fauga;UID=sa;PWD=1234567;Trusted_Connection=Yes";//Util.myConnection.OleConnectionString;
+
+
+
+
+
                 int result = await _sqlRepository.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
+
+
                 return result;
             }
             catch (Exception ex)

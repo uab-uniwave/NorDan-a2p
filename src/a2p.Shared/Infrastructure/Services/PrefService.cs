@@ -1,5 +1,8 @@
-﻿using a2p.Shared.Core.Interfaces.Repository;
+﻿using a2p.Shared.Core.DTO;
+using a2p.Shared.Core.Interfaces.Repository;
 using a2p.Shared.Core.Interfaces.Services;
+
+using Microsoft.Extensions.Configuration;
 
 using System.Data;
 
@@ -10,11 +13,15 @@ namespace a2p.Shared.Infrastructure.Services
     {
         private readonly ILogService _logService;
         private readonly ISqlRepoitory _sqlRepository;
-        public PrefService(ILogService logService, ISqlRepoitory sqlService)
+        private readonly IConfiguration _configuration;
+        private readonly Interop.PrefDataManager.IPrefDataSource _prefSuiteOLEDBConnection;
+        public PrefService(ILogService logService, ISqlRepoitory sqlService, IConfiguration configuration)
         {
             _logService = logService;
             _sqlRepository = sqlService;
+            _configuration = configuration;
 
+            _prefSuiteOLEDBConnection = new Interop.PrefDataManager.PrefDataSource();
         }
 
 
@@ -181,7 +188,56 @@ namespace a2p.Shared.Infrastructure.Services
         }
 
 
-    }
+        public async Task<string> AddItem(ItemDTO itemDTO, int salesDocumentNumber, int salesDocumentVersion)
+        {
 
+            Interop.PrefSales.SalesDoc salesDoc = new()
+            {
+                //ConnectionString = _configuration.GetConnectionString("DefaultConnection")
+                ConnectionString = _prefSuiteOLEDBConnection.ConnectionString
+            };
+
+            salesDoc.Load(salesDocumentNumber, salesDocumentVersion);
+
+            string Command = "<cmd:Commands name=\"CommandName\" xmlns:cmd=\"http://www.preference.com/XMLSchemas/2006/PrefCAD.Command\">" +
+                                                               "<cmd:Command name=\"Model.SetDimensions\">" +
+                                                                   "<cmd:Parameter name=\"dimensions\" type=\"string\" value=\"W=" + itemDTO.Width.ToString() + ";H=" + itemDTO.ToString() + ";\"/>" +
+
+                                                               "</cmd:Command>" +
+                                                               "<cmd:Command name=\"Model.SetModelVariables\">" +
+                                                                   "<cmd:Parameter name=\"variables\" type=\"list\">" +
+                                                                   "<cmd:Item type=\"set\">" +
+
+                                                                   "<cmd:ItemValue name=\"name\" type=\"string\" value=\"Weight\"/>" +
+                                                                   "<cmd:ItemValue name=\"namespace\" type=\"string\" value=\"\"/>" +
+                                                                    "<cmd:ItemValue name=\"value\" type=\"real\" value=\"" + itemDTO.Weight.ToString() + "\"/>" +
+                                                                   "</cmd:Item>" +
+                                                                    "</cmd:Parameter>" +
+                                                               "</cmd:Command>" +
+
+                                                               "<cmd:Command name=\"Model.Regenerate\"/>" +
+                                                               "</cmd:Commands>";
+            string Result = "";
+
+
+            string salesDocumentIdPos = Guid.NewGuid().ToString();
+            await Task.Run(() =>
+            {
+                Interop.PrefSales.SalesDocItem sdi = salesDoc.Items.Add(salesDocumentIdPos);
+                sdi.SetCode("ALU_SAPA", false);
+                _ = sdi.ExecuteCommandStr(Command, out Result, true);
+                sdi.SetUnitPrice((double)itemDTO.Price);
+                sdi.SetUnitCost((double)itemDTO.Cost);
+                sdi.PriceClosed = true;
+                sdi.SetQuantity(itemDTO.Quantity);
+
+                sdi.Fields["Position"].Value = (itemDTO.SortOrder - 1).ToString();
+                sdi.Fields["SortOrder"].Value = (itemDTO.SortOrder - 1).ToString();
+                sdi.Fields["Description"].Value = itemDTO.Description;
+                salesDoc.Save();
+            });
+            return salesDocumentIdPos;
+        }
+    }
 
 }

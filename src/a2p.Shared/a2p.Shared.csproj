@@ -11,6 +11,27 @@
  </PropertyGroup>
 
  <ItemGroup>
+   <COMReference Include="PrefSales">
+     <WrapperTool>tlbimp</WrapperTool>
+     <VersionMinor>0</VersionMinor>
+     <VersionMajor>1</VersionMajor>
+     <Guid>c1694be9-8281-4ae9-805c-f536fbc09377</Guid>
+     <Lcid>0</Lcid>
+     <Isolated>false</Isolated>
+     <EmbedInteropTypes>true</EmbedInteropTypes>
+   </COMReference>
+   <COMReference Include="PrefDataManager">
+     <WrapperTool>tlbimp</WrapperTool>
+     <VersionMinor>0</VersionMinor>
+     <VersionMajor>1</VersionMajor>
+     <Guid>bb65111f-611b-4891-8a37-200ccdd0a115</Guid>
+     <Lcid>0</Lcid>
+     <Isolated>false</Isolated>
+     <EmbedInteropTypes>true</EmbedInteropTypes>
+   </COMReference>
+ </ItemGroup>
+
+ <ItemGroup>
  <None Include="Core\Entities\ConcreteEntity\ItemSchuco.cs" />
  <None Include="Core\Entities\Models\A2PLogRecord.cs" />
  </ItemGroup>
@@ -77,6 +98,16 @@
  <ItemGroup>
    <Folder Include="Core\Entities\BaseEntities\" />
    <Folder Include="Core\Utils\" />
+ </ItemGroup>
+
+
+ <ItemGroup>
+   <Reference Include="Interop.PrefDataManager">
+     <HintPath>..\..\..\..\Program Files\Preference\PrefSuite\Interop.PrefDataManager.dll</HintPath>
+   </Reference>
+   <Reference Include="Interop.PrefSales">
+     <HintPath>..\..\..\..\Program Files\Preference\PrefSuite\Interop.PrefSales.dll</HintPath>
+   </Reference>
  </ItemGroup>
 
 

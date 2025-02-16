@@ -25,6 +25,18 @@
  </ItemGroup>
 
  <ItemGroup>
+   <COMReference Include="PrefSales">
+     <WrapperTool>tlbimp</WrapperTool>
+     <VersionMinor>0</VersionMinor>
+     <VersionMajor>1</VersionMajor>
+     <Guid>c1694be9-8281-4ae9-805c-f536fbc09377</Guid>
+     <Lcid>0</Lcid>
+     <Isolated>false</Isolated>
+     <EmbedInteropTypes>true</EmbedInteropTypes>
+   </COMReference>
+ </ItemGroup>
+
+ <ItemGroup>
    <Content Include="Icon.ico" />
  </ItemGroup>
 

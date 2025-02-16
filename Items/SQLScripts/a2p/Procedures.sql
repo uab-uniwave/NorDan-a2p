@@ -1,8 +1,4 @@
 ﻿
-SET ANSI_nullS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 
 --Materials Insert
 --==================================================================================
@@ -269,6 +265,7 @@ GO
 CREATE PROCEDURE [dbo].[Uniwave_a2p_InsertItem]
     @SalesDocumentNumber [int],
     @SalesDocumentVersion [int],
+    @SalesDocumentIdPos [uniqueidentifier],
     --==================  
     @Order [nvarchar](255),
     @Worksheet [nvarchar](255),
@@ -335,6 +332,7 @@ BEGIN
     INSERT INTO [dbo].[Uniwave_a2p_Items] (
         [SalesDocumentNumber],
         [SalesDocumentVersion],
+        [SalesDocumentIdPos],
         --==================
         [Order],
         [Worksheet],
@@ -400,6 +398,7 @@ BEGIN
     VALUES (
         @SalesDocumentNumber,
         @SalesDocumentVersion,
+        @SalesDocumentIdPos,
         --==================
         @Order,
         @Worksheet,

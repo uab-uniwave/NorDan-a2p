@@ -1,4 +1,6 @@
-﻿namespace a2p.Shared.Core.Interfaces.Services
+﻿using a2p.Shared.Core.DTO;
+
+namespace a2p.Shared.Core.Interfaces.Services
 {
     public interface IPrefService
     {
@@ -10,6 +12,8 @@
         Task<string?> ItemsExistsAsync(string order);
 
         Task<string?> GetColorAsync(string color);
+
+        Task<string> AddItem(ItemDTO itemDTO, int SalesDocumentNumber, int SalesDocumentVersion);
     }
 }
 

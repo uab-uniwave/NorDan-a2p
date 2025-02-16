@@ -14,15 +14,18 @@ namespace a2p.Shared.Infrastructure.Services
         private readonly IWriteService _writeService;
         private ProgressValue _progressValue;
         private IProgress<ProgressValue> _progress;
+        private IPrefService _prefService;
         public MappingHandlerService(ILogService logService,
               IWriteService writeService,
-              IMapperServiceSapa_V2 mapperSapa_V2)
+              IMapperServiceSapa_V2 mapperSapa_V2,
+                IPrefService prefService)
 
         {
             _logService = logService;
             _mapperSapa_V2 = mapperSapa_V2;
             _writeService = writeService;
             _progressValue = new ProgressValue();
+            _prefService = prefService; 
 
         }
 
@@ -167,6 +170,8 @@ namespace a2p.Shared.Infrastructure.Services
                                                               $"item {itemDTO.Item ?? "Unknown"}" +
                                                               $" insert failed. "
                                             });
+
+
 
                                         }
                                     }

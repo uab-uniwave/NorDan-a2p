@@ -1,4 +1,4 @@
-﻿using a2p.Shared.Core.Entities.Models;
+﻿using a2p.Shared.Domain.Entities;
 
 using System.Drawing.Drawing2D;
 

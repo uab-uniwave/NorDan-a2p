@@ -1,5 +1,6 @@
 ﻿using a2p.Shared.Core.Entities.Models;
-using a2p.Shared.Core.Interfaces.Services;
+using a2p.Shared.Domain.Entities;
+using a2p.Shared.Infrastructure.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 

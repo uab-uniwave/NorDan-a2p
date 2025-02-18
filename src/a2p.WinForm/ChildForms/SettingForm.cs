@@ -1,4 +1,4 @@
-﻿using a2p.Shared.Core.Interfaces.Services;
+﻿using a2p.Shared.Infrastructure.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;

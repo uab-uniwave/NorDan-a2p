@@ -1,6 +1,7 @@
 ﻿using a2p.Shared;
-using a2p.Shared.Core.Interfaces.Services;
-using a2p.Shared.Core.Interfaces.Services.Other.Mappers;
+using a2p.Shared.Application.Interfaces;
+using a2p.Shared.Application.Services;
+using a2p.Shared.Infrastructure.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,13 +33,13 @@ namespace a2p.WinForm
 
             ILogService logService = _services.GetRequiredService<ILogService>();
             Console.SetOut(new DebugTextWriter());
-            _ = _services.GetRequiredService<IWriteService>();
-            _ = _services.GetRequiredService<IPrefService>();
+            _ = _services.GetRequiredService<IWriteMaterials>();
+            _ = _services.GetRequiredService<IPrefSuiteIntegrationService>();
             IFileService fileService = _services.GetRequiredService<IFileService>();
-            IReadService readService = _services.GetRequiredService<IReadService>();
+            IExcelReadService readService = _services.GetRequiredService<IExcelReadService>();
 
-            IMappingHandlerService mappingHandlerService = _services.GetRequiredService<IMappingHandlerService>();
-            _ = _services.GetRequiredService<IMapperServiceSapa_V2>();
+            IOrderProcessingService mappingHandlerService = _services.GetRequiredService<IOrderProcessingService>();
+            _ = _services.GetRequiredService<IMapperSapaV2>();
 
             IA2POrderMapper orderMapper = _services.GetRequiredService<IA2POrderMapper>();
 

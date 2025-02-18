@@ -21,6 +21,7 @@
  </PropertyGroup>
 
  <ItemGroup>
+ <Compile Remove="Mappers\A2PLogRecord.cs" />
  <Compile Remove="ThemeColor.cs" />
  </ItemGroup>
 
@@ -38,6 +39,10 @@
 
  <ItemGroup>
    <Content Include="Icon.ico" />
+ </ItemGroup>
+
+ <ItemGroup>
+   <None Include="Mappers\A2PLogRecord.cs" />
  </ItemGroup>
 
     <ItemGroup>

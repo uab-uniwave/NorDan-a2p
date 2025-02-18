@@ -1,6 +1,8 @@
-﻿using a2p.Shared.Core.DTO.a2p.Shared.Core.DTO;
-using a2p.Shared.Core.Entities.Models;
-using a2p.Shared.Core.Interfaces.Services;
+﻿using a2p.Shared.Application.Interfaces;
+using a2p.Shared.Application.Services;
+using a2p.Shared.Core.DTO.a2p.Shared.Core.DTO;
+using a2p.Shared.Domain.Entities;
+using a2p.Shared.Infrastructure.Interfaces;
 using a2p.WinForm.CustomControls;
 
 using Microsoft.Extensions.Configuration;
@@ -14,7 +16,7 @@ namespace a2p.WinForm.ChildForms
     public partial class OrdersForm : Form
     {
         private readonly IFileService _fileService;
-        private readonly IMappingHandlerService _mappingHandlerService;
+        private readonly IOrderProcessingService _mappingHandlerService;
         private readonly ILogService _logService;
         private readonly IA2POrderMapper _orderMapper;
         private readonly IConfiguration _configuration;
@@ -24,7 +26,7 @@ namespace a2p.WinForm.ChildForms
         private BindingSource _bindingSource;
         private List<A2POrder> _orderList;
 
-        public OrdersForm(IConfiguration configuration, IFileService fileService, IMappingHandlerService mappingService, ILogService logService, IA2POrderMapper orderMapper)
+        public OrdersForm(IConfiguration configuration, IFileService fileService, IOrderProcessingService mappingService, ILogService logService, IA2POrderMapper orderMapper)
         {
             _fileService = fileService;
             _mappingHandlerService = mappingService;
@@ -479,7 +481,7 @@ namespace a2p.WinForm.ChildForms
 
                 _progressValue.ProgressTitle = "Refreshing Files ...";
                 _progress?.Report(_progressValue);
-                _orderList = await _fileService.GetOrdersAsync(_orderList, _progressValue, _progress);
+                _orderList = await _fileService.GetOrdersAsync(_progressValue, _progress);
 
 
                 _progress?.Report(_progressValue);
@@ -686,7 +688,7 @@ namespace a2p.WinForm.ChildForms
 
         #endregion -== Methods ==-
 
-
+        
 
 
 

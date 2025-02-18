@@ -11,6 +11,12 @@
  </PropertyGroup>
 
  <ItemGroup>
+   <Compile Remove="Application\Utils\**" />
+   <EmbeddedResource Remove="Application\Utils\**" />
+   <None Remove="Application\Utils\**" />
+ </ItemGroup>
+
+ <ItemGroup>
    <COMReference Include="PrefSales">
      <WrapperTool>tlbimp</WrapperTool>
      <VersionMinor>0</VersionMinor>
@@ -32,8 +38,9 @@
  </ItemGroup>
 
  <ItemGroup>
- <None Include="Core\Entities\ConcreteEntity\ItemSchuco.cs" />
- <None Include="Core\Entities\Models\A2PLogRecord.cs" />
+ <None Include="Application\Interfaces\IMapperSapaV1.cs" />
+ <None Include="Application\Models\Models\ItemSchuco.cs" />
+ <None Include="Domain\Entities\A2PLogRecord.cs" />
  </ItemGroup>
 
  <ItemGroup>
@@ -92,12 +99,6 @@
  <None Update="appsettings.json">
   <CopyToOutputDirectory>Always</CopyToOutputDirectory>
  </None>
- </ItemGroup>
-
-
- <ItemGroup>
-   <Folder Include="Core\Entities\BaseEntities\" />
-   <Folder Include="Core\Utils\" />
  </ItemGroup>
 
 

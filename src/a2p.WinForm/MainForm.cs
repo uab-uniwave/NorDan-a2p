@@ -1,6 +1,8 @@
-﻿using a2p.Shared.Core.Entities.Models;
-using a2p.Shared.Core.Enums;
-using a2p.Shared.Core.Interfaces.Services;
+﻿using a2p.Shared.Application.Interfaces;
+using a2p.Shared.Application.Services;
+using a2p.Shared.Domain.Entities;
+using a2p.Shared.Domain.Enums;
+using a2p.Shared.Infrastructure.Interfaces;
 using a2p.WinForm.ChildForms;
 
 using Microsoft.Extensions.Configuration;
@@ -21,8 +23,8 @@ namespace a2p.WinForm
         private Button? selectedButton = null;
 
         private readonly IFileService _fileService;
-        private readonly IReadService _readService;
-        private readonly IMappingHandlerService _mappingHandlerService;
+        private readonly IExcelReadService _readService;
+        private readonly IOrderProcessingService _mappingHandlerService;
         private readonly IConfiguration _configuration;
         private readonly ILogService _logService;
         private readonly IA2POrderMapper _orderMapper;
@@ -54,7 +56,7 @@ namespace a2p.WinForm
 
         #endregion -== Custom Form Design Componenets ==-
 
-        public MainForm(IFileService fileService, IReadService excelService, IMappingHandlerService mappingHandlerService,
+        public MainForm(IFileService fileService, IExcelReadService excelService, IOrderProcessingService mappingHandlerService,
             IConfiguration configuration, ILogService logService, IA2POrderMapper orderMapper)
         {
             _fileService = fileService;

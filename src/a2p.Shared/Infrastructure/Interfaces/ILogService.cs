@@ -1,4 +1,4 @@
-﻿using a2p.Shared.Core.Entities.Models;
+﻿using a2p.Shared.Domain.Entities;
 
 namespace a2p.Shared.Infrastructure.Interfaces
 {

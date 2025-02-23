@@ -1,11 +1,11 @@
-﻿using a2p.Shared.Core.Entities.Models;
+﻿using System.Data;
+using System.Text.Json.Nodes;
+
+using a2p.Shared.Application.Services.Domain.Entities;
 using a2p.Shared.Domain.Entities;
 using a2p.Shared.Infrastructure.Interfaces;
 
 using Microsoft.Extensions.Configuration;
-
-using System.Data;
-using System.Text.Json.Nodes;
 
 namespace a2p.WinForm.ChildForms
 {
@@ -23,7 +23,6 @@ namespace a2p.WinForm.ChildForms
         private BindingSource _bindingSourceProperties;
         private string _file;
 
-
         public LogForm(IConfiguration configuration, ILogService logService)
         {
 
@@ -34,7 +33,6 @@ namespace a2p.WinForm.ChildForms
             _dataTableProperties = new DataTable();
             _bindingSourceProperties = [];
             _progressValue = new ProgressValue();
-
 
             _file = Path.Combine(_configuration["AppSettings:Folders:RootFolder"] ?? "C://Temp//Import", _configuration["AppSettings:Folders:Log"] ?? "Log", "a2pLog.json");
 
@@ -50,7 +48,6 @@ namespace a2p.WinForm.ChildForms
         {
             try
             {
-
 
                 dataGridViewLog.CellFormatting += LogGridView_CellFormatting!;
                 dataGridViewLog.CellClick += LogGridView_CellClick!;
@@ -75,7 +72,6 @@ namespace a2p.WinForm.ChildForms
                     ReadOnly = true,
                     Visible = true,
                     AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
-
 
                 });
                 _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
@@ -115,8 +111,6 @@ namespace a2p.WinForm.ChildForms
                     ReadOnly = true,
                     Visible = false,
 
-
-
                 });
                 _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
                 {
@@ -125,7 +119,6 @@ namespace a2p.WinForm.ChildForms
                     Name = "Exception",
                     ReadOnly = true,
                     Visible = false,
-
 
                 });
                 _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
@@ -150,8 +143,6 @@ namespace a2p.WinForm.ChildForms
                     Visible = true,
                     AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
 
-
-
                 });
                 _ = dataGridViewProperties.Columns.Add(new DataGridViewTextBoxColumn
                 {
@@ -163,9 +154,7 @@ namespace a2p.WinForm.ChildForms
                     MinimumWidth = 100,
                     AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
 
-
                 });
-
 
                 //DataGrid Header Style 
                 //===================================================================================================================
@@ -264,18 +253,12 @@ namespace a2p.WinForm.ChildForms
                 _bindingSourceLog.DataSource = _dataTableLog;
                 dataGridViewLog.DataSource = _bindingSourceLog;
 
-
-
                 // DataTable for log properties 
                 _ = _dataTableProperties.Columns.Add("Properties", typeof(string));
                 _ = _dataTableProperties.Columns.Add("Value", typeof(string));
                 _bindingSourceProperties.DataSource = _dataTableProperties;
                 dataGridViewProperties.DataSource = _bindingSourceProperties;
             }
-
-
-
-
 
             catch (Exception ex2)
             {
@@ -295,7 +278,6 @@ namespace a2p.WinForm.ChildForms
         #endregion -== Initializations ==-
 
         #region -== Form Events ==-
-
 
         private void LogForm_Load(object sender, EventArgs e)
         {
@@ -366,61 +348,65 @@ namespace a2p.WinForm.ChildForms
 
                     string cellValue = e.Value.ToString() ?? string.Empty;
 
-                    //  Use a dictionary to map log levels to styles for better maintainability
-                    Dictionary<string, (Color ForeColor, Color BackColor)> logLevelStyles = new()
-                   {
-                     { "Verbose", (System.Drawing.Color.LightGray,  BackColor) },
-                     { "Debug", (System.Drawing.Color.LightBlue,   BackColor ) },
-                     { "Information", (System.Drawing.Color.LightGreen,  BackColor) },
-                     { "Warning", (System.Drawing.Color.Yellow, BackColor)},
-                     { "Error", (System.Drawing.Color.Red,  BackColor)},
-                     { "Fatal", (System.Drawing.Color.DarkRed,  BackColor)}
-                   };
+                    if (e.CellStyle != null)
+                    {
 
-                    // Apply the style if the log level matches
-                    if (logLevelStyles.TryGetValue(cellValue, out (Color ForeColor, Color BackColor) style))
+                        // Apply the style if the log level matches
+                        if (e.Value.ToString() == "Fatal")
+                        {
+                            e.CellStyle.ForeColor = System.Drawing.Color.DarkRed;
+                        }
+                        else if (e.Value.ToString() == "Error")
+                        {
+                            e.CellStyle.ForeColor = System.Drawing.Color.Red;
+                        }
+                        else if (e.Value.ToString() == "Warning")
+                        {
+                            e.CellStyle.ForeColor = System.Drawing.Color.Yellow;
+                        }
+
+                        else if (e.Value.ToString() == "Warning")
+                        {
+                            e.CellStyle.ForeColor = System.Drawing.Color.LightGreen;
+
+                        }
+
+                        else if (e.Value.ToString() == "Debug")
+                        {
+                            e.CellStyle.ForeColor = System.Drawing.Color.LightBlue;
+                        }
+                        else if (e.Value.ToString() == "Verbose")
+                        {
+                            e.CellStyle.ForeColor = System.Drawing.Color.LightGray;
+                        }
+
+                    }
+
+                    // Apply wrapping for the "Message" column
+                    if (columnName == "Message")
                     {
                         if (e.CellStyle != null)
                         {
-                            e.CellStyle.BackColor = _backColor;
-                            e.CellStyle.ForeColor = style.ForeColor;
+                            e.CellStyle.WrapMode = DataGridViewTriState.True;
                         }
-
                     }
                     else
                     {
                         if (e.CellStyle != null)
                         {
-                            e.CellStyle.BackColor = _backColor;
-                            e.CellStyle.ForeColor = Color.LightGray;
+                            e.CellStyle.WrapMode = DataGridViewTriState.False;
                         }
                     }
-                }
 
-                // Apply wrapping for the "Message" column
-                if (columnName == "Message")
-                {
-                    if (e.CellStyle != null)
+                    // Format the "Timestamp" column
+                    if (columnName == "Timestamp" && e.Value != null)
                     {
-                        e.CellStyle.WrapMode = DataGridViewTriState.True;
-                    }
-                }
-                else
-                {
-                    if (e.CellStyle != null)
-                    {
-                        e.CellStyle.WrapMode = DataGridViewTriState.False;
-                    }
-                }
+                        if (DateTime.TryParse(e.Value.ToString(), out DateTime dateValue))
+                        {
+                            e.Value = dateValue.ToString("yyyy-MM-dd HH:mm:ss:ffff");
+                            e.FormattingApplied = true;
 
-                // Format the "Timestamp" column
-                if (columnName == "Timestamp" && e.Value != null)
-                {
-                    if (DateTime.TryParse(e.Value.ToString(), out DateTime dateValue))
-                    {
-                        e.Value = dateValue.ToString("yyyy-MM-dd HH:mm:ss:ffff");
-                        e.FormattingApplied = true;
-
+                        }
                     }
                 }
             }
@@ -436,7 +422,6 @@ namespace a2p.WinForm.ChildForms
         {
             try
             {
-
 
             }
             catch (Exception ex)
@@ -507,14 +492,12 @@ namespace a2p.WinForm.ChildForms
                     await Task.Run(() => LogAddAsync(logEntry));
                 }
 
-
             }
         }
         private async Task<A2PLogRecord> LogParseLineAsync(string jsonLine)
         {
             try
             {
-
 
                 using MemoryStream jsonStream = new(System.Text.Encoding.UTF8.GetBytes(jsonLine));
                 JsonNode? root = await JsonNode.ParseAsync(jsonStream);
@@ -531,7 +514,6 @@ namespace a2p.WinForm.ChildForms
                  kvp => kvp.Value?.ToString() as object
                 );
 
-
                 A2PLogRecord logRecord = new()
                 {
                     Timestamp = root["Timestamp"]?.ToString() ?? string.Empty,
@@ -544,15 +526,10 @@ namespace a2p.WinForm.ChildForms
 
                 };
 
-
-
-
-
                 if (properties == null)
                 {
                     return logRecord;
                 }
-
 
                 if (properties.Count == 0)
                 {
@@ -613,11 +590,8 @@ namespace a2p.WinForm.ChildForms
                 if (selectedLevels.Count > 0)
                 {
 
-
                     string filterExpression = $"Level IN ({string.Join(",", selectedLevels)})";
                     _bindingSourceLog.Filter = filterExpression;
-
-
 
                 }
                 else
@@ -663,14 +637,8 @@ namespace a2p.WinForm.ChildForms
         {
             LogClear();
 
-
             try
             {
-
-
-
-
-
 
                 List<A2PLogRecord> logEntries = await _logService.GetRepository(string.Empty);
 
@@ -694,11 +662,8 @@ namespace a2p.WinForm.ChildForms
                      .Select(group => group.First())
                      .ToList();
 
-
-
                     foreach (A2PLogRecord? logEntry in distinctLogEntries)
                     {
-
 
                         _ = _dataTableLog.Rows.Add(logEntry.Timestamp, logEntry.Level, logEntry.Message, logEntry.Order, logEntry.Worksheet, logEntry.Line, logEntry.Exception, logEntry.Properties);
                     }
@@ -713,7 +678,6 @@ namespace a2p.WinForm.ChildForms
             }
 
         }
-
 
         public void LogClear()
         {
@@ -796,12 +760,6 @@ namespace a2p.WinForm.ChildForms
 
         #endregion -== Data Table methods ==-
 
-
-
-
-
-
     }
 }
-
 

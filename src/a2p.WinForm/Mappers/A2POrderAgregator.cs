@@ -1,7 +1,9 @@
-﻿using a2p.Shared.Domain.Entities;
+﻿using a2p.Shared.Application.Domain.Entities;
+using a2p.Shared.Application.Services.Domain.Entities;
+using a2p.Shared.Domain.Entities;
 using a2p.Shared.Domain.Enums;
 
-namespace a2p.Shared.Infrastructure.Services.Other
+namespace a2p.WinForm.Mappers
 {
     public static class A2POrderAgregator
     {
@@ -18,12 +20,12 @@ namespace a2p.Shared.Infrastructure.Services.Other
 
         public static async Task<A2PWorksheet?> FindWorksheetAsync(List<A2POrder> orders, string orderNumber, string fileName, string worksheetName)
         {
-            return (await FindFileAsync(orders, orderNumber, fileName))?.Worksheets.FirstOrDefault(w => w.Worksheet == worksheetName);
+            return (await FindFileAsync(orders, orderNumber, fileName))?.Worksheets.FirstOrDefault(w => w.Name == worksheetName);
         }
 
         public static async Task<A2PWorksheet?> FindWorksheetByTypeAsync(List<A2POrder> orders, string orderNumber, string fileName, WorksheetType type)
         {
-            return (await FindFileAsync(orders, orderNumber, fileName))?.Worksheets.FirstOrDefault(w => w.Type == type);
+            return (await FindFileAsync(orders, orderNumber, fileName))?.Worksheets.FirstOrDefault(w => w.WorksheetType == type);
         }
 
         // Add or Update Methods
@@ -76,13 +78,13 @@ namespace a2p.Shared.Infrastructure.Services.Other
             {
                 foreach (A2PWorksheet worksheet in worksheets)
                 {
-                    A2PWorksheet? existingWorksheet = fileToUpdate.Worksheets.FirstOrDefault(w => w.Worksheet == worksheet.Worksheet);
+                    A2PWorksheet? existingWorksheet = fileToUpdate.Worksheets.FirstOrDefault(w => w.Name == worksheet.Name);
                     if (existingWorksheet != null)
                     {
                         // Update worksheet properties
                         existingWorksheet.RowCount = worksheet.RowCount;
                         existingWorksheet.WorksheetData = worksheet.WorksheetData;
-                        existingWorksheet.Type = worksheet.Type;
+                        existingWorksheet.WorksheetType = worksheet.WorksheetType;
                     }
                     else
                     {
@@ -124,7 +126,7 @@ namespace a2p.Shared.Infrastructure.Services.Other
             A2PFile? file = await FindFileAsync(orders, orderNumber, fileName);
             if (file != null)
             {
-                A2PWorksheet? worksheetToRemove = file.Worksheets.FirstOrDefault(w => w.Worksheet == worksheetName);
+                A2PWorksheet? worksheetToRemove = file.Worksheets.FirstOrDefault(w => w.Name == worksheetName);
                 if (worksheetToRemove != null)
                     _ = file.Worksheets.Remove(worksheetToRemove);
             }

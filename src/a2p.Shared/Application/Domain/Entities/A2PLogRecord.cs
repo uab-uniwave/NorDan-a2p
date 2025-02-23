@@ -1,4 +1,4 @@
-﻿namespace a2p.Shared.Core.Entities.Models
+﻿namespace a2p.Shared.Domain.Entities
 {
 
     public class A2PLogRecord

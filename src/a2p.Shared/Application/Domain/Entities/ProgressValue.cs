@@ -1,4 +1,4 @@
-﻿namespace a2p.Shared.Domain.Entities
+﻿namespace a2p.Shared.Application.Services.Domain.Entities
 {
  public class ProgressValue
  {

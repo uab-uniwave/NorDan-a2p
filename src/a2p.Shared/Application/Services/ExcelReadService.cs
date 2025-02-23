@@ -1,105 +1,101 @@
-﻿using a2p.Shared.Application.Interfaces;
-using a2p.Shared.Domain.Entities;
+﻿using System.Globalization;
+
+using a2p.Shared.Application.Domain.Entities;
+using a2p.Shared.Application.Interfaces;
+using a2p.Shared.Application.Services.Domain.Entities;
 using a2p.Shared.Domain.Enums;
 using a2p.Shared.Infrastructure.Interfaces;
 
 using ClosedXML.Excel;
-
-using DocumentFormat.OpenXml.Office2021.Excel.RichDataWebImage;
-
-using System.Globalization;
-
 
 namespace a2p.Shared.Application.Services
 {
     public class ExcelReadService : IExcelReadService
     {
 
-
         private readonly ILogService _logService;
-        private ProgressValue _progressValue;
-        private readonly IFileService _fileService;
-        private readonly IMapperSapaV1 _mapperSapaV1;
-        private readonly IMapperSapaV2 _mapperSapaV2;
-        private readonly IMapperSchuco _mapperSchuco;
-        private IProgress<ProgressValue>? _progress;
-        private string _currency = string.Empty;
-     
 
-        public ExcelReadService(ILogService logService, IFileService fileService, IMapperSapaV1 mapperSapaV1, IMapperSapaV2 mapperSapaV2, IMapperSchuco mapperSchuco)
+        private IProgress<ProgressValue>? _progress;
+        private ProgressValue _progressValue;
+        private string _currency = string.Empty;
+
+        public ExcelReadService(ILogService logService)
         {
 
-            _progressValue = new ProgressValue();
-
             _logService = logService;
-            _fileService = fileService;
+            _progressValue = new ProgressValue();
             _progress = new Progress<ProgressValue>();
-            _mapperSapaV1 = mapperSapaV1;    
-            _mapperSapaV2 = mapperSapaV2; 
-            _mapperSchuco = mapperSchuco;
-
-
 
         }
 
 
 
-        private async Task<A2POrder> GetWorksheetsAsync(A2POrder order,  IXLWorksheet ixlWorksheet, List<List<object>> values, IProgress<ProgressValue>? progress)
+        public async Task<List<A2PWorksheet>> GetWorksheetsAsync(A2PFile file, ProgressValue progressValue, IProgress<ProgressValue>? progress)
         {
 
-            foreach (var file in order.Files)
+            XLWorkbook workbook = new(file.File);
+            List<A2PWorksheet> worksheets = [];
+            int worksheetCount = 0;
+            try
             {
-                foreach (var worksheet in file.Worksheets)
+                foreach (IXLWorksheet ixlWorksheet in workbook.Worksheets)
                 {
 
+                    _progressValue.ProgressTask2 = $"Processing {ixlWorksheet.Name}. Worksheet {worksheetCount + 1} of {workbook.Worksheets.Count()}.";
+                    _progressValue.ProgressTask3 = $"Searching rows...";
+                    _progress?.Report(_progressValue);
 
                     if (ixlWorksheet == null)
                     {
-                        _logService.Error("Read Service: Error reading worksheet.Order {$Order}, file {$File} worksheet is null.", order.Order, worksheet.FileName);
-                        return order;
+                        continue;
                     }
-                    worksheet.Worksheet = ixlWorksheet.Name;
-                    worksheet.RowCount = ixlWorksheet.RowCount();
-                    worksheet.WorksheetData = values;
+
+                    if (ixlWorksheet.RowsUsed().Count() == 0)
+                    {
+                        continue;
+                    }
+
+                    A2PWorksheet worksheet = new()
+                    {
+                        WorksheetType = GetWorksheetType(file.FileName, ixlWorksheet.Name),
+                        Name = ixlWorksheet.Name,
+                        RowCount = ixlWorksheet.RowsUsed().Count(),
+                        FileName = file.FileName
+                    };
 
                     CultureInfo culture = CultureInfo.InvariantCulture;
                     int totalColumns = ixlWorksheet.LastColumnUsed()?.ColumnNumber() ?? 0;
                     string tempTask3 = _progressValue.ProgressTask3;
-                    int rowCount = 0;
-
 
                     IEnumerable<IXLRow> rows = ixlWorksheet.RowsUsed() ?? Enumerable.Empty<IXLRow>();
 
                     int totalCount = rows.Count();
-
+                    int rowCount = 0;
 
                     _progressValue.ProgressTask3 = $"Found {totalCount} rows.";
-                    progress?.Report(_progressValue);
+                    _progress?.Report(_progressValue);
 
+                    //iterate through all rows
                     foreach (IXLRow row in ixlWorksheet.RowsUsed() ?? Enumerable.Empty<IXLRow>())
                     {
-                        {
 
-                            _progressValue.ProgressTask3 = $"Processing row {rowCount + 1} of {totalCount}...";
-                            progress?.Report(_progressValue);
-                        }
-
+                        _progressValue.ProgressTask3 = $"Processing row {rowCount + 1} of {totalCount}...";
+                        _progress?.Report(_progressValue);
 
                         List<object> rowValues = [];
+
+                        //iterate through all Columns
+                        //=======================================================================================================
                         for (int col = 1; col <= totalColumns; col++) // Iterate through all columns
                         {
-
-
                             IXLCell cell = row.Cell(col); // Access the cell by column index
                             if (cell != null && !cell.IsEmpty())
                             {
-                                _progressValue.ProgressTask3 = $"Processing row {rowCount + 1} of {totalCount} - cell {cell.Address}";
-                                progress?.Report(_progressValue);
 
-                                if (string.IsNullOrEmpty(_currency))
-
+                                if (string.IsNullOrEmpty(file.Currency))
                                 {
-                                    _currency = GetCurrency(cell.Style.NumberFormat.Format);
+                                    worksheet.Currency = GetCurrency(cell.Style.NumberFormat.Format).Trim();
+                                    file.Currency = worksheet.Currency;
                                 }
 
                                 // Attempt to parse numeric values
@@ -107,58 +103,47 @@ namespace a2p.Shared.Application.Services
 
                                 if (numericValue != 0)
                                 {
-                                    _logService.Verbose("Read Service. Cell is Empty. Order {$Order}, " +
-                                                                                     "worksheet {$Worksheet}, " +
-                                                                                     "line  {$Line}, " +
-                                                                                     "cell {$Cell}." +
-                                                                                     " Extracting numeric value: {$Value}", order, a2pWorksheet.Worksheet, rowCount + 1, cell!.Address.ToString() ?? "", numericValue);
-                                    cell!.Value = numericValue.ToString(culture);
+                                    _logService.Verbose("Extracting from cell {Cell} Numeric Value: {Double}", cell.Address.ToString() ?? "", numericValue);
+                                    cell.Value = numericValue.ToString(culture);
                                     rowValues.Add(cell.Value);
                                 }
                                 else
                                 {
-                                    _logService.Verbose("Read Service. Extracted from cell {Cell} Text: {Text}", cell.Address.ToString() ?? "", cell.Value.ToString());
+                                    _logService.Verbose("Extracted from cell {Cell} Text: {Text}", cell.Address.ToString() ?? "", cell.Value.ToString());
                                     rowValues.Add(cell.Value.ToString());
                                 }
                             }
                             else
                             {
-                                _logService.Verbose("Read Service. Cell is Empty. Order {$Order}, worksheet {$Worksheet}, line  {$Line}, cell {$Cell}", order.Order, a2pWorksheet.Worksheet, row.RowNumber() + 1, cell!.Address.ToString() ?? "");
+                                _logService.Debug("Cell at column {Col} is empty!", cell.Address.ToString() ?? "-1");
                                 rowValues.Add(string.Empty); // Add empty string for empty cells
                             }
 
-
                         }
-                        a2pWorksheet.WorksheetData.Add(rowValues);
+                        worksheet.WorksheetData.Add(rowValues);
                         rowCount++;
                     }
 
-                    file.Worksheets.Add(worksheet);
+                    worksheets.Add(worksheet);
+                    worksheetCount++;
                 }
+                return worksheets;
 
-                order.Files.Add(file);
-           
             }
+            catch (Exception ex)
+            {
+                _logService.Error(ex, "ES. Unhandled error: Reading worksheet list from file ${FileName}", file.FileName);
+                return worksheets;
 
-
-            A2PWorksheet a2pWorksheet = new();
-           
-
-
-
-
-           
-
-            return order;
-
+            }
         }
 
         private WorksheetType GetWorksheetType(string fileName, string worksheetName)
         {
 
-
             if (string.IsNullOrEmpty(fileName))
             {
+
                 return WorksheetType.Unknown;
             }
 
@@ -166,54 +151,42 @@ namespace a2p.Shared.Application.Services
             {
                 return WorksheetType.Unknown;
             }
-            WorksheetType worksheetType = WorksheetType.Unknown;
+
+            WorksheetType worksheetType = (worksheetName.Trim().Contains("Litteralista") && fileName.Contains("CalcSapaLogic")) ||
+                    (worksheetName.Trim().Contains("Price Details") && fileName?.Contains("Price_Details") == true)
+                ? WorksheetType.Items
+                //Materials
+                //=======================================================================================================
+                : (worksheetName.Trim().Contains("Sapa Accessories") ||
+                                      worksheetName.Trim().Contains("Sapa Profiles") ||
+                                      worksheetName.Trim().Contains("Default hardware supplier") ||
+                                      worksheetName.Trim().Contains("Accessories") ||
+                                      worksheetName.Trim().Contains("Accessory_summary") ||
+                                      worksheetName.Trim().Contains("1") ||
+                                      worksheetName.Trim().Contains("2") ||
+                                      worksheetName.Trim().Contains("Others") ||
+                                      worksheetName.Trim().Contains("Gaskets") ||
+                                      worksheetName.Trim().Contains("Profiles")) &&
+                                     (fileName?.Contains("MaterialList") == true ||
+                                      fileName?.Contains("SumList") == true ||
+                                      fileName?.Contains("Profile_summary") == true)
+                    ? WorksheetType.Materials
+
+                    //Glasses
+                    //=======================================================================================================
+                    : (worksheetName.Trim().Contains("Default glazing supplier") ||
+                                                      worksheetName.Trim().Contains("Glasses") ||
+                                                      worksheetName.Trim().Contains("2")) &&
+                                                      (fileName?.Contains("FillingList") == true ||
+                                                      fileName?.Contains("SumList") == true ||
+                                                      fileName?.Contains("Glass_panel") == true)
+                                    ? WorksheetType.Glasses
+                                    : WorksheetType.Panels;
 
             //Items
             //=======================================================================================================
-            if ((worksheetName.Trim().Contains("Litteralista") && fileName.Contains("CalcSapaLogic")) ||
-                (worksheetName.Trim().Contains("Price Details") && fileName?.Contains("Price_Details") == true))
-            {
-                worksheetType = WorksheetType.Items;
-            }
-            //Materials
-            //=======================================================================================================
-            else if ((worksheetName.Trim().Contains("Sapa Accessories") ||
-                      worksheetName.Trim().Contains("Sapa Profiles") ||
-                      worksheetName.Trim().Contains("Default hardware supplier") ||
-                      worksheetName.Trim().Contains("Accessories") ||
-                      worksheetName.Trim().Contains("Accessory_summary") ||
-                      worksheetName.Trim().Contains("1") ||
-                      worksheetName.Trim().Contains("2") ||
-                      worksheetName.Trim().Contains("Others") ||
-                      worksheetName.Trim().Contains("Gaskets") ||
-                      worksheetName.Trim().Contains("Profiles")) &&
-                     (fileName?.Contains("MaterialList") == true ||
-                      fileName?.Contains("SumList") == true ||
-                      fileName?.Contains("Profile_summary") == true))
-            {
-                worksheetType = WorksheetType.Materials;
-            }
-
-            //Glasses
-            //=======================================================================================================
-            else if ((worksheetName.Trim().Contains("Default glazing supplier") ||
-                      worksheetName.Trim().Contains("Glasses") ||
-                      worksheetName.Trim().Contains("2")) &&
-                      (fileName?.Contains("FillingList") == true ||
-                      fileName?.Contains("SumList") == true ||
-                      fileName?.Contains("Glass_panel") == true))
-            {
-                worksheetType = WorksheetType.Glasses;
-            }
-            else if ((worksheetName.Trim().Contains("Metal sheet optimization") ||
-                     worksheetName.Trim().Contains("ND_Panel")) &&
-                     fileName?.Contains("FillingList") == true)
-            {
-                worksheetType = WorksheetType.Panels;
-            }
 
             // SAPA V2 Positions
-
             return worksheetType;
         }
         private static async Task<double> GetRawNumericValueAsDoubleAsync(IXLCell cell, IXLWorksheet worksheet, CultureInfo culture)
@@ -225,12 +198,12 @@ namespace a2p.Shared.Application.Services
              GetRawNumericValue(cell, worksheet));
 
             return await Task.Run(() =>
-              {
-                  // Attempt to parse the raw value as a double using the specified culture
-                  return !double.TryParse(rawValue, NumberStyles.Any, culture, out double result)
-          ? 0
-          : double.Parse(rawValue, NumberStyles.Any, culture);
-              });
+            {
+                // Attempt to parse the raw value as a double using the specified culture
+                return !double.TryParse(rawValue, NumberStyles.Any, culture, out double result)
+        ? 0
+        : double.Parse(rawValue, NumberStyles.Any, culture);
+            });
         }
 
         private static async Task<string> GetRawNumericValue(IXLCell cell, IXLWorksheet worksheet)
@@ -250,7 +223,6 @@ namespace a2p.Shared.Application.Services
         {
 
             string currency = string.Empty;
-
 
             // Simplify currency extraction logic
             string lowerFormat = customFormat.ToLower();
@@ -298,8 +270,5 @@ namespace a2p.Shared.Application.Services
             return currency;
         }
 
-        
     }
 }
-
-

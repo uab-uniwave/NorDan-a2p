@@ -1,10 +1,8 @@
 ﻿using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Application.Services;
-using a2p.Shared.Core.Interfaces;
 using a2p.Shared.Infrastructure.Interfaces;
 using a2p.Shared.Infrastructure.Services;
 using a2p.Shared.Infrastructure.Services.Logger;
-using a2p.Shared.Infrastructure.Services.Other.Mappers;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -72,16 +70,19 @@ namespace a2p.Shared
 
             // Register core services
             _ = services.AddSingleton<ILogService, LogService>();
+            _ = services.AddSingleton<IOrderReadProcessor, OrderReadProcessor>();
             _ = services.AddSingleton<IExcelReadService, ExcelReadService>();
-            _ = services.AddSingleton<IPrefSuiteIntegrationService, PrefSuiteIntegrationService>();
+            _ = services.AddSingleton<IPrefSuiteService, PrefSuiteService>();
+            _ = services.AddSingleton<IWriteItemService, WriteItemService>();
+            _ = services.AddSingleton<IWriteMaterialService, WriteMaterialService>();
             _ = services.AddSingleton<IFileService, FileService>();
-
+            _ = services.AddSingleton<IMapperSapaV1, MapperSapaV1>();
             _ = services.AddSingleton<IMapperSapaV2, MapperSapaV2>();
-            _ = services.AddSingleton<IA2POrderMapper, A2POrderRecordMapper>();
+            _ = services.AddSingleton<IMapperSchuco, MapperSchuco>();
+            _ = services.AddSingleton<IOrderWriteProcessor, OrderWritingProcessor>();
+            // _ = services.AddSingleton<Record, A2POrderRecordMapper>();
+            _ = services.AddSingleton<ISqlRepository, SqlRepository>();
 
-            _ = services.AddSingleton<IWriteMaterialsService, WriteMaterialService>();
-            _ = services.AddSingleton<IOrderProcessingService, OrderProcessingService>();
-            _ = services.AddSingleton<SQLRepository, SQLRepository>();
 
 
 

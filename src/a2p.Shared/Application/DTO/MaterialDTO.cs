@@ -2,7 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace a2p.Shared.Core.DTO
+namespace a2p.Shared.Application.DTO
 {
     public class MaterialDTO
     {

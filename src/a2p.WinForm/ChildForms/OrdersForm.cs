@@ -1,13 +1,14 @@
-﻿using a2p.Shared.Application.Interfaces;
-using a2p.Shared.Application.Services;
+﻿using System.Data;
+
+using a2p.Shared.Application.Interfaces;
+using a2p.Shared.Application.Services.Domain.Entities;
 using a2p.Shared.Core.DTO.a2p.Shared.Core.DTO;
 using a2p.Shared.Domain.Entities;
+using a2p.Shared.Domain.Enums;
 using a2p.Shared.Infrastructure.Interfaces;
 using a2p.WinForm.CustomControls;
 
 using Microsoft.Extensions.Configuration;
-
-using System.Data;
 
 using Font = System.Drawing.Font;
 
@@ -16,27 +17,40 @@ namespace a2p.WinForm.ChildForms
     public partial class OrdersForm : Form
     {
         private readonly IFileService _fileService;
-        private readonly IOrderProcessingService _mappingHandlerService;
+        private readonly IOrderWriteProcessor _orderWriteProcessor;
         private readonly ILogService _logService;
-        private readonly IA2POrderMapper _orderMapper;
+        private readonly IOrderReadProcessor _readServices;
+        private readonly IExcelReadService _excelReadServices;
+
         private readonly IConfiguration _configuration;
         private IProgress<ProgressValue>? _progress;
         private ProgressValue _progressValue;
         private DataTable _dataTable;
         private BindingSource _bindingSource;
-        private List<A2POrder> _orderList;
+        private List<A2POrder> _a2pOrders;
+        private List<A2POrder> _a2OrdersPendingImport;
 
-        public OrdersForm(IConfiguration configuration, IFileService fileService, IOrderProcessingService mappingService, ILogService logService, IA2POrderMapper orderMapper)
+        public OrdersForm(IConfiguration configuration,
+                          IOrderWriteProcessor orderWriteProcessor,
+                          ILogService logService,
+                          IOrderReadProcessor orderReadProcessor,
+                          IExcelReadService excelReadServices,
+                          IFileService fileService)
+
         {
-            _fileService = fileService;
-            _mappingHandlerService = mappingService;
+
+            _orderWriteProcessor = orderWriteProcessor;
             _logService = logService;
-            _orderMapper = orderMapper;
-            _orderList = [];
             _dataTable = new DataTable();
             _bindingSource = [];
             _progressValue = new ProgressValue();
+            _progress = new Progress<ProgressValue>();
             _configuration = configuration;
+            _readServices = orderReadProcessor;
+            _excelReadServices = excelReadServices;
+            _a2pOrders = [];
+            _a2OrdersPendingImport = [];
+            _fileService = fileService;
 
             this.SuspendLayout();
             this.AutoScaleMode = AutoScaleMode.Dpi;
@@ -44,6 +58,7 @@ namespace a2p.WinForm.ChildForms
             InitializeComponent();
             InitializeGrid();
             InitializeTable();
+            _readServices = orderReadProcessor;
         }
 
         #region -== Initializations ==-
@@ -62,7 +77,7 @@ namespace a2p.WinForm.ChildForms
                             DataPropertyName = "Order",
                             Name = "Order",
                             ReadOnly = true,
-                            AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+                            AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
                         });
                     }
                     if (!dataGridViewFiles.Columns.Contains("Currency"))
@@ -73,7 +88,7 @@ namespace a2p.WinForm.ChildForms
                             DataPropertyName = "Currency",
                             Name = "Currency",
                             ReadOnly = true,
-                            AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                            AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
                         });
                     }
                     if (!dataGridViewFiles.Columns.Contains("FileCount"))
@@ -84,7 +99,7 @@ namespace a2p.WinForm.ChildForms
                             DataPropertyName = "FileCount",
                             Name = "FileCount",
                             ReadOnly = true,
-                            AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                            AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
                         });
                     }
                     if (!dataGridViewFiles.Columns.Contains("FileList"))
@@ -97,27 +112,7 @@ namespace a2p.WinForm.ChildForms
                             Visible = false
                         });
                     }
-                    //if (!dataGridViewFiles.Columns.Contains("LockedFileCount"))
-                    //{
-                    //    _ = dataGridViewFiles.Columns.Add(new DataGridViewTextBoxColumn
-                    //    {
-                    //        HeaderText = "IsLocked",
-                    //        DataPropertyName = "LockedFileCount",
-                    //        Name = "LockedFileCount",
-                    //        ReadOnly = true,
-                    //        Visible = false
-                    //    });
-                    //}
-                    //if (!dataGridViewFiles.Columns.Contains("LockedFileList"))
-                    //{
-                    //    _ = dataGridViewFiles.Columns.Add(new DataGridViewTextBoxColumn
-                    //    {
-                    //        HeaderText = "LockedList",
-                    //        DataPropertyName = "LockedFileList",
-                    //        Name = "LockedFileList",
-                    //        Visible = false
-                    //    });
-                    //}
+
                     if (!dataGridViewFiles.Columns.Contains("WorksheetCount"))
                     {
                         _ = dataGridViewFiles.Columns.Add(new DataGridViewTextBoxColumn
@@ -126,7 +121,7 @@ namespace a2p.WinForm.ChildForms
                             DataPropertyName = "WorksheetCount",
                             Name = "WorksheetCount",
                             ReadOnly = true,
-                            AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                            AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
                         });
                     }
                     if (!dataGridViewFiles.Columns.Contains("WorksheetList"))
@@ -148,7 +143,31 @@ namespace a2p.WinForm.ChildForms
                             DataPropertyName = "Items",
                             Name = "Items",
                             ReadOnly = true,
-                            AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                            AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+                        });
+                    }
+
+                    if (!dataGridViewFiles.Columns.Contains("ItemList"))
+                    {
+                        _ = dataGridViewFiles.Columns.Add(new DataGridViewTextBoxColumn
+                        {
+                            HeaderText = "Item List",
+                            DataPropertyName = "ItemList",
+                            Name = "ItemList",
+                            ReadOnly = true,
+                            Visible = false
+                        });
+                    }
+
+                    if (!dataGridViewFiles.Columns.Contains("Materials"))
+                    {
+                        _ = dataGridViewFiles.Columns.Add(new DataGridViewTextBoxColumn
+                        {
+                            HeaderText = "Materials",
+                            DataPropertyName = "Materials",
+                            Name = "Materials",
+                            ReadOnly = true,
+                            AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
                         });
                     }
                     if (!dataGridViewFiles.Columns.Contains("Import"))
@@ -158,9 +177,32 @@ namespace a2p.WinForm.ChildForms
                             HeaderText = "Import",
                             DataPropertyName = "Import",
                             Name = "Import",
-                            AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                            AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
                         });
                     }
+                    if (!dataGridViewFiles.Columns.Contains("WarningCount"))
+                    {
+                        _ = dataGridViewFiles.Columns.Add(new DataGridViewTextBoxColumn
+                        {
+                            HeaderText = "Warnings",
+                            DataPropertyName = "WarningCount",
+                            Name = "WarningCount",
+                            ReadOnly = true,
+                            AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+                        });
+                    }
+                    if (!dataGridViewFiles.Columns.Contains("WarningList"))
+                    {
+                        _ = dataGridViewFiles.Columns.Add(new DataGridViewTextBoxColumn
+                        {
+                            HeaderText = "WarningList",
+                            DataPropertyName = "WarningList",
+                            Name = "WarningList",
+                            ReadOnly = true,
+                            Visible = false
+                        });
+                    }
+
                     if (!dataGridViewFiles.Columns.Contains("ErrorCount"))
                     {
                         _ = dataGridViewFiles.Columns.Add(new DataGridViewTextBoxColumn
@@ -169,7 +211,7 @@ namespace a2p.WinForm.ChildForms
                             DataPropertyName = "ErrorCount",
                             Name = "ErrorCount",
                             ReadOnly = true,
-                            AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                            AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
                         });
                     }
                     if (!dataGridViewFiles.Columns.Contains("ErrorList"))
@@ -223,7 +265,6 @@ namespace a2p.WinForm.ChildForms
                     };
                     dataGridViewFiles.RowsDefaultCellStyle = RowsDefaultCellStyle;
 
-
                     DataGridViewCellStyle DefaultCellStyle = new()
                     {
                         BackColor = Color.FromArgb(56, 57, 60),
@@ -255,12 +296,14 @@ namespace a2p.WinForm.ChildForms
                 _ = _dataTable.Columns.Add("Currency", typeof(string));
                 _ = _dataTable.Columns.Add("FileCount", typeof(int));
                 _ = _dataTable.Columns.Add("FileList", typeof(string));
-                //_ = _dataTable.Columns.Add("LockedFileCount", typeof(int));
-                //_ = _dataTable.Columns.Add("LockedFileList", typeof(string));
                 _ = _dataTable.Columns.Add("WorksheetCount", typeof(int));
                 _ = _dataTable.Columns.Add("WorksheetList", typeof(string));
                 _ = _dataTable.Columns.Add("Items", typeof(int));
+                _ = _dataTable.Columns.Add("ItemList", typeof(string));
+                _ = _dataTable.Columns.Add("Materials", typeof(int));
                 _ = _dataTable.Columns.Add("Import", typeof(bool));
+                _ = _dataTable.Columns.Add("WarningCount", typeof(string));
+                _ = _dataTable.Columns.Add("WarningList", typeof(string));
                 _ = _dataTable.Columns.Add("ErrorCount", typeof(string));
                 _ = _dataTable.Columns.Add("ErrorList", typeof(string));
 
@@ -296,8 +339,10 @@ namespace a2p.WinForm.ChildForms
         private void OrdersForm_DpiChanged(object sender, DpiChangedEventArgs e)
         {
             this.PerformAutoScale();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            plGridPanel.ResumeLayout(true);
+            plTbSBInfo.ResumeLayout(true);
+            dataGridViewFiles.ResumeLayout(true);
+            this.ResumeLayout(true);
 
         }
         private void FileForm_ResizeBegin(object sender, EventArgs e)
@@ -328,36 +373,19 @@ namespace a2p.WinForm.ChildForms
                     string? fileList = dataGridViewFiles.Rows[e.RowIndex].Cells["FileList"].Value.ToString();
                     dataGridViewFiles.Rows[e.RowIndex].Cells[e.ColumnIndex].ToolTipText = fileList;
                 }
+
+                if (dataGridViewFiles.Columns["Items"] != null && e.ColumnIndex == dataGridViewFiles.Columns["Items"].Index && e.Value != null)
+                {
+                    string? fileList = dataGridViewFiles.Rows[e.RowIndex].Cells["ItemList"].Value.ToString();
+                    dataGridViewFiles.Rows[e.RowIndex].Cells[e.ColumnIndex].ToolTipText = fileList;
+                }
+
                 else if (dataGridViewFiles.Columns["WorksheetCount"] != null && e.ColumnIndex == dataGridViewFiles.Columns["WorksheetCount"].Index && e.Value != null)
                 {
                     string? worksheetList = dataGridViewFiles.Rows[e.RowIndex].Cells["WorksheetList"].Value.ToString();
                     dataGridViewFiles.Rows[e.RowIndex].Cells[e.ColumnIndex].ToolTipText = worksheetList;
                 }
-                //if (dataGridViewFiles.Columns["ErrorCount"] != null && e.ColumnIndex == dataGridViewFiles.Columns["ErrorCount"].Index && e.Value != null)
-                //{
-                //    if (e.CellStyle != null)
-                //    {
-                //        e.CellStyle.ForeColor = Color.FromArgb(56, 57, 60);
-                //    }
-                //    if (int.TryParse(e.Value.ToString(), out int locked))
-                //    {
-                //        if (e.CellStyle != null)
-                //        {
-                //            e.CellStyle.ForeColor = locked > 0 ? System.Drawing.Color.LightSalmon : Color.FromArgb(126, 127, 130);
-                //        }
-                //    }
-                //    else
-                //    {
-                //        if (e.CellStyle != null)
-                //        {
-                //            e.CellStyle.ForeColor = Color.FromArgb(126, 127, 130);
-                //        }
-                //    }
-                //    string? errorFileList = dataGridViewFiles.Rows[e.RowIndex].Cells["ErrorList"].Value.ToString();
-                //    dataGridViewFiles.Rows[e.RowIndex].Cells[e.ColumnIndex].ToolTipText = errorFileList;
-                //}
-
-                if (dataGridViewFiles.Columns["ErrorCount"] != null && e.ColumnIndex == dataGridViewFiles.Columns["ErrorCount"].Index && e.Value != null)
+                else if (dataGridViewFiles.Columns["ErrorCount"] != null && e.ColumnIndex == dataGridViewFiles.Columns["ErrorCount"].Index && e.Value != null)
                 {
                     if (e.CellStyle != null)
                     {
@@ -384,6 +412,53 @@ namespace a2p.WinForm.ChildForms
                     dataGridViewFiles.Rows[e.RowIndex].Cells[e.ColumnIndex].ToolTipText = errorList;
                 }
 
+                else if (dataGridViewFiles.Columns["WarningCount"] != null && e.ColumnIndex == dataGridViewFiles.Columns["WarningCount"].Index && e.Value != null)
+                {
+                    if (e.CellStyle != null)
+                    {
+                        e.CellStyle.ForeColor = Color.FromArgb(56, 57, 60);
+                    }
+                    if (!string.IsNullOrEmpty(e.Value.ToString()))
+                    {
+                        if (e.CellStyle != null)
+                        {
+                            e.CellStyle.ForeColor = System.Drawing.Color.Yellow;
+                        }
+                    }
+                    else
+                    {
+                        if (e.CellStyle != null)
+                        {
+                            e.CellStyle.ForeColor = Color.FromArgb(239, 112, 32);
+                        }
+                    }
+                    string? warningList = dataGridViewFiles.Rows[e.RowIndex].Cells["WarningList"].Value.ToString();
+                    dataGridViewFiles.Rows[e.RowIndex].Cells[e.ColumnIndex].ToolTipText = warningList;
+                }
+
+                //if (dataGridViewFiles.Columns["ErrorCount"] != null && e.ColumnIndex == dataGridViewFiles.Columns["ErrorCount"].Index && e.Value != null)
+                //{
+                //    if (e.CellStyle != null)
+                //    {
+                //        e.CellStyle.ForeColor = Color.FromArgb(56, 57, 60);
+                //    }
+                //    if (int.TryParse(e.Value.ToString(), out int locked))
+                //    {
+                //        if (e.CellStyle != null)
+                //        {
+                //            e.CellStyle.ForeColor = locked > 0 ? System.Drawing.Color.LightSalmon : Color.FromArgb(126, 127, 130);
+                //        }
+                //    }
+                //    else
+                //    {
+                //        if (e.CellStyle != null)
+                //        {
+                //            e.CellStyle.ForeColor = Color.FromArgb(126, 127, 130);
+                //        }
+                //    }
+                //    string? errorFileList = dataGridViewFiles.Rows[e.RowIndex].Cells["ErrorList"].Value.ToString();
+                //    dataGridViewFiles.Rows[e.RowIndex].Cells[e.ColumnIndex].ToolTipText = errorFileList;
+                //}
 
             }
             catch (Exception ex)
@@ -398,6 +473,22 @@ namespace a2p.WinForm.ChildForms
 
         public async Task OrdersLoad()
         {
+            int orderCount = 0;
+            int fileCount = 0;
+            int worksheetCount = 0;
+            int ItemCount = 0;
+            int materialCount = 0;
+            int warningCount = 0;
+            int errorCount = 0;
+
+            lbInfoOrdersCount.Text = orderCount.ToString();
+            lbInfoFilesCount.Text = fileCount.ToString();
+            lbInfoWorksheetsCount.Text = worksheetCount.ToString();
+            lbInfoItemsCount.Text = ItemCount.ToString();
+            lbInfoMaterialCount.Text = materialCount.ToString();
+            lbInfoWarningCount.Text = warningCount.ToString();
+            lbInfoErrorCount.Text = errorCount.ToString();
+
             if (_progressValue != null)
             {
                 _progressValue.ProgressTitle = "Loading Order Files ...";
@@ -417,10 +508,8 @@ namespace a2p.WinForm.ChildForms
 
             }
 
-
             try
             {
-
 
                 using ProgressBarForm progressBarForm = new()
                 {
@@ -438,18 +527,13 @@ namespace a2p.WinForm.ChildForms
                 _progress = progress;
                 _progress?.Report(_progressValue);
 
-
                 progressBarForm.Cursor = Cursors.WaitCursor;
                 progressBarForm.Show();
                 await progressBarForm.FormReadyAsync();
-    
 
                 _progress?.Report(_progressValue);
 
-
                 #region  Start Loading Files
-
-
 
                 if (_dataTable.Rows.Count > 0)
                 {
@@ -460,7 +544,7 @@ namespace a2p.WinForm.ChildForms
                             _progressValue.ProgressTitle = "Removing Existing data ...";
                             _progress?.Report(_progressValue);
                             _dataTable.Clear();
-                            _orderList.Clear();
+                            _a2pOrders.Clear();
 
                         }));
                     }
@@ -469,49 +553,64 @@ namespace a2p.WinForm.ChildForms
                         _progressValue.ProgressTitle = "Removing Existing data ...";
                         _progress?.Report(_progressValue);
                         _dataTable.Clear();
-                        _orderList.Clear();
-
-
-
+                        _a2pOrders.Clear();
 
                     }
 
                 }
 
-
                 _progressValue.ProgressTitle = "Refreshing Files ...";
                 _progress?.Report(_progressValue);
-                _orderList = await _fileService.GetOrdersAsync(_progressValue, _progress);
-
-
-                _progress?.Report(_progressValue);
+                _a2pOrders = await _readServices.ReadAsync(_progressValue, _progress);
 
                 _progress?.Report(_progressValue);
-                foreach (A2POrder a2pOrder in _orderList)
+
+                foreach (A2POrder a2pOrder in _a2pOrders)
                 {
+
                     _progress?.Report(_progressValue);
                     try
                     {
-                        OrderDTO order = await _orderMapper.MapToOrderDTOAsync(a2pOrder);
+
+                        OrderDTO orderDTO = await MapToOrderDTOAsync(a2pOrder);
                         _ = _dataTable.Rows.Add
-                            (order.Order,
-                              order.Currency,
-                              order.FileCount,
-                              order.FileList,
-                              //    order.LockedFileCount,
-                              //    order.LockedFileList,
-                              order.WorksheetCount,
-                              order.WorksheetList,
-                              order.ItemCount,
-                              order.Import,
-                              order.ErrorCount,
-                              order.ErrorList
+                            (orderDTO.Order,
+                              orderDTO.Currency,
+                              orderDTO.FileCount,
+                              orderDTO.FileList,
+                              orderDTO.WorksheetCount,
+                              orderDTO.WorksheetList,
+                              orderDTO.ItemCount,
+                              orderDTO.ItemList,
+                              orderDTO.Materials,
+                              orderDTO.Import,
+                              orderDTO.WarningCount,
+                              orderDTO.WarningList,
+                              orderDTO.ErrorCount,
+                              orderDTO.ErrorList
                             );
                         this.PerformLayout();
+
+                        orderCount++;
+                        fileCount += orderDTO.FileCount;
+                        worksheetCount += orderDTO.WorksheetCount;
+                        ItemCount += orderDTO.ItemCount;
+                        materialCount += orderDTO.Materials;
+                        warningCount += orderDTO.WarningCount;
+                        errorCount += orderDTO.ErrorCount;
+
+                        lbInfoOrdersCount.Text = orderCount.ToString();
+                        lbInfoFilesCount.Text = fileCount.ToString();
+                        lbInfoWorksheetsCount.Text = worksheetCount.ToString();
+                        lbInfoItemsCount.Text = ItemCount.ToString();
+                        lbInfoMaterialCount.Text = materialCount.ToString();
+                        lbInfoWarningCount.Text = warningCount.ToString();
+                        lbInfoErrorCount.Text = errorCount.ToString();
+
                     }
                     catch (Exception ex)
                     {
-                        _logService.Debug(ex, "Error adding individual order to data table");
+                        _logService.Debug(ex, "Error adding individual a2pOrder to data table");
                     }
                 }
                 if (InvokeRequired)
@@ -530,14 +629,13 @@ namespace a2p.WinForm.ChildForms
                     plGridPanel.PerformLayout();
                 }
 
-
                 progressBarForm.Close();
                 #endregion
 
             }
             catch (Exception ex)
             {
-                _ = MessageBox.Show($@"An error occurred during the import: {ex.Message}", "Error",
+                _ = MessageBox.Show($@"An a2pOrderError occurred during the import: {ex.Message}", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             }
@@ -546,6 +644,7 @@ namespace a2p.WinForm.ChildForms
 
         public async Task ImportFilesAsync()
         {
+            _a2OrdersPendingImport = [];
 
             if (_progressValue != null)
             {
@@ -590,30 +689,53 @@ namespace a2p.WinForm.ChildForms
                 progressBarForm.Show();
                 await progressBarForm.FormReadyAsync();
 
-
-
-                List<A2POrder> a2pOrderList = [];
-
-
-                foreach (DataGridViewRow row in dataGridViewFiles.Rows)
+                for (int i; i < dataGridViewFiles.Rows.Count; i++)
                 {
-                    if (row.Cells["Import"].Value != null && (bool)row.Cells["Import"].Value)
+                    DataGridViewRow row = dataGridViewFiles.Rows[i];
+                    if (row.Cells["Import"].Value != null && (bool) row.Cells["Import"].Value)
                     {
-
+                        string? orderNumber = row.Cells["Order"].Value.ToString();
+                        if (!string.IsNullOrEmpty(orderNumber))
+                        {
+                            A2POrder order = _a2pOrders.FirstOrDefault(o => o.Order == orderNumber)!;
+                            DateTime localDateTime;
+                            if (order != null && order.OrderExists.HasValue)
+                            {
+                                localDateTime = order.OrderExists.Value.ToLocalTime();
+                                MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+                                DialogResult result = MessageBox.Show(
+                                    $"Order {orderNumber} already exists in the database." +
+                                    $"\nLast known import date: {localDateTime}." +
+                                    $"\nDo you want to import it again?" +
+                                    $"\n" +
+                                    $"\nKeep attention! Existing data will be removed!",
+                                    "Order Exists",
+                                    buttons, MessageBoxIcon.Warning
+                                );
+                                order.OverwriteOrder = result == DialogResult.Yes;
+                                row.Cells["Import"].Value = order.OverwriteOrder;
+                            }
+                            if ((order!.OverwriteOrder && order.OrderExists.HasValue) || !order.OrderExists.HasValue)
+                            {
+                                _a2OrdersPendingImport.Add(order);
+                            }
+                        }
+                    }
+                }
+                {
+                    if (row.Cells["Import"].Value != null && (bool) row.Cells["Import"].Value)
+                    {
 
                         string? orderNumber = row.Cells["Order"].Value.ToString();
                         if (!string.IsNullOrEmpty(orderNumber))
                         {
-                            A2POrder a2pOrder = _orderList.FirstOrDefault(o => o.Order == orderNumber)!;
-
-
+                            A2POrder order = _a2pOrders.FirstOrDefault(o => o.Order == orderNumber)!;
 
                             DateTime localDateTime;
 
-
-                            if (a2pOrder != null && a2pOrder.OrderExists.HasValue)
+                            if (order != null && order.OrderExists.HasValue)
                             {
-                                localDateTime = a2pOrder.OrderExists.Value.ToLocalTime();
+                                localDateTime = order.OrderExists.Value.ToLocalTime();
 
                                 MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
@@ -627,70 +749,65 @@ namespace a2p.WinForm.ChildForms
                                     buttons, MessageBoxIcon.Warning
                                 );
 
-                                a2pOrder.OverwriteOrder = result == DialogResult.Yes;
+                                order.OverwriteOrder = result == DialogResult.Yes;
+                                row.Cells["Import"].Value = order.OverwriteOrder;
 
                             }
 
-                            if ((a2pOrder!.OverwriteOrder && a2pOrder.OrderExists.HasValue) || !a2pOrder.OrderExists.HasValue)
+                            if ((order!.OverwriteOrder && order.OrderExists.HasValue) || !order.OrderExists.HasValue)
                             {
-                                a2pOrderList.Add(a2pOrder);
+
+                                _a2OrdersPendingImport.Add(order);
+
                             }
 
                         }
                     }
                 }
 
+                await _orderWriteProcessor.WriteAsync(_a2OrdersPendingImport, _progressValue, _progress);
 
-
-                IEnumerable<A2POrder> s2pOderList = await _mappingHandlerService.MapDataAsync(a2pOrderList, progress);
                 string root = _configuration["AppSettings:Folders:WorkFolder"] ?? @"C:\Temp\Import";
                 string success = Path.Combine(root, _configuration["AppSettings:Folders:ImportSuccess"] ?? "Import_Success");
                 string failed = Path.Combine(root, _configuration["AppSettings:Folders:ImportFailed"] ?? "Import_Failed");
 
-                foreach (A2POrder a2pOrder in s2pOderList)
+                foreach (A2POrder order in _a2pOrders)
                 {
-                    if (a2pOrder.WriteErrors.Count > 0)
+
+                    if (order.WriteErrors.Count > 0)
                     {
 
-                        foreach (A2PFile a2pFile in a2pOrder.Files)
+                        foreach (A2PFile a2pFile in order.Files)
                         {
                             string destination = Path.Combine(failed, a2pFile.FileName);
                             _fileService.MoveFilesAsync(a2pFile.File, destination);
                         }
-
-
-
                     }
                     else
                     {
-                        foreach (A2PFile a2pFile in a2pOrder.Files)
+                        foreach (A2PFile a2pFile in order.Files)
                         {
                             string destination = Path.Combine(success, a2pFile.FileName);
                             _fileService.MoveFilesAsync(a2pFile.File, destination);
                         }
                     }
 
+                    progressBarForm.Close();
+
                 }
-
-
-
-                progressBarForm.Close();
-
                 await OrdersLoad();
+
             }
+
             catch (Exception ex)
             {
                 _logService.Error(ex, "Error loading FileForm");
-                _ = MessageBox.Show(@"An error occurred while loading the files.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _ = MessageBox.Show(@"An a2pOrderError occurred while loading the files.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally { dataGridViewFiles.ResumeLayout(false); }
         }
 
         #endregion -== Methods ==-
-
-        
-
-
 
         private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -709,6 +826,43 @@ namespace a2p.WinForm.ChildForms
             }
         }
 
+        public async Task<OrderDTO> MapToOrderDTOAsync(A2POrder a2pOrder)
+        {
+            return await Task.Run(() =>
+            {
+                OrderDTO orderDTO = new()
+                {
+                    Order = a2pOrder.Order,
+                    Currency = a2pOrder.Files
+                        .SelectMany(a2pFile => a2pFile.Worksheets)
+                        .FirstOrDefault(worksheet => !string.IsNullOrEmpty(a2pOrder.Currency)) != null ? a2pOrder.Currency ?? string.Empty : string.Empty,
+                    FileCount = a2pOrder.Files.Count,
+                    FileList = string.Join("\n ", a2pOrder.Files.Select(a2pFile => a2pFile.FileName)),
+                    WorksheetCount = a2pOrder.Files.Sum(a2pFile => a2pFile.Worksheets?.Count ?? 0),
+                    WorksheetList = string.Join("\n ", a2pOrder.Files.SelectMany(file => file.Worksheets).Select(ws => ws.Name)),
+                    ItemCount = a2pOrder.Items.Count(),
+                    ItemList = string.Join("\n ", a2pOrder.Items.Select(itemDTO => itemDTO.Item)),
+                    Materials = a2pOrder.Materials.Count(),
+                    ErrorCount = a2pOrder.ReadErrors.Count(a2pOrderError => a2pOrderError.Level is ErrorLevel.Error or ErrorLevel.Fatal),
+                    ErrorList = string.Join("\n ", a2pOrder.ReadErrors
+                        .Where(a2pOrderError => a2pOrderError.Level is ErrorLevel.Error or ErrorLevel.Fatal)
+                        .Select(a2pOrderError
+                        => a2pOrderError.Message)),
+                    WarningCount = a2pOrder.ReadErrors.Count(a2pOrderError => a2pOrderError.Level is ErrorLevel.Warning),
+                    WarningList = string.Join("\n ", a2pOrder.ReadErrors
+                        .Where(a2pOrderError => a2pOrderError.Level is ErrorLevel.Warning)
+                        .Select(a2pOrderError
+                        => a2pOrderError.Message)),
+                };
+
+                if (a2pOrder.ReadErrors.Any(a2pOrderError => a2pOrderError.Level is ErrorLevel.Error or ErrorLevel.Fatal))
+                {
+                    orderDTO.Import = false;
+                }
+
+                return orderDTO;
+            });
+        }
 
     }
 

@@ -1,6 +1,6 @@
-﻿using a2p.Shared.Domain.Entities;
+﻿using System.Drawing.Drawing2D;
 
-using System.Drawing.Drawing2D;
+using a2p.Shared.Application.Services.Domain.Entities;
 
 namespace a2p.WinForm.CustomControls
 {
@@ -24,7 +24,6 @@ namespace a2p.WinForm.CustomControls
             this.PerformAutoScale();
 
         }
-
 
         private void ProgressBarForm_Shown(object? sender, EventArgs e)
         {
@@ -67,29 +66,10 @@ namespace a2p.WinForm.CustomControls
             lbProgressBarTask1.Text = progressValue.ProgressTask1 ?? string.Empty;
             lbProgressBarTask2.Text = progressValue.ProgressTask2 ?? string.Empty;
             lbProgressBarTask3.Text = progressValue.ProgressTask3 ?? string.Empty;
+            plMainPanel.ResumeLayout(false);
+            plMainPanel.PerformLayout();
         }
-
-
-
-        private void Timer1_Tick(object sender, EventArgs e)
-        {
-            ResumeLayout(false);
-            PerformLayout();
-        }
-
-
-
-
-        public void Timer1Tick_timer1_Tick(object sender, EventArgs e)
-        {
-            //progressBar.Value = (progressBar.Value + 1) % (progressBar.Maximum + 1);
-
-        }
-
-
         #endregion -== Form Evenets ==-
-
-
 
         private void SetRoundedCorners(int radius)
         {
@@ -109,7 +89,6 @@ namespace a2p.WinForm.CustomControls
             this.Shown += (s, e) => tcs.SetResult();
             return tcs.Task;
         }
-
 
         private void UpdateProgressBar()
         {

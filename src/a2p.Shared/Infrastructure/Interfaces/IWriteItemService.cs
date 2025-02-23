@@ -1,12 +1,13 @@
-﻿using a2p.Shared.Core.DTO;
+﻿using a2p.Shared.Application.DTO;
+using a2p.Shared.Application.Services.Domain.Entities;
 
 namespace a2p.Shared.Infrastructure.Interfaces
 {
     public interface IWriteItemService
     {
-        Task<int> InsertAsync(ItemDTO itemDTO, int salesDocumentNumber, int salesDocumentVersion, DateTime dateTime);
-        Task<int> DeleteAsync(string order);
+        Task<int> InsertListAsync(List<ItemDTO> itemDTO, int salesDocumentNumber, int salesDocumentVersion, ProgressValue progressValue, IProgress<ProgressValue>? progress = null);
 
+        Task<int> DeleteAsync(string order);
 
     }
 }

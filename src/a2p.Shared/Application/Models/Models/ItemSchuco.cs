@@ -1,4 +1,4 @@
-﻿using a2p.Shared.Core.Entities.BaseEntities;
+﻿using a2p.Shared.Application.Models.BaseModels;
 
 namespace a2p.Shared.Core.Entities
 {

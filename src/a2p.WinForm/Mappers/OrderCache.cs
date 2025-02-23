@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace a2p.Shared.Application.Services
+namespace a2p.WinForm.Mappers
 {
 
         public static class OrderCache

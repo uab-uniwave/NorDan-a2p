@@ -1,4 +1,6 @@
-﻿using a2p.Shared.Domain.Entities;
+﻿using a2p.Shared.Application.Domain.Entities;
+using a2p.Shared.Application.Services.Domain.Entities;
+using a2p.Shared.Domain.Entities;
 using a2p.Shared.Domain.Enums;
 using a2p.Shared.Infrastructure.Interfaces;
 
@@ -11,7 +13,7 @@ namespace a2p.WinForm.ChildForms
     {
         private readonly ILogService _logService;
 
-        public Helpers( ILogService logService)
+        public Helpers(ILogService logService)
         {
             _logService = logService;
         }
@@ -51,7 +53,7 @@ namespace a2p.WinForm.ChildForms
                 return orders
                     .FirstOrDefault(o => o.Order == orderNumber)?
                     .Files.FirstOrDefault(f => f.File == file)?
-                    .Worksheets.FirstOrDefault(w => w.Worksheet == worksheet);
+                    .Worksheets.FirstOrDefault(w => w.Name == worksheet);
             }
             catch (Exception ex)
             {
@@ -67,7 +69,7 @@ namespace a2p.WinForm.ChildForms
                 return orders
                     .FirstOrDefault(o => o.Order == orderNumber)?
                     .Files.FirstOrDefault(f => f.File == file)?
-                    .Worksheets.FirstOrDefault(w => w.Type == Type);
+                    .Worksheets.FirstOrDefault(w => w.WorksheetType == Type);
             }
             catch (Exception ex)
             {

@@ -1,4 +1,4 @@
-﻿namespace a2p.Shared.Core.Entities.BaseEntities
+﻿namespace a2p.Shared.Application.Models.BaseModels
 {
  // Base class for all materials
  public abstract class BaseMaterial

@@ -1,4 +1,4 @@
-﻿namespace a2p.Shared.Core.Entities.ConcreteEntity
+﻿namespace a2p.Shared.Application.Models.Models
 {
  public class GlassSchuco
  {

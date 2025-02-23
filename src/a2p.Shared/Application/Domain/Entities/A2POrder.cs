@@ -1,4 +1,5 @@
-﻿using a2p.Shared.Core.DTO;
+﻿using a2p.Shared.Application.DTO;
+using a2p.Shared.Application.Services.Domain.Entities;
 using a2p.Shared.Domain.Enums;
 
 using System.ComponentModel.DataAnnotations;

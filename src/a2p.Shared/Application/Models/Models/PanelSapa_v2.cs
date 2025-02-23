@@ -1,6 +1,6 @@
-﻿using a2p.Shared.Core.Entities.BaseEntities;
+﻿using a2p.Shared.Application.Models.BaseModels;
 
-namespace a2p.Shared.Core.Entities.ConcreteEntity
+namespace a2p.Shared.Application.Models.Models
 {
  public class PanelSapa_v2 : BasePanel
  {

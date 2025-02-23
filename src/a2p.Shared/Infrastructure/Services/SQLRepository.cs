@@ -1,9 +1,9 @@
-﻿using a2p.Shared.Infrastructure.Interfaces;
+﻿using System.Data;
+
+using a2p.Shared.Infrastructure.Interfaces;
 
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-
-using System.Data;
 
 namespace a2p.Shared.Infrastructure.Services
 {
@@ -15,8 +15,6 @@ namespace a2p.Shared.Infrastructure.Services
 
         public SqlRepository(IConfiguration configuration, ILogService logService)
         {
-
-
 
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _logService = logService ?? throw new ArgumentNullException(nameof(logService));
@@ -72,7 +70,6 @@ namespace a2p.Shared.Infrastructure.Services
             int value1;
             int value2;
             (int, int) result = (-1, -1);
-
 
             try
             {

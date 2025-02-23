@@ -1,6 +1,5 @@
 ﻿using a2p.Shared.Application.Interfaces;
-using a2p.Shared.Application.Services;
-using a2p.Shared.Domain.Entities;
+using a2p.Shared.Application.Services.Domain.Entities;
 using a2p.Shared.Domain.Enums;
 using a2p.Shared.Infrastructure.Interfaces;
 using a2p.WinForm.ChildForms;
@@ -22,12 +21,13 @@ namespace a2p.WinForm
         private int borderWidth = 1;
         private Button? selectedButton = null;
 
-        private readonly IFileService _fileService;
-        private readonly IExcelReadService _readService;
-        private readonly IOrderProcessingService _mappingHandlerService;
+        private readonly IOrderReadProcessor _orderReadProcessor;
+        private readonly IExcelReadService _excelReadService;
+        private readonly IOrderWriteProcessor _orderProcessingService;
         private readonly IConfiguration _configuration;
         private readonly ILogService _logService;
-        private readonly IA2POrderMapper _orderMapper;
+        private readonly IFileService _fileService;
+
 
         private static ProgressValue? _progressValue;
         private IProgress<ProgressValue> _progress;
@@ -56,21 +56,22 @@ namespace a2p.WinForm
 
         #endregion -== Custom Form Design Componenets ==-
 
-        public MainForm(IFileService fileService, IExcelReadService excelService, IOrderProcessingService mappingHandlerService,
-            IConfiguration configuration, ILogService logService, IA2POrderMapper orderMapper)
+        public MainForm(IOrderReadProcessor orderReadProcessor, IExcelReadService excelReadService, IOrderWriteProcessor orderProcessingService,
+            IConfiguration configuration, ILogService logService, IFileService fileService)
         {
-            _fileService = fileService;
-            _readService = excelService;
-            _mappingHandlerService = mappingHandlerService;
+            _orderReadProcessor = orderReadProcessor;
+            _excelReadService = excelReadService;
+            _orderProcessingService = orderProcessingService;
             _configuration = configuration;
             _logService = logService;
-            _orderMapper = orderMapper;
+            _fileService = fileService;
+
             _progressValue = new ProgressValue();
 
             _progress = new Progress<ProgressValue>();
 
             _toolTip = new ToolTip();
-            _orderForm = new OrdersForm(_configuration, _fileService, _mappingHandlerService, _logService, _orderMapper);
+            _orderForm = new OrdersForm(_configuration, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService);
             _logForm = new LogForm(_configuration, _logService);
             _settingForm = new SettingForm(_configuration, _logService);
 
@@ -139,7 +140,7 @@ namespace a2p.WinForm
             try
             {
                 await ShowFormAsync(_orderForm,
-                    () => new OrdersForm(_configuration, _fileService, _mappingHandlerService, _logService, _orderMapper));
+                    () => new OrdersForm(_configuration, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService));
                 if (bool.Parse(_configuration["AppSettings:RefreshFilesOnStartup"] ?? "true"))
                 {
 
@@ -470,7 +471,7 @@ namespace a2p.WinForm
             try
             {
                 await ShowFormAsync(_orderForm,
-                    () => new OrdersForm(_configuration, _fileService, _mappingHandlerService, _logService, _orderMapper));
+                    () => new OrdersForm(_configuration, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService));
 
 
 
@@ -489,11 +490,8 @@ namespace a2p.WinForm
                 plSideBarMain.PerformLayout(); // Resume layout after expanding
             }
         }
-
-
         private async void BtnImport_Click(object sender, EventArgs e)
         {
-
 
             try
             {
@@ -501,7 +499,7 @@ namespace a2p.WinForm
                 _processType = ProcessType.LogRefresh;
 
                 await ShowFormAsync(_orderForm,
-                     () => new OrdersForm(_configuration, _fileService, _mappingHandlerService, _logService, _orderMapper));
+                     () => new OrdersForm(_configuration, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService));
                 await _orderForm.ImportFilesAsync();
             }
             catch (Exception ex)

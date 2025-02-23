@@ -40,7 +40,7 @@
  <ItemGroup>
  <None Include="Application\Interfaces\IMapperSapaV1.cs" />
  <None Include="Application\Models\Models\ItemSchuco.cs" />
- <None Include="Domain\Entities\A2PLogRecord.cs" />
+ <None Include="Application\Domain\Entities\A2PLogRecord.cs" />
  </ItemGroup>
 
  <ItemGroup>

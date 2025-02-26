@@ -94,11 +94,12 @@ namespace a2p.WinForm.ChildForms
             dataGridViewFiles.Size = new Size(1308, 800);
             dataGridViewFiles.TabIndex = 61;
             dataGridViewFiles.VirtualMode = true;
-            dataGridViewFiles.CellFormatting += dataGridViewFiles_CellFormatting;
+           dataGridViewFiles.CellFormatting += dataGridViewFiles_CellFormatting;
+            dataGridViewFiles.CellValueChanged += dataGridViewFiles_CellValueChanged;
             // 
             // contextMenuStrip1
             // 
-            contextMenuStrip1.BackColor = Color.DimGray;
+            contextMenuStrip1.BackColor = Color.FromArgb(  56,   57,   60);
             contextMenuStrip1.BackgroundImageLayout = ImageLayout.None;
             contextMenuStrip1.ImageScalingSize = new Size(32, 32);
             contextMenuStrip1.Items.AddRange(new ToolStripItem[] { selectAllToolStripMenuItem, deselectAllToolStripMenuItem });
@@ -110,6 +111,7 @@ namespace a2p.WinForm.ChildForms
             // 
             // selectAllToolStripMenuItem
             // 
+            selectAllToolStripMenuItem.ForeColor = Color.WhiteSmoke;
             selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
             selectAllToolStripMenuItem.Size = new Size(188, 38);
             selectAllToolStripMenuItem.Text = "Select All";
@@ -117,6 +119,7 @@ namespace a2p.WinForm.ChildForms
             // 
             // deselectAllToolStripMenuItem
             // 
+            deselectAllToolStripMenuItem.ForeColor = Color.WhiteSmoke;
             deselectAllToolStripMenuItem.Name = "deselectAllToolStripMenuItem";
             deselectAllToolStripMenuItem.Size = new Size(188, 38);
             deselectAllToolStripMenuItem.Text = "Deselect All";

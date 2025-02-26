@@ -5,6 +5,8 @@ using a2p.Shared.Application.Services.Domain.Entities;
 using a2p.Shared.Domain.Entities;
 using a2p.Shared.Infrastructure.Interfaces;
 
+using ClosedXML.Excel;
+
 using Microsoft.Extensions.Configuration;
 
 namespace a2p.WinForm.ChildForms
@@ -757,9 +759,34 @@ namespace a2p.WinForm.ChildForms
                 _logService.Error($"LF: Error processing log entry properties: {ex.Message}");
             }
         }
-
         #endregion -== Data Table methods ==-
 
+        #region -== Contextual Menu ==-
+        private void saveLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string defaultFileName = $"Log_{DateTime.Now:yyyy-MM-dd_HH-mm}.xlsx";
+            SaveFileDialog saveLog = new()
+            {
+                Filter = "Excel file (*.xlsx)|*.xlsx|All files (*.*)|*.*",
+                FilterIndex = 1,
+                RestoreDirectory = true,
+                FileName = defaultFileName
+            };
+
+            if (saveLog.ShowDialog() == DialogResult.OK)
+            {
+                string fileName = saveLog.FileName;
+                using (XLWorkbook workbook = new())
+                {
+                    DataTable dataTable = ((DataTable) _bindingSourceLog.DataSource).Copy();
+                    _ = workbook.Worksheets.Add(dataTable, "LogRecords");
+                    workbook.SaveAs(fileName);
+                }
+                _logService.Information("Log saved successfully to {FileName}", fileName);
+            }
+        }
+
+        #endregion -== Contextual Menu ==-
     }
 }
 

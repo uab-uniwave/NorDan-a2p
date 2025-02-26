@@ -1,4 +1,4 @@
-﻿using a2p.Shared.Application.Services.Domain.Enums;
+﻿using a2p.Shared.Application.Domain.Enums;
 using a2p.Shared.Domain.Enums;
 
 namespace a2p.Shared.Application.Services.Domain.Entities
@@ -15,12 +15,6 @@ namespace a2p.Shared.Application.Services.Domain.Entities
         required public string Message { get; set; }
 
 
-        // ======================================
-        // 🟢 Common Errors
-        // ======================================
-        // ======================================
-        // 🔵 Read Process Errors
-        // ======================================
-
+    
     }
 }

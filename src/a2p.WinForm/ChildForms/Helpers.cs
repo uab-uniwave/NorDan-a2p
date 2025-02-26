@@ -1,6 +1,5 @@
 ﻿using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.Services.Domain.Entities;
-using a2p.Shared.Domain.Entities;
 using a2p.Shared.Domain.Enums;
 using a2p.Shared.Infrastructure.Interfaces;
 

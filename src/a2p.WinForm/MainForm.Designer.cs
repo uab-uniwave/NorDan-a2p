@@ -36,7 +36,6 @@ namespace a2p.WinForm
             plNordanHeaderLogo = new Panel();
             lbHeader1 = new Label();
             lbHeader2 = new Label();
-            plUniwaveHeaderLogo = new Panel();
             lbHeader3 = new Label();
             lbHeader4 = new Label();
             tlpTitleBar = new TableLayoutPanel();
@@ -76,18 +75,16 @@ namespace a2p.WinForm
             tplHeader.AutoSize = true;
             tplHeader.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             tplHeader.BackColor = Color.FromArgb(239, 112, 32);
-            tplHeader.ColumnCount = 7;
+            tplHeader.ColumnCount = 6;
             tplHeader.ColumnStyles.Add(new ColumnStyle());
             tplHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 60F));
             tplHeader.ColumnStyles.Add(new ColumnStyle());
             tplHeader.ColumnStyles.Add(new ColumnStyle());
             tplHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tplHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
-            tplHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
-            tplHeader.Controls.Add(plNordanHeaderLogo, 6, 2);
+            tplHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 500F));
+            tplHeader.Controls.Add(plNordanHeaderLogo, 5, 0);
             tplHeader.Controls.Add(lbHeader1, 0, 0);
-            tplHeader.Controls.Add(lbHeader2, 1, 1);
-            tplHeader.Controls.Add(plUniwaveHeaderLogo, 6, 0);
+            tplHeader.Controls.Add(lbHeader2, 1, 0);
             tplHeader.Controls.Add(lbHeader3, 2, 0);
             tplHeader.Controls.Add(lbHeader4, 4, 0);
             tplHeader.Dock = DockStyle.Top;
@@ -95,12 +92,11 @@ namespace a2p.WinForm
             tplHeader.Margin = new Padding(4);
             tplHeader.Name = "tplHeader";
             tplHeader.Padding = new Padding(4);
-            tplHeader.RowCount = 3;
-            tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 41F));
-            tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 57F));
+            tplHeader.RowCount = 1;
+            tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
+            tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
             tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 22F));
-            tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tplHeader.Size = new Size(2072, 148);
+            tplHeader.Size = new Size(2072, 128);
             tplHeader.TabIndex = 1;
             // 
             // plNordanHeaderLogo
@@ -108,12 +104,12 @@ namespace a2p.WinForm
             plNordanHeaderLogo.BackgroundImage = Properties.Resources.NordanLogoInversed;
             plNordanHeaderLogo.BackgroundImageLayout = ImageLayout.Zoom;
             plNordanHeaderLogo.Dock = DockStyle.Top;
-            plNordanHeaderLogo.Location = new Point(1868, 102);
+            plNordanHeaderLogo.Location = new Point(1568, 4);
             plNordanHeaderLogo.Margin = new Padding(0);
             plNordanHeaderLogo.Name = "plNordanHeaderLogo";
-            tplHeader.SetRowSpan(plNordanHeaderLogo, 2);
-            plNordanHeaderLogo.Size = new Size(200, 41);
-            plNordanHeaderLogo.TabIndex = 9;
+            tplHeader.SetRowSpan(plNordanHeaderLogo, 3);
+            plNordanHeaderLogo.Size = new Size(500, 120);
+            plNordanHeaderLogo.TabIndex = 11;
             // 
             // lbHeader1
             // 
@@ -126,8 +122,8 @@ namespace a2p.WinForm
             lbHeader1.Location = new Point(10, 10);
             lbHeader1.Margin = new Padding(6);
             lbHeader1.Name = "lbHeader1";
-            tplHeader.SetRowSpan(lbHeader1, 3);
-            lbHeader1.Size = new Size(268, 108);
+            tplHeader.SetRowSpan(lbHeader1, 2);
+            lbHeader1.Size = new Size(268, 86);
             lbHeader1.TabIndex = 6;
             lbHeader1.Text = "Aluminum";
             lbHeader1.TextAlign = ContentAlignment.MiddleRight;
@@ -140,26 +136,15 @@ namespace a2p.WinForm
             lbHeader2.FlatStyle = FlatStyle.Flat;
             lbHeader2.Font = new Font("Segoe UI Black", 30F, FontStyle.Bold);
             lbHeader2.ForeColor = Color.FromArgb(248, 248, 249);
-            lbHeader2.Location = new Point(290, 51);
+            lbHeader2.Location = new Point(290, 10);
             lbHeader2.Margin = new Padding(6);
             lbHeader2.Name = "lbHeader2";
             tplHeader.SetRowSpan(lbHeader2, 2);
-            lbHeader2.Size = new Size(48, 67);
+            lbHeader2.Size = new Size(48, 86);
             lbHeader2.TabIndex = 7;
             lbHeader2.Text = "2";
             lbHeader2.TextAlign = ContentAlignment.MiddleCenter;
             lbHeader2.UseCompatibleTextRendering = true;
-            // 
-            // plUniwaveHeaderLogo
-            // 
-            plUniwaveHeaderLogo.BackgroundImage = Properties.Resources.UniwaveLogoInversed;
-            plUniwaveHeaderLogo.BackgroundImageLayout = ImageLayout.Zoom;
-            plUniwaveHeaderLogo.Dock = DockStyle.Top;
-            plUniwaveHeaderLogo.Location = new Point(1868, 4);
-            plUniwaveHeaderLogo.Margin = new Padding(0);
-            plUniwaveHeaderLogo.Name = "plUniwaveHeaderLogo";
-            plUniwaveHeaderLogo.Size = new Size(200, 41);
-            plUniwaveHeaderLogo.TabIndex = 1;
             // 
             // lbHeader3
             // 
@@ -169,10 +154,10 @@ namespace a2p.WinForm
             lbHeader3.Font = new Font("Segoe UI", 16.125F, FontStyle.Bold);
             lbHeader3.ForeColor = Color.FromArgb(248, 248, 249);
             lbHeader3.ImageAlign = ContentAlignment.TopLeft;
-            lbHeader3.Location = new Point(350, 30);
+            lbHeader3.Location = new Point(350, 52);
             lbHeader3.Margin = new Padding(6);
             lbHeader3.Name = "lbHeader3";
-            tplHeader.SetRowSpan(lbHeader3, 2);
+            tplHeader.SetRowSpan(lbHeader3, 3);
             lbHeader3.Size = new Size(206, 66);
             lbHeader3.TabIndex = 4;
             lbHeader3.Text = "PrefSuite";
@@ -186,10 +171,10 @@ namespace a2p.WinForm
             lbHeader4.Font = new Font("Segoe UI", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 10, true);
             lbHeader4.ForeColor = Color.Transparent;
             lbHeader4.ImageAlign = ContentAlignment.TopLeft;
-            lbHeader4.Location = new Point(568, 10);
+            lbHeader4.Location = new Point(568, 11);
             lbHeader4.Margin = new Padding(6);
             lbHeader4.Name = "lbHeader4";
-            lbHeader4.Size = new Size(64, 29);
+            lbHeader4.Size = new Size(64, 43);
             lbHeader4.TabIndex = 5;
             lbHeader4.Text = "v2.0";
             lbHeader4.TextAlign = ContentAlignment.BottomLeft;
@@ -367,10 +352,10 @@ namespace a2p.WinForm
             plSideBarMain.Controls.Add(btnLoad);
             plSideBarMain.Dock = DockStyle.Left;
             plSideBarMain.ForeColor = Color.Transparent;
-            plSideBarMain.Location = new Point(0, 198);
+            plSideBarMain.Location = new Point(0, 178);
             plSideBarMain.Margin = new Padding(6);
             plSideBarMain.Name = "plSideBarMain";
-            plSideBarMain.Size = new Size(400, 1076);
+            plSideBarMain.Size = new Size(400, 1096);
             plSideBarMain.TabIndex = 46;
             // 
             // btnProperties
@@ -403,7 +388,7 @@ namespace a2p.WinForm
             btnExit.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
             btnExit.ForeColor = Color.LightGray;
             btnExit.ImageAlign = ContentAlignment.MiddleLeft;
-            btnExit.Location = new Point(0, 996);
+            btnExit.Location = new Point(0, 1016);
             btnExit.Margin = new Padding(6);
             btnExit.Name = "btnExit";
             btnExit.Size = new Size(400, 80);
@@ -480,12 +465,13 @@ namespace a2p.WinForm
             // 
             plFormContainer.AutoScroll = true;
             plFormContainer.BackColor = Color.Transparent;
+            plFormContainer.Dock = DockStyle.Fill;
             plFormContainer.ForeColor = Color.Transparent;
-            plFormContainer.Location = new Point(400, 198);
+            plFormContainer.Location = new Point(400, 178);
             plFormContainer.Margin = new Padding(6);
             plFormContainer.MinimumSize = new Size(10, 10);
             plFormContainer.Name = "plFormContainer";
-            plFormContainer.Size = new Size(1672, 1076);
+            plFormContainer.Size = new Size(1672, 1096);
             plFormContainer.TabIndex = 60;
             // 
             // MainForm
@@ -545,7 +531,6 @@ namespace a2p.WinForm
         private Label lbHeader2;
         private Label lbHeader3;
         private Label lbHeader4;
-        private Panel plUniwaveHeaderLogo;
 
     
 
@@ -577,7 +562,7 @@ namespace a2p.WinForm
         private Label lbInfoWorksheets;
         private Label lbInfoOrders;
         private Button btnProperties;
-        private Panel plNordanHeaderLogo;
         private Panel plFormContainer;
+        private Panel plNordanHeaderLogo;
     }
 }

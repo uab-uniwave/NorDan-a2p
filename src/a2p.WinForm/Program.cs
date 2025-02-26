@@ -1,12 +1,12 @@
-﻿using a2p.Shared;
+﻿using System.Diagnostics;
+using System.Text;
+
+using a2p.Shared;
 using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Infrastructure.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
-using System.Diagnostics;
-using System.Text;
 
 namespace a2p.WinForm
 {
@@ -31,17 +31,14 @@ namespace a2p.WinForm
             _ = _services.GetRequiredService<IMapperSapaV1>();
             _ = _services.GetRequiredService<IMapperSapaV2>();
             _ = _services.GetRequiredService<IMapperSchuco>();
+            DataCache dataCache = _services.GetRequiredService<DataCache>();
             _ = _services.GetRequiredService<IWriteMaterialService>();
             _ = _services.GetRequiredService<IWriteItemService>();
             IOrderReadProcessor readService = _services.GetRequiredService<IOrderReadProcessor>();
             IExcelReadService excelReadService = _services.GetRequiredService<IExcelReadService>();
             IFileService fileService = _services.GetRequiredService<IFileService>();
 
-
-
             IOrderWriteProcessor orderProcessingService = _services.GetRequiredService<IOrderWriteProcessor>();
-
-
 
             logService.Information("Application started.");
 
@@ -50,7 +47,7 @@ namespace a2p.WinForm
             splashScreen.FadeIn();
             Task.Delay(2000).Wait();
 
-            MainForm mainWindow = new(readService, excelReadService, orderProcessingService, configuration, logService, fileService);
+            MainForm mainWindow = new(readService, excelReadService, orderProcessingService, configuration, logService, fileService, dataCache);
 
             splashScreen.FadeOut();
             splashScreen.Close();

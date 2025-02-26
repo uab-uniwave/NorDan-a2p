@@ -1,7 +1,7 @@
-﻿using a2p.Shared.Application.Interfaces;
+﻿using a2p.Shared.Application.Domain.Entities;
+using a2p.Shared.Application.Domain.Enums;
+using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Application.Services.Domain.Entities;
-using a2p.Shared.Application.Services.Domain.Enums;
-using a2p.Shared.Domain.Entities;
 using a2p.Shared.Domain.Enums;
 using a2p.Shared.Infrastructure.Interfaces;
 
@@ -11,29 +11,31 @@ namespace a2p.Shared.Infrastructure.Services
     {
         private readonly ILogService _logService;
         private readonly IFileService _fileService;
-        private readonly IMapperSapaV1 _mapperSapaV1;
-        private readonly IMapperSapaV2 _mapperSapaV2;
-        private readonly IMapperSchuco _mapperSchuco;
+        private readonly IExcelReadService _excelReadService;
+        private readonly IPrefSuiteService _prefSuiteService;
+        private readonly DataCache _dataCache;
         private ProgressValue _progressValue;
         private IProgress<ProgressValue> _progress;
         public OrderReadProcessor(ILogService logService,
                            IFileService fileService,
-                           IMapperSapaV1 mapperSapaV1,
-                           IMapperSapaV2 mapperSapaV2,
-                           IMapperSchuco mapperSchuco,
-                           IExcelReadService excelReadService)
+                           IExcelReadService excelReadService,
+                           DataCache dataCache, IPrefSuiteService prefSuiteService, IExcelReadService excelService)
+
         {
             _logService = logService;
             _fileService = fileService;
-            _mapperSapaV1 = mapperSapaV1;
-            _mapperSapaV2 = mapperSapaV2;
-            _mapperSchuco = mapperSchuco;
             _progressValue = new ProgressValue();
             _progress = new Progress<ProgressValue>();
+            _dataCache = dataCache;
+            _prefSuiteService = prefSuiteService;
+            _excelReadService = excelService;
         }
 
-        public async Task<List<A2POrder>> ReadAsync(ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
+        public async Task ReadAsync(ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
         {
+
+            _progressValue = progressValue;
+            _progress = progress ?? new Progress<ProgressValue>();
 
             try
             {
@@ -43,32 +45,24 @@ namespace a2p.Shared.Infrastructure.Services
 
                 _progressValue.ProgressTitle = "Loading Orders Files... ";
                 _progressValue.ProgressTask1 = $"Reading Orders ...";
-                _progressValue.ProgressTask2 = string.Empty;
-                _progressValue.ProgressTask3 = string.Empty;
 
-                List<A2POrder> a2pOrders = await _fileService.GetOrdersAsync(_progressValue, _progress);
+                await _fileService.GetOrdersAsync(_progressValue, _progress);
+
+                await _prefSuiteService.GetSalesDocumentStates(_progressValue, _progress);
+
+                List<A2POrder> a2pOrders = _dataCache.GetAllOrders();
 
                 _progressValue.ProgressTask3 = string.Empty;
                 _progressValue.MinValue = 0;
-                _progressValue.MaxValue = a2pOrders.Count * 2;
+                _progressValue.MaxValue = (a2pOrders.Count * 2) + 3;
                 _progressValue.Value = 0;
                 _progress?.Report(_progressValue);
-
-                int ordersCounter = 0;
-                int progressBarValue = 0;
                 for (int i = 0; i < a2pOrders.Count; i++)
 
                 {
                     _ = a2pOrders[i];
                     try
                     {
-
-                        ordersCounter++;
-                        progressBarValue++;
-
-                        _progressValue.ProgressTitle = $"Reading Order # {a2pOrders[i].Order}. {ordersCounter} of {a2pOrders.Count}";
-                        _progressValue.Value = progressBarValue;
-                        _progress?.Report(_progressValue);
 
                     }
                     catch (Exception ex)
@@ -85,19 +79,15 @@ namespace a2p.Shared.Infrastructure.Services
 
                     finally
                     {
-                        progressBarValue++;
-                        _progressValue.Value = progressBarValue;
+
                         _progress?.Report(_progressValue);
                     }
 
                 }
-                return a2pOrders;
-
             }
             catch (Exception ex)
             {
                 _logService.Error(ex, "Error reading a2pOrders");
-                return [];
 
             }
 

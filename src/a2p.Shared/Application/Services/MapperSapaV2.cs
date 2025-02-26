@@ -1,10 +1,13 @@
-﻿using System.Text.RegularExpressions;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System.Text.RegularExpressions;
 
 using a2p.Shared.Application.Domain.Entities;
+using a2p.Shared.Application.Domain.Enums;
 using a2p.Shared.Application.DTO;
 using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Application.Services.Domain.Entities;
-using a2p.Shared.Domain.Entities;
 using a2p.Shared.Domain.Enums;
 using a2p.Shared.Infrastructure.Interfaces;
 
@@ -14,18 +17,34 @@ namespace a2p.Shared.Application.Services
     {
         private readonly ILogService _logService;
         private ProgressValue _progressValue;
+        private DataCache _dataCache;
         private IProgress<ProgressValue>? _progress;
 
-        public MapperSapaV2(ILogService logService, IExcelReadService excelReadService)
+        public MapperSapaV2(ILogService logService, IExcelReadService excelReadService, DataCache dataCache)
         {
             _logService = logService;
             _progressValue = new ProgressValue();
             _progress = new Progress<ProgressValue>();
-
+            _dataCache = dataCache;
         }
 
         public async Task<List<ItemDTO>> MapItemsAsync(A2PWorksheet a2pWorksheet, ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
         {
+
+            if (a2pWorksheet == null)
+            {
+                _logService.Error("Mapper Sapa 2 Service: Order a2pWorksheet is null!");
+                return [];
+
+            }
+
+            if (string.IsNullOrEmpty(a2pWorksheet.Order))
+            {
+                _logService.Error("Mapper Sapa 2 Service: Order a2pWorksheet Order is null!");
+                return [];
+            }
+
+            A2POrder? a2pOrder = _dataCache.GetOrder(a2pWorksheet.Order);
 
             List<ItemDTO> items = [];
 
@@ -41,8 +60,24 @@ namespace a2p.Shared.Application.Services
 
                 if (a2pWorksheet.RowCount == 0)
                 {
-                    _logService.Error("Mapper Sapa 2 Service: Mapping Item. Order {$Order}, File: {$File}, Worksheet {$Worksheet},  No rows or data found!", a2pWorksheet.Order, a2pWorksheet.FileName, a2pWorksheet.Name);
+                    _logService.Error("Mapper Sapa 2 Service: Mapping Item. Order {$Order}, File: {$File}, Worksheet {$Worksheet}, No rows or data found!", a2pWorksheet.Order, a2pWorksheet.FileName, a2pWorksheet.Name);
+
+                    A2POrderError writeError = new()
+                    {
+                        Order = a2pWorksheet.Order,
+                        Level = ErrorLevel.Error,
+                        Code = ErrorCode.MappingService_MapItem,
+                        Message = $"Mapper Sapa V2: Unhandled error in order: {a2pWorksheet.Order}."
+                    };
+
+                    a2pOrder!.WriteErrors.Add(writeError);
+                    _dataCache.UpdateOrderInCache(a2pOrder.Order, updatedOrder =>
+                    {
+                        updatedOrder.WriteErrors.Add(writeError);
+                    });
+
                     return items;
+
                 }
                 await Task.Run(() =>
                 {
@@ -211,26 +246,60 @@ namespace a2p.Shared.Application.Services
 
             catch (Exception ex)
             {
-                _logService.Error("MS2: Unhandled error in Order: {$Order}, Exception:{Exception,} ", a2pWorksheet.Order, ex.Message);
+                _logService.Error("Mapper Sapa V2: Unhandled error in Order: {$Order}, Exception:{Exception,} ", a2pWorksheet.Order, ex.Message);
+                A2POrderError writeError = new()
+                {
+                    Order = a2pWorksheet.Order,
+                    Level = ErrorLevel.Error,
+                    Code = ErrorCode.MappingService_MapItem,
+                    Message = $"Mapper Sapa V2: Unhandled error mapping Items in Order: {a2pWorksheet.Order}, Exception:{ex.Message}"
+                };
+
+                a2pOrder!.WriteErrors.Add(writeError);
+                _dataCache.UpdateOrderInCache(a2pOrder.Order, updatedOrder =>
+                {
+                    updatedOrder.WriteErrors.Add(writeError);
+                });
+
                 return items;
             }
         }
 
         //============================================================================================================
-        public async Task<List<MaterialDTO>> MapMaterialsAsync(A2PWorksheet worksheet, ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
+        public async Task<List<MaterialDTO>> MapMaterialsAsync(A2PWorksheet a2pWorksheet, ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
         {
+
             List<MaterialDTO> materials = [];
-            if (worksheet == null)
+            if (a2pWorksheet == null)
             {
                 _logService.Error("Mapper Sapa 2 Service: Order a2pWorksheet is null!");
                 return materials;
             }
 
+            A2POrder a2pOrder = _dataCache.GetOrder(a2pWorksheet.Order)!;
             //validate the excel workbook is not null
-            if (worksheet.RowCount == 0)
+            if (a2pWorksheet.RowCount == 0)
 
             {
-                _logService.Error("Mapper Sapa 2 Service: Order {$Order},a2pWorksheet {$Worksheet} has no rows. File {$File}", worksheet.Order, worksheet.FileName, worksheet.Name);
+                _logService.Error("Mapper Sapa 2 Service: Order {$Order},a2pWorksheet {$Worksheet} has no rows. File {$File}", a2pWorksheet.Order, a2pWorksheet.FileName, a2pWorksheet.Name);
+
+                if (a2pOrder != null)
+                {
+                    A2POrderError writeError = new()
+                    {
+                        Order = a2pWorksheet.Order,
+                        Level = ErrorLevel.Error,
+                        Code = ErrorCode.MappingService_MapItem,
+                        Message = $"Mapper Sapa V2: Order {a2pWorksheet.Order},a2pWorksheet {a2pWorksheet.Name} has no rows. File {a2pWorksheet.FileName}"
+                    };
+
+                    a2pOrder!.WriteErrors.Add(writeError);
+                    _dataCache.UpdateOrderInCache(a2pOrder.Order, updatedOrder =>
+                    {
+                        updatedOrder.WriteErrors.Add(writeError);
+                    });
+                }
+
                 return materials;
 
             }
@@ -246,21 +315,38 @@ namespace a2p.Shared.Application.Services
                 await Task.Run(() =>
                 {
 
-                    for (int i = 4; i < worksheet.RowCount; i++)
+                    for (int i = 4; i < a2pWorksheet.RowCount; i++)
                     {
 
                         line = i + 1;
                         try
                         {
-                            if (string.IsNullOrEmpty(worksheet.WorksheetData[i][1].ToString()))
+                            if (string.IsNullOrEmpty(a2pWorksheet.WorksheetData[i][1].ToString()))
                             {
-                                _logService.Warning("Mapper Sapa 2 Service: Reference (Sapa article) field empty. Line will be skipped. Order: {$Order}, Worksheet: {$Worksheet}, LineNumber: {$Line}.", worksheet.Order ?? string.Empty, worksheet.Name ?? string.Empty, line);
+                                _logService.Warning("Mapper Sapa 2: Reference (Sapa article) field empty. Line will be skipped. Order: {$Order}, Worksheet: {$Worksheet}, LineNumber: {$Line}.", a2pWorksheet.Order ?? string.Empty, a2pWorksheet.Name ?? string.Empty, line);
+
+                                if (a2pOrder != null)
+                                {
+                                    A2POrderError writeError = new()
+                                    {
+                                        Order = a2pWorksheet.Order!,
+                                        Level = ErrorLevel.Error,
+                                        Code = ErrorCode.MappingService_MapMaterial,
+                                        Message = $"Mapper Sapa 2 : Reference (Sapa article) field empty. Line will be skipped. Order: {a2pWorksheet.Order}, Worksheet: {a2pWorksheet.Name}, LineNumber: {line}."
+                                    };
+
+                                    a2pOrder!.WriteErrors.Add(writeError);
+                                    _dataCache.UpdateOrderInCache(a2pOrder.Order, updatedOrder =>
+                                    {
+                                        updatedOrder.WriteErrors.Add(writeError);
+                                    });
+                                }
                             }
 
                             MaterialDTO material = new()
                             {
-                                Worksheet = worksheet.Name ?? string.Empty,
-                                Order = worksheet.Order ?? string.Empty,
+                                Worksheet = a2pWorksheet.Name ?? string.Empty,
+                                Order = a2pWorksheet.Order ?? string.Empty,
                                 Line = line,
                                 Column = column,
                                 //===================================================
@@ -268,14 +354,14 @@ namespace a2p.Shared.Application.Services
                                 RequiredQuantity = 0,
                                 Reference = string.Empty,
                                 //===================================================
-                                WorksheetType = worksheet.WorksheetType,
+                                WorksheetType = a2pWorksheet.WorksheetType,
                                 MaterialType = MaterialType.Unknown
                             };
 
-                            if (worksheet.Name is "ND_Glasses")
+                            if (a2pWorksheet.Name is "ND_Glasses")
                             {
 
-                                material.Item = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
+                                material.Item = a2pWorksheet.WorksheetData[i][1].ToString() ?? string.Empty;
                                 //Reset Sort Order if new item
                                 //===================================================================================================
                                 if (material.Item != lastItem)
@@ -287,40 +373,40 @@ namespace a2p.Shared.Application.Services
                                 material.SortOrder = sortOrder;
                                 //===================================================================================================
                                 // material.Reference  //TODO: Add Reference for Glass from description field   
-                                material.Description = worksheet.WorksheetData[i][2].ToString() ?? string.Empty;
+                                material.Description = a2pWorksheet.WorksheetData[i][2].ToString() ?? string.Empty;
                                 //===================================================================================================
                                 material.Color = string.Empty; // not used in glasses
                                 material.ColorDescription = null; // not used in glasses
                                                                   //===================================================================================================
-                                material.Width = double.TryParse(worksheet.WorksheetData[i][4].ToString(), out double width) ? width : 0;
-                                material.Height = double.TryParse(worksheet.WorksheetData[i][5].ToString(), out double height) ? height : 0;
+                                material.Width = double.TryParse(a2pWorksheet.WorksheetData[i][4].ToString(), out double width) ? width : 0;
+                                material.Height = double.TryParse(a2pWorksheet.WorksheetData[i][5].ToString(), out double height) ? height : 0;
                                 //===================================================================================================
-                                material.Quantity = worksheet.WorksheetData[i][3] == null ? 1 : int.TryParse(worksheet.WorksheetData[i][3].ToString(), out int quantity) ? quantity : 1;
+                                material.Quantity = a2pWorksheet.WorksheetData[i][3] == null ? 1 : int.TryParse(a2pWorksheet.WorksheetData[i][3].ToString(), out int quantity) ? quantity : 1;
                                 material.PackageQuantity = 0;
                                 material.TotalQuantity = material.Quantity;
                                 material.RequiredQuantity = material.TotalQuantity;
                                 material.LeftOverQuantity = 0;// not used. Threated as unique piece material, that has no leftovers 
                                                               //===================================================================================================
-                                material.Weight = double.TryParse(worksheet.WorksheetData[i][8].ToString(), out double weight) ? weight : 0;
-                                material.TotalWeight = double.TryParse(worksheet.WorksheetData[i][9].ToString(), out double totalWeight) ? totalWeight : 0;
+                                material.Weight = double.TryParse(a2pWorksheet.WorksheetData[i][8].ToString(), out double weight) ? weight : 0;
+                                material.TotalWeight = double.TryParse(a2pWorksheet.WorksheetData[i][9].ToString(), out double totalWeight) ? totalWeight : 0;
                                 material.RequiredWeight = material.TotalWeight;
                                 material.LeftOverWeight = 0;// not used. Threated as unique piece material, that has no leftovers 
                                                             //===================================================================================================
-                                material.Area = double.TryParse(worksheet.WorksheetData[i][10].ToString(), out double area) ? area : 0;
+                                material.Area = double.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out double area) ? area : 0;
                                 material.TotalArea = Math.Round(material.Area * material.Quantity, 6);
                                 material.RequiredArea = material.TotalArea; // not used. Threated as unique piece material.
                                 material.LeftOverArea = 0;// not used. Threated as unique piece material, that has no leftovers 
                                                           //===================================================================================================
                                 material.Waste = 0; // not used, glasses are not cut in production. Threated as piece material. 
                                                     //===================================================================================================
-                                material.Price = decimal.TryParse(worksheet.WorksheetData[i][7].ToString(), out decimal price) ? price : 0;
-                                material.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][11].ToString(), out decimal totalPrice) ? totalPrice : 0;
+                                material.Price = decimal.TryParse(a2pWorksheet.WorksheetData[i][7].ToString(), out decimal price) ? price : 0;
+                                material.TotalPrice = decimal.TryParse(a2pWorksheet.WorksheetData[i][11].ToString(), out decimal totalPrice) ? totalPrice : 0;
                                 material.RequiredPrice = material.TotalPrice; // not used. Threated as unique piece material 
                                 material.LeftOverPrice = 0; /// not used. Threated as unique piece material, that has no leftovers 
                                 //===================================================================================================
-                                material.SquareMeterPrice = decimal.TryParse(worksheet.WorksheetData[i][6].ToString(), out decimal squareMeterPrice) ? squareMeterPrice : 0;
+                                material.SquareMeterPrice = decimal.TryParse(a2pWorksheet.WorksheetData[i][6].ToString(), out decimal squareMeterPrice) ? squareMeterPrice : 0;
                                 //===================================================================================================
-                                material.Pallet = worksheet.WorksheetData[i][12].ToString();
+                                material.Pallet = a2pWorksheet.WorksheetData[i][12].ToString();
                                 //===================================================================================================
                                 material.CustomField1 = null; // not used in glasses
                                 material.CustomField2 = null; // not used in glasses
@@ -332,15 +418,15 @@ namespace a2p.Shared.Application.Services
                                 material.MaterialType = MaterialType.Glasses;
                                 //===================================================================================================
                                 material.SourceReference = null;
-                                material.SourceDescription = worksheet.WorksheetData[i][2]?.ToString();
+                                material.SourceDescription = a2pWorksheet.WorksheetData[i][2]?.ToString();
                                 material.SourceColor = null;
                                 material.SourceColorDescription = null;
 
                             }
-                            if (worksheet.Name is "ND_Panels")
+                            if (a2pWorksheet.Name is "ND_Panels")
                             {
 
-                                material.Item = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
+                                material.Item = a2pWorksheet.WorksheetData[i][1].ToString() ?? string.Empty;
                                 //Reset Sort Order if new item
                                 //===================================================================================================
                                 if (material.Item != lastItem)
@@ -352,24 +438,24 @@ namespace a2p.Shared.Application.Services
                                 material.SortOrder = sortOrder;
                                 //===================================================================================================
                                 // material.Reference  //TODO: Add Reference for Glass from description field   
-                                material.Description = worksheet.WorksheetData[i][4].ToString() ?? string.Empty;
+                                material.Description = a2pWorksheet.WorksheetData[i][4].ToString() ?? string.Empty;
                                 // Pattern to match "XPS <number>mm"
                                 string pattern1 = @"(XPS\s+\d+mm)";
                                 Match match = Regex.Match(material.Description, pattern1);
                                 material.Reference = match.Success ? $"LOB_XPS{match.Groups[1].Value}" : string.Empty;
                                 //===================================================================================================
                                 material.Reference = string.IsNullOrEmpty(material.Reference) && material.Description == "1mm aluminium sheet"
-                                    ? GetSapa_V2Code("AluSheet1", worksheet.WorksheetData[i][2].ToString() ?? string.Empty, worksheet.Order ?? string.Empty, worksheet.Name ?? string.Empty, line)
-                                    : GetSapa_V2Code(worksheet.WorksheetData[i][1].ToString() ?? string.Empty, worksheet.WorksheetData[i][2].ToString() ?? string.Empty, worksheet.Order ?? string.Empty, worksheet.Name ?? string.Empty, line);
+                                    ? GetSapa_V2Code("AluSheet1", a2pWorksheet.WorksheetData[i][2].ToString() ?? string.Empty, a2pWorksheet.Order ?? string.Empty, a2pWorksheet.Name ?? string.Empty, line)
+                                    : GetSapa_V2Code(a2pWorksheet.WorksheetData[i][1].ToString() ?? string.Empty, a2pWorksheet.WorksheetData[i][2].ToString() ?? string.Empty, a2pWorksheet.Order ?? string.Empty, a2pWorksheet.Name ?? string.Empty, line);
 
                                 //===================================================================================================
-                                material.Color = worksheet.WorksheetData[i][2].ToString() ?? string.Empty;
-                                material.ColorDescription = worksheet.WorksheetData[i][3].ToString() ?? string.Empty;  // not used in glasses
-                                                                                                                       //===================================================================================================
-                                material.Width = double.TryParse(worksheet.WorksheetData[i][6].ToString(), out double width) ? width : 0;
-                                material.Height = double.TryParse(worksheet.WorksheetData[i][7].ToString(), out double height) ? height : 0;
+                                material.Color = a2pWorksheet.WorksheetData[i][2].ToString() ?? string.Empty;
+                                material.ColorDescription = a2pWorksheet.WorksheetData[i][3].ToString() ?? string.Empty;  // not used in glasses
+                                                                                                                          //===================================================================================================
+                                material.Width = double.TryParse(a2pWorksheet.WorksheetData[i][6].ToString(), out double width) ? width : 0;
+                                material.Height = double.TryParse(a2pWorksheet.WorksheetData[i][7].ToString(), out double height) ? height : 0;
                                 //===================================================================================================
-                                material.Quantity = worksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(worksheet.WorksheetData[i][3].ToString(), out int quantity) ? quantity : 1;
+                                material.Quantity = a2pWorksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(a2pWorksheet.WorksheetData[i][3].ToString(), out int quantity) ? quantity : 1;
                                 material.PackageQuantity = 0;
                                 material.TotalQuantity = material.Quantity;
                                 material.RequiredQuantity = material.TotalQuantity;
@@ -380,19 +466,19 @@ namespace a2p.Shared.Application.Services
                                 material.RequiredWeight = 0;// not used in panels
                                 material.LeftOverWeight = 0;// not used in panels
                                                             //===================================================================================================
-                                material.Area = double.TryParse(worksheet.WorksheetData[i][10].ToString(), out double area) ? area : 0;
+                                material.Area = double.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out double area) ? area : 0;
                                 material.TotalArea = Math.Round(material.Area * material.Quantity, 6);
                                 material.RequiredArea = material.TotalArea; // not used. Threated as unique piece material.
                                 material.LeftOverArea = 0;// not used. Threated as unique piece material, that has no leftovers 
                                                           //===================================================================================================
                                 material.Waste = 0; // not used, panels are not cut in production. Threated as piece material. 
                                                     //===================================================================================================
-                                material.Price = decimal.TryParse(worksheet.WorksheetData[i][9].ToString(), out decimal price) ? price : 0;
-                                material.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][11].ToString(), out decimal totalPrice) ? totalPrice : 0;
+                                material.Price = decimal.TryParse(a2pWorksheet.WorksheetData[i][9].ToString(), out decimal price) ? price : 0;
+                                material.TotalPrice = decimal.TryParse(a2pWorksheet.WorksheetData[i][11].ToString(), out decimal totalPrice) ? totalPrice : 0;
                                 material.RequiredPrice = material.TotalPrice; // not used. Threated as unique piece material 
                                 material.LeftOverPrice = 0; /// not used. Threated as unique piece material, that has no leftovers 
                                 //===================================================================================================
-                                material.SquareMeterPrice = decimal.TryParse(worksheet.WorksheetData[i][8].ToString(), out decimal squareMeterPrice) ? squareMeterPrice : 0;
+                                material.SquareMeterPrice = decimal.TryParse(a2pWorksheet.WorksheetData[i][8].ToString(), out decimal squareMeterPrice) ? squareMeterPrice : 0;
                                 //===================================================================================================
                                 material.Pallet = null;
                                 //===================================================================================================
@@ -406,48 +492,48 @@ namespace a2p.Shared.Application.Services
                                 material.MaterialType = MaterialType.Glasses;
                                 //===================================================================================================
                                 material.SourceReference = null;
-                                material.SourceDescription = worksheet.WorksheetData[i][4]?.ToString();
-                                material.SourceColor = worksheet.WorksheetData[i][2]?.ToString();
-                                material.SourceColorDescription = worksheet.WorksheetData[i][3] == null ? null : worksheet.WorksheetData[i][2].ToString();
+                                material.SourceDescription = a2pWorksheet.WorksheetData[i][4]?.ToString();
+                                material.SourceColor = a2pWorksheet.WorksheetData[i][2]?.ToString();
+                                material.SourceColorDescription = a2pWorksheet.WorksheetData[i][3] == null ? null : a2pWorksheet.WorksheetData[i][2].ToString();
 
                             }
-                            if (worksheet.Name is "ND_Profiles")
+                            if (a2pWorksheet.Name is "ND_Profiles")
                             {
                                 material.Item = null; // not used in profiles
                                 material.SortOrder = -1; // not used in profiles
                                                          //===================================================================================================
-                                material.Reference = GetSapa_V2Code(worksheet.WorksheetData[i][1].ToString() ?? string.Empty, worksheet.WorksheetData[i][2].ToString() ?? string.Empty, worksheet.Order ?? string.Empty, worksheet.Name ?? string.Empty, line);
-                                material.Description = worksheet.WorksheetData[i][4].ToString() ?? string.Empty;
+                                material.Reference = GetSapa_V2Code(a2pWorksheet.WorksheetData[i][1].ToString() ?? string.Empty, a2pWorksheet.WorksheetData[i][2].ToString() ?? string.Empty, a2pWorksheet.Order ?? string.Empty, a2pWorksheet.Name ?? string.Empty, line);
+                                material.Description = a2pWorksheet.WorksheetData[i][4].ToString() ?? string.Empty;
                                 //===================================================================================================
-                                material.Color = worksheet.WorksheetData[i][2].ToString() ?? string.Empty;
-                                material.ColorDescription = worksheet.WorksheetData[i][3].ToString() ?? string.Empty;
+                                material.Color = a2pWorksheet.WorksheetData[i][2].ToString() ?? string.Empty;
+                                material.ColorDescription = a2pWorksheet.WorksheetData[i][3].ToString() ?? string.Empty;
                                 //===================================================================================================
-                                material.Quantity = worksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(worksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 1;
-                                material.PackageQuantity = worksheet.WorksheetData[i][6] == null ? 1 : double.TryParse(worksheet.WorksheetData[i][6].ToString(), out double packageQuantity) ? packageQuantity : 1;
-                                material.TotalQuantity = worksheet.WorksheetData[i][7] == null ? 0 : double.TryParse(worksheet.WorksheetData[i][7].ToString(), out double totalQuantity) ? totalQuantity : 0;
-                                material.RequiredQuantity = worksheet.WorksheetData[i][8] == null ? 0 : double.TryParse(worksheet.WorksheetData[i][8].ToString(), out double requiredQuantity) ? requiredQuantity : 0;
+                                material.Quantity = a2pWorksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(a2pWorksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 1;
+                                material.PackageQuantity = a2pWorksheet.WorksheetData[i][6] == null ? 1 : double.TryParse(a2pWorksheet.WorksheetData[i][6].ToString(), out double packageQuantity) ? packageQuantity : 1;
+                                material.TotalQuantity = a2pWorksheet.WorksheetData[i][7] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][7].ToString(), out double totalQuantity) ? totalQuantity : 0;
+                                material.RequiredQuantity = a2pWorksheet.WorksheetData[i][8] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][8].ToString(), out double requiredQuantity) ? requiredQuantity : 0;
                                 material.LeftOverQuantity = Math.Round(material.TotalQuantity - material.RequiredQuantity, 6) < 0 ? 0 : Math.Round(material.TotalQuantity - material.RequiredQuantity, 6);
                                 //===================================================================================================
                                 material.Width = material.PackageQuantity * 1000; //used as bar length in mm
                                 material.Height = 0;
                                 //===================================================================================================
-                                material.TotalWeight = worksheet.WorksheetData[i][11] == null ? 0 : double.TryParse(worksheet.WorksheetData[i][11].ToString(), out double totalWeight) ? totalWeight : 0;
+                                material.TotalWeight = a2pWorksheet.WorksheetData[i][11] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][11].ToString(), out double totalWeight) ? totalWeight : 0;
                                 material.Weight = material.TotalQuantity == 0 ? 0 : Math.Round(material.TotalWeight / material.TotalQuantity, 6);
                                 material.RequiredWeight = Math.Round(material.Weight * material.RequiredQuantity, 6);
                                 material.LeftOverWeight = Math.Round(material.TotalWeight - material.RequiredWeight, 6) < 0 ? 0 : Math.Round(material.TotalWeight - material.RequiredWeight, 6);
                                 //===================================================================================================
-                                material.TotalArea = worksheet.WorksheetData[i][10] == null ? 0 : double.TryParse(worksheet.WorksheetData[i][10].ToString(), out double totalArea) ? totalArea : 0;
+                                material.TotalArea = a2pWorksheet.WorksheetData[i][10] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out double totalArea) ? totalArea : 0;
                                 material.Area = material.TotalQuantity == 0 ? 0 : Math.Round(material.TotalArea / material.TotalQuantity, 6);
                                 material.RequiredArea = Math.Round(material.Area * material.RequiredQuantity, 6);
                                 material.LeftOverArea = Math.Round(material.TotalArea - material.RequiredArea, 6) < 0 ? 0 : Math.Round(material.TotalArea - material.RequiredArea, 6);
                                 //===================================================================================================
                                 material.Waste = material.RequiredWeight != 0
-                                    ? worksheet.WorksheetData[i][9] == null ? 0 : double.TryParse(worksheet.WorksheetData[i][9].ToString(), out double lostWeight) ? lostWeight : 0 / material.RequiredWeight * 100
+                                    ? a2pWorksheet.WorksheetData[i][9] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][9].ToString(), out double lostWeight) ? lostWeight : 0 / material.RequiredWeight * 100
                                     : 0;
                                 //===================================================================================================                                
-                                material.Price = decimal.TryParse(worksheet.WorksheetData[i][12].ToString(), out decimal price) ? price : 0;
-                                material.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][13].ToString(), out decimal totalPrice) ? totalPrice : 0;
-                                material.RequiredPrice = Math.Round(material.Price * (decimal) material.RequiredQuantity, 6);
+                                material.Price = decimal.TryParse(a2pWorksheet.WorksheetData[i][12].ToString(), out decimal price) ? price : 0;
+                                material.TotalPrice = decimal.TryParse(a2pWorksheet.WorksheetData[i][13].ToString(), out decimal totalPrice) ? totalPrice : 0;
+                                material.RequiredPrice = Math.Round(material.Price * (decimal)material.RequiredQuantity, 6);
                                 material.LeftOverPrice = Math.Round(material.TotalPrice - material.RequiredPrice, 6) < 0 ? 0 : Math.Round(material.TotalPrice - material.RequiredPrice, 6);
                                 //===================================================================================================
                                 material.SquareMeterPrice = 0; // not used in profiles 
@@ -463,30 +549,30 @@ namespace a2p.Shared.Application.Services
                                                               //===================================================================================================
                                 material.MaterialType = MaterialType.Profiles;
                                 //===================================================================================================
-                                material.SourceReference = worksheet.WorksheetData[i][1]?.ToString();
-                                material.SourceColor = worksheet.WorksheetData[i][2].ToString() == null ? null : worksheet.WorksheetData[i][2].ToString();
-                                material.SourceColorDescription = worksheet.WorksheetData[i][3].ToString() == null ? null : worksheet.WorksheetData[i][3].ToString();
-                                material.SourceDescription = worksheet.WorksheetData[i][4].ToString() == null ? null : worksheet.WorksheetData[i][4].ToString();
+                                material.SourceReference = a2pWorksheet.WorksheetData[i][1]?.ToString();
+                                material.SourceColor = a2pWorksheet.WorksheetData[i][2].ToString() == null ? null : a2pWorksheet.WorksheetData[i][2].ToString();
+                                material.SourceColorDescription = a2pWorksheet.WorksheetData[i][3].ToString() == null ? null : a2pWorksheet.WorksheetData[i][3].ToString();
+                                material.SourceDescription = a2pWorksheet.WorksheetData[i][4].ToString() == null ? null : a2pWorksheet.WorksheetData[i][4].ToString();
                             }
-                            if (worksheet.Name is "ND_Other")
+                            if (a2pWorksheet.Name is "ND_Other")
                             {
                                 material.Item = null; // not used in others
                                 material.SortOrder = -1; // not used in others
                                                          //===================================================================================================
-                                material.Reference = $"ASA_{worksheet.WorksheetData[i][1].ToString() ?? string.Empty}";
-                                material.Description = worksheet.WorksheetData[i][4].ToString() ?? string.Empty;
+                                material.Reference = $"ASA_{a2pWorksheet.WorksheetData[i][1].ToString() ?? string.Empty}";
+                                material.Description = a2pWorksheet.WorksheetData[i][4].ToString() ?? string.Empty;
                                 //===================================================================================================                                                         
-                                material.ColorDescription = worksheet.WorksheetData[i][3].ToString() ?? string.Empty;
+                                material.ColorDescription = a2pWorksheet.WorksheetData[i][3].ToString() ?? string.Empty;
                                 if (string.IsNullOrEmpty(material.Color) && string.IsNullOrEmpty(material.ColorDescription)
                                 | material.ColorDescription.Contains("Without finish"))
                                 {
                                     material.Color = "Without";
                                 }
                                 //===================================================================================================
-                                material.Quantity = worksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(worksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 1;
-                                material.PackageQuantity = worksheet.WorksheetData[i][6] == null ? 1 : double.TryParse(worksheet.WorksheetData[i][6].ToString(), out double packageQuantity) ? packageQuantity : 1;
-                                material.TotalQuantity = worksheet.WorksheetData[i][7] == null ? 0 : double.TryParse(worksheet.WorksheetData[i][7].ToString(), out double totalQuantity) ? totalQuantity : 0;
-                                material.RequiredQuantity = worksheet.WorksheetData[i][8] == null ? 0 : double.TryParse(worksheet.WorksheetData[i][8].ToString(), out double requiredQuantity) ? requiredQuantity : 0;
+                                material.Quantity = a2pWorksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(a2pWorksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 1;
+                                material.PackageQuantity = a2pWorksheet.WorksheetData[i][6] == null ? 1 : double.TryParse(a2pWorksheet.WorksheetData[i][6].ToString(), out double packageQuantity) ? packageQuantity : 1;
+                                material.TotalQuantity = a2pWorksheet.WorksheetData[i][7] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][7].ToString(), out double totalQuantity) ? totalQuantity : 0;
+                                material.RequiredQuantity = a2pWorksheet.WorksheetData[i][8] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][8].ToString(), out double requiredQuantity) ? requiredQuantity : 0;
                                 material.LeftOverQuantity = Math.Round(material.TotalQuantity - material.RequiredQuantity, 6) < 0 ? 0 : Math.Round(material.TotalQuantity - material.RequiredQuantity, 6);
                                 //===================================================================================================
                                 material.Width = 0; // not used in others
@@ -504,9 +590,9 @@ namespace a2p.Shared.Application.Services
                                                            //===================================================================================================
                                 material.Waste = 0; // not used in others
                                                     //=================================================================================================                                
-                                material.Price = decimal.TryParse(worksheet.WorksheetData[i][9].ToString(), out decimal price) ? price : 0;
-                                material.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][10].ToString(), out decimal totalPrice) ? totalPrice : 0;
-                                material.RequiredPrice = Math.Round(material.Price * (decimal) material.RequiredQuantity, 6);
+                                material.Price = decimal.TryParse(a2pWorksheet.WorksheetData[i][9].ToString(), out decimal price) ? price : 0;
+                                material.TotalPrice = decimal.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out decimal totalPrice) ? totalPrice : 0;
+                                material.RequiredPrice = Math.Round(material.Price * (decimal)material.RequiredQuantity, 6);
                                 material.LeftOverPrice = Math.Round(material.TotalPrice - material.RequiredPrice, 6) < 0 ? 0 : Math.Round(material.TotalPrice - material.RequiredPrice, 6);
                                 //===================================================================================================
                                 material.SquareMeterPrice = 0; // not used in others
@@ -522,28 +608,28 @@ namespace a2p.Shared.Application.Services
                                                               //===================================================================================================
                                 material.MaterialType = MaterialType.Piece;
                                 //===================================================================================================
-                                material.SourceReference = worksheet.WorksheetData[i][1]?.ToString();
-                                material.SourceColor = worksheet.WorksheetData[i][2].ToString() == null ? null : worksheet.WorksheetData[i][2].ToString();
-                                material.SourceColorDescription = worksheet.WorksheetData[i][3].ToString() == null ? null : worksheet.WorksheetData[i][3].ToString();
-                                material.SourceDescription = worksheet.WorksheetData[i][4].ToString() == null ? null : worksheet.WorksheetData[i][4].ToString();
+                                material.SourceReference = a2pWorksheet.WorksheetData[i][1]?.ToString();
+                                material.SourceColor = a2pWorksheet.WorksheetData[i][2].ToString() == null ? null : a2pWorksheet.WorksheetData[i][2].ToString();
+                                material.SourceColorDescription = a2pWorksheet.WorksheetData[i][3].ToString() == null ? null : a2pWorksheet.WorksheetData[i][3].ToString();
+                                material.SourceDescription = a2pWorksheet.WorksheetData[i][4].ToString() == null ? null : a2pWorksheet.WorksheetData[i][4].ToString();
                             }
-                            if (worksheet.Name is "ND_Accessories")
+                            if (a2pWorksheet.Name is "ND_Accessories")
                             {
                                 material.Item = null; // not used in accessories
                                 material.SortOrder = -1; // not used in accessories
                                                          //===================================================================================================                                                         
-                                material.ColorDescription = worksheet.WorksheetData[i][3].ToString() ?? string.Empty;
+                                material.ColorDescription = a2pWorksheet.WorksheetData[i][3].ToString() ?? string.Empty;
                                 if (string.IsNullOrEmpty(material.Color) && (string.IsNullOrEmpty(material.ColorDescription) || material.ColorDescription.Contains("Without finish")))
                                 {
                                     material.Color = "Without";
                                 }
-                                material.Reference = GetSapa_V2Code(worksheet.WorksheetData[i][1].ToString() ?? string.Empty, material.Color ?? string.Empty, worksheet.Order ?? string.Empty, worksheet.Name ?? string.Empty, line);
-                                material.Description = worksheet.WorksheetData[i][4].ToString() ?? string.Empty;
+                                material.Reference = GetSapa_V2Code(a2pWorksheet.WorksheetData[i][1].ToString() ?? string.Empty, material.Color ?? string.Empty, a2pWorksheet.Order ?? string.Empty, a2pWorksheet.Name ?? string.Empty, line);
+                                material.Description = a2pWorksheet.WorksheetData[i][4].ToString() ?? string.Empty;
                                 //===================================================================================================
-                                material.Quantity = worksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(worksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 1;
-                                material.PackageQuantity = worksheet.WorksheetData[i][6] == null ? 1 : double.TryParse(worksheet.WorksheetData[i][6].ToString(), out double packageQuantity) ? packageQuantity : 1;
-                                material.TotalQuantity = worksheet.WorksheetData[i][7] == null ? 0 : double.TryParse(worksheet.WorksheetData[i][7].ToString(), out double totalQuantity) ? totalQuantity : 0;
-                                material.RequiredQuantity = worksheet.WorksheetData[i][8] == null ? 0 : double.TryParse(worksheet.WorksheetData[i][8].ToString(), out double requiredQuantity) ? requiredQuantity : 0;
+                                material.Quantity = a2pWorksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(a2pWorksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 1;
+                                material.PackageQuantity = a2pWorksheet.WorksheetData[i][6] == null ? 1 : double.TryParse(a2pWorksheet.WorksheetData[i][6].ToString(), out double packageQuantity) ? packageQuantity : 1;
+                                material.TotalQuantity = a2pWorksheet.WorksheetData[i][7] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][7].ToString(), out double totalQuantity) ? totalQuantity : 0;
+                                material.RequiredQuantity = a2pWorksheet.WorksheetData[i][8] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][8].ToString(), out double requiredQuantity) ? requiredQuantity : 0;
                                 material.LeftOverQuantity = Math.Round(material.TotalQuantity - material.RequiredQuantity, 6) < 0 ? 0 : Math.Round(material.TotalQuantity - material.RequiredQuantity, 6);
                                 //===================================================================================================
                                 material.Width = 0; // not used in accessories
@@ -561,9 +647,9 @@ namespace a2p.Shared.Application.Services
                                                            //===================================================================================================
                                 material.Waste = 0; // not used in accessories
                                                     //=================================================================================================                                
-                                material.Price = decimal.TryParse(worksheet.WorksheetData[i][9].ToString(), out decimal price) ? price : 0;
-                                material.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][10].ToString(), out decimal totalPrice) ? totalPrice : 0;
-                                material.RequiredPrice = Math.Round(material.Price * (decimal) material.RequiredQuantity, 6);
+                                material.Price = decimal.TryParse(a2pWorksheet.WorksheetData[i][9].ToString(), out decimal price) ? price : 0;
+                                material.TotalPrice = decimal.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out decimal totalPrice) ? totalPrice : 0;
+                                material.RequiredPrice = Math.Round(material.Price * (decimal)material.RequiredQuantity, 6);
                                 material.LeftOverPrice = Math.Round(material.TotalPrice - material.RequiredPrice, 6) < 0 ? 0 : Math.Round(material.TotalPrice - material.RequiredPrice, 6);
                                 //===================================================================================================
                                 material.SquareMeterPrice = 0; // not used in accessories
@@ -579,36 +665,36 @@ namespace a2p.Shared.Application.Services
                                                               //===================================================================================================
                                 material.MaterialType = MaterialType.Piece;
                                 //===================================================================================================
-                                material.SourceReference = worksheet.WorksheetData[i][1]?.ToString();
-                                material.SourceColor = worksheet.WorksheetData[i][2].ToString() == null ? null : worksheet.WorksheetData[i][2].ToString();
-                                material.SourceColorDescription = worksheet.WorksheetData[i][3].ToString() == null ? null : worksheet.WorksheetData[i][3].ToString();
-                                material.SourceDescription = worksheet.WorksheetData[i][4].ToString() == null ? null : worksheet.WorksheetData[i][4].ToString();
+                                material.SourceReference = a2pWorksheet.WorksheetData[i][1]?.ToString();
+                                material.SourceColor = a2pWorksheet.WorksheetData[i][2].ToString() == null ? null : a2pWorksheet.WorksheetData[i][2].ToString();
+                                material.SourceColorDescription = a2pWorksheet.WorksheetData[i][3].ToString() == null ? null : a2pWorksheet.WorksheetData[i][3].ToString();
+                                material.SourceDescription = a2pWorksheet.WorksheetData[i][4].ToString() == null ? null : a2pWorksheet.WorksheetData[i][4].ToString();
                             }
-                            if (worksheet.Name is "ND_Gaskets")
+                            if (a2pWorksheet.Name is "ND_Gaskets")
                             {
 
                                 material.Item = null; // not used in accessories
                                 material.SortOrder = -1; // not used in accessories
                                                          //===================================================================================================                                                         
-                                material.ColorDescription = worksheet.WorksheetData[i][3].ToString() ?? string.Empty;
+                                material.ColorDescription = a2pWorksheet.WorksheetData[i][3].ToString() ?? string.Empty;
                                 if (string.IsNullOrEmpty(material.Color) && (string.IsNullOrEmpty(material.ColorDescription) || material.ColorDescription.Contains("Without finish")))
                                 {
                                     material.Color = "Without";
                                 }
-                                material.Reference = GetSapa_V2Code(worksheet.WorksheetData[i][1].ToString() ?? string.Empty, material.Color ?? string.Empty, worksheet.Order ?? string.Empty, worksheet.Name ?? string.Empty, line);
-                                material.Description = worksheet.WorksheetData[i][4].ToString() ?? string.Empty;
+                                material.Reference = GetSapa_V2Code(a2pWorksheet.WorksheetData[i][1].ToString() ?? string.Empty, material.Color ?? string.Empty, a2pWorksheet.Order ?? string.Empty, a2pWorksheet.Name ?? string.Empty, line);
+                                material.Description = a2pWorksheet.WorksheetData[i][4].ToString() ?? string.Empty;
                                 //===================================================================================================
-                                material.Quantity = worksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(worksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 1;
-                                material.PackageQuantity = worksheet.WorksheetData[i][6] == null ? 0 : double.TryParse(worksheet.WorksheetData[i][6].ToString(), out double packageQuantity) ? packageQuantity : 0;
-                                material.TotalQuantity = worksheet.WorksheetData[i][7] == null ? 0 : double.TryParse(worksheet.WorksheetData[i][7].ToString(), out double totalQuantity) ? totalQuantity : 0;
-                                material.RequiredQuantity = worksheet.WorksheetData[i][8] == null ? 0 : double.TryParse(worksheet.WorksheetData[i][8].ToString(), out double requiredQuantity) ? requiredQuantity : 0;
+                                material.Quantity = a2pWorksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(a2pWorksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 1;
+                                material.PackageQuantity = a2pWorksheet.WorksheetData[i][6] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][6].ToString(), out double packageQuantity) ? packageQuantity : 0;
+                                material.TotalQuantity = a2pWorksheet.WorksheetData[i][7] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][7].ToString(), out double totalQuantity) ? totalQuantity : 0;
+                                material.RequiredQuantity = a2pWorksheet.WorksheetData[i][8] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][8].ToString(), out double requiredQuantity) ? requiredQuantity : 0;
                                 material.LeftOverQuantity = Math.Round(material.TotalQuantity - material.RequiredQuantity, 6) < 0 ? 0 : Math.Round(material.TotalQuantity - material.RequiredQuantity, 6);
                                 //===================================================================================================
-                                if (!string.IsNullOrEmpty(worksheet.WorksheetData[i][9]?.ToString()))
+                                if (!string.IsNullOrEmpty(a2pWorksheet.WorksheetData[i][9]?.ToString()))
                                 {
-                                    if (worksheet.WorksheetData[i][9]?.ToString()?.Contains('/') == true)
+                                    if (a2pWorksheet.WorksheetData[i][9]?.ToString()?.Contains('/') == true)
                                     {
-                                        string[] split = worksheet.WorksheetData[i][9]?.ToString()?.Split('/') ?? Array.Empty<string>();
+                                        string[] split = a2pWorksheet.WorksheetData[i][9]?.ToString()?.Split('/') ?? Array.Empty<string>();
                                         if (split.Length == 2)
                                         {
                                             material.Width = double.TryParse(split[0], out double width) ? width : 0;
@@ -636,9 +722,9 @@ namespace a2p.Shared.Application.Services
                                                            //===================================================================================================
                                 material.Waste = 0; // not used in accessories
                                                     //=================================================================================================                                
-                                material.Price = decimal.TryParse(worksheet.WorksheetData[i][10].ToString(), out decimal price) ? price : 0;
-                                material.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][11].ToString(), out decimal totalPrice) ? totalPrice : 0;
-                                material.RequiredPrice = Math.Round(material.Price * (decimal) material.RequiredQuantity, 6);
+                                material.Price = decimal.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out decimal price) ? price : 0;
+                                material.TotalPrice = decimal.TryParse(a2pWorksheet.WorksheetData[i][11].ToString(), out decimal totalPrice) ? totalPrice : 0;
+                                material.RequiredPrice = Math.Round(material.Price * (decimal)material.RequiredQuantity, 6);
                                 material.LeftOverPrice = Math.Round(material.TotalPrice - material.RequiredPrice, 6) < 0 ? 0 : Math.Round(material.TotalPrice - material.RequiredPrice, 6);
                                 //===================================================================================================
                                 material.SquareMeterPrice = 0; // not used in accessories
@@ -654,10 +740,10 @@ namespace a2p.Shared.Application.Services
                                                               //===================================================================================================
                                 material.MaterialType = MaterialType.Gaskets;
                                 //===================================================================================================
-                                material.SourceReference = worksheet.WorksheetData[i][1]?.ToString();
-                                material.SourceColor = worksheet.WorksheetData[i][2].ToString() == null ? null : worksheet.WorksheetData[i][2].ToString();
-                                material.SourceColorDescription = worksheet.WorksheetData[i][3].ToString() == null ? null : worksheet.WorksheetData[i][3].ToString();
-                                material.SourceDescription = worksheet.WorksheetData[i][4].ToString() == null ? null : worksheet.WorksheetData[i][4].ToString();
+                                material.SourceReference = a2pWorksheet.WorksheetData[i][1]?.ToString();
+                                material.SourceColor = a2pWorksheet.WorksheetData[i][2].ToString() == null ? null : a2pWorksheet.WorksheetData[i][2].ToString();
+                                material.SourceColorDescription = a2pWorksheet.WorksheetData[i][3].ToString() == null ? null : a2pWorksheet.WorksheetData[i][3].ToString();
+                                material.SourceDescription = a2pWorksheet.WorksheetData[i][4].ToString() == null ? null : a2pWorksheet.WorksheetData[i][4].ToString();
                             }
 
                             _logService.Verbose("Mapper Sapa 2 Service: Map Materials | Order : {$Order} " +
@@ -748,7 +834,7 @@ namespace a2p.Shared.Application.Services
                         }
                         catch (Exception ex)
                         {
-                            _logService.Error("Mapper Sapa 2 Service: Unhandled Error. Map single material from material list.  Last known success action. Order: {$Order}, a2pWorksheet: {$Worksheet}, line {$Line}. Exception  ${Exception} ", worksheet.Order ?? string.Empty, worksheet.Name ?? string.Empty, line, ex.Message);
+                            _logService.Error("Mapper Sapa 2 Service: Unhandled Error. Map single material from material list.  Last known success action. Order: {$Order}, a2pWorksheet: {$Worksheet}, line {$Line}. Exception  ${Exception} ", a2pWorksheet.Order ?? string.Empty, a2pWorksheet.Name ?? string.Empty, line, ex.Message);
                             continue;
                         }
                     }
@@ -758,109 +844,136 @@ namespace a2p.Shared.Application.Services
             }
             catch (Exception ex)
             {
-                _logService.Error("Mapper Sapa 2 Service: Unhandled Error. Mapping material map materials. Last known success action. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}+ ${Exception}", worksheet.Order ?? string.Empty, worksheet.Name ?? string.Empty, line, ex.Message);
+                _logService.Error("Mapper Sapa 2 Service: Unhandled Error. Mapping material map materials. Last known success action. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}+ ${Exception}", a2pWorksheet.Order ?? string.Empty, a2pWorksheet.Name ?? string.Empty, line, ex.Message);
                 return materials;
             }
         }
 
-        private string GetSapa_V2Code(string sapaArticle_v2, string sapaColor_v2, string order, string worksheetName, int line)
+        public string GetSapa_V2Code(string sapaArticle_v2, string sapaColor_v2, string order, string worksheetName, int line)
         {
+
             try
             {
 
+                A2POrder? a2pOrder = _dataCache.GetOrder(order);
+
+                // Log an error if both fields are empty
                 if (string.IsNullOrEmpty(sapaArticle_v2) && string.IsNullOrEmpty(sapaColor_v2))
                 {
-                    _logService.Error("Mapper Sapa 2 Service: Mapping material Article and Color fields are empty. Line will be skipped. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}.", order ?? string.Empty, worksheetName ?? string.Empty, line);
+                    _logService.Error(
+                        "Mapper Sapa 2 Service: Mapping material Article and Color fields are empty. Line will be skipped. Order: {Order}, FileName: {Worksheet}, LineNumber: {Line}.",
+                        order ?? string.Empty, worksheetName ?? string.Empty, line
+                    );
+
+                    
+                        A2POrderError writeError = new()
+                        {
+                            Order = order!,
+                            Level = ErrorLevel.Error,
+                            Code = ErrorCode.MappingService_MapMaterial,
+                            Message = $"Mapper Sapa 2: Mapping material Article and Color fields are empty. Line will be skipped. Order: {order}, FileName: {worksheetName}, LineNumber: {line}.",
+                        };
+
+                        a2pOrder!.WriteErrors.Add(writeError);
+                        _dataCache.UpdateOrderInCache(order!, updatedOrder =>
+                        {
+                            updatedOrder.WriteErrors.Add(writeError);
+                        });
+                    
+
+                    return "Unknown";
                 }
 
+                // If sapaColor_v2 is empty and the worksheet is ND_Gaskets or ND_Accessories, return modified sapaArticle_v2
                 if (string.IsNullOrEmpty(sapaColor_v2) && (worksheetName == "ND_Gaskets" || worksheetName == "ND_Accessories"))
                 {
-                    if (sapaArticle_v2.StartsWith("S"))
-                    {
-                        sapaArticle_v2 = sapaArticle_v2[1..];
-
-                    }
-
-                    return sapaArticle_v2;
+                    return sapaArticle_v2.StartsWith("S") ? sapaArticle_v2[1..] : sapaArticle_v2;
                 }
 
+                // Processing for ND_Profiles and ND_Accessories
                 if (worksheetName is "ND_Profiles" or "ND_Accessories")
                 {
-
-                    // Remove 'S' if it is the first character of field1
                     if (sapaArticle_v2.StartsWith("S"))
                     {
                         sapaArticle_v2 = sapaArticle_v2[1..];
-
                     }
-                    // Remove 'S' if it is the first character of field1
+
                     if ((sapaColor_v2.EndsWith("F") || sapaColor_v2.EndsWith("R") || sapaColor_v2.EndsWith("M")) && sapaColor_v2 != "MF")
                     {
-                        sapaColor_v2 = sapaColor_v2[..^1];
+                        sapaColor_v2 = sapaColor_v2[..^1]; // Remove last character
                     }
-                    _ = sapaColor_v2.Replace("A | R", "|R");
-                    _ = sapaColor_v2.Replace("R | R", "|R");
-                    _ = sapaColor_v2.Replace("F | R", "|R");
-                    _ = sapaColor_v2.Replace("M | R", "|R");
-                    _ = sapaColor_v2.Replace("U | R", "|R");
-                    _ = sapaColor_v2.Replace("A | N", "|N");
-                    _ = sapaColor_v2.Replace("R | N", "|N");
-                    _ = sapaColor_v2.Replace("F | N", "|N");
-                    _ = sapaColor_v2.Replace("M | N", "|N");
-                    _ = sapaColor_v2.Replace("U | N", "|N");
+
+                    // Regex pattern to replace cases like "A | R" with "|R"
+                    sapaColor_v2 = Regex.Replace(sapaColor_v2, @"[A-Z] \| ([RN])", "|$1");
                 }
+
                 // Merge the fields with a '-'
                 string merged = $"{sapaArticle_v2}-{sapaColor_v2}";
 
-                // Regex pattern to keep only letters, numbers, dots, and '-'
+                // Keep only allowed characters (letters, numbers, dots, and '-')
                 string reference = Regex.Replace(merged, @"[^a-zA-Z0-9.\-|]", "");
 
                 // Ensure the final string is not more than 25 characters
                 if (reference.Length > 25)
                 {
-
                     string newReference = $"*{reference[..24]}";
-                    _logService.Error("Mapper Sapa 2 Service: Warning. Reference > 25 character. Order {$Order}, " +
-                                                                                                  "a2pWorksheet {$Worksheet}, " +
-                                                                                                  "line {$Line}, " +
-                                                                                                  "Sapa Article {$SapaArticle}({$SapaArticleLength}), " +
-                                                                                                  "Sapa Color {$SapaColor}({$SapaColorLength}), " +
-                                                                                                  "generated reference {$Reference}({$ReferenceLength}), " +
-                                                                                                  "Truncated reference {$NewReference}({$NewReferenceLength}).",
+                    _logService.Error(
+                        "Mapper Sapa 2 Service: Warning. " +
+                        "Reference > 25 characters. \nOrder:{Order}, Worksheet: {Worksheet}, Line: {Line}, " +
+                        "\nSapa Article: {SapaArticle}({SapaArticleLength}):, Sapa Color: {SapaColor}({SapaColorLength}). " +
+                        "\n Generated PrefSuite Reference: {Reference}({ReferenceLength})." +
+                        "\nReference inserted into DB Reference {NewReference}({NewReferenceLength}).",
+                        order ?? string.Empty,
+                        worksheetName ?? string.Empty,
+                        line,
+                        sapaArticle_v2 ?? string.Empty,
+                        (sapaArticle_v2 ?? string.Empty).Length,
+                        sapaColor_v2 ?? string.Empty,
+                        (sapaColor_v2 ?? string.Empty).Length,
+                        reference,
+                        reference.Length,
+                        newReference,
+                        newReference.Length
+                    );
 
-                                                                                                  order ?? string.Empty,
-                                                                                                  worksheetName ?? string.Empty,
-                                                                                                  line,
-                                                                                                  sapaArticle_v2 ?? string.Empty,
-                                                                                                  (sapaArticle_v2 ?? string.Empty).Length,
-                                                                                                  sapaColor_v2 ?? string.Empty,
-                                                                                                  (sapaColor_v2 ?? string.Empty).Length,
-                                                                                                  reference,
-                                                                                                  reference.Length,
-                                                                                                  newReference,
-                                                                                                  newReference.Length);
+                    A2POrderError writeError = new()
+                    {
+                        Order = order!,
+                        Level = ErrorLevel.Error,
+                        Code = ErrorCode.MappingService_MapMaterial,
+                        Message = $"Mapper Sapa 2: Generated material Reference is  > 25 characters!" +
+                        $"\n Line will be skipped. Order: {order}, FileName: {worksheetName}, LineNumber: {line}." +
+                        $"\nSapa Article: {sapaArticle_v2 ?? string.Empty}({(sapaArticle_v2 ?? string.Empty).Length}), Sapa Color: {sapaColor_v2 ?? string.Empty}({(sapaColor_v2 ?? string.Empty).Length}). " +
+                        $"\n Generated PrefSuite Reference: {reference}({reference.Length})." +
+                        $"Reference inserted into DB: {newReference}({newReference.Length})."
+                    };
 
-                    return newReference!;
+                    a2pOrder!.WriteErrors.Add(writeError);
+                    _dataCache.UpdateOrderInCache(order!, updatedOrder =>
+                    {
+                        updatedOrder.WriteErrors.Add(writeError);
+                    });
+
+                    A2POrder? testOrder = _dataCache.GetOrder(order!);
                 }
 
                 return reference;
             }
             catch (Exception ex)
             {
-                _logService.Error(ex.Message, "Mapper Sapa 2 Service: Error Order {$Order}, a2pWorksheet {$Worksheet}, line {$Line}. Can't generate PrefSuite reference using Sapa v.2 article: {$Article} and Sapa v.2 Color {$Color}.", order ?? string.Empty, sapaArticle_v2, sapaColor_v2);
+                _logService.Error(
+                    ex.Message,
+                    "Mapper Sapa 2 Service: Error Order {Order}, a2pWorksheet {Worksheet}, line {Line}. " +
+                    "Can't generate PrefSuite reference using Sapa v.2 article: {Article} and Sapa v.2 Color {Color}.",
+                    order ?? string.Empty, worksheetName ?? string.Empty, line, sapaArticle_v2, sapaColor_v2
+                );
                 return "Unknown";
             }
         }
 
-        public List<A2PFile> GetNonOrderItemFiles(A2POrder order)
-        {
-            return order.Files.Where(file => !file.IsOrderItemsFile).ToList();
-        }
+        public List<A2PFile> GetNonOrderItemFiles(A2POrder order) => order.Files.Where(file => !file.IsOrderItemsFile).ToList();
 
-        public List<A2PFile> GetOrderItemFiles(A2POrder order)
-        {
-            return order.Files.Where(file => file.IsOrderItemsFile).ToList();
-        }
+        public List<A2PFile> GetOrderItemFiles(A2POrder order) => order.Files.Where(file => file.IsOrderItemsFile).ToList();
 
     }
 }

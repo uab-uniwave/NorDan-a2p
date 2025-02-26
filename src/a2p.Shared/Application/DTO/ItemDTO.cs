@@ -1,19 +1,19 @@
-﻿using a2p.Shared.Domain.Enums;
+﻿using System.ComponentModel.DataAnnotations;
 
-using System.ComponentModel.DataAnnotations;
+using a2p.Shared.Domain.Enums;
 
 namespace a2p.Shared.Application.DTO
 {
     public class ItemDTO
     {
-        public string SalesDocumentIdPos { get; init; } = Guid.NewGuid().ToString();
+        public string SalesDocumentIdPos { get; set; } = Guid.NewGuid().ToString();
         [Required, MaxLength(50)] required public string Order { get; set; } = string.Empty;
         [Required, MaxLength(255)] required public string Worksheet { get; set; } = string.Empty;
         [Required] required public int Line { get; set; } = -1;
         [Required] required public int Column { get; set; } = -1;
         //============================================================================================================================
         [MaxLength(50)] public string? Project { get; set; }
-       
+
         [Required, MaxLength(50)] required public string Item { get; set; } = string.Empty;
         [Required] required public int SortOrder { get; set; } = -1;
         [MaxLength(255)] public string? Description { get; set; }

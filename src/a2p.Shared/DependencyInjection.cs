@@ -70,6 +70,7 @@ namespace a2p.Shared
 
             // Register core services
             _ = services.AddSingleton<ILogService, LogService>();
+            _ = services.AddSingleton<DataCache>();
             _ = services.AddSingleton<IOrderReadProcessor, OrderReadProcessor>();
             _ = services.AddSingleton<IExcelReadService, ExcelReadService>();
             _ = services.AddSingleton<IPrefSuiteService, PrefSuiteService>();

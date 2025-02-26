@@ -5,7 +5,9 @@ namespace a2p.Shared.Infrastructure.Interfaces
 {
     public interface IOrderReadProcessor
     {
-        Task<List<A2POrder>> ReadAsync(ProgressValue progressValue, IProgress<ProgressValue>? progress = null);
+        Task ReadAsync(ProgressValue progressValue, IProgress<ProgressValue>? progress = null);
+     
+
 
     }
 }

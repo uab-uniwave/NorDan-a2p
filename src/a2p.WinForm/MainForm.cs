@@ -1,4 +1,10 @@
-﻿using a2p.Shared.Application.Interfaces;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices;
+
+using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Application.Services.Domain.Entities;
 using a2p.Shared.Domain.Enums;
 using a2p.Shared.Infrastructure.Interfaces;
@@ -6,15 +12,10 @@ using a2p.WinForm.ChildForms;
 
 using Microsoft.Extensions.Configuration;
 
-using System.Drawing.Drawing2D;
-using System.Runtime.InteropServices;
-
-
 namespace a2p.WinForm
 {
     public partial class MainForm : Form
     {
-
 
         private System.Drawing.Color selectedBackgroundColor = System.Drawing.Color.FromArgb(239, 112, 32);
         private System.Drawing.Color borderColor = System.Drawing.Color.White;
@@ -27,7 +28,7 @@ namespace a2p.WinForm
         private readonly IConfiguration _configuration;
         private readonly ILogService _logService;
         private readonly IFileService _fileService;
-
+        private readonly DataCache _dataCache;
 
         private static ProgressValue? _progressValue;
         private IProgress<ProgressValue> _progress;
@@ -36,8 +37,6 @@ namespace a2p.WinForm
         private readonly OrdersForm _orderForm;
         private readonly LogForm _logForm;
         private readonly SettingForm _settingForm;
-
-
 
         #region -== Custom Form Design Componenets ==-
 
@@ -57,7 +56,7 @@ namespace a2p.WinForm
         #endregion -== Custom Form Design Componenets ==-
 
         public MainForm(IOrderReadProcessor orderReadProcessor, IExcelReadService excelReadService, IOrderWriteProcessor orderProcessingService,
-            IConfiguration configuration, ILogService logService, IFileService fileService)
+            IConfiguration configuration, ILogService logService, IFileService fileService, DataCache dataCache)
         {
             _orderReadProcessor = orderReadProcessor;
             _excelReadService = excelReadService;
@@ -65,13 +64,14 @@ namespace a2p.WinForm
             _configuration = configuration;
             _logService = logService;
             _fileService = fileService;
+            _dataCache = dataCache;
 
             _progressValue = new ProgressValue();
 
             _progress = new Progress<ProgressValue>();
 
             _toolTip = new ToolTip();
-            _orderForm = new OrdersForm(_configuration, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService);
+            _orderForm = new OrdersForm(_configuration, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService, _dataCache);
             _logForm = new LogForm(_configuration, _logService);
             _settingForm = new SettingForm(_configuration, _logService);
 
@@ -87,7 +87,7 @@ namespace a2p.WinForm
 
             this.KeyPreview = true; // Allows the form to capture key events before controls do
             this.KeyDown += MainForm_KeyDown; // Attach key event handler
-
+            _dataCache = dataCache;
         }
 
         #region -== Initialization ==-
@@ -120,12 +120,10 @@ namespace a2p.WinForm
             try
             {
 
-
                 slbPath.Text = _configuration.GetValue<string>("AppSettings:RootFolder") ?? string.Empty;
                 statusStrip.SizingGrip = true;
                 this.PerformAutoScale(); // Ensure everything is scaled correctly (optional)
             }
-
 
             catch (Exception ex)
             {
@@ -140,7 +138,7 @@ namespace a2p.WinForm
             try
             {
                 await ShowFormAsync(_orderForm,
-                    () => new OrdersForm(_configuration, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService));
+                    () => new OrdersForm(_configuration, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService, _dataCache));
                 if (bool.Parse(_configuration["AppSettings:RefreshFilesOnStartup"] ?? "true"))
                 {
 
@@ -162,6 +160,30 @@ namespace a2p.WinForm
         private void MainForm_DpiChanged(object? sender, DpiChangedEventArgs e)
         {
             this.PerformAutoScale();
+            ResizeControls();
+            tplHeader.ResumeLayout(false);
+            tplHeader.PerformLayout();
+            tlpTitleBar.ResumeLayout(false);
+            tlpTitleBar.PerformLayout();
+            plTitleBar.ResumeLayout(false);
+            plTBPanel.ResumeLayout(false);
+            plTBPanel.PerformLayout();
+            statusStrip.ResumeLayout(false);
+            statusStrip.PerformLayout();
+            plFormContainer.ResumeLayout(false);
+            plFormContainer.PerformLayout();
+            plNordanHeaderLogo.ResumeLayout(false);
+            plNordanHeaderLogo.PerformLayout();
+            plTbSBInfo.ResumeLayout(false);
+            plTbSBInfo.PerformLayout();
+            plMiniLogo.ResumeLayout(false);
+            plMiniLogo.PerformLayout();
+            plTitleBarAppName.ResumeLayout(false);
+            plTitleBarAppName.PerformLayout();
+            plSideBarMain.ResumeLayout(false);
+            plSideBarMain.PerformLayout();
+            this.ResumeLayout(false);
+
             this.PerformLayout();
         }
 
@@ -213,7 +235,6 @@ namespace a2p.WinForm
             this.Region = new Region(path);
         }
 
-
         protected override void OnSizeChanged(EventArgs e)
         {
             base.OnSizeChanged(e);
@@ -226,26 +247,14 @@ namespace a2p.WinForm
             }
         }
 
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e) => _logService.DeleteLogFiles();
 
-        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            _logService.DeleteLogFiles();
-        }
-
-        private void MainForm_ResizeBegin(object sender, EventArgs e)
-        {
-            this.SuspendLayout();
-        }
-        private void MainForm_ResizeEnd(object sender, EventArgs e)
-        {
-
-            this.PerformLayout();
-        }
+        private void MainForm_ResizeBegin(object sender, EventArgs e) => this.SuspendLayout();
+        private void MainForm_ResizeEnd(object sender, EventArgs e) => this.PerformLayout();
 
         #endregion -== Main Form Events ==-
 
         #region -== Child Forms Methods ==-
-
 
         private async Task ShowFormAsync<T>(T formInstance, Func<T> formCreator) where T : Form
         {
@@ -282,7 +291,6 @@ namespace a2p.WinForm
         {
             // Circular buttons
 
-
             SetupCircularButton(btnMaximize);
             SetupCircularButton(btnMinimize);
             SetupCircularButton(btnClose);
@@ -293,7 +301,6 @@ namespace a2p.WinForm
             SetupGroupButton(btnImport);
             SetupGroupButton(btnLog);
             SetupGroupButton(btnExit);
-
 
         }
 
@@ -353,7 +360,6 @@ namespace a2p.WinForm
 
             };
 
-
             // Click event for selection
             btn.Click += (s, e) => SelectButton(btn);
 
@@ -388,7 +394,6 @@ namespace a2p.WinForm
         private Image? LoadImage(string imageName, int width, int height)
         {
 
-
             Image? originalImage = GetImageByName(imageName);
             return originalImage == null ? null : ResizeImage(originalImage, new Size(width, height));
         }
@@ -421,7 +426,6 @@ namespace a2p.WinForm
             return resizedBitmap;
         }
 
-
         #endregion -== Setup Buttons ==-
 
         #region -== Title Bar buttons Events ==-
@@ -441,17 +445,11 @@ namespace a2p.WinForm
 
         // Minimize window
         //============================================================
-        private void btMinimize_Click(object sender, EventArgs e)
-        {
-            this.WindowState = FormWindowState.Minimized;
-        }
+        private void btMinimize_Click(object sender, EventArgs e) => this.WindowState = FormWindowState.Minimized;
 
         // Close window
         //===============================================================
-        private void btClose_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
+        private void btClose_Click(object sender, EventArgs e) => Application.Exit();
 
         #endregion -== Title Bar buttons Events ==-
 
@@ -466,17 +464,12 @@ namespace a2p.WinForm
             plSideBarMain.SuspendLayout(); // Suspend layout before expanding
             _processType = ProcessType.FileImport;
 
-
-
             try
             {
                 await ShowFormAsync(_orderForm,
-                    () => new OrdersForm(_configuration, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService));
-
-
+                    () => new OrdersForm(_configuration, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService, _dataCache));
 
                 await _orderForm.OrdersLoad();
-
 
             }
             catch (Exception ex)
@@ -499,7 +492,7 @@ namespace a2p.WinForm
                 _processType = ProcessType.LogRefresh;
 
                 await ShowFormAsync(_orderForm,
-                     () => new OrdersForm(_configuration, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService));
+                     () => new OrdersForm(_configuration, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService, _dataCache));
                 await _orderForm.ImportFilesAsync();
             }
             catch (Exception ex)
@@ -512,7 +505,6 @@ namespace a2p.WinForm
                 _processType = ProcessType.None;
                 await Task.Run(EnableButtons); // Enable buttons at the end 
 
-
             }
         }
 
@@ -524,11 +516,9 @@ namespace a2p.WinForm
 
                 await Task.Run(DisableButtons); // Disable buttons at the beginning
 
-
                 await ShowFormAsync(_logForm,
                   () => new LogForm(_configuration, _logService));
                 _processType = ProcessType.LogRefresh;
-
 
                 await _logForm.LogRefreshAsync();
 
@@ -544,36 +534,19 @@ namespace a2p.WinForm
 
                 await Task.Run(EnableButtons);
 
-
             }
 
         }
 
         // SideBar Other Buttons
         //========================================================================
-        private async void BtnProperties_Click(object sender, EventArgs e)
-        {
-
-
-
-
-            await ShowFormAsync(_settingForm,
+        private async void BtnProperties_Click(object sender, EventArgs e) => await ShowFormAsync(_settingForm,
                 () => new SettingForm(_configuration, _logService));
-        }
 
-        private void BtnExit_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
-
-
-
+        private void BtnExit_Click(object sender, EventArgs e) => Application.Exit();
 
         //Buttons style
         //========================================================================
-
-
-
 
         private void DisableButtons()
         {
@@ -609,7 +582,6 @@ namespace a2p.WinForm
             {
                 Invoke(new Action(() => EnableButtons()));
 
-
             }
             else
             {
@@ -631,7 +603,6 @@ namespace a2p.WinForm
 
             }
         }
-
 
         #endregion -== Side Bar Buttons Events ==-
 
@@ -682,7 +653,6 @@ namespace a2p.WinForm
 
         }
 
-
         protected override void OnMouseUp(MouseEventArgs e)
         {
             base.OnMouseUp(e);
@@ -690,7 +660,6 @@ namespace a2p.WinForm
         }
 
         #endregion -== Overrides Custom Form Methods==-
-
 
         protected override void OnResize(EventArgs e)
         {
@@ -701,11 +670,19 @@ namespace a2p.WinForm
             tplHeader.ResumeLayout(false);
             tplHeader.PerformLayout();
             tlpTitleBar.ResumeLayout(false);
+            tlpTitleBar.PerformLayout();
             plTitleBar.ResumeLayout(false);
             plTBPanel.ResumeLayout(false);
             plTBPanel.PerformLayout();
             statusStrip.ResumeLayout(false);
             statusStrip.PerformLayout();
+            plFormContainer.ResumeLayout(false);
+            plFormContainer.PerformLayout();
+            plNordanHeaderLogo.ResumeLayout(false);
+            plMiniLogo.ResumeLayout(false);
+            plMiniLogo.PerformLayout();
+            plTitleBarAppName.ResumeLayout(false);
+            plTitleBarAppName.PerformLayout();
             plSideBarMain.ResumeLayout(false);
             plSideBarMain.PerformLayout();
             ResumeLayout(false);
@@ -719,9 +696,7 @@ namespace a2p.WinForm
                 plFormContainer.Size = new Size(this.ClientSize.Width - plFormContainer.Left, this.ClientSize.Height - plFormContainer.Top);
             }
 
-
         }
-
 
     }
 }

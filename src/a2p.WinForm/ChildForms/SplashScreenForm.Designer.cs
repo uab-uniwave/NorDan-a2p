@@ -209,7 +209,7 @@ namespace a2p.WinForm
             panel3.TabIndex = 12;
             panel3.UseWaitCursor = true;
             // 
-            // lbInfoMaterials
+            // label1
             // 
             label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             label1.BackColor = Color.Transparent;
@@ -217,7 +217,7 @@ namespace a2p.WinForm
             label1.ForeColor = Color.White;
             label1.Location = new Point(1000, 12);
             label1.Margin = new Padding(10);
-            label1.Name = "lbInfoMaterials";
+            label1.Name = "label1";
             label1.Size = new Size(160, 40);
             label1.TabIndex = 10;
             label1.Text = "v.1.0.0.1";

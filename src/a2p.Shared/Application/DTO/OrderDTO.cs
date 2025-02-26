@@ -11,7 +11,7 @@
             public string FileList { get; set; } = string.Empty;
             public int WorksheetCount { get; set; } = 0;
             public string WorksheetList { get; set; } = string.Empty;
-            public int ItemCount { get; set; } = 0;
+            public int Items { get; set; } = 0;
             public string ItemList { get; set; } = string.Empty;
             public int Materials { get; set; } = 0;
             public bool Import { get; set; } = true;

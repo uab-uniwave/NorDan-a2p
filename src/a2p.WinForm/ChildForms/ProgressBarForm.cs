@@ -52,7 +52,7 @@ namespace a2p.WinForm.CustomControls
                 else
                 {
                     UpdateProgressInternal(progressValue);
-                }
+                } 
             }
         }
 

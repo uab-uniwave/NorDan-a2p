@@ -6,9 +6,9 @@ namespace a2p.Shared.Infrastructure.Interfaces
     public interface IWriteMaterialService
     {
 
-        Task<int> InsertListAsync(List<MaterialDTO> materialDTOs, int salesDocumentNumber, int salesDocumentVersion, ProgressValue progressValue, IProgress<ProgressValue>? progress = null);
+       Task InsertListAsync( ProgressValue progressValue, IProgress<ProgressValue>? progress = null);
 
-        Task<int> DeleteAsync(string order);
+         Task DeleteAsync(string order);
 
     }
 }

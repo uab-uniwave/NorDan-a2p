@@ -1,4 +1,4 @@
-﻿namespace a2p.Shared.Application.Services.Domain.Enums
+﻿namespace a2p.Shared.Application.Domain.Enums
 {
     public enum ErrorCode
     {
@@ -23,11 +23,14 @@
         DatabaseRead_Order = 4101,
         DatabaseRead_Item = 4102,
         DatabaseRead_Material = 4103,
+        DatabaseRead_OrderAlreadyImported = 4201,
+        DatabaseRead_OrderReferenceNotFound = 4202,
 
         // ERP Read Errors (51xx)
         ERPRead_Order = 5101,
         ERPRead_Item = 5102,
         ERPRead_Material = 5103,
+
 
         // ======================================
         // 🔴 Write Process Errors

@@ -10,34 +10,34 @@ namespace a2p.WinForm
 
             this.AutoScaleMode = AutoScaleMode.Dpi;
             this.AutoScaleDimensions = new SizeF(96F, 96F);
-            InitializeComponent(); // Initialize components first
-
-            // Attach events before setting DPI to catch any initial changes
-            this.DpiChanged += SplashScreenForm_DpiChanged;
-            this.Load += SplashScreenForm_Load;
-
-            // Set DPI mode and dimensions after attaching events
-
-
-
+            InitializeComponent();
             this.Opacity = 0; // Start fully transparent
         }
 
+        #region -== Form Events ==-
+        private void SplashScreenForm_Load(object? sender, EventArgs e)
+        {
 
+            SetRoundedCorners(50);
+            this.PerformAutoScale();
+
+        }
+        private void SplashScreenForm_Shown(object sender, EventArgs e)
+        {
+            this.ResumeLayout(false);
+            this.PerformLayout();
+        }
         private void SplashScreenForm_DpiChanged(object? sender, DpiChangedEventArgs e)
         {
 
 
             this.PerformAutoScale();
-
+            this.ResumeLayout(false);
+            this.PerformLayout();
         }
+        #endregion  -== Form Events ==-
 
-        private void SplashScreenForm_Load(object? sender, EventArgs e)
-        {
-
-            SetRoundedCorners(50);
-
-        }
+        #region -== Methods ==-
         public void FadeIn()
         {
             for (double i = 0; i <= 1; i += 0.1)
@@ -46,7 +46,6 @@ namespace a2p.WinForm
                 Task.Delay(50).Wait();
             }
         }
-
         public void FadeOut()
         {
 
@@ -56,8 +55,6 @@ namespace a2p.WinForm
                 Task.Delay(50).Wait();
             }
         }
-
-
         private void SetRoundedCorners(int radius)
         {
             GraphicsPath path = new();
@@ -72,19 +69,12 @@ namespace a2p.WinForm
         protected override void WndProc(ref Message m)
         {
             {
-
-                //if (m.Msg == WM_DPICHANGED)
-                //{
-                //    int newDpi = m.WParam.ToInt32() & 0xFFFF; // Extract DPI value
-                //  float scaleFactor = newDpi / 192f;
-
-                //    // Resize form properly based on new DPI
-                //    this.Scale(new SizeF(scaleFactor, scaleFactor));
-                //}
                 base.WndProc(ref m);
 
             }
 
         }
+        #endregion -== Methods ==-
+
     }
 }

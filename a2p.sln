@@ -19,13 +19,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShellScripts", "PowerS
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF}"
-	ProjectSection(SolutionItems) = preProject
-		
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{DE026394-5BA8-42AB-B7EF-A3E0779D8D40}"
+	ProjectSection(SolutionItems) = preProject
+		Items\SQLScripts\a2p\Procedures.sql = Items\SQLScripts\a2p\Procedures.sql
+		Items\SQLScripts\a2p\Tables.sql = Items\SQLScripts\a2p\Tables.sql
+		Items\SQLScripts\a2p\Test.sql = Items\SQLScripts\a2p\Test.sql
+		Test.sql = Test.sql
 	EndProjectSection
 EndProject
 Global
@@ -51,10 +57,11 @@ Global
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{5DB87A85-F247-4178-B216-BFD4DCF4DFB5} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
 		{0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
+		{DE026394-5BA8-42AB-B7EF-A3E0779D8D40} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		BuildVersion_BuildVersioningStyle = None.None.None.Increment
-		BuildVersion_StartDate = 2000/1/1
 		SolutionGuid = {02931AC6-E3AF-4E96-A144-EE9EE4BE10E7}
+		BuildVersion_StartDate = 2000/1/1
+		BuildVersion_BuildVersioningStyle = None.None.None.Increment
 	EndGlobalSection
 EndGlobal

@@ -7,7 +7,7 @@ namespace a2p.WinForm
     partial class SplashScreenForm
     {
         /// <summary>
-        /// QuantityRequired designer variable.
+        /// RequiredQuantity designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
@@ -27,7 +27,7 @@ namespace a2p.WinForm
         #region Windows Form Designer generated code
 
         /// <summary>
-        /// QuantityRequired method for Designer support - do not modify
+        /// RequiredQuantity method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
@@ -251,6 +251,9 @@ namespace a2p.WinForm
             Margin = new Padding(6);
             Name = "SplashScreenForm";
             StartPosition = FormStartPosition.CenterScreen;
+            Load += SplashScreenForm_Load;
+            Shown += SplashScreenForm_Shown;
+            DpiChanged += SplashScreenForm_DpiChanged;
             panel1.ResumeLayout(false);
             tplHeader.ResumeLayout(false);
             tplHeader.PerformLayout();

@@ -1,4 +1,4 @@
-﻿using a2p.Shared.Core.Interfaces.Services;
+﻿using a2p.Shared.Infrastructure.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
@@ -42,8 +42,8 @@ namespace a2p.WinForm.ChildForms
             AutoScaleMode = AutoScaleMode.Dpi;
             // Load initial settings into controls
             tbxWorkingFolder.Text = _configuration["AppSettings:WorkingFolder"] ?? @"C:\Temp\Import";
-            tbxSuccess.Text = _configuration["AppSettings:SuccessFolder"] ?? @"C:\Temp\Import\SC\";
-            tbxFailed.Text = _configuration["AppSettings:UnsuccessFolder"] ?? @"C:\Temp\Import\US\";
+            tbxSuccess.Text = _configuration["AppSettings:SuccessFolder"] ?? @"C:\Temp\Import\Import_Success";
+            tbxFailed.Text = _configuration["AppSettings:UnsuccessFolder"] ?? @"C:\Temp\Import\Import_Failed";
             cbxStaging.Checked = bool.Parse(_configuration["AppSettings:Staging"] ?? "false");
             cbxLoadOnStart.Checked = bool.Parse(_configuration["AppSettings:RefreshFilesOnStartup"] ?? "false");
 
@@ -119,7 +119,7 @@ namespace a2p.WinForm.ChildForms
             PerformLayout();
         }
 
-        private void btnSucess_Click(object sender, EventArgs e)
+        private void btnSuccess_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog successFolder = new()
             {

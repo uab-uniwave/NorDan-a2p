@@ -1,21 +1,18 @@
-﻿using a2p.Shared;
-using a2p.Shared.Core.Interfaces.Services;
+﻿using System.Diagnostics;
+using System.Text;
+
+using a2p.Shared;
+using a2p.Shared.Application.Interfaces;
+using a2p.Shared.Infrastructure.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
-using System.Diagnostics;
-using System.Text;
 
 namespace a2p.WinForm
 {
     internal static class Program
     {
         private static IServiceProvider _services = null!;
-
-
-
-
 
         [STAThread]
         private static void Main()
@@ -24,40 +21,39 @@ namespace a2p.WinForm
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-
             _services = DependencyInjection.ConfigureServices();
             IConfiguration configuration = _services.GetRequiredService<IConfiguration>();
 
-
             ILogService logService = _services.GetRequiredService<ILogService>();
             Console.SetOut(new DebugTextWriter());
+            _ = _services.GetRequiredService<IPrefSuiteService>();
 
-            IPrefService prefService = _services.GetRequiredService<IPrefService>();
+            _ = _services.GetRequiredService<IMapperSapaV1>();
+            _ = _services.GetRequiredService<IMapperSapaV2>();
+            _ = _services.GetRequiredService<IMapperSchuco>();
+            DataCache dataCache = _services.GetRequiredService<DataCache>();
+            _ = _services.GetRequiredService<IWriteMaterialService>();
+            _ = _services.GetRequiredService<IWriteItemService>();
+            IOrderReadProcessor readService = _services.GetRequiredService<IOrderReadProcessor>();
+            IExcelReadService excelReadService = _services.GetRequiredService<IExcelReadService>();
             IFileService fileService = _services.GetRequiredService<IFileService>();
-            IReadService readService = _services.GetRequiredService<IReadService>();
-            IMappingService mappingService = _services.GetRequiredService<IMappingService>();
-            IA2POrderMapper orderMapper = _services.GetRequiredService<IA2POrderMapper>();
+
+            IOrderWriteProcessor orderProcessingService = _services.GetRequiredService<IOrderWriteProcessor>();
 
             logService.Information("Application started.");
 
             using SplashScreenForm splashScreen = new();
             splashScreen.Show();
             splashScreen.FadeIn();
+            Task.Delay(2000).Wait();
 
-            Task.Delay(2000).Wait(); // Ensure splash screen is shown for at least 4 seconds
-
-            MainForm mainWindow = new(fileService, readService, mappingService, configuration, logService, orderMapper);
+            MainForm mainWindow = new(readService, excelReadService, orderProcessingService, configuration, logService, fileService, dataCache);
 
             splashScreen.FadeOut();
             splashScreen.Close();
 
-
-
-
             Application.Run(mainWindow);
         }
-
-
     }
 
     public class DebugTextWriter : TextWriter

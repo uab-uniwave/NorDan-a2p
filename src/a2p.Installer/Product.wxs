@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" Name="Aluminum2Prefsuite" Language="1033" Version="1.0.0.1" Manufacturer="Uniwave UAB" UpgradeCode="4072be89-896a-47fa-9449-ffbfc24f5b90">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate />
+    <Feature Id="ProductFeature" Title="a2p.Installer" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+    </Feature>
+  </Product>
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="[Manufacturer]">
+          <Directory Id="PRODUCTFOLDER" Name="[ProductName]" />
+        </Directory>
+      </Directory>
+    </Directory>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="PRODUCTFOLDER">
+      <ComponentRef Id="win_x64" />
+      <ComponentRef Id="cs" />
+      <ComponentRef Id="de" />
+      <ComponentRef Id="es" />
+      <ComponentRef Id="fr" />
+      <ComponentRef Id="it" />
+      <ComponentRef Id="ja" />
+      <ComponentRef Id="ko" />
+      <ComponentRef Id="pl" />
+      <ComponentRef Id="pt_BR" />
+      <ComponentRef Id="ru" />
+      <ComponentRef Id="tr" />
+      <ComponentRef Id="zh_Hans" />
+      <ComponentRef Id="zh_Hant" />
+    </ComponentGroup>
+  </Fragment>
+</Wix>

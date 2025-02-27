@@ -1,38 +1,37 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="Aluminum2Prefsuite" Language="1033" Version="1.0.0.1" Manufacturer="Uniwave UAB" UpgradeCode="4072be89-896a-47fa-9449-ffbfc24f5b90">
-    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
-    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
-    <MediaTemplate />
-    <Feature Id="ProductFeature" Title="a2p.Installer" Level="1">
-      <ComponentGroupRef Id="ProductComponents" />
-    </Feature>
-  </Product>
-  <Fragment>
-    <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="ProgramFilesFolder">
-        <Directory Id="INSTALLFOLDER" Name="[Manufacturer]">
-          <Directory Id="PRODUCTFOLDER" Name="[ProductName]" />
-        </Directory>
-      </Directory>
-    </Directory>
-  </Fragment>
-  <Fragment>
-    <ComponentGroup Id="ProductComponents" Directory="PRODUCTFOLDER">
-      <ComponentRef Id="win_x64" />
-      <ComponentRef Id="cs" />
-      <ComponentRef Id="de" />
-      <ComponentRef Id="es" />
-      <ComponentRef Id="fr" />
-      <ComponentRef Id="it" />
-      <ComponentRef Id="ja" />
-      <ComponentRef Id="ko" />
-      <ComponentRef Id="pl" />
-      <ComponentRef Id="pt_BR" />
-      <ComponentRef Id="ru" />
-      <ComponentRef Id="tr" />
-      <ComponentRef Id="zh_Hans" />
-      <ComponentRef Id="zh_Hant" />
-    </ComponentGroup>
-  </Fragment>
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:msix="http://www.firegiant.com/schemas/v4/wxs/heatwave/buildtools/msix">
+    <Package Name="Alu2Prefsuite" Language="1033" Version="1.0.0.1" Manufacturer="Uniwave UAB" UpgradeCode="4072be89-896a-47fa-9449-ffbfc24f5b90" InstallerVersion="200" Scope="perMachine" ProductCode="53C6D9CE-4F08-422B-9A6C-FFE529FC5531" Compressed="true" ShortNames="no" >
+        <SummaryInformation Manufacturer="Uniwave UAB" Keywords="Conver, Import, Sapa. PrefSuite, Schucal, Windows, Doors, Store Front, Facade, Curtian Wall" Description="Import BOM and Items of orders Exported From SAPA and Schucal Applications into Prefsuite." />
+        <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+        <MediaTemplate CabinetTemplate="cab{0}.cab" EmbedCab="yes"></MediaTemplate>
+
+            <StandardDirectory Id="ProgramFiles64Folder">
+            <Directory Id="INSTALLFOLDER" Name="Uniwave UAB">
+                <Directory Id="PRODUCTFOLDER" Name="Alu2PreSuite">
+                    <Directory Id="TEST_CASES" Name="Test_Case" />
+                    <Directory Id="SQL" Name="Sql_Queries" />
+                </Directory>
+            </Directory>
+        </StandardDirectory>
+        <Feature Id="MainFeature" Title="Main Application Files" Level="1" Description="Main Feature of appliaction" Display="expand" AllowAbsent="no" AllowAdvertise="no" ConfigurableDirectory="PRODUCTFOLDER" InstallDefault="local" TypicalDefault="install">
+            <ComponentGroupRef Id="cmGr_Alu2Prefsuite" />
+            <ComponentGroupRef Id="cmGr_.Net" />
+            <ComponentGroupRef Id="cmGr_.NetRuntime" />
+            <ComponentGroupRef Id="cmGr_PrefSuiteFiles" />
+            <ComponentGroupRef Id="cmGr_Sql_Queries" />
+        </Feature>
+        <Feature Id="TestCasesFeature" Title="Test Cases" Level="1" InstallDefault="local" TypicalDefault="install" ConfigurableDirectory="TEST_CASES" AllowAdvertise="no" AllowAbsent="yes" Description="Excel file collection  ">
+            <ComponentGroupRef Id="cmGr_Test_Cases" />
+        </Feature>
+    </Package>
 </Wix>
+<!--
+
+ <TextStyle Id="Title" FaceName="Tahoma" Size="9" Bold="yes" />
+            <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+            <DialogRef Id="BrowseDlg" />
+            <DialogRef Id="SetupTypeDlg" />
+            <DialogRef Id="CustomizeDlg" />
+            <DialogRef Id="VerifyReadyDlg" />
+        </UI>
+
+-->

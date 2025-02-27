@@ -94,7 +94,7 @@ namespace a2p.Shared.Infrastructure.Services
                         try
                         {
                             object? result = await _sqlRepository.ExecuteScalarAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
-                            int state = result != DBNull.Value ? (int)result : default;
+                            int state = result != DBNull.Value ? (int)result! : 0;
                             _dataCache.UpdateOrderInCache(a2pOrder2.Order, a2pOrder2 => a2pOrder2.SalesDocumentState = state);
 
                             await SetSalesDocumentReadErrors(progressValue, _progress);
@@ -133,7 +133,7 @@ namespace a2p.Shared.Infrastructure.Services
                 foreach (A2POrder a2pOrder in a2pOrders)
                 {
                     ordersCounter++;
-                    _progressValue.ProgressTitle = $"Checkinhg Errors in Order # {a2pOrder.Order}. {ordersCounter} of {a2pOrders.Count}";
+                    _progressValue.ProgressTitle = $"Checking Errors in Order # {a2pOrder.Order}. {ordersCounter} of {a2pOrders.Count}";
                     _progress?.Report(_progressValue);
 
                     _progressValue.ProgressTitle = $"Reading Order States # {a2pOrder.Order}. {ordersCounter} of {a2pOrders.Count}";

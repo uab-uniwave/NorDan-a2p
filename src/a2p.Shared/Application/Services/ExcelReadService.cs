@@ -115,7 +115,6 @@ namespace a2p.Shared.Application.Services
                             }
                             else
                             {
-                                _logService.Debug("Cell at column {Col} is empty!", cell.Address.ToString() ?? "-1");
                                 rowValues.Add(string.Empty); // Add empty string for empty cells
                             }
 

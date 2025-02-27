@@ -1,4 +1,7 @@
-﻿using a2p.Shared.Infrastructure.Interfaces;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using a2p.Shared.Infrastructure.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
@@ -20,7 +23,6 @@ namespace a2p.WinForm.ChildForms
             this.AutoScaleDimensions = new SizeF(96F, 96F);
             this.SuspendLayout();
             InitializeComponent();
-
 
             // Add change detection handlers for controls
             tbxWorkingFolder.TextChanged += OnSettingChanged;
@@ -62,21 +64,24 @@ namespace a2p.WinForm.ChildForms
                 _configuration["AppSettings:Staging"] = cbxStaging.Checked.ToString();
                 _configuration["AppSettings:RefreshFilesOnStartup"] = cbxLoadOnStart.Checked.ToString();
 
+#pragma warning disable CA1416 // Validate platform compatibility
                 // Save the configuration to appsettings.json
                 IConfigurationRoot configurationRoot = (IConfigurationRoot)_configuration;
                 if (configurationRoot.Providers.FirstOrDefault(p => p is JsonConfigurationProvider) is JsonConfigurationProvider fileProvider)
                 {
                     JsonConfigurationSource jsonConfigSource = (JsonConfigurationSource)fileProvider.Source;
                     string? filePath = jsonConfigSource.Path;
-                    IConfigurationRoot jsonConfig = new ConfigurationBuilder().AddJsonFile(filePath).Build();
-                    jsonConfig["AppSettings:WorkingFolder"] = tbxWorkingFolder.Text;
-                    jsonConfig["AppSettings:SuccessFolder"] = tbxSuccess.Text;
-                    jsonConfig["AppSettings:UnsuccessFolder"] = tbxFailed.Text;
-                    jsonConfig["AppSettings:Staging"] = cbxStaging.Checked.ToString();
-                    jsonConfig["AppSettings:RefreshFilesOnStartup"] = cbxLoadOnStart.Checked.ToString();
-                    File.WriteAllText(filePath, jsonConfig.GetDebugView());
-                }
+                    IConfigurationRoot jsonConfig = new ConfigurationBuilder().AddJsonFile(filePath ?? string.Empty).Build();
 
+                    jsonConfig["AppSettings:WorkingFolder"] = tbxWorkingFolder.Text.ToString();
+
+                    jsonConfig["AppSettings:SuccessFolder"] = tbxSuccess.Text.ToString();
+                    jsonConfig["AppSettings:UnsuccessFolder"] = tbxFailed.Text.ToString();
+                    jsonConfig["AppSettings:Staging"] = cbxStaging.Checked.ToString().ToString();
+                    jsonConfig["AppSettings:RefreshFilesOnStartup"] = cbxLoadOnStart.Checked.ToString();
+                    File.WriteAllText(filePath ?? string.Empty, jsonConfig.GetDebugView());
+                }
+#pragma warning restore CA1416 // Validate platform compatibility
                 _logService.Information("Settings have been successfully saved.");
 
                 // Reset the change tracking flag and disable the Save button
@@ -89,17 +94,10 @@ namespace a2p.WinForm.ChildForms
             }
         }
 
-        private void SettingForm_DpiChanged(object sender, DpiChangedEventArgs e)
-        {
-            this.PerformAutoScale();
-
-        }
-
-
+        private void SettingForm_DpiChanged(object sender, DpiChangedEventArgs e) => this.PerformAutoScale();
 
         private void btnWorkingFolder_Click(object sender, EventArgs e)
         {
-
             FolderBrowserDialog workingFolder = new()
             {
                 Description = "Select the working folder",
@@ -110,17 +108,13 @@ namespace a2p.WinForm.ChildForms
                 tbxWorkingFolder.Text = workingFolder.SelectedPath;
             }
 
-
         }
 
-        private void SettingForm_Shown(object sender, EventArgs e)
-        {
-
-            PerformLayout();
-        }
+        private void SettingForm_Shown(object sender, EventArgs e) => PerformLayout();
 
         private void btnSuccess_Click(object sender, EventArgs e)
         {
+#if WINDOWS
             FolderBrowserDialog successFolder = new()
             {
                 Description = "Select folder for failed processed files.",
@@ -130,11 +124,12 @@ namespace a2p.WinForm.ChildForms
             {
                 tbxFailed.Text = successFolder.SelectedPath;
             }
+#endif
         }
-
 
         private void btnFailed_Click(object sender, EventArgs e)
         {
+#if WINDOWS
             FolderBrowserDialog failedFolder = new()
             {
                 Description = "Select folder for failed processed files.",
@@ -145,6 +140,7 @@ namespace a2p.WinForm.ChildForms
             {
                 tbxFailed.Text = failedFolder.SelectedPath;
             }
+#endif
         }
     }
 }

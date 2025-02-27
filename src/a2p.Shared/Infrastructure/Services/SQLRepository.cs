@@ -141,7 +141,7 @@ namespace a2p.Shared.Infrastructure.Services
             }
         }
         /// </summary>
-        public async Task<object> ExecuteScalarAsync(string sqlCommand, CommandType commandType, params SqlParameter[] parameters)
+        public async Task<object?> ExecuteScalarAsync(string sqlCommand, CommandType commandType, params SqlParameter[] parameters)
         {
             try
             {

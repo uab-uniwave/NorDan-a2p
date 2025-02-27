@@ -1,0 +1,12 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+    <Fragment>
+        <UI>
+            <TextStyle Id="Title" FaceName="Tahoma" Size="9" Bold="yes" />
+            <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+            <DialogRef Id="BrowseDlg" />
+            <DialogRef Id="SetupTypeDlg" />
+            <DialogRef Id="CustomizeDlg" />
+            <DialogRef Id="VerifyReadyDlg" />
+        </UI>
+    </Fragment>
+</Wix>

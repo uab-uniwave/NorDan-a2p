@@ -1,119 +1,100 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
- <PropertyGroup>
- <TargetFramework>net8.0-Windows</TargetFramework>
- <ImplicitUsings>enable</ImplicitUsings>
- <Nullable>enable</Nullable>
- <BaseOutputPath>..\..\Output</BaseOutputPath>
- <OutputPath>$(BaseOutputPath)\$(Configuration)\</OutputPath>
- <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
- <OutputType>Library</OutputType>
- </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0-Windows</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<BaseOutputPath>..\..\Output\a2p.Shared</BaseOutputPath>
+		<OutputPath>$(BaseOutputPath)\$(Configuration)\</OutputPath>
+		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+		<OutputType>Library</OutputType>
+		<Version>$(VersionPrefix)</Version>
+	</PropertyGroup>
 
- <ItemGroup>
-   <Compile Remove="Application\Utils\**" />
-   <EmbeddedResource Remove="Application\Utils\**" />
-   <None Remove="Application\Utils\**" />
- </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Application\Utils\**" />
+		<EmbeddedResource Remove="Application\Utils\**" />
+		<None Remove="Application\Utils\**" />
+	</ItemGroup>
 
- <ItemGroup>
-   <COMReference Include="PrefSales">
-     <WrapperTool>tlbimp</WrapperTool>
-     <VersionMinor>0</VersionMinor>
-     <VersionMajor>1</VersionMajor>
-     <Guid>c1694be9-8281-4ae9-805c-f536fbc09377</Guid>
-     <Lcid>0</Lcid>
-     <Isolated>false</Isolated>
-     <EmbedInteropTypes>true</EmbedInteropTypes>
-   </COMReference>
-   <COMReference Include="PrefDataManager">
-     <WrapperTool>tlbimp</WrapperTool>
-     <VersionMinor>0</VersionMinor>
-     <VersionMajor>1</VersionMajor>
-     <Guid>bb65111f-611b-4891-8a37-200ccdd0a115</Guid>
-     <Lcid>0</Lcid>
-     <Isolated>false</Isolated>
-     <EmbedInteropTypes>true</EmbedInteropTypes>
-   </COMReference>
- </ItemGroup>
+	<ItemGroup>
+		<None Include="Application\Interfaces\IMapperSapaV1.cs" />
+		<None Include="Application\Models\Models\ItemSchuco.cs" />
+		<None Include="Application\Domain\Entities\A2PLogRecord.cs" />
+	</ItemGroup>
 
- <ItemGroup>
- <None Include="Application\Interfaces\IMapperSapaV1.cs" />
- <None Include="Application\Models\Models\ItemSchuco.cs" />
- <None Include="Application\Domain\Entities\A2PLogRecord.cs" />
- </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="ClosedXML" Version="0.104.2" />
+		<PackageReference Include="MathNet.Numerics" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.0-preview3.24332.3" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="9.0.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+		<PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+		<PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+		<PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
+		<PackageReference Include="Serilog.Expressions" Version="5.1.0-dev-00186" />
+		<PackageReference Include="Serilog.Extensions.Logging" Version="9.0.1-dev-02308" />
+		<PackageReference Include="Serilog.Extensions.Logging.File" Version="9.0.0-dev-02302" />
+		<PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
+		<PackageReference Include="Serilog.Formatting.Compact.Reader" Version="4.1.0-dev-00085" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+		<PackageReference Include="Serilog.Sinks.EventLog" Version="4.0.1-dev-00087" />
+		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+		<PackageReference Include="Eris.Serilog.Formatting.Json" Version="1.1.0">
+			<TreatAsUsed>true</TreatAsUsed>
+		</PackageReference>
+		<PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
+	</ItemGroup>
 
- <ItemGroup>
- <PackageReference Include="ClosedXML" Version="0.104.2" />
- <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
- <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.0-preview3.24332.3" />
-	 <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.0" />
-	 <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
-	 <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
-	 <PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="9.0.0" />
-	 <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
-	 <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
-	 <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
-	 <PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
-	 <PackageReference Include="Serilog.Expressions" Version="5.1.0-dev-00186" />
-	 <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.1-dev-02308" />
-	 <PackageReference Include="Serilog.Extensions.Logging.File" Version="9.0.0-dev-02302" />
-	 <PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
-	 <PackageReference Include="Serilog.Formatting.Compact.Reader" Version="4.1.0-dev-00085" />
-	 <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
-	 <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-	 <PackageReference Include="Serilog.Sinks.EventLog" Version="4.0.1-dev-00087" />
-	 <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
-	 <PackageReference Include="Eris.Serilog.Formatting.Json" Version="1.1.0">
-  <TreatAsUsed>true</TreatAsUsed>
- </PackageReference>
-	 <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
- </ItemGroup>
+	<ItemGroup>
+		<Page Include="appsettings.Development.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Page>
+	</ItemGroup>
 
- <ItemGroup>
-   <Page Include="appsettings.Development.json">
-     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-   </Page>
- </ItemGroup>
+	<ItemGroup>
+	  <Reference Include="Interop.PrefDataManager">
+	    <HintPath>..\..\..\..\Program Files\Preference\PrefSuite\Interop.PrefDataManager.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Interop.PrefSales">
+	    <HintPath>..\..\..\..\Program Files\Preference\PrefSuite\Interop.PrefSales.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
 
- <ItemGroup>
-   <Compile Update="Properties\Resources.Designer.cs">
-     <DesignTime>True</DesignTime>
-     <AutoGen>True</AutoGen>
-     <DependentUpon>Resources.resx</DependentUpon>
-   </Compile>
- </ItemGroup>
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
 
- <ItemGroup>
-   <EmbeddedResource Update="Properties\Resources.resx">
-     <Generator>ResXFileCodeGenerator</Generator>
-     <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-   </EmbeddedResource>
- </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
 
 
- <ItemGroup>
- <None Update="appsettings.Production.json">
-  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
- </None>
- <None Update="appsettings.json">
-  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
- </None>
- </ItemGroup>
+	<ItemGroup>
+		<None Update="appsettings.Production.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="appsettings.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 
- <ItemGroup>
-   <Reference Include="Interop.PrefDataManager">
-     <HintPath>..\..\..\..\Program Files\Preference\PrefSuite\Interop.PrefDataManager.dll</HintPath>
-   </Reference>
-   <Reference Include="Interop.PrefSales">
-     <HintPath>..\..\..\..\Program Files\Preference\PrefSuite\Interop.PrefSales.dll</HintPath>
-   </Reference>
- </ItemGroup>
 
 
- <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
- <Exec Command="&quot;$(DevEnvDir)devenv.com&quot; &quot;$(SolutionPath)&quot; /Clean &quot;$(ConfigurationName)&quot;" />
- </Target>
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+
+	</Target>
 
 </Project>

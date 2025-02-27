@@ -1,61 +1,371 @@
-<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
-  <Fragment>
-    <DirectoryRef Id='TARGETDIR'>
-      <Directory Id='SOURCE' Name='Source'>
-<Component Id='SOURCE' Guid='803c0948-232e-4358-bd4e-3e165d80a774'>
-    <File Id='SOURCE_a2p.Shared.deps.json' Source='a2p.Shared.deps.json' />
-    <File Id='SOURCE_a2p.Shared.dll' Source='a2p.Shared.dll' />
-    <File Id='SOURCE_a2p.Shared.pdb' Source='a2p.Shared.pdb' />
-    <File Id='SOURCE_appsettings.json' Source='appsettings.json' />
-    <File Id='SOURCE_appsettings.Production.json' Source='appsettings.Production.json' />
-    <File Id='SOURCE_Interop.MSXML2.dll' Source='Interop.MSXML2.dll' />
-    <File Id='SOURCE_Interop.PrefCAD.dll' Source='Interop.PrefCAD.dll' />
-    <File Id='SOURCE_Interop.PrefComponents.dll' Source='Interop.PrefComponents.dll' />
-    <File Id='SOURCE_Interop.PrefDataManager.dll' Source='Interop.PrefDataManager.dll' />
-    <File Id='SOURCE_Interop.PrefErrors.dll' Source='Interop.PrefErrors.dll' />
-    <File Id='SOURCE_Interop.PrefImagen.dll' Source='Interop.PrefImagen.dll' />
-    <File Id='SOURCE_Interop.PrefPrices.dll' Source='Interop.PrefPrices.dll' />
-    <File Id='SOURCE_Interop.PrefSales.dll' Source='Interop.PrefSales.dll' />
-</Component>
-      </Directory>
-    </DirectoryRef>
-  </Fragment>
-  <Fragment>
-    <DirectoryRef Id='TARGETDIR'>
-      <Directory Id='SOURCE_SQL_Queries' Name='SOURCE_SQL_Queries'>
-<Component Id='SOURCE_SQL_Queries' Guid='6035e085-ce41-4fc3-af70-b96ea34b4c29'>
-    <File Id='SOURCE_SQL_Queries_Procedures.sql' Source='SQL_Queries/Procedures.sql' />
-    <File Id='SOURCE_SQL_Queries_Tables.sql' Source='SQL_Queries/Tables.sql' />
-    <File Id='SOURCE_SQL_Queries_Test.sql' Source='SQL_Queries/Test.sql' />
-</Component>
-      </Directory>
-    </DirectoryRef>
-  </Fragment>
-  <Fragment>
-    <DirectoryRef Id='TARGETDIR'>
-      <Directory Id='SOURCE_Test_Cases' Name='SOURCE_Test_Cases'>
-<Component Id='SOURCE_Test_Cases' Guid='e7e21a88-99d9-48ef-86cf-be7a6d29b907'>
-    <File Id='SOURCE_Test_Cases_0000Z00001_1_Price_Details.xlsx' Source='Test_Cases/0000Z00001-1 Price_Details.xlsx' />
-    <File Id='SOURCE_Test_Cases_0000Z00001_1_SumList.xlsx' Source='Test_Cases/0000Z00001-1 SumList.xlsx' />
-    <File Id='SOURCE_Test_Cases_0000Z00001_2_Price_Details.xlsx' Source='Test_Cases/0000Z00001-2 Price_Details.xlsx' />
-    <File Id='SOURCE_Test_Cases_0000Z00001_2_SumList.xlsx' Source='Test_Cases/0000Z00001-2 SumList.xlsx' />
-    <File Id='SOURCE_Test_Cases_0000Z00001_3_Price_Details.xlsx' Source='Test_Cases/0000Z00001-3 Price_Details.xlsx' />
-    <File Id='SOURCE_Test_Cases_0000Z00001_3_SumList.xlsx' Source='Test_Cases/0000Z00001-3 SumList.xlsx' />
-    <File Id='SOURCE_Test_Cases_0000Z00001_4_Price_Details.xlsx' Source='Test_Cases/0000Z00001-4 Price_Details.xlsx' />
-    <File Id='SOURCE_Test_Cases_0000Z00001_4_SumList.xlsx' Source='Test_Cases/0000Z00001-4 SumList.xlsx' />
-    <File Id='SOURCE_Test_Cases_0000Z00001_5_Price_Details.xlsx' Source='Test_Cases/0000Z00001-5 Price_Details.xlsx' />
-    <File Id='SOURCE_Test_Cases_0000Z00001_5_SumList.xlsx' Source='Test_Cases/0000Z00001-5 SumList.xlsx' />
-    <File Id='SOURCE_Test_Cases_0000Z00001_6_Price_Details.xlsx' Source='Test_Cases/0000Z00001-6 Price_Details.xlsx' />
-    <File Id='SOURCE_Test_Cases_0000Z00001_6_SumList.xlsx' Source='Test_Cases/0000Z00001-6 SumList.xlsx' />
-    <File Id='SOURCE_Test_Cases_0000Z00001_7_Price_Details.xlsx' Source='Test_Cases/0000Z00001-7 Price_Details.xlsx' />
-    <File Id='SOURCE_Test_Cases_0000Z00001_7_SumList.xlsx' Source='Test_Cases/0000Z00001-7 SumList.xlsx' />
-    <File Id='SOURCE_Test_Cases_0000Z00001_8_Price_Details.xlsx' Source='Test_Cases/0000Z00001-8 Price_Details.xlsx' />
-    <File Id='SOURCE_Test_Cases_0000Z00001_8_SumList.xlsx' Source='Test_Cases/0000Z00001-8 SumList.xlsx' />
-    <File Id='SOURCE_Test_Cases_0000Z00001_9_Price_Details.xlsx' Source='Test_Cases/0000Z00001-9 Price_Details.xlsx' />
-    <File Id='SOURCE_Test_Cases_0000Z00001_9_SumList.xlsx' Source='Test_Cases/0000Z00001-9 SumList.xlsx' />
-</Component>
-      </Directory>
-    </DirectoryRef>
-  </Fragment>
-</Wix>
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
 
+
+    <Fragment>
+
+
+        <ComponentGroup Id="cmGr_Alu2Prefsuite" Directory="PRODUCTFOLDER">
+            <Component Id="cm_a2p.WinForm.exe" Guid="43c95e1a-509c-45a8-b7e0-f50776d7a5f6">
+                <File Id="fl_a2p.WinForms.exe" Source="../../Output/a2p.WinForm/Release/net8.0-windows/a2p.WinForm.exe" KeyPath="yes" />
+            </Component>
+            <Component Id="DesktopShortcut">
+                <Shortcut Id="DesktopShortcut" Name="Alu2Prefsuite" Directory="DesktopFolder" Target="[PRODUCTFOLDER]\a2p.WinForms.exe" WorkingDirectory="INSTALLFOLDER" />
+                <RemoveFolder Id="RemoveDesktopShortcut" Directory="DesktopFolder" On="uninstall" />
+                <RegistryValue Root="HKCU" Key="Software\Alu2PrefSuite" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
+
+            </Component>
+                <Component Id="cm_appsettings.json" Guid="8F3DC26C-72AA-4F18-A5E0-430F7FE98C3C">
+                <File Id="fl_appsettings.json" Source="../../Output/a2p.WinForm/Release/net8.0-windows/appsettings.json" />
+            </Component>
+            <Component Id="cm_appsettings.Production.json" Guid="22AF1EDC-5E2A-495F-94F2-2692907AC436">
+                <File Id="fl_appsettings.Production.json" Source="../../Output/a2p.WinForm/Release/net8.0-windows/appsettings.Production.json" />
+                
+            </Component>
+
+            <Component Id="cm_a2p_Shared_dll" Guid="d181e0a0-57d9-4511-bfb8-4a26dcfd9272">
+                <File Id="fl_a2p_Shared_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/a2p.Shared.dll" />
+            </Component>
+            <Component Id="cm_a2p_WinForm_dll" Guid="cd9b001d-a48d-4838-88d0-7460f3ee4bf4">
+                <File Id="fl_a2p_WinForm_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/a2p.WinForm.dll" />
+            </Component>
+        </ComponentGroup>
+
+
+        <ComponentGroup Id="cmGr_PrefSuiteFiles" Directory="PRODUCTFOLDER">
+            <Component Id="cm_Interop_MSXML2_dll" Guid="5ee3cf0f-aa9d-4d3f-9097-0fc89f8b1ed2">
+                <File Id="fl_Interop_MSXML2_dll" Source="../../Output/a2p.Shared/Release/net8.0-windows/Interop.MSXML2.dll" />
+            </Component>
+            <Component Id="cm_Interop_PrefCAD_dll" Guid="d181e8b0-57d9-4671-bfb8-4a26dcfd9272">
+                <File Id="fl_Interop_PrefCAD_dll" Source="../../Output/a2p.Shared/Release/net8.0-windows/Interop.PrefCAD.dll" />
+            </Component>
+            <Component Id="cm_Interop_PrefComponents_dll" Guid="dc4ac9b3-4625-470f-8d79-167c19399040">
+                <File Id="fl_Interop_PrefComponents_dll" Source="../../Output/a2p.Shared/Release/net8.0-windows/Interop.PrefComponents.dll" />
+            </Component>
+            <Component Id="cm_Interop_PrefDataManager_dll" Guid="82e6afb9-5836-4111-8ac0-450087148fab">
+                <File Id="fl_Interop_PrefDataManager_dll" Source="../../Output/a2p.Shared/Release/net8.0-windows/Interop.PrefDataManager.dll" />
+            </Component>
+            <Component Id="cm_Interop_PrefErrors_dll" Guid="83e3994f-e310-4573-8bcf-9611c9f088f9">
+                <File Id="fl_Interop_PrefErrors_dll" Source="../../Output/a2p.Shared/Release/net8.0-windows/Interop.PrefErrors.dll" />
+            </Component>
+            <Component Id="cm_Interop_PrefImagen_dll" Guid="34ae1c30-ffb6-4ac1-888f-04d9e4985d2f">
+                <File Id="fl_Interop_PrefImagen_dll" Source="../../Output/a2p.Shared/Release/net8.0-windows/Interop.PrefImagen.dll" />
+            </Component>
+            <Component Id="cm_Interop_PrefPrices_dll" Guid="bbe118f1-c62f-4fdb-988b-8c670e99eee3">
+                <File Id="fl_Interop_PrefPrices_dll" Source="../../Output/a2p.Shared/Release/net8.0-windows/Interop.PrefPrices.dll" />
+            </Component>
+            <Component Id="cm_Interop_PrefSales_dll" Guid="3f953ca4-12ed-4c0f-8e6d-486daf458b5f">
+                <File Id="fl_Interop_PrefSales_dll" Source="../../Output/a2p.Shared/Release/net8.0-windows/Interop.PrefSales.dll" />
+            </Component>
+        </ComponentGroup>
+
+        <ComponentGroup Id="cmGr_.Net" Directory="PRODUCTFOLDER">
+            <Component Id="cm_Azure_Core_dll" Guid="7fd9c037-9110-4403-8c79-eba86779eb7d">
+                <File Id="fl_Azure_Core_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Azure.Core.dll" />
+            </Component>
+            <Component Id="cm_Azure_Identity_dll" Guid="8e788027-fc3c-455c-ab6e-272ca105e08f">
+                <File Id="fl_Azure_Identity_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Azure.Identity.dll" />
+            </Component>
+            <Component Id="cm_ClosedXML_dll" Guid="c9bbefcb-1593-4b3f-9853-865545e70fca">
+                <File Id="fl_ClosedXML_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/ClosedXML.dll" />
+            </Component>
+            <Component Id="cm_ClosedXML_Parser_dll" Guid="f8e1b067-a2ea-42d2-9309-6e66f60dd49b">
+                <File Id="fl_ClosedXML_Parser_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/ClosedXML.Parser.dll" />
+            </Component>
+            <Component Id="cm_DocumentFormat_OpenXml_dll" Guid="027d23e3-4548-4f73-a00f-d75492c070d4">
+                <File Id="fl_DocumentFormat_OpenXml_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/DocumentFormat.OpenXml.dll" />
+            </Component>
+            <Component Id="cm_DocumentFormat_OpenXml_Framework_dll" Guid="ca026227-f736-4bdf-bf2c-33ff26fca2b0">
+                <File Id="fl_DocumentFormat_OpenXml_Framework_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/DocumentFormat.OpenXml.Framework.dll" />
+            </Component>
+            <Component Id="cm_Eris_Serilog_Formatting_Json_dll" Guid="d8daafb4-7a8b-4461-849f-2812975eb72c">
+                <File Id="fl_Eris_Serilog_Formatting_Json_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Eris.Serilog.Formatting.Json.dll" />
+            </Component>
+            <Component Id="cm_ExcelNumberFormat_dll" Guid="5640bda5-c814-4f89-a22b-11b39ed52d9f">
+                <File Id="fl_ExcelNumberFormat_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/ExcelNumberFormat.dll" />
+            </Component>
+
+            <Component Id="cm_MathNet_Numerics_dll" Guid="cd74ec51-4bc0-4ac1-ae09-88315c5ced76">
+                <File Id="fl_MathNet_Numerics_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/MathNet.Numerics.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Bcl_AsyncInterfaces_dll" Guid="c4ffe8e7-edd7-40d8-ae14-50910a219a0a">
+                <File Id="fl_Microsoft_Bcl_AsyncInterfaces_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Bcl.AsyncInterfaces.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Bcl_Cryptography_dll" Guid="0ba92738-e9c7-4247-913b-c5b01752efec">
+                <File Id="fl_Microsoft_Bcl_Cryptography_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Bcl.Cryptography.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Data_SqlClient_dll" Guid="18c7da22-e03c-47fe-a956-62df54292609">
+                <File Id="fl_Microsoft_Data_SqlClient_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Data.SqlClient.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Extensions_Caching_Abstractions_dll" Guid="0f353087-7961-48d6-b1f9-f771983648dc">
+                <File Id="fl_Microsoft_Extensions_Caching_Abstractions_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Extensions.Caching.Abstractions.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Extensions_Caching_Memory_dll" Guid="cc1f086d-3409-443d-8205-12ce2964809a">
+                <File Id="fl_Microsoft_Extensions_Caching_Memory_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Extensions.Caching.Memory.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Extensions_Configuration_Abstractions_dll" Guid="29869856-3cb0-4111-a6cd-349749a02a87">
+                <File Id="fl_Microsoft_Extensions_Configuration_Abstractions_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Extensions.Configuration.Abstractions.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Extensions_Configuration_Binder_dll" Guid="b68b2aea-e2a1-477d-aa92-5fa8fc2fd1c2">
+                <File Id="fl_Microsoft_Extensions_Configuration_Binder_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Extensions.Configuration.Binder.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Extensions_Configuration_dll" Guid="5f602a1f-ebf3-465d-a749-b450853ec7b5">
+                <File Id="fl_Microsoft_Extensions_Configuration_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Extensions.Configuration.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Extensions_Configuration_FileExtensions_dll" Guid="b61a5e6a-3778-419c-a646-5ba39d5aa2e1">
+                <File Id="fl_Microsoft_Extensions_Configuration_FileExtensions_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Extensions.Configuration.FileExtensions.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Extensions_Configuration_Json_dll" Guid="b8beedc4-88c9-42d7-8556-8c4c23b6e3b9">
+                <File Id="fl_Microsoft_Extensions_Configuration_Json_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Extensions.Configuration.Json.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Extensions_DependencyInjection_Abstractions_dll" Guid="9c3e55bb-a266-44f7-bc46-e345573dc25e">
+                <File Id="fl_Microsoft_Extensions_DependencyInjection_Abstractions_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Extensions.DependencyInjection.Abstractions.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Extensions_DependencyInjection_dll" Guid="c73e33da-2eea-4593-9e2e-1f5d35948e21">
+                <File Id="fl_Microsoft_Extensions_DependencyInjection_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Extensions.DependencyInjection.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Extensions_DependencyModel_dll" Guid="71f79653-460e-497f-a76e-03dfa7aa75cc">
+                <File Id="fl_Microsoft_Extensions_DependencyModel_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Extensions.DependencyModel.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Extensions_Diagnostics_Abstractions_dll" Guid="12cc6edc-e0ae-4911-9600-8c65226f1684">
+                <File Id="fl_Microsoft_Extensions_Diagnostics_Abstractions_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Extensions.Diagnostics.Abstractions.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Extensions_FileProviders_Abstractions_dll" Guid="34f0a033-7aff-431e-9873-ffad9673f14d">
+                <File Id="fl_Microsoft_Extensions_FileProviders_Abstractions_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Extensions.FileProviders.Abstractions.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Extensions_FileProviders_Physical_dll" Guid="f8823b3b-2070-4398-8d27-089cbc6a5469">
+                <File Id="fl_Microsoft_Extensions_FileProviders_Physical_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Extensions.FileProviders.Physical.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Extensions_FileSystemGlobbing_dll" Guid="6c743be6-6bb5-4325-8d8a-b993f9cf7ad1">
+                <File Id="fl_Microsoft_Extensions_FileSystemGlobbing_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Extensions.FileSystemGlobbing.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Extensions_Hosting_Abstractions_dll" Guid="c349cab9-c8d6-4c45-a013-ada7119d832d">
+                <File Id="fl_Microsoft_Extensions_Hosting_Abstractions_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Extensions.Hosting.Abstractions.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Extensions_Logging_Abstractions_dll" Guid="9813e767-dc54-4c8c-a2c6-f791f257ad39">
+                <File Id="fl_Microsoft_Extensions_Logging_Abstractions_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Extensions.Logging.Abstractions.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Extensions_Logging_dll" Guid="02ee7942-e7fa-4b78-bf23-b69b5a10d5b2">
+                <File Id="fl_Microsoft_Extensions_Logging_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Extensions.Logging.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Extensions_Logging_EventLog_dll" Guid="e6e1c512-f7a0-4e37-ac28-b08afc71192d">
+                <File Id="fl_Microsoft_Extensions_Logging_EventLog_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Extensions.Logging.EventLog.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Extensions_Options_dll" Guid="0c20b6b7-46a9-4d6a-aa39-b29b1f92e10f">
+                <File Id="fl_Microsoft_Extensions_Options_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Extensions.Options.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Extensions_Primitives_dll" Guid="c9b686cf-56ff-4aad-9cc3-45b5734eecca">
+                <File Id="fl_Microsoft_Extensions_Primitives_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Extensions.Primitives.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Identity_Client_dll" Guid="58cd38eb-1716-4942-9f0f-08b166018db9">
+                <File Id="fl_Microsoft_Identity_Client_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Identity.Client.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_Identity_Client_Extensions_Msal_dll" Guid="bfc31a5c-7dda-4eee-a23d-a54ededec01d">
+                <File Id="fl_Microsoft_Identity_Client_Extensions_Msal_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.Identity.Client.Extensions.Msal.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_IdentityModel_Abstractions_dll" Guid="115a361e-35cc-418a-9147-bc0c3b0ad359">
+                <File Id="fl_Microsoft_IdentityModel_Abstractions_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.IdentityModel.Abstractions.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_IdentityModel_JsonWebTokens_dll" Guid="a24fa0d3-38f4-4d11-b15d-b2508002a110">
+                <File Id="fl_Microsoft_IdentityModel_JsonWebTokens_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.IdentityModel.JsonWebTokens.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_IdentityModel_Logging_dll" Guid="1385dcb5-4336-4dc1-bd7f-dffc254c12e1">
+                <File Id="fl_Microsoft_IdentityModel_Logging_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.IdentityModel.Logging.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_IdentityModel_Protocols_dll" Guid="7997cf53-7dd0-4aea-a3a2-097826282215">
+                <File Id="fl_Microsoft_IdentityModel_Protocols_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.IdentityModel.Protocols.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_IdentityModel_Protocols_OpenIdConnect_dll" Guid="b8cf2b7d-9f94-4a6e-b1f3-2a9ecc05b21e">
+                <File Id="fl_Microsoft_IdentityModel_Protocols_OpenIdConnect_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_IdentityModel_Tokens_dll" Guid="f753c74b-616e-4fce-ae71-145a3822b3db">
+                <File Id="fl_Microsoft_IdentityModel_Tokens_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.IdentityModel.Tokens.dll" />
+            </Component>
+            <Component Id="cm_Microsoft_SqlServer_Server_dll" Guid="655c3522-0943-4234-8db5-ababa454d3f6">
+                <File Id="fl_Microsoft_SqlServer_Server_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Microsoft.SqlServer.Server.dll" />
+            </Component>
+            <Component Id="cm_Newtonsoft_Json_dll" Guid="f32395d1-1dcc-4158-8235-5ccb5c8e07a4">
+                <File Id="fl_Newtonsoft_Json_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Newtonsoft.Json.dll" />
+            </Component>
+            <Component Id="cm_RBush_dll" Guid="b20cf4d4-87dd-4c88-8581-9ea7d4b3f510">
+                <File Id="fl_RBush_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/RBush.dll" />
+            </Component>
+            <Component Id="cm_Serilog_AspNetCore_dll" Guid="91dc9239-6bb4-4a86-a9a3-fa09cb2229cd">
+                <File Id="fl_Serilog_AspNetCore_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Serilog.AspNetCore.dll" />
+            </Component>
+            <Component Id="cm_Serilog_dll" Guid="9a9ace1b-b512-4c0f-b540-9f6edf77128c">
+                <File Id="fl_Serilog_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Serilog.dll" />
+            </Component>
+            <Component Id="cm_Serilog_Enrichers_Environment_dll" Guid="6788b062-762f-41b3-bbe3-4c717943cabd">
+                <File Id="fl_Serilog_Enrichers_Environment_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Serilog.Enrichers.Environment.dll" />
+            </Component>
+            <Component Id="cm_Serilog_Enrichers_Thread_dll" Guid="ad78dec0-9ef7-450e-8c0f-b925174ba863">
+                <File Id="fl_Serilog_Enrichers_Thread_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Serilog.Enrichers.Thread.dll" />
+            </Component>
+            <Component Id="cm_Serilog_Exceptions_dll" Guid="914951d4-1126-4e9d-b172-7326baa3649c">
+                <File Id="fl_Serilog_Exceptions_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Serilog.Exceptions.dll" />
+            </Component>
+            <Component Id="cm_Serilog_Expressions_dll" Guid="4009e344-b86e-49c6-9b42-ceb97dea05b2">
+                <File Id="fl_Serilog_Expressions_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Serilog.Expressions.dll" />
+            </Component>
+            <Component Id="cm_Serilog_Extensions_Hosting_dll" Guid="90c602d0-1b31-4fd1-8fdc-6d5a2112450d">
+                <File Id="fl_Serilog_Extensions_Hosting_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Serilog.Extensions.Hosting.dll" />
+            </Component>
+            <Component Id="cm_Serilog_Extensions_Logging_dll" Guid="8d819128-321d-411e-a92d-534cd6f250c8">
+                <File Id="fl_Serilog_Extensions_Logging_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Serilog.Extensions.Logging.dll" />
+            </Component>
+            <Component Id="cm_Serilog_Extensions_Logging_File_dll" Guid="46f6efb9-fe4f-40c7-9fdb-a724892e18b8">
+                <File Id="fl_Serilog_Extensions_Logging_File_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Serilog.Extensions.Logging.File.dll" />
+            </Component>
+            <Component Id="cm_Serilog_Formatting_Compact_dll" Guid="10ff0757-7310-43a3-880e-02c06f2612b0">
+                <File Id="fl_Serilog_Formatting_Compact_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Serilog.Formatting.Compact.dll" />
+            </Component>
+            <Component Id="cm_Serilog_Formatting_Compact_Reader_dll" Guid="659ba8d5-4458-424a-b2a0-ac5dbd7c2efc">
+                <File Id="fl_Serilog_Formatting_Compact_Reader_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Serilog.Formatting.Compact.Reader.dll" />
+            </Component>
+            <Component Id="cm_Serilog_Settings_Configuration_dll" Guid="a2159efb-88e5-46b6-9f42-3f0e0bd635df">
+                <File Id="fl_Serilog_Settings_Configuration_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Serilog.Settings.Configuration.dll" />
+            </Component>
+            <Component Id="cm_Serilog_Sinks_Async_dll" Guid="453acf56-5e26-4614-a839-c9c7da71db34">
+                <File Id="fl_Serilog_Sinks_Async_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Serilog.Sinks.Async.dll" />
+            </Component>
+            <Component Id="cm_Serilog_Sinks_Console_dll" Guid="a34e9e31-7a03-4750-a9d7-4368c13ad024">
+                <File Id="fl_Serilog_Sinks_Console_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Serilog.Sinks.Console.dll" />
+            </Component>
+            <Component Id="cm_Serilog_Sinks_Debug_dll" Guid="1a7d8d32-a555-49d6-8b3e-1793dec426a0">
+                <File Id="fl_Serilog_Sinks_Debug_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Serilog.Sinks.Debug.dll" />
+            </Component>
+            <Component Id="cm_Serilog_Sinks_EventLog_dll" Guid="bf31e32e-ab8a-4d01-8e8e-9109606efdaa">
+                <File Id="fl_Serilog_Sinks_EventLog_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Serilog.Sinks.EventLog.dll" />
+            </Component>
+            <Component Id="cm_Serilog_Sinks_File_dll" Guid="ae445b98-a5cf-4b24-8a9d-aa588e763cb9">
+                <File Id="fl_Serilog_Sinks_File_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Serilog.Sinks.File.dll" />
+            </Component>
+            <Component Id="cm_Serilog_Sinks_Seq_dll" Guid="66275270-ec1b-442c-a616-40c9cfe3d947">
+                <File Id="fl_Serilog_Sinks_Seq_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Serilog.Sinks.Seq.dll" />
+            </Component>
+            <Component Id="cm_SixLabors_Fonts_dll" Guid="3e21f958-0bec-4c50-bf71-e1965cc414b3">
+                <File Id="fl_SixLabors_Fonts_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/SixLabors.Fonts.dll" />
+            </Component>
+            <Component Id="cm_System_ClientModel_dll" Guid="1eb16599-cf48-4dd6-8645-b9bb94638467">
+                <File Id="fl_System_ClientModel_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/System.ClientModel.dll" />
+            </Component>
+            <Component Id="cm_System_Configuration_ConfigurationManager_dll" Guid="4dc28962-d00b-4454-b3a2-6a736a93bb5e">
+                <File Id="fl_System_Configuration_ConfigurationManager_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/System.Configuration.ConfigurationManager.dll" />
+            </Component>
+            <Component Id="cm_System_Diagnostics_DiagnosticSource_dll" Guid="55abc756-6d9b-4736-b958-77bd6e9d4d3e">
+                <File Id="fl_System_Diagnostics_DiagnosticSource_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/System.Diagnostics.DiagnosticSource.dll" />
+            </Component>
+            <Component Id="cm_System_Diagnostics_EventLog_dll" Guid="5ebdada0-f13f-4f57-8e8a-3f6cff1c60e7">
+                <File Id="fl_System_Diagnostics_EventLog_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/System.Diagnostics.EventLog.dll" />
+            </Component>
+            <Component Id="cm_System_Formats_Asn1_dll" Guid="1cc9e81a-60be-4df1-b289-bb9664f23241">
+                <File Id="fl_System_Formats_Asn1_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/System.Formats.Asn1.dll" />
+            </Component>
+            <Component Id="cm_System_IdentityModel_Tokens_Jwt_dll" Guid="e239b0f9-8817-41c4-bc64-d7dc3b310653">
+                <File Id="fl_System_IdentityModel_Tokens_Jwt_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/System.IdentityModel.Tokens.Jwt.dll" />
+            </Component>
+            <Component Id="cm_System_IO_Packaging_dll" Guid="ed28d6f2-c96b-4779-8efe-8f398a3fda7c">
+                <File Id="fl_System_IO_Packaging_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/System.IO.Packaging.dll" />
+            </Component>
+            <Component Id="cm_System_IO_Pipelines_dll" Guid="484c8f3c-75e9-4dff-92b0-e08e3e949337">
+                <File Id="fl_System_IO_Pipelines_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/System.IO.Pipelines.dll" />
+            </Component>
+            <Component Id="cm_System_Memory_Data_dll" Guid="ea26332d-5522-4d9d-8e5f-de3ae9ef8cac">
+                <File Id="fl_System_Memory_Data_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/System.Memory.Data.dll" />
+            </Component>
+            <Component Id="cm_System_Security_Cryptography_Pkcs_dll" Guid="66cf4df2-2e81-4f86-8ba8-f470b9a105ea">
+                <File Id="fl_System_Security_Cryptography_Pkcs_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/System.Security.Cryptography.Pkcs.dll" />
+            </Component>
+            <Component Id="cm_System_Security_Cryptography_ProtectedData_dll" Guid="1c4229fb-220e-447a-8aa7-6c1ca8e31a3f">
+                <File Id="fl_System_Security_Cryptography_ProtectedData_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/System.Security.Cryptography.ProtectedData.dll" />
+            </Component>
+            <Component Id="cm_System_Text_Encodings_Web_dll" Guid="9cf0b087-ab07-418a-ba4d-60e0098cf4a7">
+                <File Id="fl_System_Text_Encodings_Web_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/System.Text.Encodings.Web.dll" />
+            </Component>
+            <Component Id="cm_System_Text_Json_dll" Guid="e26521cf-f23e-4a0d-a412-8f50c1447fe9">
+                <File Id="fl_System_Text_Json_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/System.Text.Json.dll" />
+            </Component>
+        </ComponentGroup>
+        <ComponentGroup Id="cmGr_.NetRuntime" Directory="PRODUCTFOLDER">
+            <Component Id="cm_Microsoft_Data_SqlClient_SNI_dll" Guid="8dd132e1-7e0a-4362-98ae-1c50545fba93">
+                <File Id="fl_Microsoft_Data_SqlClient_SNI_dll" Source="../../Output/a2p.WinForm/Release/net8.0-windows/runtimes/win-x64/native/Microsoft.Data.SqlClient.SNI.dll" />
+            </Component>
+        </ComponentGroup>
+
+
+
+        <ComponentGroup Id="cmGr_Test_Cases" Directory="TEST_CASES">
+            <Component Id="cm_0000Z00001_1_Price_Details_xlsx" Guid="ff2f440b-caa6-4c19-b126-88f4bfa9205f" Bitness="always64">
+                <File Id="fl_0000Z00001_1_Price_Details_xlsx" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Test_Cases/0000Z00001-1 Price_Details.xlsx" />
+            </Component>
+            <Component Id="cm_0000Z00001_1_SumList_xlsx" Guid="b40d1a5a-5abb-4cf9-8274-7deea043eddd" Bitness="always64">
+                <File Id="fl_0000Z00001_1_SumList_xlsx" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Test_Cases/0000Z00001-1 SumList.xlsx" />
+            </Component>
+            <Component Id="cm_0000Z00001_2_Price_Details_xlsx" Guid="88ee32ae-f40f-407f-9be7-e1e0a25d5e26" Bitness="always64">
+                <File Id="fl_0000Z00001_2_Price_Details_xlsx" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Test_Cases/0000Z00001-2 Price_Details.xlsx" />
+            </Component>
+            <Component Id="cm_0000Z00001_2_SumList_xlsx" Guid="b8d1d7f6-90f5-4f13-927b-fb9cea77daaf" Bitness="always64">
+                <File Id="fl_0000Z00001_2_SumList_xlsx" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Test_Cases/0000Z00001-2 SumList.xlsx" />
+            </Component>
+            <Component Id="cm_0000Z00001_3_Price_Details_xlsx" Guid="4456ce8c-8588-405d-bf68-77218734506e" Bitness="always64">
+                <File Id="fl_0000Z00001_3_Price_Details_xlsx" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Test_Cases/0000Z00001-3 Price_Details.xlsx" />
+            </Component>
+            <Component Id="cm_0000Z00001_3_SumList_xlsx" Guid="a121a084-16a9-47df-8626-e065538f8586">
+                <File Id="fl_0000Z00001_3_SumList_xlsx" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Test_Cases/0000Z00001-3 SumList.xlsx" />
+            </Component>
+            <Component Id="cm_0000Z00001_4_Price_Details_xlsx" Guid="3336b7b2-d713-43f7-ac64-c8d967f94ea6" Bitness="always64">
+                <File Id="fl_0000Z00001_4_Price_Details_xlsx" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Test_Cases/0000Z00001-4 Price_Details.xlsx" />
+            </Component>
+            <Component Id="cm_0000Z00001_4_SumList_xlsx" Guid="4194b5fe-410f-467b-803a-07dc9bc3f53d" Bitness="always64">
+                <File Id="fl_0000Z00001_4_SumList_xlsx" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Test_Cases/0000Z00001-4 SumList.xlsx" />
+            </Component>
+            <Component Id="cm_0000Z00001_5_Price_Details_xlsx" Guid="a1247bb6-1236-4594-894d-b4aa973d1681" Bitness="always64">
+                <File Id="fl_0000Z00001_5_Price_Details_xlsx" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Test_Cases/0000Z00001-5 Price_Details.xlsx" />
+            </Component>
+            <Component Id="cm_0000Z00001_5_SumList_xlsx" Guid="e25e4644-95b0-426f-9446-aa773520259b" Bitness="always64">
+                <File Id="fl_0000Z00001_5_SumList_xlsx" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Test_Cases/0000Z00001-5 SumList.xlsx" />
+            </Component>
+            <Component Id="cm_0000Z00001_6_Price_Details_xlsx" Guid="d36d6235-d6b4-4a5f-af84-c3c4b0da0936" Bitness="always64">
+                <File Id="fl_0000Z00001_6_Price_Details_xlsx" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Test_Cases/0000Z00001-6 Price_Details.xlsx" />
+            </Component>
+            <Component Id="cm_0000Z00001_6_SumList_xlsx" Guid="09e1ff17-dff8-4803-9ffc-ce0155224692" Bitness="always64">
+                <File Id="fl_0000Z00001_6_SumList_xlsx" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Test_Cases/0000Z00001-6 SumList.xlsx" />
+            </Component>
+            <Component Id="cm_0000Z00001_7_Price_Details_xlsx" Guid="6148f7e5-a7a0-4d93-8531-89ea28c84285" Bitness="always64">
+                <File Id="fl_0000Z00001_7_Price_Details_xlsx" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Test_Cases/0000Z00001-7 Price_Details.xlsx" />
+            </Component>
+            <Component Id="cm_0000Z00001_7_SumList_xlsx" Guid="5bd987eb-f374-44f7-9172-c0bd5ca3f138" Bitness="always64">
+                <File Id="fl_0000Z00001_7_SumList_xlsx" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Test_Cases/0000Z00001-7 SumList.xlsx" />
+            </Component>
+            <Component Id="cm_0000Z00001_8_Price_Details_xlsx" Guid="ca8f4f86-22e6-46c4-807e-1923228f6ea3" Bitness="always64">
+                <File Id="fl_0000Z00001_8_Price_Details_xlsx" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Test_Cases/0000Z00001-8 Price_Details.xlsx" />
+            </Component>
+            <Component Id="cm_0000Z00001_8_SumList_xlsx" Guid="06386c9f-73c9-4893-80cc-d825668ad15d" Bitness="always64">
+                <File Id="fl_0000Z00001_8_SumList_xlsx" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Test_Cases/0000Z00001-8 SumList.xlsx" />
+            </Component>
+            <Component Id="cm_0000Z00001_9_Price_Details_xlsx" Guid="2803bac5-3fb5-4d62-9072-871af77dfe60" Bitness="always64" >
+                <File Id="fl_0000Z00001_9_Price_Details_xlsx" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Test_Cases/0000Z00001-9 Price_Details.xlsx" />
+            </Component>
+            <Component Id="cm_0000Z00001_9_SumList_xlsx" Guid="f5a421b2-c22f-49ae-a8ed-ff30bb5d0092" Bitness="always64" >
+                <File Id="fl_0000Z00001_9_SumList_xlsx" Source="../../Output/a2p.WinForm/Release/net8.0-windows/Test_Cases/0000Z00001-9 SumList.xlsx" />
+            </Component>
+
+        </ComponentGroup>
+
+
+        <ComponentGroup Id="cmGr_Sql_Queries" Directory="SQL">
+            <Component Id="cm_Procedures_sql" Guid="fe4ab485-fa39-4a26-b85b-7d8fa6aa7611"  Bitness="always64">
+                <File Id="fl_Procedures_sql" Source="../../Output/a2p.WinForm/Release/net8.0-windows/SQL_Queries/Procedures.sql" />
+            </Component>
+            <Component Id="cm_Tables_sql" Guid="add7859a-7a60-46fd-a144-339328006277"  Bitness="always64">
+                <File Id="fl_Tables_sql" Source="../../Output/a2p.WinForm/Release/net8.0-windows/SQL_Queries/Tables.sql" />
+            </Component>
+            <Component Id="cm_Test_sql" Guid="d6ba4726-bb1f-4cfa-abf2-f6ff01ee67cd"  Bitness="always64">
+                <File Id="fl_Test_sql" Source="../../Output/a2p.WinForm/Release/net8.0-windows/SQL_Queries/Test.sql" />
+            </Component>
+        </ComponentGroup>
+
+
+    </Fragment>
+
+</Wix>

@@ -149,17 +149,15 @@ namespace a2p.Shared.Application.Services
 
                         item.ExchangeRateEUR = 1; //TODO': Exchange Rate 
 
-                        if (item.ExchangeRateEUR != null)
-                        {
 
-                            item.MaterialCostEUR = Math.Round(item.MaterialCost * item.ExchangeRateEUR, 6);
-                            item.TotalMaterialCostEUR = Math.Round(item.TotalMaterialCost * item.ExchangeRateEUR, 6);
-                            item.TotalLaborCostEUR = Math.Round(item.TotalLaborCost * item.ExchangeRateEUR, 6);
-                            item.CostEUR = Math.Round(item.Cost * item.ExchangeRateEUR, 6);
-                            item.TotalCostEUR = Math.Round(item.TotalCost * item.ExchangeRateEUR, 6);
-                            item.PriceEUR = Math.Round(item.Price * item.ExchangeRateEUR, 6);
-                            item.TotalPriceEUR = Math.Round(item.TotalPrice * item.ExchangeRateEUR, 6);
-                        }
+                        item.MaterialCostEUR = Math.Round(item.MaterialCost * item.ExchangeRateEUR, 6);
+                        item.TotalMaterialCostEUR = Math.Round(item.TotalMaterialCost * item.ExchangeRateEUR, 6);
+                        item.TotalLaborCostEUR = Math.Round(item.TotalLaborCost * item.ExchangeRateEUR, 6);
+                        item.CostEUR = Math.Round(item.Cost * item.ExchangeRateEUR, 6);
+                        item.TotalCostEUR = Math.Round(item.TotalCost * item.ExchangeRateEUR, 6);
+                        item.PriceEUR = Math.Round(item.Price * item.ExchangeRateEUR, 6);
+                        item.TotalPriceEUR = Math.Round(item.TotalPrice * item.ExchangeRateEUR, 6);
+
 
                         item.WorksheetType = WorksheetType.Items;
                         items.Add(item);
@@ -865,21 +863,21 @@ namespace a2p.Shared.Application.Services
                         order ?? string.Empty, worksheetName ?? string.Empty, line
                     );
 
-                    
-                        A2POrderError writeError = new()
-                        {
-                            Order = order!,
-                            Level = ErrorLevel.Error,
-                            Code = ErrorCode.MappingService_MapMaterial,
-                            Message = $"Mapper Sapa 2: Mapping material Article and Color fields are empty. Line will be skipped. Order: {order}, FileName: {worksheetName}, LineNumber: {line}.",
-                        };
 
-                        a2pOrder!.WriteErrors.Add(writeError);
-                        _dataCache.UpdateOrderInCache(order!, updatedOrder =>
-                        {
-                            updatedOrder.WriteErrors.Add(writeError);
-                        });
-                    
+                    A2POrderError writeError = new()
+                    {
+                        Order = order!,
+                        Level = ErrorLevel.Error,
+                        Code = ErrorCode.MappingService_MapMaterial,
+                        Message = $"Mapper Sapa 2: Mapping material Article and Color fields are empty. Line will be skipped. Order: {order}, FileName: {worksheetName}, LineNumber: {line}.",
+                    };
+
+                    a2pOrder!.WriteErrors.Add(writeError);
+                    _dataCache.UpdateOrderInCache(order!, updatedOrder =>
+                    {
+                        updatedOrder.WriteErrors.Add(writeError);
+                    });
+
 
                     return "Unknown";
                 }

@@ -1,0 +1,50 @@
+﻿<Project>
+  <PropertyGroup>
+    <ManagePackagesVersionsCentrally>true</ManagePackagesVersionsCentrally>
+    
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageVersion Include="ClosedXML" Version="0.104.2" />
+    <PackageVersion Include="MathNet.Numerics" Version="5.0.0" />
+    <PackageVersion Include="Microsoft.Data.SqlClient" Version="6.0.0-preview3.24332.3" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.EventLog" Version="9.0.0" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageVersion Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+    <PackageVersion Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+    <PackageVersion Include="Serilog.Exceptions" Version="8.4.0" />
+    <PackageVersion Include="Serilog.Expressions" Version="5.1.0-dev-00186" />
+    <PackageVersion Include="Serilog.Extensions.Logging" Version="9.0.1-dev-02308" />
+    <PackageVersion Include="Serilog.Extensions.Logging.File" Version="9.0.0-dev-02302" />
+    <PackageVersion Include="Serilog.Formatting.Compact" Version="3.0.0" />
+    <PackageVersion Include="Serilog.Formatting.Compact.Reader" Version="4.1.0-dev-00085" />
+    <PackageVersion Include="Serilog.Settings.Configuration" Version="9.0.0" />
+    <PackageVersion Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageVersion Include="Serilog.Sinks.EventLog" Version="4.0.1-dev-00087" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageVersion Include="Eris.Serilog.Formatting.Json" Version="1.1.0"/>
+    <PackageVersion Include="Microsoft.Data.SqlClient" Version="6.0.0-preview3.24332.3" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.EventLog" Version="9.0.0" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageVersion Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+    <PackageVersion Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+    <PackageVersion Include="Serilog.Exceptions" Version="8.4.0" />
+    <PackageVersion Include="Serilog.Expressions" Version="5.1.0-dev-00186" />
+    <PackageVersion Include="Serilog.Extensions.Logging" Version="9.0.1-dev-02308" />
+    <PackageVersion Include="Serilog.Extensions.Logging.File" Version="9.0.0-dev-02302" />
+    <PackageVersion Include="Serilog.Formatting.Compact" Version="3.0.0" />
+    <PackageVersion Include="Serilog.Formatting.Compact.Reader" Version="4.1.0-dev-00085" />
+    <PackageVersion Include="Serilog.Settings.Configuration" Version="9.0.0" />
+    <PackageVersion Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageVersion Include="Serilog.Sinks.EventLog" Version="4.0.1-dev-00087" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageVersion Include="Serilog.Sinks.Seq" Version="9.0.0" />
+
+  </ItemGroup> 
+</Project>

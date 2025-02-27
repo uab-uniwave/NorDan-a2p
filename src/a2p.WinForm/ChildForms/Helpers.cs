@@ -1,6 +1,7 @@
-﻿using a2p.Shared.Core.Entities.Models;
-using a2p.Shared.Core.Enums;
-using a2p.Shared.Core.Interfaces.Services;
+﻿using a2p.Shared.Application.Domain.Entities;
+using a2p.Shared.Application.Services.Domain.Entities;
+using a2p.Shared.Domain.Enums;
+using a2p.Shared.Infrastructure.Interfaces;
 
 namespace a2p.WinForm.ChildForms
 {
@@ -11,7 +12,7 @@ namespace a2p.WinForm.ChildForms
     {
         private readonly ILogService _logService;
 
-        public Helpers( ILogService logService)
+        public Helpers(ILogService logService)
         {
             _logService = logService;
         }
@@ -20,63 +21,63 @@ namespace a2p.WinForm.ChildForms
         {
             try
             {
-                return orders.FirstOrDefault(o => o.OrderNumber == orderNumber);
+                return orders.FirstOrDefault(o => o.Order == orderNumber);
             }
             catch (Exception ex)
             {
-                _logService.Error(ex, "Error finding order with number {OrderNumber}", orderNumber);
+                _logService.Error(ex, "Error finding order with number {Order}", orderNumber);
                 return null;
             }
         }
 
-        public A2POrderFile? FindFile(List<A2POrder> orders, string orderNumber, string file)
+        public A2PFile? FindFile(List<A2POrder> orders, string orderNumber, string file)
         {
             try
             {
                 return orders
-                    .FirstOrDefault(o => o.OrderNumber == orderNumber)?
-                    .OrderFiles.FirstOrDefault(f => f.File == file);
+                    .FirstOrDefault(o => o.Order == orderNumber)?
+                    .Files.FirstOrDefault(f => f.File == file);
             }
             catch (Exception ex)
             {
-                _logService.Error(ex, "Error finding file {File} in order {OrderNumber}", file, orderNumber);
+                _logService.Error(ex, "Error finding file {File} in order {Order}", file, orderNumber);
                 return null;
             }
         }
 
-        public A2POrderFileWorksheet? FindWorksheet(List<A2POrder> orders, string orderNumber, string file, string worksheet)
+        public A2PWorksheet? FindWorksheet(List<A2POrder> orders, string orderNumber, string file, string worksheet)
         {
             try
             {
                 return orders
-                    .FirstOrDefault(o => o.OrderNumber == orderNumber)?
-                    .OrderFiles.FirstOrDefault(f => f.File == file)?
-                    .OrderFileWorksheets.FirstOrDefault(w => w.WorksheetName == worksheet);
+                    .FirstOrDefault(o => o.Order == orderNumber)?
+                    .Files.FirstOrDefault(f => f.File == file)?
+                    .Worksheets.FirstOrDefault(w => w.Name == worksheet);
             }
             catch (Exception ex)
             {
-                _logService.Error(ex, "Error finding worksheet {Worksheet} in file {File} of order {OrderNumber}", worksheet, file, orderNumber);
+                _logService.Error(ex, "Error finding worksheet {Worksheet} in file {File} of order {Order}", worksheet, file, orderNumber);
                 return null;
             }
         }
 
-        public A2POrderFileWorksheet? FindWorksheetByType(List<A2POrder> orders, string orderNumber, string file, WorksheetType Type)
+        public A2PWorksheet? FindWorksheetByType(List<A2POrder> orders, string orderNumber, string file, WorksheetType Type)
         {
             try
             {
                 return orders
-                    .FirstOrDefault(o => o.OrderNumber == orderNumber)?
-                    .OrderFiles.FirstOrDefault(f => f.File == file)?
-                    .OrderFileWorksheets.FirstOrDefault(w => w.WorksheetType == Type);
+                    .FirstOrDefault(o => o.Order == orderNumber)?
+                    .Files.FirstOrDefault(f => f.File == file)?
+                    .Worksheets.FirstOrDefault(w => w.WorksheetType == Type);
             }
             catch (Exception ex)
             {
-                _logService.Error(ex, "Unhandled error finding worksheets by Type");
+                _logService.Error(ex, "Unhandled error finding worksheets by WorksheetType");
                 return null;
             }
         }
 
-        public List<A2POrder> UpdateOrderFiles(List<A2POrder> orderList, string orderNumber, List<A2POrderFile> files)
+        public List<A2POrder> UpdateOrderFiles(List<A2POrder> orderList, string orderNumber, List<A2PFile> files)
         {
             try
             {
@@ -84,14 +85,14 @@ namespace a2p.WinForm.ChildForms
                 A2POrder? orderToUpdate = FindOrder(orderList, orderNumber);
 
                 // Update the files list for the found order
-                orderToUpdate?.OrderFiles.AddRange(files); // AddRange is more concise for adding multiple items
+                orderToUpdate?.Files.AddRange(files); // AddRange is more concise for adding multiple items
 
                 // Return the updated list
                 return orderList;
             }
             catch (Exception ex)
             {
-                _logService.Error(ex, "Error updating files for order {OrderNumber}", orderNumber);
+                _logService.Error(ex, "Error updating files for order {Order}", orderNumber);
                 return orderList;
             }
         }

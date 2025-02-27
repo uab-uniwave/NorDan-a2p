@@ -1,0 +1,61 @@
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+  <Fragment>
+    <DirectoryRef Id='TARGETDIR'>
+      <Directory Id='SOURCE' Name='Source'>
+<Component Id='SOURCE' Guid='803c0948-232e-4358-bd4e-3e165d80a774'>
+    <File Id='SOURCE_a2p.Shared.deps.json' Source='a2p.Shared.deps.json' />
+    <File Id='SOURCE_a2p.Shared.dll' Source='a2p.Shared.dll' />
+    <File Id='SOURCE_a2p.Shared.pdb' Source='a2p.Shared.pdb' />
+    <File Id='SOURCE_appsettings.json' Source='appsettings.json' />
+    <File Id='SOURCE_appsettings.Production.json' Source='appsettings.Production.json' />
+    <File Id='SOURCE_Interop.MSXML2.dll' Source='Interop.MSXML2.dll' />
+    <File Id='SOURCE_Interop.PrefCAD.dll' Source='Interop.PrefCAD.dll' />
+    <File Id='SOURCE_Interop.PrefComponents.dll' Source='Interop.PrefComponents.dll' />
+    <File Id='SOURCE_Interop.PrefDataManager.dll' Source='Interop.PrefDataManager.dll' />
+    <File Id='SOURCE_Interop.PrefErrors.dll' Source='Interop.PrefErrors.dll' />
+    <File Id='SOURCE_Interop.PrefImagen.dll' Source='Interop.PrefImagen.dll' />
+    <File Id='SOURCE_Interop.PrefPrices.dll' Source='Interop.PrefPrices.dll' />
+    <File Id='SOURCE_Interop.PrefSales.dll' Source='Interop.PrefSales.dll' />
+</Component>
+      </Directory>
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <DirectoryRef Id='TARGETDIR'>
+      <Directory Id='SOURCE_SQL_Queries' Name='SOURCE_SQL_Queries'>
+<Component Id='SOURCE_SQL_Queries' Guid='6035e085-ce41-4fc3-af70-b96ea34b4c29'>
+    <File Id='SOURCE_SQL_Queries_Procedures.sql' Source='SQL_Queries/Procedures.sql' />
+    <File Id='SOURCE_SQL_Queries_Tables.sql' Source='SQL_Queries/Tables.sql' />
+    <File Id='SOURCE_SQL_Queries_Test.sql' Source='SQL_Queries/Test.sql' />
+</Component>
+      </Directory>
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <DirectoryRef Id='TARGETDIR'>
+      <Directory Id='SOURCE_Test_Cases' Name='SOURCE_Test_Cases'>
+<Component Id='SOURCE_Test_Cases' Guid='e7e21a88-99d9-48ef-86cf-be7a6d29b907'>
+    <File Id='SOURCE_Test_Cases_0000Z00001_1_Price_Details.xlsx' Source='Test_Cases/0000Z00001-1 Price_Details.xlsx' />
+    <File Id='SOURCE_Test_Cases_0000Z00001_1_SumList.xlsx' Source='Test_Cases/0000Z00001-1 SumList.xlsx' />
+    <File Id='SOURCE_Test_Cases_0000Z00001_2_Price_Details.xlsx' Source='Test_Cases/0000Z00001-2 Price_Details.xlsx' />
+    <File Id='SOURCE_Test_Cases_0000Z00001_2_SumList.xlsx' Source='Test_Cases/0000Z00001-2 SumList.xlsx' />
+    <File Id='SOURCE_Test_Cases_0000Z00001_3_Price_Details.xlsx' Source='Test_Cases/0000Z00001-3 Price_Details.xlsx' />
+    <File Id='SOURCE_Test_Cases_0000Z00001_3_SumList.xlsx' Source='Test_Cases/0000Z00001-3 SumList.xlsx' />
+    <File Id='SOURCE_Test_Cases_0000Z00001_4_Price_Details.xlsx' Source='Test_Cases/0000Z00001-4 Price_Details.xlsx' />
+    <File Id='SOURCE_Test_Cases_0000Z00001_4_SumList.xlsx' Source='Test_Cases/0000Z00001-4 SumList.xlsx' />
+    <File Id='SOURCE_Test_Cases_0000Z00001_5_Price_Details.xlsx' Source='Test_Cases/0000Z00001-5 Price_Details.xlsx' />
+    <File Id='SOURCE_Test_Cases_0000Z00001_5_SumList.xlsx' Source='Test_Cases/0000Z00001-5 SumList.xlsx' />
+    <File Id='SOURCE_Test_Cases_0000Z00001_6_Price_Details.xlsx' Source='Test_Cases/0000Z00001-6 Price_Details.xlsx' />
+    <File Id='SOURCE_Test_Cases_0000Z00001_6_SumList.xlsx' Source='Test_Cases/0000Z00001-6 SumList.xlsx' />
+    <File Id='SOURCE_Test_Cases_0000Z00001_7_Price_Details.xlsx' Source='Test_Cases/0000Z00001-7 Price_Details.xlsx' />
+    <File Id='SOURCE_Test_Cases_0000Z00001_7_SumList.xlsx' Source='Test_Cases/0000Z00001-7 SumList.xlsx' />
+    <File Id='SOURCE_Test_Cases_0000Z00001_8_Price_Details.xlsx' Source='Test_Cases/0000Z00001-8 Price_Details.xlsx' />
+    <File Id='SOURCE_Test_Cases_0000Z00001_8_SumList.xlsx' Source='Test_Cases/0000Z00001-8 SumList.xlsx' />
+    <File Id='SOURCE_Test_Cases_0000Z00001_9_Price_Details.xlsx' Source='Test_Cases/0000Z00001-9 Price_Details.xlsx' />
+    <File Id='SOURCE_Test_Cases_0000Z00001_9_SumList.xlsx' Source='Test_Cases/0000Z00001-9 SumList.xlsx' />
+</Component>
+      </Directory>
+    </DirectoryRef>
+  </Fragment>
+</Wix>
+

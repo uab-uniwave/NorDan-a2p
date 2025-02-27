@@ -12,42 +12,124 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "a2p.WinForm", "src\a2p.WinF
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShellScripts", "PowerShellScripts", "{5DB87A85-F247-4178-B216-BFD4DCF4DFB5}"
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "a2p.Installer", "..\..\temp\Nordan-Alu2Prefsuite\src\a2p.Installer\a2p.Installer.wixproj", "{D4107497-36A4-4200-8BB8-55084BDC2FB3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution_Items", "Solution_Items", "{4B83F7BB-6EF8-4330-BB78-998F1ED922FD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{5EED0990-5137-4F33-B715-24A141C3A509}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell_Scripts", "PowerShell_Scripts", "{331C5991-8A71-4DE2-8759-1FB483E7DDD1}"
 	ProjectSection(SolutionItems) = preProject
-		Items\PowerShell_Scripts\FileTree.ps1 = Items\PowerShell_Scripts\FileTree.ps1
-		Items\PowerShell_Scripts\FileTreeWithMethods.ps1 = Items\PowerShell_Scripts\FileTreeWithMethods.ps1
+		Solution_Items\PowerShell_Scripts\FileTree.ps1 = Solution_Items\PowerShell_Scripts\FileTree.ps1
+		Solution_Items\PowerShell_Scripts\FileTreeWithMethods.ps1 = Solution_Items\PowerShell_Scripts\FileTreeWithMethods.ps1
+		Solution_Items\PowerShell_Scripts\wixComponents.ps1 = Solution_Items\PowerShell_Scripts\wixComponents.ps1
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL_Quaries", "SQL_Quaries", "{7A304685-1542-4C0B-B48D-4566C4CB0CBF}"
 	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-		README.md = README.md
+		Solution_Items\SQL_Queries\Procedures.sql = Solution_Items\SQL_Queries\Procedures.sql
+		Solution_Items\SQL_Queries\Tables.sql = Solution_Items\SQL_Queries\Tables.sql
+		Solution_Items\SQL_Queries\Test.sql = Solution_Items\SQL_Queries\Test.sql
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{DE026394-5BA8-42AB-B7EF-A3E0779D8D40}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test_Cases", "Test_Cases", "{C109993E-4BE4-440B-BD54-BC8F9737B551}"
 	ProjectSection(SolutionItems) = preProject
-		Items\SQLScripts\a2p\Procedures.sql = Items\SQLScripts\a2p\Procedures.sql
-		Items\SQLScripts\a2p\Tables.sql = Items\SQLScripts\a2p\Tables.sql
-		Items\SQLScripts\a2p\Test.sql = Items\SQLScripts\a2p\Test.sql
-		Test.sql = Test.sql
+		Solution_Items\Test_Cases\0000Z00001-1 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-1 Price_Details.xlsx
+		Solution_Items\Test_Cases\0000Z00001-1 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-1 SumList.xlsx
+		Solution_Items\Test_Cases\0000Z00001-2 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-2 Price_Details.xlsx
+		Solution_Items\Test_Cases\0000Z00001-2 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-2 SumList.xlsx
+		Solution_Items\Test_Cases\0000Z00001-3 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-3 Price_Details.xlsx
+		Solution_Items\Test_Cases\0000Z00001-3 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-3 SumList.xlsx
+		Solution_Items\Test_Cases\0000Z00001-4 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-4 Price_Details.xlsx
+		Solution_Items\Test_Cases\0000Z00001-4 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-4 SumList.xlsx
+		Solution_Items\Test_Cases\0000Z00001-5 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-5 Price_Details.xlsx
+		Solution_Items\Test_Cases\0000Z00001-5 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-5 SumList.xlsx
+		Solution_Items\Test_Cases\0000Z00001-6 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-6 Price_Details.xlsx
+		Solution_Items\Test_Cases\0000Z00001-6 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-6 SumList.xlsx
+		Solution_Items\Test_Cases\0000Z00001-7 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-7 Price_Details.xlsx
+		Solution_Items\Test_Cases\0000Z00001-7 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-7 SumList.xlsx
+		Solution_Items\Test_Cases\0000Z00001-8 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-8 Price_Details.xlsx
+		Solution_Items\Test_Cases\0000Z00001-8 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-8 SumList.xlsx
+		Solution_Items\Test_Cases\0000Z00001-9 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-9 Price_Details.xlsx
+		Solution_Items\Test_Cases\0000Z00001-9 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-9 SumList.xlsx
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Icons", "Icons", "{1E9CA2EC-C3B4-4250-93D8-2C12C15DDB4A}"
+	ProjectSection(SolutionItems) = preProject
+		Items\Assets\Icons\Icon.ico = Items\Assets\Icons\Icon.ico
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{3FE18A27-9C23-41A7-81EE-F5C4FB9F9953}"
+	ProjectSection(SolutionItems) = preProject
+		Solution_Items\Assets\Images\SpalshScreen.jpg = Solution_Items\Assets\Images\SpalshScreen.jpg
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logo", "Logo", "{4E98E7F9-6399-4EA8-AD7D-08B60CD9E9B4}"
+	ProjectSection(SolutionItems) = preProject
+		Solution_Items\Assets\Logo\NordanLogoInversed.png = Solution_Items\Assets\Logo\NordanLogoInversed.png
+		Solution_Items\Assets\Logo\UniwaveLogo.png = Solution_Items\Assets\Logo\UniwaveLogo.png
+		Solution_Items\Assets\Logo\UniwaveLogoInversed.png = Solution_Items\Assets\Logo\UniwaveLogoInversed.png
+		Solution_Items\Assets\Logo\UniwaveLogoMini.png = Solution_Items\Assets\Logo\UniwaveLogoMini.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SideBarIcons", "SideBarIcons", "{301A0489-CD17-496A-B08A-14F8554BDD2E}"
+	ProjectSection(SolutionItems) = preProject
+		Solution_Items\Assets\SideBarIcons\btExit.png = Solution_Items\Assets\SideBarIcons\btExit.png
+		Solution_Items\Assets\SideBarIcons\btImport.png = Solution_Items\Assets\SideBarIcons\btImport.png
+		Solution_Items\Assets\SideBarIcons\btLoad.png = Solution_Items\Assets\SideBarIcons\btLoad.png
+		Solution_Items\Assets\SideBarIcons\btLog.png = Solution_Items\Assets\SideBarIcons\btLog.png
+		Solution_Items\Assets\SideBarIcons\btProperties.png = Solution_Items\Assets\SideBarIcons\btProperties.png
+		Solution_Items\Assets\SideBarIcons\btSideBar.png = Solution_Items\Assets\SideBarIcons\btSideBar.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TitleBarIcons", "TitleBarIcons", "{7A0BBB3A-A539-415C-A22E-65A006515A14}"
+	ProjectSection(SolutionItems) = preProject
+		Solution_Items\Assets\TitleBarIcons\btClose.afdesign = Solution_Items\Assets\TitleBarIcons\btClose.afdesign
+		Solution_Items\Assets\TitleBarIcons\btClose.png = Solution_Items\Assets\TitleBarIcons\btClose.png
+		Solution_Items\Assets\TitleBarIcons\btCloseHover.png = Solution_Items\Assets\TitleBarIcons\btCloseHover.png
+		Solution_Items\Assets\TitleBarIcons\btCloseHower.afdesign = Solution_Items\Assets\TitleBarIcons\btCloseHower.afdesign
+		Solution_Items\Assets\TitleBarIcons\btMaximize.png = Solution_Items\Assets\TitleBarIcons\btMaximize.png
+		Solution_Items\Assets\TitleBarIcons\btMaximizeHover.afdesign = Solution_Items\Assets\TitleBarIcons\btMaximizeHover.afdesign
+		Solution_Items\Assets\TitleBarIcons\btMaximizeHover.png = Solution_Items\Assets\TitleBarIcons\btMaximizeHover.png
+		Solution_Items\Assets\TitleBarIcons\btMaximizeHower.afdesign = Solution_Items\Assets\TitleBarIcons\btMaximizeHower.afdesign
+		Solution_Items\Assets\TitleBarIcons\btMinimize.png = Solution_Items\Assets\TitleBarIcons\btMinimize.png
+		Solution_Items\Assets\TitleBarIcons\btMinimizeHover.afdesign = Solution_Items\Assets\TitleBarIcons\btMinimizeHover.afdesign
+		Solution_Items\Assets\TitleBarIcons\btMinimizeHover.png = Solution_Items\Assets\TitleBarIcons\btMinimizeHover.png
+		Solution_Items\Assets\TitleBarIcons\btMnimize.afdesign = Solution_Items\Assets\TitleBarIcons\btMnimize.afdesign
 	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x86.Build.0 = Debug|Any CPU
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x86.ActiveCfg = Release|Any CPU
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x86.Build.0 = Release|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x86.Build.0 = Debug|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x86.ActiveCfg = Release|Any CPU
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x86.Build.0 = Release|Any CPU
+		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|Any CPU.Build.0 = Debug|x86
+		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|x86.ActiveCfg = Debug|x86
+		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|x86.Build.0 = Debug|x86
+		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|Any CPU.ActiveCfg = Release|x86
+		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|Any CPU.Build.0 = Release|x86
+		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|x86.ActiveCfg = Release|x86
+		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,13 +137,20 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-		{5DB87A85-F247-4178-B216-BFD4DCF4DFB5} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
-		{0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
-		{DE026394-5BA8-42AB-B7EF-A3E0779D8D40} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
+		{D4107497-36A4-4200-8BB8-55084BDC2FB3} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{5EED0990-5137-4F33-B715-24A141C3A509} = {4B83F7BB-6EF8-4330-BB78-998F1ED922FD}
+		{331C5991-8A71-4DE2-8759-1FB483E7DDD1} = {4B83F7BB-6EF8-4330-BB78-998F1ED922FD}
+		{7A304685-1542-4C0B-B48D-4566C4CB0CBF} = {4B83F7BB-6EF8-4330-BB78-998F1ED922FD}
+		{C109993E-4BE4-440B-BD54-BC8F9737B551} = {4B83F7BB-6EF8-4330-BB78-998F1ED922FD}
+		{1E9CA2EC-C3B4-4250-93D8-2C12C15DDB4A} = {5EED0990-5137-4F33-B715-24A141C3A509}
+		{3FE18A27-9C23-41A7-81EE-F5C4FB9F9953} = {5EED0990-5137-4F33-B715-24A141C3A509}
+		{4E98E7F9-6399-4EA8-AD7D-08B60CD9E9B4} = {5EED0990-5137-4F33-B715-24A141C3A509}
+		{301A0489-CD17-496A-B08A-14F8554BDD2E} = {5EED0990-5137-4F33-B715-24A141C3A509}
+		{7A0BBB3A-A539-415C-A22E-65A006515A14} = {5EED0990-5137-4F33-B715-24A141C3A509}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {02931AC6-E3AF-4E96-A144-EE9EE4BE10E7}
-		BuildVersion_StartDate = 2000/1/1
 		BuildVersion_BuildVersioningStyle = None.None.None.Increment
+		BuildVersion_StartDate = 2000/1/1
 	EndGlobalSection
 EndGlobal

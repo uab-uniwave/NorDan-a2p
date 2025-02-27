@@ -1,4 +1,7 @@
-﻿using a2p.Shared.Application.Domain.Entities;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Infrastructure.Interfaces;
 
 public class DataCache
@@ -6,10 +9,7 @@ public class DataCache
     private readonly Dictionary<string, A2POrder> _orderCache = [];
     private readonly ILogService _logService;
 
-    public DataCache(ILogService logService)
-    {
-        _logService = logService;
-    }
+    public DataCache(ILogService logService) => _logService = logService;
 
     /// <summary>
     /// Adds or updates an order in the cache.

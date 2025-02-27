@@ -1,8 +1,11 @@
-﻿using System.Data;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System.Data;
 using System.Text.Json.Nodes;
 
-using a2p.Shared.Application.Services.Domain.Entities;
-using a2p.Shared.Domain.Entities;
+using a2p.Shared.Application.Domain.Entities;
+
 using a2p.Shared.Infrastructure.Interfaces;
 
 using ClosedXML.Excel;
@@ -281,11 +284,7 @@ namespace a2p.WinForm.ChildForms
 
         #region -== Form Events ==-
 
-        private void LogForm_Load(object sender, EventArgs e)
-        {
-            this.PerformAutoScale();
-
-        }
+        private void LogForm_Load(object sender, EventArgs e) => this.PerformAutoScale();
 
         private void LogForm_Shown(object sender, EventArgs e)
         {
@@ -301,10 +300,7 @@ namespace a2p.WinForm.ChildForms
             this.PerformLayout();
 
         }
-        private void LogForm_ResizeBegin(object sender, EventArgs e)
-        {
-            this.SuspendLayout();
-        }
+        private void LogForm_ResizeBegin(object sender, EventArgs e) => this.SuspendLayout();
 
         private void LogForm_ResizeEnd(object sender, EventArgs e)
         {
@@ -433,46 +429,23 @@ namespace a2p.WinForm.ChildForms
             }
         }
 
-        private void dataGridViewLog_SelectionChanged(object sender, EventArgs e)
-        {
-
-            _ = PropertiesAddAsync(dataGridViewLog.Rows.IndexOf(dataGridViewLog.CurrentRow));
-        }
+        private void dataGridViewLog_SelectionChanged(object sender, EventArgs e) => _ = PropertiesAddAsync(dataGridViewLog.Rows.IndexOf(dataGridViewLog.CurrentRow));
 
         #endregion -== Grids events == -
 
         #region -== Log Level Filter Method and Controls Events ==-
 
-        private void chxLogLevelWarning_CheckedChanged(object sender, EventArgs e)
-        {
-            ApplyFilter();
+        private void chxLogLevelWarning_CheckedChanged(object sender, EventArgs e) => ApplyFilter();
 
-        }
+        private void chxLogLevelVerbose_CheckedChanged(object sender, EventArgs e) => ApplyFilter();
 
-        private void chxLogLevelVerbose_CheckedChanged(object sender, EventArgs e)
-        {
-            ApplyFilter();
-        }
+        private void chxLogLevelDebug_CheckedChanged(object sender, EventArgs e) => ApplyFilter();
 
-        private void chxLogLevelDebug_CheckedChanged(object sender, EventArgs e)
-        {
-            ApplyFilter();
-        }
+        private void chxLogLevelInfo_CheckedChanged(object sender, EventArgs e) => ApplyFilter();
 
-        private void chxLogLevelInfo_CheckedChanged(object sender, EventArgs e)
-        {
-            ApplyFilter();
-        }
+        private void chxLogLevelError_CheckedChanged(object sender, EventArgs e) => ApplyFilter();
 
-        private void chxLogLevelError_CheckedChanged(object sender, EventArgs e)
-        {
-            ApplyFilter();
-        }
-
-        private void chxLogLevelFatal_CheckedChanged(object sender, EventArgs e)
-        {
-            ApplyFilter();
-        }
+        private void chxLogLevelFatal_CheckedChanged(object sender, EventArgs e) => ApplyFilter();
 
         #endregion  -== Log Level Filter Method and Controls Events ==-
 
@@ -778,7 +751,7 @@ namespace a2p.WinForm.ChildForms
                 string fileName = saveLog.FileName;
                 using (XLWorkbook workbook = new())
                 {
-                    DataTable dataTable = ((DataTable) _bindingSourceLog.DataSource).Copy();
+                    DataTable dataTable = ((DataTable)_bindingSourceLog.DataSource).Copy();
                     _ = workbook.Worksheets.Add(dataTable, "LogRecords");
                     workbook.SaveAs(fileName);
                 }

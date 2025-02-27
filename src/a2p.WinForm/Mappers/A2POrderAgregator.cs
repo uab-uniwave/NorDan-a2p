@@ -1,31 +1,21 @@
-﻿using a2p.Shared.Application.Domain.Entities;
-using a2p.Shared.Application.Services.Domain.Entities;
-using a2p.Shared.Domain.Enums;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using a2p.Shared.Application.Domain.Entities;
+using a2p.Shared.Application.Domain.Enums;
 
 namespace a2p.WinForm.Mappers
 {
     public static class A2POrderAgregator
     {
         // Find Methods
-        public static async Task<A2POrder?> FindOrderAsync(List<A2POrder> orders, string orderNumber)
-        {
-            return await Task.FromResult(orders.FirstOrDefault(o => o.Order == orderNumber));
-        }
+        public static async Task<A2POrder?> FindOrderAsync(List<A2POrder> orders, string orderNumber) => await Task.FromResult(orders.FirstOrDefault(o => o.Order == orderNumber));
 
-        public static async Task<A2PFile?> FindFileAsync(List<A2POrder> orders, string orderNumber, string fileName)
-        {
-            return (await FindOrderAsync(orders, orderNumber))?.Files.FirstOrDefault(f => f.File == fileName);
-        }
+        public static async Task<A2PFile?> FindFileAsync(List<A2POrder> orders, string orderNumber, string fileName) => (await FindOrderAsync(orders, orderNumber))?.Files.FirstOrDefault(f => f.File == fileName);
 
-        public static async Task<A2PWorksheet?> FindWorksheetAsync(List<A2POrder> orders, string orderNumber, string fileName, string worksheetName)
-        {
-            return (await FindFileAsync(orders, orderNumber, fileName))?.Worksheets.FirstOrDefault(w => w.Name == worksheetName);
-        }
+        public static async Task<A2PWorksheet?> FindWorksheetAsync(List<A2POrder> orders, string orderNumber, string fileName, string worksheetName) => (await FindFileAsync(orders, orderNumber, fileName))?.Worksheets.FirstOrDefault(w => w.Name == worksheetName);
 
-        public static async Task<A2PWorksheet?> FindWorksheetByTypeAsync(List<A2POrder> orders, string orderNumber, string fileName, WorksheetType type)
-        {
-            return (await FindFileAsync(orders, orderNumber, fileName))?.Worksheets.FirstOrDefault(w => w.WorksheetType == type);
-        }
+        public static async Task<A2PWorksheet?> FindWorksheetByTypeAsync(List<A2POrder> orders, string orderNumber, string fileName, WorksheetType type) => (await FindFileAsync(orders, orderNumber, fileName))?.Worksheets.FirstOrDefault(w => w.WorksheetType == type);
 
         // Add or Update Methods
         public static async Task<List<A2POrder>> AddOrUpdateOrderAsync(List<A2POrder> orders, A2POrder newOrder)
@@ -127,36 +117,23 @@ namespace a2p.WinForm.Mappers
             {
                 A2PWorksheet? worksheetToRemove = file.Worksheets.FirstOrDefault(w => w.Name == worksheetName);
                 if (worksheetToRemove != null)
+                {
                     _ = file.Worksheets.Remove(worksheetToRemove);
+                }
             }
 
             return orders;
         }
 
         // Get Methods
-        public static async Task<List<A2POrder>> GetOrdersAsync(List<A2POrder> orders)
-        {
-            return await Task.FromResult(orders);
-        }
+        public static async Task<List<A2POrder>> GetOrdersAsync(List<A2POrder> orders) => await Task.FromResult(orders);
 
-        public static async Task<List<A2PFile>> GetOrderFilesAsync(List<A2POrder> orders, string orderNumber)
-        {
-            return (await FindOrderAsync(orders, orderNumber))?.Files ?? [];
-        }
+        public static async Task<List<A2PFile>> GetOrderFilesAsync(List<A2POrder> orders, string orderNumber) => (await FindOrderAsync(orders, orderNumber))?.Files ?? [];
 
-        public static async Task<List<A2PWorksheet>> GetOrderFileWorksheetsAsync(List<A2POrder> orders, string orderNumber, string fileName)
-        {
-            return (await FindFileAsync(orders, orderNumber, fileName))?.Worksheets ?? [];
-        }
+        public static async Task<List<A2PWorksheet>> GetOrderFileWorksheetsAsync(List<A2POrder> orders, string orderNumber, string fileName) => (await FindFileAsync(orders, orderNumber, fileName))?.Worksheets ?? [];
 
-        public static async Task<List<A2PWorksheet>> GetOrderAllWorksheetsAsync(List<A2POrder> orders, string orderNumber)
-        {
-            return (await FindOrderAsync(orders, orderNumber))?.Files.SelectMany(f => f.Worksheets).ToList() ?? [];
-        }
+        public static async Task<List<A2PWorksheet>> GetOrderAllWorksheetsAsync(List<A2POrder> orders, string orderNumber) => (await FindOrderAsync(orders, orderNumber))?.Files.SelectMany(f => f.Worksheets).ToList() ?? [];
 
-        public static async Task<List<A2PWorksheet>> GetOrderWorksheetsByFileNameAsync(List<A2POrder> orders, string orderNumber, string fileName)
-        {
-            return await GetOrderFileWorksheetsAsync(orders, orderNumber, fileName);
-        }
+        public static async Task<List<A2PWorksheet>> GetOrderWorksheetsByFileNameAsync(List<A2POrder> orders, string orderNumber, string fileName) => await GetOrderFileWorksheetsAsync(orders, orderNumber, fileName);
     }
 }

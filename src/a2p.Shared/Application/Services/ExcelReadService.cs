@@ -1,9 +1,11 @@
-﻿using System.Globalization;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System.Globalization;
 
 using a2p.Shared.Application.Domain.Entities;
+using a2p.Shared.Application.Domain.Enums;
 using a2p.Shared.Application.Interfaces;
-using a2p.Shared.Application.Services.Domain.Entities;
-using a2p.Shared.Domain.Enums;
 using a2p.Shared.Infrastructure.Interfaces;
 
 using ClosedXML.Excel;
@@ -27,8 +29,6 @@ namespace a2p.Shared.Application.Services
             _progress = new Progress<ProgressValue>();
 
         }
-
-
 
         public async Task<List<A2PWorksheet>> GetWorksheetsAsync(A2PFile file, ProgressValue progressValue, IProgress<ProgressValue>? progress)
         {
@@ -206,19 +206,16 @@ namespace a2p.Shared.Application.Services
             });
         }
 
-        private static async Task<string> GetRawNumericValue(IXLCell cell, IXLWorksheet worksheet)
-        {
-            return await Task.Run(() =>
-            { // If the cell has a value, return it as a string
-                if (!cell.IsEmpty())
-                {
-                    // Return the unformatted numeric value directly from the cell
-                    return cell.Value.ToString();
-                }
+        private static async Task<string> GetRawNumericValue(IXLCell cell, IXLWorksheet worksheet) => await Task.Run(() =>
+                                                                                                               { // If the cell has a value, return it as a string
+                                                                                                                   if (!cell.IsEmpty())
+                                                                                                                   {
+                                                                                                                       // Return the unformatted numeric value directly from the cell
+                                                                                                                       return cell.Value.ToString();
+                                                                                                                   }
 
-                return string.Empty;
-            });
-        }
+                                                                                                                   return string.Empty;
+                                                                                                               });
         private string GetCurrency(string customFormat)
         {
 

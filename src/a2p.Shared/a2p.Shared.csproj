@@ -8,40 +8,36 @@
  <OutputPath>$(BaseOutputPath)\$(Configuration)\</OutputPath>
  <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
  <OutputType>Library</OutputType>
+ <Platforms>AnyCPU</Platforms>
  </PropertyGroup>
 
  <ItemGroup>
-   <Compile Remove="Application\Utils\**" />
-   <EmbeddedResource Remove="Application\Utils\**" />
-   <None Remove="Application\Utils\**" />
+	 <Compile Remove="Application\Utils\**" />
+	 <EmbeddedResource Remove="Application\Utils\**" />
+	 <None Remove="Application\Utils\**" />
  </ItemGroup>
 
  <ItemGroup>
-   <COMReference Include="PrefSales">
-     <WrapperTool>tlbimp</WrapperTool>
-     <VersionMinor>0</VersionMinor>
-     <VersionMajor>1</VersionMajor>
-     <Guid>c1694be9-8281-4ae9-805c-f536fbc09377</Guid>
-     <Lcid>0</Lcid>
-     <Isolated>false</Isolated>
-     <EmbedInteropTypes>true</EmbedInteropTypes>
-   </COMReference>
-   <COMReference Include="PrefDataManager">
-     <WrapperTool>tlbimp</WrapperTool>
-     <VersionMinor>0</VersionMinor>
-     <VersionMajor>1</VersionMajor>
-     <Guid>bb65111f-611b-4891-8a37-200ccdd0a115</Guid>
-     <Lcid>0</Lcid>
-     <Isolated>false</Isolated>
-     <EmbedInteropTypes>true</EmbedInteropTypes>
-   </COMReference>
+	 <COMReference Include="PrefSales">
+		 <WrapperTool>tlbimp</WrapperTool>
+		 <VersionMinor>0</VersionMinor>
+		 <VersionMajor>1</VersionMajor>
+		 <Guid>c1694be9-8281-4ae9-805c-f536fbc09377</Guid>
+		 <Lcid>0</Lcid>
+		 <Isolated>false</Isolated>
+		 <EmbedInteropTypes>true</EmbedInteropTypes>
+	 </COMReference>
+	 <COMReference Include="PrefDataManager">
+		 <WrapperTool>tlbimp</WrapperTool>
+		 <VersionMinor>0</VersionMinor>
+		 <VersionMajor>1</VersionMajor>
+		 <Guid>bb65111f-611b-4891-8a37-200ccdd0a115</Guid>
+		 <Lcid>0</Lcid>
+		 <Isolated>false</Isolated>
+		 <EmbedInteropTypes>true</EmbedInteropTypes>
+	 </COMReference>
  </ItemGroup>
 
- <ItemGroup>
- <None Include="Application\Interfaces\IMapperSapaV1.cs" />
- <None Include="Application\Models\Models\ItemSchuco.cs" />
- <None Include="Application\Domain\Entities\A2PLogRecord.cs" />
- </ItemGroup>
 
  <ItemGroup>
  <PackageReference Include="ClosedXML" Version="0.104.2" />
@@ -65,55 +61,40 @@
 	 <PackageReference Include="Serilog.Sinks.EventLog" Version="4.0.1-dev-00087" />
 	 <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
 	 <PackageReference Include="Eris.Serilog.Formatting.Json" Version="1.1.0">
-  <TreatAsUsed>true</TreatAsUsed>
+	<TreatAsUsed>true</TreatAsUsed>
  </PackageReference>
 	 <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
  </ItemGroup>
 
  <ItemGroup>
-   <Page Include="appsettings.Development.json">
-     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-   </Page>
+	 <Page Include="appsettings.Development.json">
+		 <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	 </Page>
+
+	 <Page Include="appsettings.Production.json">
+		 <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	 </Page>
+
+	 <Page Include="appsettings.json">
+		 <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	 </Page>
  </ItemGroup>
 
  <ItemGroup>
-   <Compile Update="Properties\Resources.Designer.cs">
-     <DesignTime>True</DesignTime>
-     <AutoGen>True</AutoGen>
-     <DependentUpon>Resources.resx</DependentUpon>
-   </Compile>
+	 <Compile Update="Properties\Resources.Designer.cs">
+		 <DesignTime>True</DesignTime>
+		 <AutoGen>True</AutoGen>
+		 <DependentUpon>Resources.resx</DependentUpon>
+	 </Compile>
  </ItemGroup>
 
  <ItemGroup>
-   <EmbeddedResource Update="Properties\Resources.resx">
-     <Generator>ResXFileCodeGenerator</Generator>
-     <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-   </EmbeddedResource>
+	 <EmbeddedResource Update="Properties\Resources.resx">
+		 <Generator>ResXFileCodeGenerator</Generator>
+		 <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	 </EmbeddedResource>
  </ItemGroup>
 
 
- <ItemGroup>
- <None Update="appsettings.Production.json">
-  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
- </None>
- <None Update="appsettings.json">
-  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
- </None>
- </ItemGroup>
-
-
- <ItemGroup>
-   <Reference Include="Interop.PrefDataManager">
-     <HintPath>..\..\..\..\Program Files\Preference\PrefSuite\Interop.PrefDataManager.dll</HintPath>
-   </Reference>
-   <Reference Include="Interop.PrefSales">
-     <HintPath>..\..\..\..\Program Files\Preference\PrefSuite\Interop.PrefSales.dll</HintPath>
-   </Reference>
- </ItemGroup>
-
-
- <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
- <Exec Command="&quot;$(DevEnvDir)devenv.com&quot; &quot;$(SolutionPath)&quot; /Clean &quot;$(ConfigurationName)&quot;" />
- </Target>
 
 </Project>

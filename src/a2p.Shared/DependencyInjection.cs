@@ -1,4 +1,9 @@
-﻿using a2p.Shared.Application.Interfaces;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System.Diagnostics;
+
+using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Application.Services;
 using a2p.Shared.Infrastructure.Interfaces;
 using a2p.Shared.Infrastructure.Services;
@@ -8,8 +13,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using Serilog;
-
-using System.Diagnostics;
 
 namespace a2p.Shared
 {
@@ -22,7 +25,6 @@ namespace a2p.Shared
 
             // Register services
             ServiceCollection services = new();
-
 
             string rootFolder = configuration["AppSettings:Folders:Root"] ?? @"C:\\Temp\\Import";
             EnsureDirectoryExist(rootFolder, "Root", configuration);
@@ -44,7 +46,6 @@ namespace a2p.Shared
                     fileExists = true;
                 }
 
-
                 if (fileExists)
                 {
                     File.Delete(logFile);
@@ -59,8 +60,6 @@ namespace a2p.Shared
 
             // Initialize Serilog
             LoggerSetup.ConfigureLogger(configuration);
-
-
 
             // Register logging
             _ = services.AddLogging(builder => builder.AddSerilog());
@@ -83,10 +82,6 @@ namespace a2p.Shared
             _ = services.AddSingleton<IOrderWriteProcessor, OrderWritingProcessor>();
             // _ = services.AddSingleton<Record, A2POrderRecordMapper>();
             _ = services.AddSingleton<ISqlRepository, SqlRepository>();
-
-
-
-
 
             return services.BuildServiceProvider();
         }

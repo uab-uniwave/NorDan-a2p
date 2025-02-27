@@ -1,7 +1,9 @@
-﻿using a2p.Shared.Application.Domain.Entities;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.Domain.Enums;
 using a2p.Shared.Application.Interfaces;
-using a2p.Shared.Application.Services.Domain.Entities;
 using a2p.Shared.Infrastructure.Interfaces;
 
 namespace a2p.Shared.Infrastructure.Services
@@ -67,7 +69,7 @@ namespace a2p.Shared.Infrastructure.Services
 
                     //Check if Order is already imported and if it is set to overwrite
                     //===================================================================================================================================
-                    OrderState orderState = (OrderState) a2pOrder.SalesDocumentState;
+                    OrderState orderState = (OrderState)a2pOrder.SalesDocumentState;
                     ;
                     if (orderState.HasFlag(OrderState.A2PMaterialsImported) ||
                         orderState.HasFlag(OrderState.A2PItemsImported) ||
@@ -91,7 +93,6 @@ namespace a2p.Shared.Infrastructure.Services
                     await _writeMaterialService.InsertListAsync(_progressValue, _progress);
                     await _writeItemService.InsertListAsync(_progressValue, _progress);
 
-
                 }
                 orderCount++;
                 _progressValue.Value = orderCount;
@@ -105,5 +106,6 @@ namespace a2p.Shared.Infrastructure.Services
             }
 
         }
+
     }
 }

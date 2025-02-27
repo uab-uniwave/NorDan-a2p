@@ -6,9 +6,8 @@ using System.Data;
 using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.Domain.Enums;
 using a2p.Shared.Application.Interfaces;
-using a2p.Shared.Application.Services.Domain.Entities;
 using a2p.Shared.Core.DTO.a2p.Shared.Core.DTO;
-using a2p.Shared.Domain.Enums;
+
 using a2p.Shared.Infrastructure.Interfaces;
 using a2p.WinForm.CustomControls;
 

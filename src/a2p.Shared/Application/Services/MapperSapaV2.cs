@@ -7,8 +7,6 @@ using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.Domain.Enums;
 using a2p.Shared.Application.DTO;
 using a2p.Shared.Application.Interfaces;
-using a2p.Shared.Application.Services.Domain.Entities;
-using a2p.Shared.Domain.Enums;
 using a2p.Shared.Infrastructure.Interfaces;
 
 namespace a2p.Shared.Application.Services
@@ -865,21 +863,19 @@ namespace a2p.Shared.Application.Services
                         order ?? string.Empty, worksheetName ?? string.Empty, line
                     );
 
-                    
-                        A2POrderError writeError = new()
-                        {
-                            Order = order!,
-                            Level = ErrorLevel.Error,
-                            Code = ErrorCode.MappingService_MapMaterial,
-                            Message = $"Mapper Sapa 2: Mapping material Article and Color fields are empty. Line will be skipped. Order: {order}, FileName: {worksheetName}, LineNumber: {line}.",
-                        };
+                    A2POrderError writeError = new()
+                    {
+                        Order = order!,
+                        Level = ErrorLevel.Error,
+                        Code = ErrorCode.MappingService_MapMaterial,
+                        Message = $"Mapper Sapa 2: Mapping material Article and Color fields are empty. Line will be skipped. Order: {order}, FileName: {worksheetName}, LineNumber: {line}.",
+                    };
 
-                        a2pOrder!.WriteErrors.Add(writeError);
-                        _dataCache.UpdateOrderInCache(order!, updatedOrder =>
-                        {
-                            updatedOrder.WriteErrors.Add(writeError);
-                        });
-                    
+                    a2pOrder!.WriteErrors.Add(writeError);
+                    _dataCache.UpdateOrderInCache(order!, updatedOrder =>
+                    {
+                        updatedOrder.WriteErrors.Add(writeError);
+                    });
 
                     return "Unknown";
                 }

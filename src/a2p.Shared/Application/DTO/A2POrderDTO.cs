@@ -1,4 +1,7 @@
-﻿namespace a2p.Shared.Application.DTO
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+namespace a2p.Shared.Application.DTO
 {
     public class A2POrderDTO
     {

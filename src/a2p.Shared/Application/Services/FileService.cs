@@ -4,8 +4,6 @@
 using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.Domain.Enums;
 using a2p.Shared.Application.Interfaces;
-using a2p.Shared.Application.Services.Domain.Entities;
-using a2p.Shared.Domain.Enums;
 using a2p.Shared.Infrastructure.Interfaces;
 
 using ClosedXML.Excel;
@@ -315,20 +313,6 @@ namespace a2p.Shared.Application.Services
                         }
 
                     }
-
-                    A2POrderError writeError = new()
-                    {
-                        Order = a2pOrder.Order,
-                        Level = ErrorLevel.Error,
-                        Code = ErrorCode.MappingService_MapMaterial,
-                        Message = $"TtTtTTTTTTTTTTT"
-                    };
-
-                    a2pOrder!.WriteErrors.Add(writeError);
-                    _dataCache.UpdateOrderInCache(a2pOrder.Order, updatedOrder =>
-                    {
-                        updatedOrder.WriteErrors.Add(writeError);
-                    });
 
                 }
 

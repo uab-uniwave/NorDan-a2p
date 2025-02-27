@@ -1,4 +1,7 @@
-﻿namespace a2p.Shared.Application.Domain.Enums
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+namespace a2p.Shared.Application.Domain.Enums
 {
     public enum ErrorCode
     {
@@ -30,7 +33,6 @@
         ERPRead_Order = 5101,
         ERPRead_Item = 5102,
         ERPRead_Material = 5103,
-
 
         // ======================================
         // 🔴 Write Process Errors

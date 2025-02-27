@@ -5,8 +5,6 @@ using System.Data;
 
 using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.Domain.Enums;
-using a2p.Shared.Application.Services.Domain.Entities;
-using a2p.Shared.Domain.Enums;
 using a2p.Shared.Infrastructure.Interfaces;
 
 using Microsoft.Data.SqlClient;
@@ -398,6 +396,6 @@ namespace a2p.Shared.Infrastructure.Services
 
             }
         }
+
     }
 }
-

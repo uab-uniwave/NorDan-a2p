@@ -12,10 +12,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "a2p.WinForm", "src\a2p.WinF
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShellScripts", "PowerShellScripts", "{5DB87A85-F247-4178-B216-BFD4DCF4DFB5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell_Scripts", "PowerShell_Scripts", "{5DB87A85-F247-4178-B216-BFD4DCF4DFB5}"
 	ProjectSection(SolutionItems) = preProject
 		Items\PowerShell_Scripts\FileTree.ps1 = Items\PowerShell_Scripts\FileTree.ps1
 		Items\PowerShell_Scripts\FileTreeWithMethods.ps1 = Items\PowerShell_Scripts\FileTreeWithMethods.ps1
+		GenerateWixComponents.ps1 = GenerateWixComponents.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF}"
@@ -31,64 +32,91 @@ Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "a2p.Installer", "src\a2p.In
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8} = {BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sql_Queries", "Sql_Queries", "{A3906B76-D505-4D6D-9445-7B5B2945E6AA}"
+	ProjectSection(SolutionItems) = preProject
+		Solution_Items\SQL_Queries\Procedures.sql = Solution_Items\SQL_Queries\Procedures.sql
+		Solution_Items\SQL_Queries\Tables.sql = Solution_Items\SQL_Queries\Tables.sql
+		Solution_Items\SQL_Queries\Test.sql = Solution_Items\SQL_Queries\Test.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test_Cases", "Test_Cases", "{30A53F2E-4E9D-4CD2-9BC4-067665073834}"
+	ProjectSection(SolutionItems) = preProject
+		Solution_Items\Test_Cases\0000Z00001-1 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-1 Price_Details.xlsx
+		Solution_Items\Test_Cases\0000Z00001-1 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-1 SumList.xlsx
+		Solution_Items\Test_Cases\0000Z00001-2 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-2 Price_Details.xlsx
+		Solution_Items\Test_Cases\0000Z00001-2 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-2 SumList.xlsx
+		Solution_Items\Test_Cases\0000Z00001-3 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-3 Price_Details.xlsx
+		Solution_Items\Test_Cases\0000Z00001-3 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-3 SumList.xlsx
+		Solution_Items\Test_Cases\0000Z00001-4 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-4 Price_Details.xlsx
+		Solution_Items\Test_Cases\0000Z00001-4 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-4 SumList.xlsx
+		Solution_Items\Test_Cases\0000Z00001-5 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-5 Price_Details.xlsx
+		Solution_Items\Test_Cases\0000Z00001-5 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-5 SumList.xlsx
+		Solution_Items\Test_Cases\0000Z00001-6 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-6 Price_Details.xlsx
+		Solution_Items\Test_Cases\0000Z00001-6 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-6 SumList.xlsx
+		Solution_Items\Test_Cases\0000Z00001-7 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-7 Price_Details.xlsx
+		Solution_Items\Test_Cases\0000Z00001-7 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-7 SumList.xlsx
+		Solution_Items\Test_Cases\0000Z00001-8 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-8 Price_Details.xlsx
+		Solution_Items\Test_Cases\0000Z00001-8 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-8 SumList.xlsx
+		Solution_Items\Test_Cases\0000Z00001-9 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-9 Price_Details.xlsx
+		Solution_Items\Test_Cases\0000Z00001-9 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-9 SumList.xlsx
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TitleBarIcons", "TitleBarIcons", "{C8B1665E-901D-4823-9A79-ACFD051340FB}"
+	ProjectSection(SolutionItems) = preProject
+		Solution_Items\Assets\TitleBarIcons\btClose.png = Solution_Items\Assets\TitleBarIcons\btClose.png
+		Solution_Items\Assets\TitleBarIcons\btCloseHover.png = Solution_Items\Assets\TitleBarIcons\btCloseHover.png
+		Solution_Items\Assets\TitleBarIcons\btMaximize.png = Solution_Items\Assets\TitleBarIcons\btMaximize.png
+		Solution_Items\Assets\TitleBarIcons\btMaximizeHover.png = Solution_Items\Assets\TitleBarIcons\btMaximizeHover.png
+		Solution_Items\Assets\TitleBarIcons\btMinimize.png = Solution_Items\Assets\TitleBarIcons\btMinimize.png
+		Solution_Items\Assets\TitleBarIcons\btMinimizeHover.png = Solution_Items\Assets\TitleBarIcons\btMinimizeHover.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SideBarIcons", "SideBarIcons", "{97CBFA81-F078-48B6-9021-C03899B55D7A}"
+	ProjectSection(SolutionItems) = preProject
+		Solution_Items\Assets\SideBarIcons\btExit.png = Solution_Items\Assets\SideBarIcons\btExit.png
+		Solution_Items\Assets\SideBarIcons\btImport.png = Solution_Items\Assets\SideBarIcons\btImport.png
+		Solution_Items\Assets\SideBarIcons\btLoad.png = Solution_Items\Assets\SideBarIcons\btLoad.png
+		Solution_Items\Assets\SideBarIcons\btLog.png = Solution_Items\Assets\SideBarIcons\btLog.png
+		Solution_Items\Assets\SideBarIcons\btProperties.png = Solution_Items\Assets\SideBarIcons\btProperties.png
+		Solution_Items\Assets\SideBarIcons\btSideBar.png = Solution_Items\Assets\SideBarIcons\btSideBar.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logo", "Logo", "{A52225F4-82B4-43CE-83FA-CDD1967430E4}"
+	ProjectSection(SolutionItems) = preProject
+		Solution_Items\Assets\Logo\NordanLogoInversed.png = Solution_Items\Assets\Logo\NordanLogoInversed.png
+		Solution_Items\Assets\Logo\UniwaveLogo.png = Solution_Items\Assets\Logo\UniwaveLogo.png
+		Solution_Items\Assets\Logo\UniwaveLogoInversed.png = Solution_Items\Assets\Logo\UniwaveLogoInversed.png
+		Solution_Items\Assets\Logo\UniwaveLogoMini.png = Solution_Items\Assets\Logo\UniwaveLogoMini.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{EDC4B62D-A279-4304-9EE7-D9A49B5ADD1A}"
+	ProjectSection(SolutionItems) = preProject
+		Solution_Items\Assets\Images\SpalshScreen.jpg = Solution_Items\Assets\Images\SpalshScreen.jpg
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Icons", "Icons", "{39D73509-DEEB-45A5-89A0-4E19EEB4AC65}"
+	ProjectSection(SolutionItems) = preProject
+		Solution_Items\Assets\Icons\Icon.ico = Solution_Items\Assets\Icons\Icon.ico
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Debug|ARM64 = Debug|ARM64
-		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
-		Release|Any CPU = Release|Any CPU
-		Release|ARM64 = Release|ARM64
-		Release|x64 = Release|x64
-		Release|x86 = Release|x86
+		Debug|AnyCPU = Debug|AnyCPU
+		Release|AnyCPU = Release|AnyCPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x64.Build.0 = Debug|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x86.Build.0 = Debug|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|ARM64.Build.0 = Release|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x64.ActiveCfg = Release|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x64.Build.0 = Release|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x86.ActiveCfg = Release|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x86.Build.0 = Release|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x64.Build.0 = Debug|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x86.Build.0 = Debug|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|ARM64.Build.0 = Release|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x64.ActiveCfg = Release|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x64.Build.0 = Release|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x86.ActiveCfg = Release|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x86.Build.0 = Release|Any CPU
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|Any CPU.Build.0 = Debug|x64
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|ARM64.ActiveCfg = Debug|ARM64
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|ARM64.Build.0 = Debug|ARM64
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|x64.ActiveCfg = Debug|x64
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|x64.Build.0 = Debug|x64
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|x86.ActiveCfg = Debug|x86
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|x86.Build.0 = Debug|x86
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|Any CPU.ActiveCfg = Release|x86
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|ARM64.ActiveCfg = Release|ARM64
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|ARM64.Build.0 = Release|ARM64
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|x64.ActiveCfg = Release|x86
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|x86.ActiveCfg = Release|x86
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|x86.Build.0 = Release|x86
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|AnyCPU.ActiveCfg = Debug|Any CPU
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|AnyCPU.Build.0 = Debug|Any CPU
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|AnyCPU.ActiveCfg = Release|Any CPU
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|AnyCPU.Build.0 = Release|Any CPU
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|AnyCPU.ActiveCfg = Debug|Any CPU
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|AnyCPU.Build.0 = Debug|Any CPU
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|AnyCPU.ActiveCfg = Release|Any CPU
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|AnyCPU.Build.0 = Release|Any CPU
+		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|AnyCPU.ActiveCfg = Debug|x64
+		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|AnyCPU.Build.0 = Debug|x64
+		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|AnyCPU.ActiveCfg = Release|x86
+		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|AnyCPU.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -99,6 +127,13 @@ Global
 		{5DB87A85-F247-4178-B216-BFD4DCF4DFB5} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
 		{0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
 		{D4107497-36A4-4200-8BB8-55084BDC2FB3} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{A3906B76-D505-4D6D-9445-7B5B2945E6AA} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
+		{30A53F2E-4E9D-4CD2-9BC4-067665073834} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
+		{C8B1665E-901D-4823-9A79-ACFD051340FB} = {0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF}
+		{97CBFA81-F078-48B6-9021-C03899B55D7A} = {0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF}
+		{A52225F4-82B4-43CE-83FA-CDD1967430E4} = {0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF}
+		{EDC4B62D-A279-4304-9EE7-D9A49B5ADD1A} = {0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF}
+		{39D73509-DEEB-45A5-89A0-4E19EEB4AC65} = {0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {02931AC6-E3AF-4E96-A144-EE9EE4BE10E7}

@@ -1,8 +1,10 @@
-﻿using System.Data;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System.Data;
 
 using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.DTO;
-using a2p.Shared.Application.Services.Domain.Entities;
 using a2p.Shared.Infrastructure.Interfaces;
 
 using Microsoft.Data.SqlClient;
@@ -72,13 +74,13 @@ namespace a2p.Shared.Infrastructure.Services
                             _ = cmd.Parameters.AddWithValue("@Line", materialDTO.Line); //required
                             _ = cmd.Parameters.AddWithValue("@Column", materialDTO.Column); //required 
                                                                                             //========================================================================================================
-                            _ = cmd.Parameters.AddWithValue("@Item", materialDTO.Item ?? (object) DBNull.Value);
+                            _ = cmd.Parameters.AddWithValue("@Item", materialDTO.Item ?? (object)DBNull.Value);
                             _ = cmd.Parameters.AddWithValue("@SortOrder", materialDTO.SortOrder);
                             //========================================================================================================
                             _ = cmd.Parameters.AddWithValue("@Reference", materialDTO.Reference);
-                            _ = cmd.Parameters.AddWithValue("@Description", materialDTO.Description ?? (object) DBNull.Value);
+                            _ = cmd.Parameters.AddWithValue("@Description", materialDTO.Description ?? (object)DBNull.Value);
                             _ = cmd.Parameters.AddWithValue("@Color", materialDTO.Color);
-                            _ = cmd.Parameters.AddWithValue("@ColorDescription", materialDTO.ColorDescription ?? (object) DBNull.Value);
+                            _ = cmd.Parameters.AddWithValue("@ColorDescription", materialDTO.ColorDescription ?? (object)DBNull.Value);
                             //========================================================================================================
                             _ = cmd.Parameters.AddWithValue("@Width", materialDTO.Width);
                             _ = cmd.Parameters.AddWithValue("@Height", materialDTO.Height);
@@ -108,23 +110,23 @@ namespace a2p.Shared.Infrastructure.Services
                             //========================================================================================================
                             _ = cmd.Parameters.AddWithValue("@SquareMeterPrice", materialDTO.SquareMeterPrice);
                             //========================================================================================================
-                            _ = cmd.Parameters.AddWithValue("@Pallet", materialDTO.Pallet ?? (object) DBNull.Value);
+                            _ = cmd.Parameters.AddWithValue("@Pallet", materialDTO.Pallet ?? (object)DBNull.Value);
                             //========================================================================================================
                             _ = cmd.Parameters.AddWithValue("@MaterialType", materialDTO.MaterialType);
                             //========================================================================================================
                             _ = cmd.Parameters.AddWithValue("@WorksheetType", materialDTO.WorksheetType);
                             //========================================================================================================
-                            _ = cmd.Parameters.AddWithValue("@CustomField1", materialDTO.CustomField1 ?? (object) DBNull.Value);
-                            _ = cmd.Parameters.AddWithValue("@CustomField2", materialDTO.CustomField2 ?? (object) DBNull.Value);
-                            _ = cmd.Parameters.AddWithValue("@CustomField3", materialDTO.CustomField3 ?? (object) DBNull.Value);
+                            _ = cmd.Parameters.AddWithValue("@CustomField1", materialDTO.CustomField1 ?? (object)DBNull.Value);
+                            _ = cmd.Parameters.AddWithValue("@CustomField2", materialDTO.CustomField2 ?? (object)DBNull.Value);
+                            _ = cmd.Parameters.AddWithValue("@CustomField3", materialDTO.CustomField3 ?? (object)DBNull.Value);
                             //========================================================================================================;
-                            _ = cmd.Parameters.AddWithValue("@CustomField4", materialDTO.CustomField4 ?? (object) DBNull.Value);
-                            _ = cmd.Parameters.AddWithValue("@CustomField5", materialDTO.CustomField5 ?? (object) DBNull.Value);
+                            _ = cmd.Parameters.AddWithValue("@CustomField4", materialDTO.CustomField4 ?? (object)DBNull.Value);
+                            _ = cmd.Parameters.AddWithValue("@CustomField5", materialDTO.CustomField5 ?? (object)DBNull.Value);
                             //========================================================================================================              
-                            _ = cmd.Parameters.AddWithValue("@SourceReference", materialDTO.SourceReference ?? (object) DBNull.Value);
-                            _ = cmd.Parameters.AddWithValue("@SourceDescription", materialDTO.SourceDescription ?? (object) DBNull.Value);
-                            _ = cmd.Parameters.AddWithValue("@SourceColor", materialDTO.SourceColor ?? (object) DBNull.Value);
-                            _ = cmd.Parameters.AddWithValue("@SourceColorDescription", materialDTO.SourceColorDescription ?? (object) DBNull.Value);
+                            _ = cmd.Parameters.AddWithValue("@SourceReference", materialDTO.SourceReference ?? (object)DBNull.Value);
+                            _ = cmd.Parameters.AddWithValue("@SourceDescription", materialDTO.SourceDescription ?? (object)DBNull.Value);
+                            _ = cmd.Parameters.AddWithValue("@SourceColor", materialDTO.SourceColor ?? (object)DBNull.Value);
+                            _ = cmd.Parameters.AddWithValue("@SourceColorDescription", materialDTO.SourceColorDescription ?? (object)DBNull.Value);
                             //========================================================================================================              
                             _ = cmd.Parameters.AddWithValue("@CreatedUTCDateTime", dateTime);
                             _ = cmd.Parameters.AddWithValue("@ModifiedUTCDateTime", dateTime);
@@ -195,7 +197,7 @@ namespace a2p.Shared.Infrastructure.Services
                     CommandType = CommandType.StoredProcedure
                 };
                 _ = cmd.Parameters.AddWithValue("@Reference", materialDTO.Reference);
-                _ = cmd.Parameters.AddWithValue("@Description", materialDTO.Description ?? (object) DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@Description", materialDTO.Description ?? (object)DBNull.Value);
                 _ = cmd.Parameters.AddWithValue("@Color", materialDTO.Color);
                 //=======================================================================================
                 _ = cmd.Parameters.AddWithValue("@PackageQuantity", materialDTO.PackageQuantity);
@@ -229,7 +231,7 @@ namespace a2p.Shared.Infrastructure.Services
                     CommandType = CommandType.StoredProcedure
                 };
                 _ = cmd.Parameters.AddWithValue("@Color", materialDTO.Color);
-                _ = cmd.Parameters.AddWithValue("@ColorDescription", materialDTO.ColorDescription ?? (object) DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@ColorDescription", materialDTO.ColorDescription ?? (object)DBNull.Value);
 
                 int result = await _sqlRepository.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
                 if (result > 0)
@@ -290,6 +292,8 @@ namespace a2p.Shared.Infrastructure.Services
 
             }
         }
+
+
     }
 
 }

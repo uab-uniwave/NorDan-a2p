@@ -10,6 +10,8 @@ $outputPath = (Resolve-Path -Path $outputPath).Path
 # Define the output file paths
 $outputFilePath = Join-Path -Path $outputPath -ChildPath "Components.wxs"
 $productFilePath = Join-Path -Path $outputPath -ChildPath "Product.wxs"
+$fragmentFilePath = Join-Path -Path $outputPath -ChildPath "Fragment.wxs"
+$directoryFilePath = Join-Path -Path $outputPath -ChildPath "Directory.wxs"
 
 # Clear Host
 Clear-Host
@@ -26,6 +28,13 @@ function Sanitize-Id {
     return $id -replace '[^a-zA-Z0-9_.]', '_'
 }
 
+function Remove-Prefix {
+    param (
+        [string]$id
+    )
+    return $id -replace '^[^_]+_', ''
+}
+
 function Generate-Component {
     param (
         [string]$folderPath,
@@ -34,10 +43,10 @@ function Generate-Component {
 
     $files = Get-ChildItem -Path $folderPath -File
     $guid = [guid]::NewGuid().ToString()
-    $componentId = Sanitize-Id -id $componentId
+    $componentId = Remove-Prefix -id (Sanitize-Id -id $componentId)
     $componentXml = "<Component Id='$componentId' Guid='$guid'>" + "`r`n"
     foreach ($file in $files) {
-        $fileId = Sanitize-Id -id ($componentId + '_' + $file.Name)
+        $fileId = Remove-Prefix -id (Sanitize-Id -id ($componentId + '_' + $file.Name))
         $relativePath = $file.FullName.Substring($sourcePath.Length + 1) -replace '\\', '/'
         $componentXml += "    <File Id='$fileId' Source='$relativePath' />" + "`r`n"
     }
@@ -54,7 +63,7 @@ function Generate-Directory {
     $directories = Get-ChildItem -Path $folderPath -Directory
     $directoryXml = Generate-Component -folderPath $folderPath -componentId $componentId
     foreach ($directory in $directories) {
-        $subComponentId = Sanitize-Id -id ($componentId + '_' + $directory.Name)
+        $subComponentId = Remove-Prefix -id (Sanitize-Id -id ($componentId + '_' + $directory.Name))
         $directoryXml += Generate-Directory -folderPath $directory.FullName -componentId $subComponentId
     }
     return $directoryXml
@@ -70,7 +79,7 @@ function Generate-Fragments {
     $directories = Get-ChildItem -Path $folderPath -Directory
     $fragmentsXml = ""
     foreach ($directory in $directories) {
-        $directoryId = Sanitize-Id -id ($componentIdPrefix + '_' + $directory.Name)
+        $directoryId = Remove-Prefix -id (Sanitize-Id -id ($componentIdPrefix + '_' + $directory.Name))
         $fragmentsXml += "  <Fragment>" + "`r`n"
         $fragmentsXml += "    <DirectoryRef Id='$parentId'>" + "`r`n"
         $fragmentsXml += "      <Directory Id='$directoryId' Name='$directoryId'>" + "`r`n"
@@ -106,14 +115,21 @@ $componentRefs = Select-String -Path $outputFilePath -Pattern '<Component Id=' |
 
 # Update Product.wxs with new ComponentRef IDs
 $productXml = [xml](Get-Content -Path $productFilePath)
-$componentGroup = $productXml.Wix.Fragment.ComponentGroup
+$namespaceManager = New-Object System.Xml.XmlNamespaceManager($productXml.NameTable)
+$namespaceManager.AddNamespace("wix", "http://schemas.microsoft.com/wix/2006/wi")
+$componentGroup = $productXml.SelectSingleNode("//wix:ComponentGroup[@Id='ProductComponents']", $namespaceManager)
+
+if ($null -eq $componentGroup) {
+    Write-Host "ComponentGroup with Id 'ProductComponents' not found in Product.wxs" -ForegroundColor Red
+    exit 1
+}
 
 # Clear existing ComponentRef elements
-$componentGroup.ComponentRef.Clear()
+$componentGroup.RemoveAll()
 
 # Add new ComponentRef elements
 foreach ($componentRef in $componentRefs) {
-    $newComponentRef = $productXml.CreateElement("ComponentRef")
+    $newComponentRef = $productXml.CreateElement("ComponentRef", "http://schemas.microsoft.com/wix/2006/wi")
     $newComponentRef.SetAttribute("Id", $componentRef)
     $componentGroup.AppendChild($newComponentRef) | Out-Null
 }
@@ -122,3 +138,52 @@ foreach ($componentRef in $componentRefs) {
 $productXml.Save($productFilePath)
 
 Write-Host "Product.wxs updated with new ComponentRef IDs" -ForegroundColor Green
+
+# Update Fragment.wxs with new ComponentRef IDs
+$fragmentXml = [xml](Get-Content -Path $fragmentFilePath)
+$componentGroup = $fragmentXml.SelectSingleNode("//wix:ComponentGroup[@Id='AllComponents']", $namespaceManager)
+
+if ($null -eq $componentGroup) {
+    Write-Host "ComponentGroup with Id 'AllComponents' not found in Fragment.wxs" -ForegroundColor Red
+    exit 1
+}
+
+# Clear existing ComponentRef elements
+$componentGroup.RemoveAll()
+
+# Add new ComponentRef elements
+foreach ($componentRef in $componentRefs) {
+    $newComponentRef = $fragmentXml.CreateElement("ComponentRef", "http://schemas.microsoft.com/wix/2006/wi")
+    $newComponentRef.SetAttribute("Id", $componentRef)
+    $componentGroup.AppendChild($newComponentRef) | Out-Null
+}
+
+# Save the updated Fragment.wxs
+$fragmentXml.Save($fragmentFilePath)
+
+Write-Host "Fragment.wxs updated with new ComponentRef IDs" -ForegroundColor Green
+
+# Update Directory.wxs with new ComponentRef IDs
+$directoryXml = [xml](Get-Content -Path $directoryFilePath)
+$componentGroup = $directoryXml.SelectSingleNode("//wix:DirectoryRef[@Id='ProgramFilesFolder']", $namespaceManager)
+
+if ($null -eq $componentGroup) {
+    Write-Host "DirectoryRef with Id 'ProgramFilesFolder' not found in Directory.wxs" -ForegroundColor Red
+    exit 1
+}
+
+# Clear existing Component elements
+$componentGroup.RemoveAll()
+
+# Add new Component elements
+foreach ($componentRef in $componentRefs) {
+    $newComponent = $directoryXml.CreateElement("Component", "http://schemas.microsoft.com/wix/2006/wi")
+    $newComponent.SetAttribute("Id", $componentRef)
+    $newComponent.SetAttribute("Guid", [guid]::NewGuid().ToString())
+    $componentGroup.AppendChild($newComponent) | Out-Null
+}
+
+# Save the updated Directory.wxs
+$directoryXml.Save($directoryFilePath)
+
+Write-Host "Directory.wxs updated with new Component IDs" -ForegroundColor Green

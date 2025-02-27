@@ -18,6 +18,7 @@
      <OutputPath>$(BaseOutputPath)\$(Configuration)\</OutputPath>
  <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
  <ApplicationIcon>Icon.ico</ApplicationIcon>
+ <Platforms>AnyCPU</Platforms>
  </PropertyGroup>
 
  <ItemGroup>

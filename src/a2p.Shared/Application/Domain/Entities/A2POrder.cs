@@ -3,9 +3,8 @@
 
 using System.ComponentModel.DataAnnotations;
 
+using a2p.Shared.Application.Domain.Enums;
 using a2p.Shared.Application.DTO;
-using a2p.Shared.Application.Services.Domain.Entities;
-using a2p.Shared.Domain.Enums;
 
 namespace a2p.Shared.Application.Domain.Entities
 {
@@ -33,7 +32,6 @@ namespace a2p.Shared.Application.Domain.Entities
         public string? Currency { get; set; }
         public decimal ExchangeRate { get; set; }
         //===================================================================================
-
 
     }
 }

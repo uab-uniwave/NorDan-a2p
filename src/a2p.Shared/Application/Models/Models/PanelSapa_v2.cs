@@ -1,11 +1,14 @@
-﻿using a2p.Shared.Application.Models.BaseModels;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using a2p.Shared.Application.Models.BaseModels;
 
 namespace a2p.Shared.Application.Models.Models
 {
- public class PanelSapa_v2 : BasePanel
- {
-  public string ArticleType { get; set; } = string.Empty;
-  public string ColorDescription { get; set; } = string.Empty;
-  public string SquareMeterPrice { get; set; } = string.Empty;
- }
+    public class PanelSapa_v2 : BasePanel
+    {
+        public string ArticleType { get; set; } = string.Empty;
+        public string ColorDescription { get; set; } = string.Empty;
+        public string SquareMeterPrice { get; set; } = string.Empty;
+    }
 }

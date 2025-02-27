@@ -1,19 +1,21 @@
-﻿namespace a2p.Shared.Application.Services.Domain.Entities
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+namespace a2p.Shared.Application.Domain.Entities
 {
- public class ProgressValue
- {
+    public class ProgressValue
+    {
 
+        public int MinValue { get; set; } = 0;
+        public int MaxValue { get; set; } = 100;
+        public int Value { get; set; } = 0;
+        public string ProgressTitle { get; set; } = string.Empty;
+        public string ProgressTask1 { get; set; } = string.Empty;
+        public string ProgressTask2 { get; set; } = string.Empty;
+        public string ProgressTask3 { get; set; } = string.Empty;
+        public string Order { get; set; } = string.Empty;
+        public string WorksheetName { get; set; } = string.Empty;
+        public int WorksheetLine { get; set; } = 0;
 
-  public int MinValue { get; set; } = 0;
-  public int MaxValue { get; set; } = 100;
-  public int Value { get; set; } = 0;
-  public string ProgressTitle { get; set; } = string.Empty;
-  public string ProgressTask1 { get; set; } = string.Empty;
-  public string ProgressTask2 { get; set; } = string.Empty;
-  public string ProgressTask3 { get; set; } = string.Empty;
-  public string Order { get; set; } = string.Empty;
-  public string WorksheetName { get; set; } = string.Empty;
-  public int WorksheetLine { get; set; } = 0;
-
- }
+    }
 }

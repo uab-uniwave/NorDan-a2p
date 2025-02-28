@@ -36,11 +36,17 @@ jobs:
           Set-Content $_.FullName
         }
 
-    - name: Update WiX Installer Version
+    - name: Update WiX Installer Project Version
       run: |
         $version = "${{ env.VERSION }}"
-        (Get-Content src/a2p.installer.wixproj) -replace 'Version=".*?"', "Version="$version" |
-        Set-Content src/a2p.installer.wixproj
+        (Get-Content src/a2p.Installer.wixproj) -replace '<Version>.*?</Version>', "<Version>$version</Version>" |
+        Set-Content src/a2p.Installer.wixproj
+
+    - name: Update WiX Installer `Product.wxs` Version
+      run: |
+        $version = "${{ env.VERSION }}"
+        (Get-Content src/a2p.Installer/Product.wxs) -replace 'Version=".*?"', "Version=`"$version`"" |
+        Set-Content src/a2p.Installer/Product.wxs
 
     - name: Build Solution (Release, x64)
       run: dotnet build a2p.sln --configuration Release --arch x64 --no-restore
@@ -49,10 +55,17 @@ jobs:
       run: dotnet tool install --global wix --version 5.0.2
 
     - name: Build WiX Installer (Release, x64)
-      run: dotnet build src/a2p.installer.wixproj --configuration Release --arch x64 --no-restore
+      run: dotnet build src/a2p.Installer.wixproj --configuration Release --arch x64 --no-restore
+
+    - name: Rename MSI with Version
+      run: |
+        $version = "${{ env.VERSION }}"
+        $msiPath = Get-ChildItem -Path Output -Filter "*.msi" | Select-Object -ExpandProperty FullName
+        $newMsiPath = "Output/A2P-Installer-$version.msi"
+        Rename-Item -Path $msiPath -NewName $newMsiPath
 
     - name: Upload MSI as Artifact
       uses: actions/upload-artifact@v4
       with:
         name: A2P-Installer
-        path: Output/*.msi
+        path: Output/A2P-Installer-${{ env.VERSION }}.msi

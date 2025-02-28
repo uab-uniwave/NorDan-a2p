@@ -29,24 +29,37 @@ jobs:
       run: echo "VERSION=1.0.${{ github.run_number }}.0" >> $GITHUB_ENV
 
     - name: Update Assembly Version
+      shell: pwsh
       run: |
         $version = "${{ env.VERSION }}"
-        (Get-ChildItem -Path src -Recurse -Include AssemblyInfo.cs) | ForEach-Object {
+        Get-ChildItem -Path "$env:GITHUB_WORKSPACE/src" -Recurse -Include AssemblyInfo.cs | ForEach-Object {
           (Get-Content $_.FullName) -replace 'AssemblyVersion\(".*?"\)', "AssemblyVersion(`"$version`")" |
           Set-Content $_.FullName
         }
 
     - name: Update WiX Installer Project Version
+      shell: pwsh
       run: |
         $version = "${{ env.VERSION }}"
-        (Get-Content src/a2p.Installer.wixproj) -replace '<Version>.*?</Version>', "<Version>$version</Version>" |
-        Set-Content src/a2p.Installer.wixproj
+        $wixProjPath = "$env:GITHUB_WORKSPACE/src/a2p.Installer.wixproj"
+        if (Test-Path $wixProjPath) {
+          (Get-Content $wixProjPath) -replace '<Version>.*?</Version>', "<Version>$version</Version>" |
+          Set-Content $wixProjPath
+        } else {
+          Write-Error "WiX project file not found: $wixProjPath"
+        }
 
     - name: Update WiX Installer `Product.wxs` Version
+      shell: pwsh
       run: |
         $version = "${{ env.VERSION }}"
-        (Get-Content src/a2p.Installer/Product.wxs) -replace 'Version=".*?"', "Version=`"$version`"" |
-        Set-Content src/a2p.Installer/Product.wxs
+        $wxsFilePath = "$env:GITHUB_WORKSPACE/src/a2p.Installer/Product.wxs"
+        if (Test-Path $wxsFilePath) {
+          (Get-Content $wxsFilePath) -replace 'Version=".*?"', "Version=`"$version`"" |
+          Set-Content $wxsFilePath
+        } else {
+          Write-Error "WiX Product.wxs file not found: $wxsFilePath"
+        }
 
     - name: Build Solution (Release, x64)
       run: dotnet build a2p.sln --configuration Release --arch x64 --no-restore
@@ -58,10 +71,11 @@ jobs:
       run: dotnet build src/a2p.Installer.wixproj --configuration Release --arch x64 --no-restore
 
     - name: Rename MSI with Version
+      shell: pwsh
       run: |
         $version = "${{ env.VERSION }}"
-        $msiPath = Get-ChildItem -Path Output -Filter "*.msi" | Select-Object -ExpandProperty FullName
-        $newMsiPath = "Output/A2P-Installer-$version.msi"
+        $msiPath = Get-ChildItem -Path "$env:GITHUB_WORKSPACE/Output" -Filter "*.msi" | Select-Object -ExpandProperty FullName
+        $newMsiPath = "$env:GITHUB_WORKSPACE/Output/A2P-Installer-$version.msi"
         Rename-Item -Path $msiPath -NewName $newMsiPath
 
     - name: Upload MSI as Artifact

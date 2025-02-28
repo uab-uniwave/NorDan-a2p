@@ -52,7 +52,7 @@ jobs:
       run: dotnet build src/a2p.installer.wixproj --configuration Release --arch x64 --no-restore
 
     - name: Upload MSI as Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: A2P-Installer
         path: Output/*.msi

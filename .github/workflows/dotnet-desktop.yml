@@ -1,4 +1,4 @@
-name: Build Alu2PrefSuite and Create MSI Installer
+name: Build A2P and Create MSI Installer
 
 on:
   push:
@@ -41,7 +41,7 @@ jobs:
       shell: pwsh
       run: |
         $version = "${{ env.VERSION }}"
-        $wixProjPath = "$env:GITHUB_WORKSPACE/src/a2p.Installer/a2p.Installer.wixproj"
+        $wixProjPath = "$env:GITHUB_WORKSPACE/src/a2p.Installer.wixproj"
         if (Test-Path $wixProjPath) {
           (Get-Content $wixProjPath) -replace '<Version>.*?</Version>', "<Version>$version</Version>" |
           Set-Content $wixProjPath
@@ -61,14 +61,17 @@ jobs:
           Write-Error "WiX Product.wxs file not found: $wxsFilePath"
         }
 
-    - name: Build Solution (Release, x64)
-      run: dotnet build a2p.sln --configuration Release --arch x64 --no-restore
+    - name: Build Shared Project (Release, x64)
+      run: dotnet build src/a2p.Shared.csproj --configuration Release --runtime win-x64 --no-restore
+
+    - name: Build WinForms Project (Release, x64)
+      run: dotnet build src/a2p.WinForm.csproj --configuration Release --runtime win-x64 --no-restore
 
     - name: Install WiX Toolset 5
       run: dotnet tool install --global wix --version 5.0.2
 
     - name: Build WiX Installer (Release, x64)
-      run: dotnet build src/a2p.Installer.wixproj --configuration Release --arch x64 --no-restore
+      run: dotnet build src/a2p.Installer.wixproj --configuration Release --no-restore
 
     - name: Rename MSI with Version
       shell: pwsh

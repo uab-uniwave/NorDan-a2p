@@ -60,7 +60,21 @@ jobs:
         } else {
           Write-Error "WiX Product.wxs file not found: $wxsFilePath"
         }
+        
+    - name: Cache External DLLs
+      uses: actions/cache@v4
+      with:
+        path: libs
+        key: external-dlls-v1
 
+    - name: Copy Cached DLLs to Build Directory
+      shell: pwsh
+      run: |
+        $destPath = "$env:GITHUB_WORKSPACE/src/a2p.Shared/bin/Release/net8.0-windows/"
+        if (!(Test-Path $destPath)) { New-Item -ItemType Directory -Path $destPath -Force }
+        Copy-Item -Path "$env:GITHUB_WORKSPACE/libs/*" -Destination $destPath -Force
+        Get-ChildItem $destPath  # Debugging: List copied DLLs
+      
     - name: Build Shared Project (Release, x64)
       run: dotnet build src/a2p.Shared/a2p.Shared.csproj --configuration Release --runtime win-x64 --no-restore
 

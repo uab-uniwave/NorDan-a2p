@@ -62,16 +62,16 @@ jobs:
         }
 
     - name: Build Shared Project (Release, x64)
-      run: dotnet build src/a2p.Shared.csproj --configuration Release --runtime win-x64 --no-restore
+      run: dotnet build src/a2p.Shared/a2p.Shared.csproj --configuration Release --runtime win-x64 --no-restore
 
     - name: Build WinForms Project (Release, x64)
-      run: dotnet build src/a2p.WinForm.csproj --configuration Release --runtime win-x64 --no-restore
+      run: dotnet build src/a2p.WinForm/a2p.WinForm.csproj --configuration Release --runtime win-x64 --no-restore
 
     - name: Install WiX Toolset 5
       run: dotnet tool install --global wix --version 5.0.2
 
     - name: Build WiX Installer (Release, x64)
-      run: dotnet build src/a2p.Installer.wixproj --configuration Release --no-restore
+      run: dotnet build src/a2p.Installer/a2p.Installer.wixproj --configuration Release --no-restore
 
     - name: Rename MSI with Version
       shell: pwsh

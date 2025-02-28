@@ -12,94 +12,20 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "a2p.WinForm", "src\a2p.WinF
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell_Scripts", "PowerShell_Scripts", "{5DB87A85-F247-4178-B216-BFD4DCF4DFB5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShellScripts", "PowerShellScripts", "{5DB87A85-F247-4178-B216-BFD4DCF4DFB5}"
 	ProjectSection(SolutionItems) = preProject
-		Solution_Items\PowerShell_Scripts\FileTree.ps1 = Solution_Items\PowerShell_Scripts\FileTree.ps1
-		Solution_Items\PowerShell_Scripts\FileTreeWithMethods.ps1 = Solution_Items\PowerShell_Scripts\FileTreeWithMethods.ps1
-		Solution_Items\PowerShell_Scripts\wixComponents.ps1 = Solution_Items\PowerShell_Scripts\wixComponents.ps1
+		Items\PowerShell_Scripts\FileTree.ps1 = Items\PowerShell_Scripts\FileTree.ps1
+		Items\PowerShell_Scripts\FileTreeWithMethods.ps1 = Items\PowerShell_Scripts\FileTreeWithMethods.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution_Items", "Solution_Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
 EndProject
-<<<<<<< HEAD
-Project("{B7DD6F7E-DEF8-4E67-B5B7-07EF123DB6F0}") = "a2p.Installer", "src\a2p.Installer\a2p.Installer.wixproj", "{D4107497-36A4-4200-8BB8-55084BDC2FB3}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Icons", "Icons", "{579F68E8-D7FC-4545-BD8A-760A9D61555E}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{CD089F95-6DCE-497D-A24D-5CA7E07B6812}"
-	ProjectSection(SolutionItems) = preProject
-		Solution_Items\Assets\Images\SpalshScreen.jpg = Solution_Items\Assets\Images\SpalshScreen.jpg
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SideBarIcons", "SideBarIcons", "{489C93E0-DB59-480B-AF3E-5844B9F7B02D}"
-	ProjectSection(SolutionItems) = preProject
-		Solution_Items\Assets\Icons\SideBarIcons\btExit.png = Solution_Items\Assets\Icons\SideBarIcons\btExit.png
-		Solution_Items\Assets\Icons\SideBarIcons\btImport.png = Solution_Items\Assets\Icons\SideBarIcons\btImport.png
-		Solution_Items\Assets\Icons\SideBarIcons\btLoad.png = Solution_Items\Assets\Icons\SideBarIcons\btLoad.png
-		Solution_Items\Assets\Icons\SideBarIcons\btLog.png = Solution_Items\Assets\Icons\SideBarIcons\btLog.png
-		Solution_Items\Assets\Icons\SideBarIcons\btProperties.png = Solution_Items\Assets\Icons\SideBarIcons\btProperties.png
-		Solution_Items\Assets\Icons\SideBarIcons\btSideBar.png = Solution_Items\Assets\Icons\SideBarIcons\btSideBar.png
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TitleBarIcons", "TitleBarIcons", "{75E64FF8-2120-4ADE-982F-EC413950747B}"
-	ProjectSection(SolutionItems) = preProject
-		Solution_Items\Assets\Icons\TitleBarIcons\btClose.png = Solution_Items\Assets\Icons\TitleBarIcons\btClose.png
-		Solution_Items\Assets\Icons\TitleBarIcons\btCloseHover.png = Solution_Items\Assets\Icons\TitleBarIcons\btCloseHover.png
-		Solution_Items\Assets\Icons\TitleBarIcons\btMaximize.png = Solution_Items\Assets\Icons\TitleBarIcons\btMaximize.png
-		Solution_Items\Assets\Icons\TitleBarIcons\btMaximizeHover.png = Solution_Items\Assets\Icons\TitleBarIcons\btMaximizeHover.png
-		Solution_Items\Assets\Icons\TitleBarIcons\btMinimize.png = Solution_Items\Assets\Icons\TitleBarIcons\btMinimize.png
-		Solution_Items\Assets\Icons\TitleBarIcons\btMinimizeHover.png = Solution_Items\Assets\Icons\TitleBarIcons\btMinimizeHover.png
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AppIcons", "AppIcons", "{20300453-7CED-41A0-BE9C-D94E4BF5CD21}"
-	ProjectSection(SolutionItems) = preProject
-		Solution_Items\Assets\Icons\AppIcons\Icon.ico = Solution_Items\Assets\Icons\AppIcons\Icon.ico
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logos", "Logos", "{408AC20F-9064-44C1-9382-277165A29512}"
-	ProjectSection(SolutionItems) = preProject
-		Solution_Items\Assets\Logos\NordanLogoInversed.png = Solution_Items\Assets\Logos\NordanLogoInversed.png
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sql_Queries", "Sql_Queries", "{A14F44E8-FA29-47B6-9DFF-8B9E4FE6008C}"
-	ProjectSection(SolutionItems) = preProject
-		Solution_Items\SQL_Queries\Procedures.sql = Solution_Items\SQL_Queries\Procedures.sql
-		Solution_Items\SQL_Queries\Tables.sql = Solution_Items\SQL_Queries\Tables.sql
-		Solution_Items\SQL_Queries\Test.sql = Solution_Items\SQL_Queries\Test.sql
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test_Cases", "Test_Cases", "{1C5A7925-6BBA-416E-BD67-BD8DB943381C}"
-	ProjectSection(SolutionItems) = preProject
-		Solution_Items\Test_Cases\0000Z00001-1 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-1 Price_Details.xlsx
-		Solution_Items\Test_Cases\0000Z00001-1 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-1 SumList.xlsx
-		Solution_Items\Test_Cases\0000Z00001-2 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-2 Price_Details.xlsx
-		Solution_Items\Test_Cases\0000Z00001-2 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-2 SumList.xlsx
-		Solution_Items\Test_Cases\0000Z00001-3 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-3 Price_Details.xlsx
-		Solution_Items\Test_Cases\0000Z00001-3 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-3 SumList.xlsx
-		Solution_Items\Test_Cases\0000Z00001-4 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-4 Price_Details.xlsx
-		Solution_Items\Test_Cases\0000Z00001-4 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-4 SumList.xlsx
-		Solution_Items\Test_Cases\0000Z00001-5 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-5 Price_Details.xlsx
-		Solution_Items\Test_Cases\0000Z00001-5 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-5 SumList.xlsx
-		Solution_Items\Test_Cases\0000Z00001-6 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-6 Price_Details.xlsx
-		Solution_Items\Test_Cases\0000Z00001-6 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-6 SumList.xlsx
-		Solution_Items\Test_Cases\0000Z00001-7 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-7 Price_Details.xlsx
-		Solution_Items\Test_Cases\0000Z00001-7 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-7 SumList.xlsx
-		Solution_Items\Test_Cases\0000Z00001-8 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-8 Price_Details.xlsx
-		Solution_Items\Test_Cases\0000Z00001-8 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-8 SumList.xlsx
-		Solution_Items\Test_Cases\0000Z00001-9 Price_Details.xlsx = Solution_Items\Test_Cases\0000Z00001-9 Price_Details.xlsx
-		Solution_Items\Test_Cases\0000Z00001-9 SumList.xlsx = Solution_Items\Test_Cases\0000Z00001-9 SumList.xlsx
-=======
-Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "a2p.Installer", "src\a2p.Installer\a2p.Installer.wixproj", "{D4107497-36A4-4200-8BB8-55084BDC2FB3}"
-	ProjectSection(ProjectDependencies) = postProject
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1} = {220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8} = {BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}
->>>>>>> c1c3994d7d98fbe211cbc4a087db9b83f3528341
-	EndProjectSection
+Project("{B7DD6F7E-DEF8-4E67-B5B7-07EF123DB6F0}") = "a2p.Installer", "src\a2p.Installer\a2p.Installer.wixproj", "{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,6 +37,10 @@ Global
 		Release|ARM64 = Release|ARM64
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
+		Test|Any CPU = Test|Any CPU
+		Test|ARM64 = Test|ARM64
+		Test|x64 = Test|x64
+		Test|x86 = Test|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -129,6 +59,14 @@ Global
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x64.Build.0 = Release|Any CPU
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x86.ActiveCfg = Release|Any CPU
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x86.Build.0 = Release|Any CPU
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Test|Any CPU.ActiveCfg = Test|Any CPU
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Test|Any CPU.Build.0 = Test|Any CPU
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Test|ARM64.ActiveCfg = Test|Any CPU
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Test|ARM64.Build.0 = Test|Any CPU
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Test|x64.ActiveCfg = Test|Any CPU
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Test|x64.Build.0 = Test|Any CPU
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Test|x86.ActiveCfg = Test|Any CPU
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Test|x86.Build.0 = Test|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|ARM64.ActiveCfg = Debug|Any CPU
@@ -145,35 +83,34 @@ Global
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x64.Build.0 = Release|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x86.ActiveCfg = Release|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x86.Build.0 = Release|Any CPU
-<<<<<<< HEAD
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|ARM64.ActiveCfg = Debug|ARM64
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|ARM64.Build.0 = Debug|ARM64
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|x64.ActiveCfg = Debug|x86
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|x86.ActiveCfg = Debug|x86
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|x86.Build.0 = Debug|x86
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|Any CPU.ActiveCfg = Release|x64
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|Any CPU.Build.0 = Release|x64
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|ARM64.ActiveCfg = Release|ARM64
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|ARM64.Build.0 = Release|ARM64
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|x64.ActiveCfg = Release|x64
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|x64.Build.0 = Release|x64
-=======
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|Any CPU.Build.0 = Debug|x64
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|ARM64.ActiveCfg = Debug|ARM64
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|ARM64.Build.0 = Debug|ARM64
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|x64.ActiveCfg = Debug|x64
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|x64.Build.0 = Debug|x64
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|x86.ActiveCfg = Debug|x86
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Debug|x86.Build.0 = Debug|x86
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|Any CPU.ActiveCfg = Release|x86
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|ARM64.ActiveCfg = Release|ARM64
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|ARM64.Build.0 = Release|ARM64
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|x64.ActiveCfg = Release|x86
->>>>>>> c1c3994d7d98fbe211cbc4a087db9b83f3528341
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|x86.ActiveCfg = Release|x86
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3}.Release|x86.Build.0 = Release|x86
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Test|Any CPU.ActiveCfg = Test|Any CPU
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Test|Any CPU.Build.0 = Test|Any CPU
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Test|ARM64.ActiveCfg = Test|Any CPU
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Test|ARM64.Build.0 = Test|Any CPU
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Test|x64.ActiveCfg = Test|Any CPU
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Test|x64.Build.0 = Test|Any CPU
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Test|x86.ActiveCfg = Test|Any CPU
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Test|x86.Build.0 = Test|Any CPU
+		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Debug|Any CPU.Build.0 = Debug|x64
+		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Debug|ARM64.Build.0 = Debug|ARM64
+		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Debug|x64.ActiveCfg = Debug|x64
+		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Debug|x64.Build.0 = Debug|x64
+		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Debug|x86.ActiveCfg = Debug|x86
+		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Debug|x86.Build.0 = Debug|x86
+		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Release|Any CPU.ActiveCfg = Release|x64
+		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Release|Any CPU.Build.0 = Release|x64
+		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Release|ARM64.ActiveCfg = Release|ARM64
+		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Release|ARM64.Build.0 = Release|ARM64
+		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Release|x64.ActiveCfg = Release|x64
+		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Release|x64.Build.0 = Release|x64
+		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Release|x86.ActiveCfg = Release|x86
+		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Release|x86.Build.0 = Release|x86
+		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Test|Any CPU.ActiveCfg = Release|x64
+		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Test|ARM64.ActiveCfg = Release|ARM64
+		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Test|x64.ActiveCfg = Release|x64
+		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Test|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -183,22 +120,11 @@ Global
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{5DB87A85-F247-4178-B216-BFD4DCF4DFB5} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
 		{0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
-		{D4107497-36A4-4200-8BB8-55084BDC2FB3} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-<<<<<<< HEAD
-		{579F68E8-D7FC-4545-BD8A-760A9D61555E} = {0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF}
-		{CD089F95-6DCE-497D-A24D-5CA7E07B6812} = {0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF}
-		{489C93E0-DB59-480B-AF3E-5844B9F7B02D} = {579F68E8-D7FC-4545-BD8A-760A9D61555E}
-		{75E64FF8-2120-4ADE-982F-EC413950747B} = {579F68E8-D7FC-4545-BD8A-760A9D61555E}
-		{20300453-7CED-41A0-BE9C-D94E4BF5CD21} = {579F68E8-D7FC-4545-BD8A-760A9D61555E}
-		{408AC20F-9064-44C1-9382-277165A29512} = {0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF}
-		{A14F44E8-FA29-47B6-9DFF-8B9E4FE6008C} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
-		{1C5A7925-6BBA-416E-BD67-BD8DB943381C} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
-=======
->>>>>>> c1c3994d7d98fbe211cbc4a087db9b83f3528341
+		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {02931AC6-E3AF-4E96-A144-EE9EE4BE10E7}
-		BuildVersion_BuildVersioningStyle = None.None.None.Increment
 		BuildVersion_StartDate = 2000/1/1
+		BuildVersion_BuildVersioningStyle = None.None.None.Increment
 	EndGlobalSection
 EndGlobal

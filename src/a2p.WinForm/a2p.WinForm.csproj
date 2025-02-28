@@ -18,6 +18,7 @@
      <OutputPath>$(BaseOutputPath)\$(Configuration)\</OutputPath>
  <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
  <ApplicationIcon>Icon.ico</ApplicationIcon>
+ <Configurations>Debug;Release;Test</Configurations>
  </PropertyGroup>
 
  <ItemGroup>
@@ -100,8 +101,8 @@
     </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command='xcopy /Y /I "..\..\Solution_Items\Sql_Queries" "..\..\Output\a2p.WinForm\Release\net8.0-windows\Sql_Queries"' />
-    <Exec Command='xcopy /Y /I "..\..\Solution_Items\Test_Cases" "..\..\Output\a2p.WinForm\Release\net8.0-windows\Test_Cases"' />
+    <Exec Command="xcopy /Y /I &quot;..\..\Solution_Items\Sql_Queries&quot; &quot;..\..\Output\a2p.WinForm\Release\net8.0-windows\Sql_Queries&quot;" />
+    <Exec Command="xcopy /Y /I &quot;..\..\Solution_Items\Test_Cases&quot; &quot;..\..\Output\a2p.WinForm\Release\net8.0-windows\Test_Cases&quot;" />
   </Target>
 
 </Project>

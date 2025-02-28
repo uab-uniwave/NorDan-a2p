@@ -1,24 +1,23 @@
 ﻿# A2P Readme
 
 ## Fields lenghts
-
 > [!CAUTION]
 > Information about PrefSuite application fields lenghts.
 
-|Type     | Field            | Length  |
-|:-------- | :-------------- | :------:|
-|Material | Referencia       | 25      |
-|Material | ReferenciaBase   | 25      |
-|Material | Description      | 255     |
-|Color    | Name             | 50      |
-|Color    | Description      | 120     |
-|Item     | Nomenclature     | 25      |
-|Item     | Concept          | 50      |
-|Item     | Description      | 255     |
-|Order    | Reference        | 50      |
-|Order    | Internal Code    | 50      |
-|Order    | User1            | 50      |
-|Order    | User2            | 50      |
+| Type     | Field          | Length |
+| :------- | :------------- | :----: |
+| Material | Referencia     |   25   |
+| Material | ReferenciaBase |   25   |
+| Material | Description    |  255   |
+| Color    | Name           |   50   |
+| Color    | Description    |  120   |
+| Item     | Nomenclature   |   25   |
+| Item     | Concept        |   50   |
+| Item     | Description    |  255   |
+| Order    | Reference      |   50   |
+| Order    | Internal Code  |   50   |
+| Order    | User1          |   50   |
+| Order    | User2          |   50   |
 
 
 ## Data transformation objects
@@ -59,7 +58,7 @@ Material transformatio (internally called MaterialDTO). Materiales data read fro
 | PriceOrderd        | decimal     |       0       | Total price                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | PriceRequired      | decimal     |       0       | Calculated value ``` PriceRequired = QuantityRequired * PriceOrderd / QuantityOrdered ```                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | PriceLeftOver      | decimal     |       0       | Calculated value ```PriceLeftOver = PriceOrdered - PriceRequired```                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| Pallet             | string      | empty string  | Used for glass or/and panels pllets                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Pallet             | string      | empty string  | Used for glass or/and panels pllets                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | Material Type      | string      | empty string  |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | CustomField1       | string      | empty string  | Custom field (used for color just Sapa legacy materials and panels)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | CustomField2       | string      | empty string  | Custom field (used for color just Sapa legacy  materials and panels)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -431,6 +430,10 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 
+      
+## msbuild 
+>[!NOTE]
+>msbuild a2p.sln -target:clean;rebuild -p:configuration=release;platform=x64;TargetFramework=net8.0-Windows
 
 
 # Header 1

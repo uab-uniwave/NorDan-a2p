@@ -4,4 +4,8 @@
     <DefineConstants>Release</DefineConstants>
     <DisableFastUpToDateCheck>True</DisableFastUpToDateCheck>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\a2p.Shared\a2p.Shared.csproj" />
+    <ProjectReference Include="..\a2p.WinForm\a2p.WinForm.csproj" />
+  </ItemGroup>
 </Project>

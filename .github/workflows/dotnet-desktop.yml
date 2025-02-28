@@ -1,4 +1,4 @@
-name: Build A2P and Create MSI Installer
+name: Build Alu2PrefSuite and Create MSI Installer
 
 on:
   push:

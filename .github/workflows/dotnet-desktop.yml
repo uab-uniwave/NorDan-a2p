@@ -41,7 +41,7 @@ jobs:
       shell: pwsh
       run: |
         $version = "${{ env.VERSION }}"
-        $wixProjPath = "$env:GITHUB_WORKSPACE/src/a2p.Installer.wixproj"
+        $wixProjPath = "$env:GITHUB_WORKSPACE/src/a2p.Installer/a2p.Installer.wixproj"
         if (Test-Path $wixProjPath) {
           (Get-Content $wixProjPath) -replace '<Version>.*?</Version>', "<Version>$version</Version>" |
           Set-Content $wixProjPath

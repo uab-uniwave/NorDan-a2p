@@ -1,5 +1,5 @@
 ﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:msix="http://www.firegiant.com/schemas/v4/wxs/heatwave/buildtools/msix">
-    <Package Name="Alu2Prefsuite" Language="1033" Version="1.0.0.1" Manufacturer="Uniwave UAB" UpgradeCode="4072be89-896a-47fa-9449-ffbfc24f5b90" InstallerVersion="200" Scope="perMachine" ProductCode="53C6D9CE-4F08-422B-9A6C-FFE529FC5531" Compressed="true" ShortNames="no" >
+    <Package Name="Alu2Prefsuite" Language="1033" Version=".*?" Manufacturer="Uniwave UAB" UpgradeCode="4072be89-896a-47fa-9449-ffbfc24f5b90" InstallerVersion="200" Scope="perMachine" ProductCode="53C6D9CE-4F08-422B-9A6C-FFE529FC5531" Compressed="true" ShortNames="no" >
         <SummaryInformation Manufacturer="Uniwave UAB" Keywords="Converter, Import, Sapa. PrefSuite, Schucal, Windows, Doors, Store Front, Facade, Curtian Wall" Description="Import BOM and Items of orders Exported From SAPA and Schucal Applications into Prefsuite." />
         <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
         <MediaTemplate CabinetTemplate="cab{0}.cab" EmbedCab="yes"></MediaTemplate>

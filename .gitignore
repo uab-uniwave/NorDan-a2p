@@ -19,6 +19,13 @@
 # Mono auto generated files
 mono_crash.*
 
+# Ignore all DLLs
+*.dll
+
+# Allow Interop DLLs
+!libs/*.dll
+
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/

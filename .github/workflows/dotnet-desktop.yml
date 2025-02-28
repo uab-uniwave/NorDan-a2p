@@ -39,7 +39,7 @@ jobs:
     - name: Update WiX Installer Version
       run: |
         $version = "${{ env.VERSION }}"
-        (Get-Content src/a2p.installer.wixproj) -replace '<Version>.*?</Version>', "<Version>$version</Version>" |
+        (Get-Content src/a2p.installer.wixproj) -replace 'Version=".*?"', "Version="$version" |
         Set-Content src/a2p.installer.wixproj
 
     - name: Build Solution (Release, x64)

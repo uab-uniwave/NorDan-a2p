@@ -3,14 +3,14 @@ name: Build A2P and Create MSI Installer
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   build:
-    runs-on: windows-latest  # GitHub-hosted Windows runner
+    runs-on: windows-latest  # Use GitHub-hosted Windows runner
 
     steps:
     - name: Checkout repository
@@ -42,14 +42,14 @@ jobs:
         (Get-Content src/a2p.installer.wixproj) -replace '<Version>.*?</Version>', "<Version>$version</Version>" |
         Set-Content src/a2p.installer.wixproj
 
-    - name: Build Solution
-      run: dotnet build a2p.sln --configuration Release --no-restore
+    - name: Build Solution (Release, x64)
+      run: dotnet build a2p.sln --configuration Release --arch x64 --no-restore
 
     - name: Install WiX Toolset 5
       run: dotnet tool install --global wix --version 5.0.2
 
-    - name: Build WiX Installer
-      run: dotnet build src/a2p.installer.wixproj --configuration Release --no-restore
+    - name: Build WiX Installer (Release, x64)
+      run: dotnet build src/a2p.installer.wixproj --configuration Release --arch x64 --no-restore
 
     - name: Upload MSI as Artifact
       uses: actions/upload-artifact@v3

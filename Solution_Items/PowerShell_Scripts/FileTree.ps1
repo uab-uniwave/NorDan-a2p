@@ -1,6 +1,6 @@
 ﻿# Define the directory to scan
-$rootDir = "R:/Any2Pref"
-$saveDir = "R:/Any2Pref/Logs/FileTree"
+$rootDir = "C:/Repos/Nordan-Alu2Prefsuite"
+$saveDir = "C:/Repos/Nordan-Alu2Prefsuite/Logs/FileTree"
 
 # Ensure the save directory exists, create if not
 if (-not (Test-Path -Path $saveDir)) {
@@ -13,7 +13,7 @@ $timestamp = Get-Date -Format "yyyyMMddTHHmmssfffZ" # ISO 8601 format
 $outputFile = Join-Path -Path $saveDir -ChildPath "tree_$timestamp.md"
 
 # List of folders to exclude (case-insensitive)
-$excludedFolders = @("Obj", "Output", ".vs", ".vscode", ".git", "Solution_Items", "Logs", "Packages")
+$excludedFolders = @("Obj", "Output", ".vs", ".vscode", ".git", "Solution_Items", "Logs", "Packages", "lib")
 
 # Function to generate the file tree
 function Get-FileTree {

@@ -95,7 +95,6 @@ namespace a2p.WinForm.ChildForms
             dataGridViewFiles.TabIndex = 61;
             dataGridViewFiles.VirtualMode = true;
            dataGridViewFiles.CellFormatting += dataGridViewFiles_CellFormatting;
-            dataGridViewFiles.CellValueChanged += dataGridViewFiles_CellValueChanged;
             // 
             // contextMenuStrip1
             // 

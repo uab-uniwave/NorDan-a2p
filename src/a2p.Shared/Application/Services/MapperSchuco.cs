@@ -1,7 +1,6 @@
 ﻿using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.DTO;
 using a2p.Shared.Application.Interfaces;
-using a2p.Shared.Application.Services.Domain.Entities;
 
 namespace a2p.Shared.Application.Services
 {

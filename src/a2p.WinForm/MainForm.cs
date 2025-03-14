@@ -4,9 +4,10 @@
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 
+using a2p.Shared.Application.Domain.Entities;
+using a2p.Shared.Application.Domain.Enums;
 using a2p.Shared.Application.Interfaces;
-using a2p.Shared.Application.Services.Domain.Entities;
-using a2p.Shared.Domain.Enums;
+using a2p.Shared.Application.Models;
 using a2p.Shared.Infrastructure.Interfaces;
 using a2p.WinForm.ChildForms;
 
@@ -16,7 +17,6 @@ namespace a2p.WinForm
 {
     public partial class MainForm : Form
     {
-
         private System.Drawing.Color selectedBackgroundColor = System.Drawing.Color.FromArgb(239, 112, 32);
         private System.Drawing.Color borderColor = System.Drawing.Color.White;
         private int borderWidth = 1;
@@ -25,7 +25,7 @@ namespace a2p.WinForm
         private readonly IOrderReadProcessor _orderReadProcessor;
         private readonly IExcelReadService _excelReadService;
         private readonly IOrderWriteProcessor _orderProcessingService;
-        private readonly IConfiguration _configuration;
+        private readonly IUserSettingsService _userSettingsService;
         private readonly ILogService _logService;
         private readonly IFileService _fileService;
         private readonly DataCache _dataCache;
@@ -37,7 +37,8 @@ namespace a2p.WinForm
         private readonly OrdersForm _orderForm;
         private readonly LogForm _logForm;
         private readonly SettingForm _settingForm;
-
+        private SettingsContainer _settingsContainer;
+        private AppSettings _appSettings;
         #region -== Custom Form Design Componenets ==-
 
         [DllImport("user32.dll")]
@@ -56,38 +57,35 @@ namespace a2p.WinForm
         #endregion -== Custom Form Design Componenets ==-
 
         public MainForm(IOrderReadProcessor orderReadProcessor, IExcelReadService excelReadService, IOrderWriteProcessor orderProcessingService,
-            IConfiguration configuration, ILogService logService, IFileService fileService, DataCache dataCache)
+            IConfiguration configuration, ILogService logService, IFileService fileService, DataCache dataCache, IUserSettingsService userSettingsService)
         {
             _orderReadProcessor = orderReadProcessor;
             _excelReadService = excelReadService;
             _orderProcessingService = orderProcessingService;
-            _configuration = configuration;
             _logService = logService;
             _fileService = fileService;
             _dataCache = dataCache;
+            _userSettingsService = userSettingsService;
+            _appSettings = _userSettingsService.LoadSettings();
+            _settingsContainer = _userSettingsService.LoadAllSettings();
 
             _progressValue = new ProgressValue();
-
             _progress = new Progress<ProgressValue>();
-
             _toolTip = new ToolTip();
-            _orderForm = new OrdersForm(_configuration, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService, _dataCache);
-            _logForm = new LogForm(_configuration, _logService);
-            _settingForm = new SettingForm(_configuration, _logService);
+            _orderForm = new OrdersForm(userSettingsService, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService, _dataCache);
+            _logForm = new LogForm(userSettingsService, _logService);
+            _settingForm = new SettingForm(_logService, _userSettingsService);
 
             this.AutoScaleMode = AutoScaleMode.Dpi;
             this.SuspendLayout();
             InitializeComponent();
-
             SetupButtons();
-
             InitializeToolTip();
-
             this.ResumeLayout(true); // Resume layout
-
             this.KeyPreview = true; // Allows the form to capture key events before controls do
             this.KeyDown += MainForm_KeyDown; // Attach key event handler
-            _dataCache = dataCache;
+            slbDataSourceValue.Text = _settingForm.ExtractValueFromConnectionString("Data Source") + "\\" + _settingForm.ExtractValueFromConnectionString("Initial Catalog");
+            slbPathValue.Text = _appSettings.Folders.RootFolder.Replace("/", "\\");
         }
 
         #region -== Initialization ==-
@@ -116,11 +114,27 @@ namespace a2p.WinForm
         #region --== Form Events ==-
         private void MainForm_Load(object sender, EventArgs e)
         {
+
+            string settingsPath = _userSettingsService.GetSettingsFilePath();
+            if (!File.Exists(settingsPath))
+            {
+                // This will still copy from default via the service constructor
+                _ = _userSettingsService.LoadSettings();
+
+                // Optional: inform user or log
+                _logService.Information("User settings file was missing. Default settings were created.");
+                _ = MessageBox.Show("Default settings have been created. You can now adjust them in Settings.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                _logService.Information("User settings file loaded successfully.");
+            }
+
             SetRoundedCorners(20); // Set the radius for rounded corners
             try
             {
 
-                slbPath.Text = _configuration.GetValue<string>("AppSettings:RootFolder") ?? string.Empty;
+                slbPathValue.Text = _appSettings.Folders.RootFolder;
                 statusStrip.SizingGrip = true;
                 this.PerformAutoScale(); // Ensure everything is scaled correctly (optional)
             }
@@ -138,8 +152,8 @@ namespace a2p.WinForm
             try
             {
                 await ShowFormAsync(_orderForm,
-                    () => new OrdersForm(_configuration, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService, _dataCache));
-                if (bool.Parse(_configuration["AppSettings:RefreshFilesOnStartup"] ?? "true"))
+                    () => new OrdersForm(_userSettingsService, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService, _dataCache));
+                if (_appSettings.RefreshFilesOnStartup)
                 {
 
                     BtnLoad_Click(btnLoad, e);
@@ -467,7 +481,7 @@ namespace a2p.WinForm
             try
             {
                 await ShowFormAsync(_orderForm,
-                    () => new OrdersForm(_configuration, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService, _dataCache));
+                    () => new OrdersForm(_userSettingsService, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService, _dataCache));
 
                 await _orderForm.OrdersLoad();
 
@@ -492,7 +506,7 @@ namespace a2p.WinForm
                 _processType = ProcessType.LogRefresh;
 
                 await ShowFormAsync(_orderForm,
-                     () => new OrdersForm(_configuration, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService, _dataCache));
+                     () => new OrdersForm(_userSettingsService, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService, _dataCache));
                 await _orderForm.ImportFilesAsync();
             }
             catch (Exception ex)
@@ -517,7 +531,7 @@ namespace a2p.WinForm
                 await Task.Run(DisableButtons); // Disable buttons at the beginning
 
                 await ShowFormAsync(_logForm,
-                  () => new LogForm(_configuration, _logService));
+                  () => new LogForm(_userSettingsService, _logService));
                 _processType = ProcessType.LogRefresh;
 
                 await _logForm.LogRefreshAsync();
@@ -541,7 +555,7 @@ namespace a2p.WinForm
         // SideBar Other Buttons
         //========================================================================
         private async void BtnProperties_Click(object sender, EventArgs e) => await ShowFormAsync(_settingForm,
-                () => new SettingForm(_configuration, _logService));
+                () => new SettingForm(_logService, _userSettingsService));
 
         private void BtnExit_Click(object sender, EventArgs e) => Application.Exit();
 

@@ -12,6 +12,11 @@
 		<Configurations>Debug;Release;Test</Configurations>
 	</PropertyGroup>
 
+
+	<PropertyGroup>
+		<UserSecretsId>B0F91B7C-4059-4F17-85CB-B6E7924EDBB1</UserSecretsId>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<Compile Remove="Application\Utils\**" />
 		<EmbeddedResource Remove="Application\Utils\**" />
@@ -58,12 +63,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Reference Include="Interop.PrefDataManager">
-	    <HintPath>..\..\..\..\Program Files\Preference\PrefSuite\Interop.PrefDataManager.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Interop.PrefSales">
-	    <HintPath>..\..\..\..\Program Files\Preference\PrefSuite\Interop.PrefSales.dll</HintPath>
-	  </Reference>
+		<Reference Include="Interop.PrefDataManager">
+			<HintPath>..\..\..\..\Program Files\Preference\PrefSuite\Interop.PrefDataManager.dll</HintPath>
+		</Reference>
+		<Reference Include="Interop.PrefSales">
+			<HintPath>..\..\..\..\Program Files\Preference\PrefSuite\Interop.PrefSales.dll</HintPath>
+		</Reference>
 	</ItemGroup>
 
 	<ItemGroup>

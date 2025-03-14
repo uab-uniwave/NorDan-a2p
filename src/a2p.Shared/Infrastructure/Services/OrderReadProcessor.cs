@@ -1,8 +1,8 @@
-﻿using a2p.Shared.Application.Domain.Entities;
-using a2p.Shared.Application.Domain.Enums;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.Interfaces;
-using a2p.Shared.Application.Services.Domain.Entities;
-using a2p.Shared.Domain.Enums;
 using a2p.Shared.Infrastructure.Interfaces;
 
 namespace a2p.Shared.Infrastructure.Services
@@ -52,38 +52,7 @@ namespace a2p.Shared.Infrastructure.Services
 
                 List<A2POrder> a2pOrders = _dataCache.GetAllOrders();
 
-                _progressValue.ProgressTask3 = string.Empty;
-                _progressValue.MinValue = 0;
-                _progressValue.MaxValue = (a2pOrders.Count * 2) + 3;
-                _progressValue.Value = 0;
-                _progress?.Report(_progressValue);
-                for (int i = 0; i < a2pOrders.Count; i++)
 
-                {
-                    _ = a2pOrders[i];
-                    try
-                    {
-
-                    }
-                    catch (Exception ex)
-                    {
-                        _logService.Error("Error reading order {a2pOrders[i].Order}. Exception {$Exception}", a2pOrders[i].Order, ex.Message);
-                        a2pOrders[i].ReadErrors.Add(new()
-                        {
-                            Order = a2pOrders[i].Order,
-                            Level = ErrorLevel.Error,
-                            Code = ErrorCode.MappingService_MapOrder,
-                            Message = $"Error reading order {a2pOrders[i].Order}. Exception {ex.Message}"
-                        });
-                    }
-
-                    finally
-                    {
-
-                        _progress?.Report(_progressValue);
-                    }
-
-                }
             }
             catch (Exception ex)
             {

@@ -23,44 +23,8 @@ namespace a2p.Shared
             // Register services
             ServiceCollection services = new();
 
-
-            string rootFolder = configuration["AppSettings:Folders:Root"] ?? @"C:\\Temp\\Import";
-            EnsureDirectoryExist(rootFolder, "Root", configuration);
-            string importSuccessFolder = Path.Combine(rootFolder, configuration["AppSettings:Folders:ImportSuccess"] ?? "Import_Success");
-            EnsureDirectoryExist(importSuccessFolder, "ImportSuccess", configuration);
-            string importFailedFolder = Path.Combine(rootFolder, configuration["AppSettings:Folders:ImportFailed"] ?? "Import_Failed");
-            EnsureDirectoryExist(importFailedFolder, "ImportFailed", configuration);
-            string logFolder = Path.Combine(rootFolder, configuration["AppSettings:Folders:Log"] ?? "Log");
-            EnsureDirectoryExist(logFolder, "Log", configuration);
-            string logFile = Path.Combine(logFolder, "a2pLog.json");
-
-            try
-            {
-
-                bool fileExists = false;
-
-                if (File.Exists(logFile))
-                {
-                    fileExists = true;
-                }
-
-
-                if (fileExists)
-                {
-                    File.Delete(logFile);
-                }
-            }
-
-            catch (IOException ex)
-            {
-                Debug.WriteLine($"PR. Deleting file: {logFile} failed. Exception: {ex.Message}");
-                throw;
-            }
-
             // Initialize Serilog
             LoggerSetup.ConfigureLogger(configuration);
-
-
 
             // Register logging
             _ = services.AddLogging(builder => builder.AddSerilog());
@@ -71,6 +35,8 @@ namespace a2p.Shared
             // Register core services
             _ = services.AddSingleton<ILogService, LogService>();
             _ = services.AddSingleton<DataCache>();
+            _ = services.AddSingleton<IUserSettingsService, UserSettingsService>();
+            _ = services.AddSingleton<SettingsManager>();
             _ = services.AddSingleton<IOrderReadProcessor, OrderReadProcessor>();
             _ = services.AddSingleton<IExcelReadService, ExcelReadService>();
             _ = services.AddSingleton<IPrefSuiteService, PrefSuiteService>();
@@ -81,12 +47,7 @@ namespace a2p.Shared
             _ = services.AddSingleton<IMapperSapaV2, MapperSapaV2>();
             _ = services.AddSingleton<IMapperSchuco, MapperSchuco>();
             _ = services.AddSingleton<IOrderWriteProcessor, OrderWritingProcessor>();
-            // _ = services.AddSingleton<Record, A2POrderRecordMapper>();
             _ = services.AddSingleton<ISqlRepository, SqlRepository>();
-
-
-
-
 
             return services.BuildServiceProvider();
         }
@@ -100,22 +61,6 @@ namespace a2p.Shared
              .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
              .AddJsonFile($"appsettings.{environment}.json", optional: true)
              .Build();
-        }
-        private static void EnsureDirectoryExist(string directoryPath, string folderKey, IConfiguration configuration)
-        {
-            try
-            {
-                if (!Directory.Exists(directoryPath))
-                {
-                    Debug.WriteLine($"FS. Directory does not exist. Creating directory: {directoryPath}");
-                    _ = Directory.CreateDirectory(directoryPath);
-                    configuration[$"AppSettings:Folders:{folderKey}"] = directoryPath;
-                }
-            }
-            catch (IOException ex)
-            {
-                Debug.WriteLine($"FS. Creating directory: {directoryPath} failed. Exception: {ex.Message}");
-            }
         }
     }
 }

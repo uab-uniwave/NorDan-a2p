@@ -1,13 +1,12 @@
-﻿using System.Data;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System.Data;
 
 using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.Domain.Enums;
 using a2p.Shared.Application.DTO;
-using a2p.Shared.Application.Services.Domain.Entities;
-using a2p.Shared.Domain.Enums;
 using a2p.Shared.Infrastructure.Interfaces;
-
-using DocumentFormat.OpenXml.Drawing.Charts;
 
 using Microsoft.Data.SqlClient;
 
@@ -31,11 +30,11 @@ namespace a2p.Shared.Infrastructure.Services
             _dataCache = dataCache;
         }
 
-        public async Task DeleteAsync(string order)
+        public async Task DeleteAsync(int salesDocumentNumber, int salesDocumentVersion, string order)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(order))
+                if (string.IsNullOrWhiteSpace(salesDocumentNumber.ToString()))
                 {
                     _logService.Error("WS: Error deleting (updating DeletedUTCDateTime) items from DB. Order is null or empty.");
                 }
@@ -44,33 +43,31 @@ namespace a2p.Shared.Infrastructure.Services
 
                 SqlCommand cmd = new()
                 {
-                    CommandText = "[dbo].[Uniwave_a2p_DeleteItems]",
+                    CommandText = "[dbo].[Uniwave_a2p_DeleteExistsingData]",
                     CommandType = CommandType.StoredProcedure
                 };
 
-                _ = cmd.Parameters.AddWithValue("@Order", order);
-                _ = cmd.Parameters.AddWithValue("@DeletedUTCDateTime", dateTime);
+                _ = cmd.Parameters.AddWithValue("@SalesDocumentNumber", salesDocumentNumber);
+                _ = cmd.Parameters.AddWithValue("@SalesDocumentNumber", salesDocumentVersion);
 
                 int result = await _sqlRepository.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
-
-                if (result > 0)
-                    _logService.Debug($"Write Item Service: Delete Items. {result} item records of order: {order} marked as deleted in the database.");
-                else
-                    _logService.Warning($"Write Item Service: No items deleted. {result} item records of order: {order}.");
-
+       
+                    _logService.Debug($"Write Item Service: Deleted records of Sales Document : {salesDocumentNumber}/{salesDocumentVersion} marked as deleted in the database.");
+               
+              
             }
             catch (Exception ex)
-            {
+            { 
                 _logService.Error("Write Item Service: Unhandled error: deleting items of order: {$Order} from DB. Exception { $Exception}", order, ex.Message);
-                var a2pOrder = _dataCache.GetOrder(order);
+                A2POrder? a2pOrder = _dataCache.GetOrder(order);
                 if (a2pOrder != null)
                 {
-                    A2POrderError writeError = new A2POrderError
+                    A2POrderError writeError = new()
                     {
                         Order = order,
                         Level = ErrorLevel.Error,
                         Code = ErrorCode.DatabaseWrite_Item,
-                        Message = $"Write Item Service: Unhandled error: deleting items of order: {a2pOrder.Order} from DB. Exception {ex.Message}"
+                        Message = $"Write Item Service: Unhandled error: deleting data of order: {a2pOrder.Order} from DB. Exception {ex.Message}"
                     };
 
                     a2pOrder.WriteErrors.Add(writeError);
@@ -81,27 +78,22 @@ namespace a2p.Shared.Infrastructure.Services
                     });
                 }
             }
-               
-            
+
         }
 
         public async Task InsertListAsync(ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
         {
 
-            var a2pOrders = _dataCache.GetAllOrders();
+            List<A2POrder> a2pOrders = _dataCache.GetAllOrders();
 
             try
             {
-
-
 
                 _progressValue = progressValue;
                 _progress = progress ?? new Progress<ProgressValue>();
 
                 foreach (A2POrder a2pOrder in a2pOrders)
                 {
-
-
 
                     DateTime dateTime = DateTime.UtcNow;
 
@@ -130,14 +122,14 @@ namespace a2p.Shared.Infrastructure.Services
                         _ = cmd.Parameters.AddWithValue("@Worksheet", itemDTO.Worksheet); //require
                         _ = cmd.Parameters.AddWithValue("@Line", itemDTO.Line); //required
                         _ = cmd.Parameters.AddWithValue("@Column", itemDTO.Column); //required
-                                                                                    //========================================================================================================
-                        _ = cmd.Parameters.AddWithValue("@Project", itemDTO.Project ?? (object) DBNull.Value);
-                        _ = cmd.Parameters.AddWithValue("@Item", itemDTO.Item ?? (object) DBNull.Value);                                                //required
-                        _ = cmd.Parameters.AddWithValue("@SortOrder", itemDTO.SortOrder - 1); //required
-                        _ = cmd.Parameters.AddWithValue("@Description", itemDTO.Description ?? (object) DBNull.Value);
+                                                                                    //=====================================================================================================================
+                        _ = cmd.Parameters.AddWithValue("@Project", itemDTO.Project ?? (object)DBNull.Value);
+                        _ = cmd.Parameters.AddWithValue("@Item", itemDTO.Item ?? (object)DBNull.Value);                                                //required
+                        _ = cmd.Parameters.AddWithValue("@SortOrder", itemDTO.SortOrder); //required
+                        _ = cmd.Parameters.AddWithValue("@Description", itemDTO.Description ?? (object)DBNull.Value);
                         //========================================================================================================
                         _ = cmd.Parameters.AddWithValue("@Quantity", itemDTO.Quantity); //required
-                       //========================================================================================================
+                                                                                        //=====================================================================================================================
                         _ = cmd.Parameters.AddWithValue("@Width", itemDTO.Width);
                         _ = cmd.Parameters.AddWithValue("@Height", itemDTO.Height);
                         //========================================================================================================
@@ -181,12 +173,12 @@ namespace a2p.Shared.Infrastructure.Services
                         _ = cmd.Parameters.AddWithValue("@TotalPriceEUR", itemDTO.TotalPriceEUR);
                         //========================================================================================================
                         _ = cmd.Parameters.AddWithValue("@WorksheetType", itemDTO.WorksheetType); //Required
-                                                                                                  //========================================================================================================
+                                                                                                  //=====================================================================================================================
                         _ = cmd.Parameters.AddWithValue("@CreatedUTCDateTime", dateTime); //Required
                         _ = cmd.Parameters.AddWithValue("@ModifiedUTCDateTime", dateTime); //Required
 
                         updatedDBRecords = +await _sqlRepository.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
-                   
+
                     }
                     if (updatedDBRecords > 0)
                     {
@@ -195,7 +187,7 @@ namespace a2p.Shared.Infrastructure.Services
                     else
                     {
                         _logService.Warning($"Write Service: No item records of order: {a2pOrder.Order} inserted into the database.");
-                        A2POrderError writeError = new A2POrderError
+                        A2POrderError writeError = new()
                         {
                             Order = a2pOrder.Order,
                             Level = ErrorLevel.Warning,
@@ -203,8 +195,8 @@ namespace a2p.Shared.Infrastructure.Services
                             Message = $"Order: {a2pOrder.Order}. No Items inserted into DB."
                         };
 
-
                         a2pOrder.WriteErrors.Add(writeError);
+
                         _dataCache.UpdateOrderInCache(a2pOrder.Order, updatedOrder =>
                         {
                             updatedOrder.WriteErrors.Add(writeError);
@@ -214,7 +206,6 @@ namespace a2p.Shared.Infrastructure.Services
 
                 }
 
-        
             }
             catch (Exception ex)
             {

@@ -4,8 +4,7 @@
 using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.Domain.Enums;
 using a2p.Shared.Application.Interfaces;
-using a2p.Shared.Application.Services.Domain.Entities;
-using a2p.Shared.Domain.Enums;
+using a2p.Shared.Application.Models;
 using a2p.Shared.Infrastructure.Interfaces;
 
 using ClosedXML.Excel;
@@ -19,7 +18,9 @@ namespace a2p.Shared.Application.Services
         private readonly IConfiguration _configuration;
         private readonly ILogService _logService;
         private readonly IExcelReadService _excelReadService;
-        private readonly IPrefSuiteService _prefSuiteService;
+        private readonly IUserSettingsService _userSettingsService;
+        private SettingsContainer _settingsContainer;
+        private AppSettings _appSettings;
         private readonly DataCache _dataCache;
 
         private readonly IMapperSapaV1 _mapperSapaV1;
@@ -29,7 +30,7 @@ namespace a2p.Shared.Application.Services
         private ProgressValue _progressValue;
         private IProgress<ProgressValue>? _progress;
 
-        public FileService(IConfiguration configuration,
+        public FileService(IUserSettingsService userSettingsService,
                            ILogService logService,
                            IExcelReadService excelReadService,
                            IPrefSuiteService prefSuiteService,
@@ -39,13 +40,13 @@ namespace a2p.Shared.Application.Services
                            DataCache dataCache)
 
         {
-            _configuration = configuration;
             _logService = logService;
             _progressValue = new ProgressValue();
             _progress = new Progress<ProgressValue>();
             _excelReadService = excelReadService;
-
-            _prefSuiteService = prefSuiteService;
+            _userSettingsService = userSettingsService;
+            _appSettings = _userSettingsService.LoadSettings();
+            _settingsContainer = _userSettingsService.LoadAllSettings();
             _mapperSapaV1 = mapperSapaV1;
             _mapperSapaV2 = mapperSapaV2;
             _mapperSchuco = mapperSchuco;
@@ -141,11 +142,11 @@ namespace a2p.Shared.Application.Services
                         //==================================================================================================================================
                         if (a2pOrders[i].Files[j].IsOrderItemsFile && a2pOrders[i].SourceAppType == SourceAppType.SapaV1)
                         {
-                            a2pOrders[i].Items = await _mapperSapaV1.MapItemsAsync(a2pOrders[i].Files[j].Worksheets[k], _progressValue, _progress);
+                            _ = await _mapperSapaV1.MapItemsAsync(a2pOrders[i].Files[j].Worksheets[k], _progressValue, _progress);
                         }
                         else if (!a2pOrders[i].Files[j].IsOrderItemsFile && a2pOrders[i].SourceAppType == SourceAppType.SapaV1)
                         {
-                            a2pOrders[i].Materials = await _mapperSapaV1.MapMaterialsAsync(a2pOrders[i].Files[j].Worksheets[k], _progressValue, _progress);
+                            _ = await _mapperSapaV1.MapMaterialsAsync(a2pOrders[i].Files[j].Worksheets[k], _progressValue, _progress);
                         }
 
                         //==================================================================================================================================
@@ -153,34 +154,31 @@ namespace a2p.Shared.Application.Services
                         //==================================================================================================================================
                         else if (a2pOrders[i].Files[j].IsOrderItemsFile && a2pOrders[i].SourceAppType == SourceAppType.SapaV2)
                         {
-                            a2pOrders[i].Items = await _mapperSapaV2.MapItemsAsync(a2pOrders[i].Files[j].Worksheets[k], _progressValue, _progress);
-                            if (string.IsNullOrEmpty(a2pOrders[i].Currency) &&
-                                (!string.IsNullOrEmpty(a2pOrders[i].Files[j].Worksheets[k].Currency)))
-                            {
-                                a2pOrders[i].Currency = a2pOrders[i].Files[j].Worksheets[k].Currency;
-                            }
+                            await _mapperSapaV2.MapItemsAsync(a2pOrders[i].Files[j].Worksheets[k], _progressValue, _progress);
+
                         }
                         else if (!a2pOrders[i].Files[j].IsOrderItemsFile && a2pOrders[i].SourceAppType == SourceAppType.SapaV2)
                         {
-                            a2pOrders[i].Materials = await _mapperSapaV2.MapMaterialsAsync(a2pOrders[i].Files[j].Worksheets[k], _progressValue, _progress);
+
+                            await _mapperSapaV2.MapMaterialsAsync(a2pOrders[i].Files[j].Worksheets[k], _progressValue, _progress);
                         }
                         //==================================================================================================================================
                         //🔵 Schuco Mapping 
                         //==================================================================================================================================
                         else if (a2pOrders[i].Files[j].IsOrderItemsFile && a2pOrders[i].SourceAppType == SourceAppType.Schuco)
                         {
-                            a2pOrders[i].Items = await _mapperSchuco.MapItemsAsync(a2pOrders[i].Files[j].Worksheets[k], _progressValue, _progress);
+                            _ = await _mapperSchuco.MapItemsAsync(a2pOrders[i].Files[j].Worksheets[k], _progressValue, _progress);
                         }
                         else if (!a2pOrders[i].Files[j].IsOrderItemsFile && a2pOrders[i].SourceAppType == SourceAppType.Schuco)
                         {
-                            a2pOrders[i].Materials = await _mapperSchuco.MapMaterialsAsync(a2pOrders[i].Files[j].Worksheets[k], _progressValue, _progress);
+                            _ = await _mapperSchuco.MapMaterialsAsync(a2pOrders[i].Files[j].Worksheets[k], _progressValue, _progress);
                         }
 
                     }
 
                 }
                 progressBarValue++;
-                _dataCache.AddOrder(a2pOrders[i]);
+
                 _progressValue.ProgressTask1 = $"Reading Order # {ordersCounter} of {a2pOrders.Count} - {a2pOrders[i].Order} ";
                 _progressValue.Value = progressBarValue;
                 _progress?.Report(_progressValue);
@@ -193,7 +191,7 @@ namespace a2p.Shared.Application.Services
 
             //GetrList of files in the root destinationFolder
             //==============================================================================================
-            string rootFolder = _configuration["AppSettings:RootFolder"] ?? @"C:\Temp\Import";
+            string rootFolder = _appSettings.Folders.RootFolder;
             List<string> files = (await Task.Run(() => Directory.GetFiles(rootFolder))).ToList(); // Get all files in the root destinationFolder
             if (files == null || !files.Any())
             {
@@ -227,7 +225,7 @@ namespace a2p.Shared.Application.Services
 
         private async Task<List<A2PFile>> GetOrderFilesAsync(string orderNumber, ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
         {
-            string rootFolder = _configuration["AppSettings:RootFolder"] ?? @"C:\Temp\Import";
+            string rootFolder = _appSettings.Folders.RootFolder;
             List<string> files = (await Task.Run(() => Directory.GetFiles(rootFolder))).ToList(); // Get all files in the root destinationFolder
             List<string> orderFiles = files.Where(file => file.Contains(orderNumber)).ToList(); // Get all files that match the order number
 
@@ -278,9 +276,9 @@ namespace a2p.Shared.Application.Services
                 foreach (A2POrder a2pOrder in a2pOrders)
                 {
                     string destinationFolder = string.Empty;
-                    string rootFolder = _configuration.GetValue<string>("AppSettings:Folders:RootFolder") ?? "C:\\Temp\\Import";
-                    string failedFolder = _configuration.GetValue<string>("AppSettings:Folders:ImportFailed") ?? "Import_Failed";
-                    string SuccessFolder = _configuration.GetValue<string>("AppSettings:Folders:ImportFailed") ?? "Import_Failed";
+                    string rootFolder = _appSettings.Folders.RootFolder;
+                    string failedFolder = _appSettings.Folders.ImportFailed;
+                    string SuccessFolder = _appSettings.Folders.ImportSuccess;
                     int totalErrors = a2pOrder.WriteErrors.Count(e => e.Level is ErrorLevel.Fatal or ErrorLevel.Error);
                     destinationFolder = totalErrors > 0 ? System.IO.Path.Combine(rootFolder, failedFolder) : System.IO.Path.Combine(rootFolder, SuccessFolder);
 
@@ -316,20 +314,6 @@ namespace a2p.Shared.Application.Services
 
                     }
 
-                    A2POrderError writeError = new()
-                    {
-                        Order = a2pOrder.Order,
-                        Level = ErrorLevel.Error,
-                        Code = ErrorCode.MappingService_MapMaterial,
-                        Message = $"TtTtTTTTTTTTTTT"
-                    };
-
-                    a2pOrder!.WriteErrors.Add(writeError);
-                    _dataCache.UpdateOrderInCache(a2pOrder.Order, updatedOrder =>
-                    {
-                        updatedOrder.WriteErrors.Add(writeError);
-                    });
-
                 }
 
                 WriteExcelLog();
@@ -347,8 +331,8 @@ namespace a2p.Shared.Application.Services
 
                 string destinationFolder = string.Empty;
                 int totalErrors = a2pOrder.WriteErrors.Count(e => e.Level is ErrorLevel.Fatal or ErrorLevel.Error);
-                string rootFolder = _configuration.GetValue<string>("AppSettings:Folders:RootFolder") ?? "C:\\Temp\\Import";
-                string failedFolder = _configuration.GetValue<string>("AppSettings:Folders:ImportFailed") ?? "Import_Failed";
+                string rootFolder = _appSettings.Folders.RootFolder;
+                string failedFolder = _appSettings.Folders.ImportFailed;
 
                 if (totalErrors > 0)
                 {

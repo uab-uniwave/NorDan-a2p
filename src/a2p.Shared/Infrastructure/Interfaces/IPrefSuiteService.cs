@@ -1,4 +1,4 @@
-﻿using a2p.Shared.Application.Services.Domain.Entities;
+﻿using a2p.Shared.Application.Domain.Entities;
 
 namespace a2p.Shared.Infrastructure.Interfaces
 {
@@ -10,6 +10,8 @@ namespace a2p.Shared.Infrastructure.Interfaces
         Task<string?> GetColorAsync(string color);
 
         Task InsertItemsAsync(ProgressValue progressValue, IProgress<ProgressValue>? progress = null);
+
+        Task<string?> GetGlassReferenceAsync(string description);
 
     }
 }

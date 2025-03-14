@@ -234,7 +234,68 @@ export excel files worksheets and store to database using common format
 
 
 
-As output will be used single object called MaterialDTO 
+As output will be used single object called MaterialDTO
+
+
+
+## Glass Reference and Description
+
+
+
+
+# Laminated Glass Code Explanation and Thickness Reference
+
+Laminated glass is composed of two or more glass panes bonded together with one or more interlayers, usually made of PVB (Polyvinyl Butyral). These interlayers enhance the safety, sound insulation, and UV resistance of the glass.
+
+## Understanding Laminated Glass Codes
+
+Laminated glass types are commonly denoted using a code format like `33.1`, `44.2`, `55.4`, etc.
+
+### First Part of the Code: Glass Pane Thickness
+The numbers before the dot represent the thickness of the individual glass panes in millimeters.
+
+- For example:  
+  - `33.x` → Two **3 mm** glass panes  
+  - `44.x` → Two **4 mm** glass panes  
+  - `55.x` → Two **5 mm** glass panes  
+  - `66.x` → Two **6 mm** glass panes  
+
+### Second Part of the Code: Number of PVB Interlayers
+The number **after the dot** indicates how many **PVB interlayers** are used. Each PVB interlayer is typically **0.38 mm** thick.
+
+- `.1` → 1 interlayer → 0.38 mm  
+- `.2` → 2 interlayers → 0.76 mm  
+- `.4` → 4 interlayers → 1.52 mm  
+- `.8` → 8 interlayers → 3.04 mm  
+
+## 📐 Approximate Total Glass Thickness
+The total thickness of laminated glass is calculated as:
+Total Thickness = Glass Pane 1 + Glass Pane 2 + (Number of Interlayers × 0.38 mm)
+
+---
+
+## 📋 Laminated Glass Code Reference Table
+
+| Glass Code | Structure Description                         | Approximate Total Thickness (mm) |
+|------------|-----------------------------------------------|----------------------------------|
+| 33.1       | 3 mm + 3 mm + 1 PVB interlayer (0.38 mm)      | 6.38 mm                          |
+| 33.2       | 3 mm + 3 mm + 2 PVB interlayers (0.76 mm)     | 6.76 mm                   |
+| 44.2       | 4 mm + 4 mm + 2 PVB interlayers (0.76 mm)     | 8.76 mm                          |
+| 55.1       | 5 mm + 5 mm + 1 PVB interlayer (0.38 mm)      | 10.38 mm                         |
+| 55.2       | 5 mm + 5 mm + 2 PVB interlayers (0.76 mm)     | 10.76 mm                         |
+| 55.4       | 5 mm + 5 mm + 4 PVB interlayers (1.52 mm)     | 11.52 mm                         |
+| 66.1       | 6 mm + 6 mm + 1 PVB interlayer (0.38 mm)      | 12.38 mm                         |
+| 66.2       | 6 mm + 6 mm + 2 PVB interlayers (0.76 mm)     | 12.76 mm                         |
+| 66.4       | 6 mm + 6 mm + 4 PVB interlayers (1.52 mm)     | 13.52 mm                         |
+| 66.8       | 6 mm + 6 mm + 8 PVB interlayers (3.04 mm)     | 15.04 mm                         |
+
+---
+
+## ✅ Summary
+
+- The **first part** of the code indicates **glass thickness per pane**.
+- The **second part** shows **number of PVB layers**, which affect the safety, sound insulation, and overall thickness.
+- This coding system helps in quickly identifying the composition and structural properties of laminated safety glass.
 
 <details> 
 <summary><span style="font-weight:bold; font-size:20px;">Uniwave Brand Colors</span></summary>

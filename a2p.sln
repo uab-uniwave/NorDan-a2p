@@ -25,7 +25,52 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{B7DD6F7E-DEF8-4E67-B5B7-07EF123DB6F0}") = "a2p.Installer", "src\a2p.Installer\a2p.Installer.wixproj", "{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SqlQueries", "SqlQueries", "{58E421E3-1FDA-4904-8877-B0639EB6CF9D}"
+	ProjectSection(SolutionItems) = preProject
+		CleanDB.sql = CleanDB.sql
+		Solution_Items\SQL_Queries\Procedures.sql = Solution_Items\SQL_Queries\Procedures.sql
+		Solution_Items\SQL_Queries\Tables.sql = Solution_Items\SQL_Queries\Tables.sql
+		Solution_Items\SQL_Queries\Test.sql = Solution_Items\SQL_Queries\Test.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XML", "XML", "{62709BAA-6BE0-4843-BCB1-EEE9D5EA440E}"
+	ProjectSection(SolutionItems) = preProject
+		Solution_Items\XML\Item.xml = Solution_Items\XML\Item.xml
+		Solution_Items\XML\PrefCMD.xml = Solution_Items\XML\PrefCMD.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XMLSchemas", "XMLSchemas", "{FC75C943-5C01-458F-989F-F0BAB88EDC43}"
+	ProjectSection(SolutionItems) = preProject
+		Solution_Items\XML\XMLSchemas\ConfigurableProperties.xsd = Solution_Items\XML\XMLSchemas\ConfigurableProperties.xsd
+		Solution_Items\XML\XMLSchemas\Constructive.xsd = Solution_Items\XML\XMLSchemas\Constructive.xsd
+		Solution_Items\XML\XMLSchemas\PrefCAD.Command.xsd = Solution_Items\XML\XMLSchemas\PrefCAD.Command.xsd
+		Solution_Items\XML\XMLSchemas\PrefCAD.Model.xsd = Solution_Items\XML\XMLSchemas\PrefCAD.Model.xsd
+		Solution_Items\XML\XMLSchemas\PrefCAD.Serialization.Common.xsd = Solution_Items\XML\XMLSchemas\PrefCAD.Serialization.Common.xsd
+		Solution_Items\XML\XMLSchemas\PrefCAD.Serialization.Items.xsd = Solution_Items\XML\XMLSchemas\PrefCAD.Serialization.Items.xsd
+		Solution_Items\XML\XMLSchemas\PrefCAD.Serialization.Material.xsd = Solution_Items\XML\XMLSchemas\PrefCAD.Serialization.Material.xsd
+		Solution_Items\XML\XMLSchemas\PrefCAD.Serialization.Model.xsd = Solution_Items\XML\XMLSchemas\PrefCAD.Serialization.Model.xsd
+		Solution_Items\XML\XMLSchemas\PrefCAD.Serialization.Script.xsd = Solution_Items\XML\XMLSchemas\PrefCAD.Serialization.Script.xsd
+		Solution_Items\XML\XMLSchemas\PrefCAD.WindowListGrammar.xsd = Solution_Items\XML\XMLSchemas\PrefCAD.WindowListGrammar.xsd
+		Solution_Items\XML\XMLSchemas\PrefCommand.xsd = Solution_Items\XML\XMLSchemas\PrefCommand.xsd
+		Solution_Items\XML\XMLSchemas\PrefDatabase.xsd = Solution_Items\XML\XMLSchemas\PrefDatabase.xsd
+		Solution_Items\XML\XMLSchemas\Preference.Documents.xsd = Solution_Items\XML\XMLSchemas\Preference.Documents.xsd
+		Solution_Items\XML\XMLSchemas\Preference.Production.CentralCut.xsd = Solution_Items\XML\XMLSchemas\Preference.Production.CentralCut.xsd
+		Solution_Items\XML\XMLSchemas\Preference.Vfo.xsd = Solution_Items\XML\XMLSchemas\Preference.Vfo.xsd
+		Solution_Items\XML\XMLSchemas\PrefExpenses.Document.xsd = Solution_Items\XML\XMLSchemas\PrefExpenses.Document.xsd
+		Solution_Items\XML\XMLSchemas\PrefHardware.xsd = Solution_Items\XML\XMLSchemas\PrefHardware.xsd
+		Solution_Items\XML\XMLSchemas\PrefMessages.xsd = Solution_Items\XML\XMLSchemas\PrefMessages.xsd
+		Solution_Items\XML\XMLSchemas\PrefOpenHardwareSet.xsd = Solution_Items\XML\XMLSchemas\PrefOpenHardwareSet.xsd
+		Solution_Items\XML\XMLSchemas\PrefProduction.ProductionLot.xsd = Solution_Items\XML\XMLSchemas\PrefProduction.ProductionLot.xsd
+		Solution_Items\XML\XMLSchemas\PrefSales.MaterialNeeds.xsd = Solution_Items\XML\XMLSchemas\PrefSales.MaterialNeeds.xsd
+		Solution_Items\XML\XMLSchemas\PrefSales.PurchaseOrdersFromMaterialNeeds.xsd = Solution_Items\XML\XMLSchemas\PrefSales.PurchaseOrdersFromMaterialNeeds.xsd
+		Solution_Items\XML\XMLSchemas\PrefSales.SalesDoc.xsd = Solution_Items\XML\XMLSchemas\PrefSales.SalesDoc.xsd
+		Solution_Items\XML\XMLSchemas\PrefSales.SalesDocuments.xsd = Solution_Items\XML\XMLSchemas\PrefSales.SalesDocuments.xsd
+		Solution_Items\XML\XMLSchemas\PrefSales.UpdateSalesDoc.xsd = Solution_Items\XML\XMLSchemas\PrefSales.UpdateSalesDoc.xsd
+		Solution_Items\XML\XMLSchemas\PrefSuite.Messages.xsd = Solution_Items\XML\XMLSchemas\PrefSuite.Messages.xsd
+		Solution_Items\XML\XMLSchemas\PrefSuite.Serialization.xsd = Solution_Items\XML\XMLSchemas\PrefSuite.Serialization.xsd
+		Solution_Items\XML\XMLSchemas\PrefWiseDDECommand.xsd = Solution_Items\XML\XMLSchemas\PrefWiseDDECommand.xsd
+		Solution_Items\XML\XMLSchemas\PrefWiseURI.xsd = Solution_Items\XML\XMLSchemas\PrefWiseURI.xsd
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,10 +82,6 @@ Global
 		Release|ARM64 = Release|ARM64
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-		Test|Any CPU = Test|Any CPU
-		Test|ARM64 = Test|ARM64
-		Test|x64 = Test|x64
-		Test|x86 = Test|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -59,14 +100,6 @@ Global
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x64.Build.0 = Release|Any CPU
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x86.ActiveCfg = Release|Any CPU
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x86.Build.0 = Release|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Test|Any CPU.ActiveCfg = Test|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Test|Any CPU.Build.0 = Test|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Test|ARM64.ActiveCfg = Test|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Test|ARM64.Build.0 = Test|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Test|x64.ActiveCfg = Test|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Test|x64.Build.0 = Test|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Test|x86.ActiveCfg = Test|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Test|x86.Build.0 = Test|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|ARM64.ActiveCfg = Debug|Any CPU
@@ -83,34 +116,6 @@ Global
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x64.Build.0 = Release|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x86.ActiveCfg = Release|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x86.Build.0 = Release|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Test|Any CPU.ActiveCfg = Test|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Test|Any CPU.Build.0 = Test|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Test|ARM64.ActiveCfg = Test|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Test|ARM64.Build.0 = Test|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Test|x64.ActiveCfg = Test|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Test|x64.Build.0 = Test|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Test|x86.ActiveCfg = Test|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Test|x86.Build.0 = Test|Any CPU
-		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Debug|Any CPU.Build.0 = Debug|x64
-		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Debug|ARM64.ActiveCfg = Debug|ARM64
-		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Debug|ARM64.Build.0 = Debug|ARM64
-		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Debug|x64.ActiveCfg = Debug|x64
-		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Debug|x64.Build.0 = Debug|x64
-		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Debug|x86.ActiveCfg = Debug|x86
-		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Debug|x86.Build.0 = Debug|x86
-		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Release|Any CPU.ActiveCfg = Release|x64
-		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Release|Any CPU.Build.0 = Release|x64
-		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Release|ARM64.ActiveCfg = Release|ARM64
-		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Release|ARM64.Build.0 = Release|ARM64
-		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Release|x64.ActiveCfg = Release|x64
-		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Release|x64.Build.0 = Release|x64
-		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Release|x86.ActiveCfg = Release|x86
-		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Release|x86.Build.0 = Release|x86
-		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Test|Any CPU.ActiveCfg = Release|x64
-		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Test|ARM64.ActiveCfg = Release|ARM64
-		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Test|x64.ActiveCfg = Release|x64
-		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089}.Test|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -120,7 +125,9 @@ Global
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{5DB87A85-F247-4178-B216-BFD4DCF4DFB5} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
 		{0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
-		{2ABDA2A1-C104-4741-AD2F-5E49CE53C089} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{58E421E3-1FDA-4904-8877-B0639EB6CF9D} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
+		{62709BAA-6BE0-4843-BCB1-EEE9D5EA440E} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
+		{FC75C943-5C01-458F-989F-F0BAB88EDC43} = {62709BAA-6BE0-4843-BCB1-EEE9D5EA440E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {02931AC6-E3AF-4E96-A144-EE9EE4BE10E7}

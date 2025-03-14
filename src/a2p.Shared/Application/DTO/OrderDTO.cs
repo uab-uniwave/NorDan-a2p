@@ -1,4 +1,7 @@
-﻿namespace a2p.Shared.Core.DTO
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+namespace a2p.Shared.Core.DTO
 {
     namespace a2p.Shared.Core.DTO
 
@@ -6,6 +9,7 @@
         public class OrderDTO
         {
             public string Order { get; set; } = string.Empty;
+            public string SalesDocument { get; set; } = string.Empty;
             public string Currency { get; set; } = string.Empty;
             public int FileCount { get; set; } = 0;
             public string FileList { get; set; } = string.Empty;

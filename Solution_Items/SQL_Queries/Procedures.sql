@@ -1,64 +1,25 @@
-﻿--Items Delte
---==================================================================================
-CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_DeleteItems]
-	@Order [nvarchar](50),
-	@DeletedUTCDateTime [datetime]  
-
-AS
-BEGIN
-DECLARE @SalesDocumentNumber int, 
-		@SalesDocumentVersion int
-
-SELECT TOP 1 @SalesDocumentNumber =[Number], @SalesDocumentVersion = [Version] FROM [dbo].[vwSales] WHERE [Reference]  = @Order 
-DELETE FROM [dbo].[ContenidoPAF] WHERE [Numero] = @SalesDocumentNumber and [Version] = @SalesDocumentVersion
-UPDATE [dbo].[Uniwave_a2p_Items] SET DeletedUTCDateTime = GETDATE() WHERE [Order] = @Order and [DeletedUTCDateTime] is null;
-
-
-END;
-GO
+﻿
 
 /****** Object:  StoredProcedure [dbo].[Uniwave_a2p_DeleteMaterials]    Script Date: 2025-02-25 12:39:34 ******/
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_DeleteMaterials]
-	@Order [nvarchar](50),
-	@DeletedUTCDateTime [datetime]  
-
+CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_DeleteExistsingData]
+	@SlaesDocumentNumber int, 
+	@SlaesDocumentVersion int
 AS
 BEGIN
-	UPDATE [dbo].[Uniwave_a2p_Materials] SET DeletedUTCDateTime = GETDATE() WHERE [Order] = @Order and [DeletedUTCDateTime] is null;
-END;
-GO
-
-/****** Object:  StoredProcedure [dbo].[Uniwave_a2p_DeletePrefItems]    Script Date: 2025-02-25 12:39:34 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE   PROCEDURE [dbo].[Uniwave_a2p_DeletePrefItems] 
-	-- Add the parameters for the stored procedure here
-	@Order NVARCHAR(50)
-AS
-BEGIN
-
+	
 	SET NOCOUNT ON;
+	UPDATE Uniwave_a2p_Items Set DeletedUTCDateTime = GETDATE() Where SalesDocumentNumber = @SlaesDocumentNumber  and SalesDocumentVersion = @SlaesDocumentVersion
+	UPDATE Uniwave_a2p_Materials Set DeletedUTCDateTime = GETDATE() Where SalesDocumentNumber = @SlaesDocumentNumber  and SalesDocumentVersion = @SlaesDocumentVersion
+	DELETE FROM ContenidoPAF Where Numero = @SlaesDocumentNumber  and [Version] = @SlaesDocumentVersion
+	DELETE FROM MaterialNeeds  Where Number = @SlaesDocumentNumber  and [Version] = @SlaesDocumentVersion
+	DELETE FROM MaterialNeedsMaster Where Number = @SlaesDocumentNumber  and [Version] = @SlaesDocumentVersion
 
-	DECLARE 
-	@Number INT, 
-	@Version INT
-	SELECT @Number=Numero, @Version =Version FROM PAF WHERE referencia =@Order
-	DELETE FROM dbo.ContenidoPAF WHERE Numero=@Number AND Version=@Version
 END
-
-
-
 GO
 
 /****** Object:  StoredProcedure [dbo].[Uniwave_a2p_InsertItem]    Script Date: 2025-02-25 12:39:34 ******/
@@ -292,6 +253,7 @@ CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertMaterial]
 	, @Item [nvarchar] (25) null
 	, @SortOrder [int] null
 	--==============================
+	, @ReferenceBase [nvarchar] (25)
 	, @Reference [nvarchar] (25)
 	, @Description [nvarchar] (255) null
 	--==============================
@@ -359,7 +321,8 @@ BEGIN
 		--==============================  
 		, [Item]
 		, [SortOrder]
-		 --==============================  
+		 --==============================
+		, [ReferenceBase]
 		, [Reference]
 		, [Description]
 		--==============================  
@@ -426,6 +389,7 @@ BEGIN
 		--==============================  
 		, @Item
 		, @SortOrder
+		, @ReferenceBase
 		, @Reference
 		, @Description
 		--==============================  
@@ -492,7 +456,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-CREATE     PROCEDURE [dbo].[Uniwave_a2p_InsertPrefColor] 
+CREATE  OR ALTER  PROCEDURE [dbo].[Uniwave_a2p_InsertPrefColor] 
 	
 	@Color nvarchar(50), 
 	@ColorDescription nvarchar (120)
@@ -642,22 +606,35 @@ GO
 -- Create date: 
 -- Description:	
 -- =============================================
-CREATE    PROCEDURE [dbo].[Uniwave_a2p_InsertPrefMaterial] 
+CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefMaterial] 
 	-- Add the parameters for the stored procedure here
+	@ReferenceBase NVARCHAR(25),
 	@Reference NVARCHAR(25),
 	@Description NVARCHAR(255),
 	@Color NVARCHAR(50),
-	@PackageQuantity INT,
+	@PackageQuantity FLOAT,
+	@Weight FLOAT,
 	@MaterialType INT
+	
 
 AS
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
+
+
+Declare @ConfigurationCode INT 
+
+
+
+
+
+SELECT Top 1 @ConfigurationCode = ConfigurationCode FROM ColorConfigurations WHERE ColorName = @Color and innerColor  is null and outerColor  is null
+
+-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
 	/* Check material base not exists*/
-	IF NOT EXISTS (SELECT * FROM dbo.MaterialesBase WHERE ReferenciaBase = @Reference)
+	IF NOT EXISTS (SELECT * FROM dbo.MaterialesBase WHERE ReferenciaBase = @ReferenceBase)
 	BEGIN
 	INSERT INTO dbo.MaterialesBase
 	(
@@ -711,7 +688,7 @@ BEGIN
 	VALUES
 	(   'AE8D70E6-C414-412A-B272-AE141FCFA63F', -- MakerId - uniqueidentifier
 		NEWID(), -- RowId - uniqueidentifier
-		@Reference,  -- ReferenciaBase - nchar(25) 
+		@ReferenceBase,  -- ReferenciaBase - nchar(25) 
 		@Description,	    
 			CASE WHEN @MaterialType = 1 THEN 'Barras'
 			 WHEN @MaterialType = 2 THEN 'Metros'
@@ -766,8 +743,10 @@ BEGIN
 		0,    -- PrefShopStatus - smallint
 		0    -- DontIncludeInMaterialReport - smallint
 		)
-	
+	END
+
 	IF NOT EXISTS (SELECT * FROM dbo.Materiales WHERE Referencia = @Reference)
+	BEGIN
 	INSERT INTO dbo.Materiales
 	(
 		MakerId,
@@ -796,7 +775,7 @@ BEGIN
 	VALUES
 	(   'AE8D70E6-C414-412A-B272-AE141FCFA63F',      -- MakerId - uniqueidentifier
 		NEWID(),      -- RowId - uniqueidentifier
-		@Reference,       -- ReferenciaBase - nchar(25)
+		@ReferenceBase,       -- ReferenciaBase - nchar(25)
 		@Reference,       -- Referencia - nchar(25)
 		@Color,       -- Color - nchar(50)
 		988,         -- Almacen - smallint
@@ -817,9 +796,11 @@ BEGIN
 		1,         -- ProductionPreparationTime - int
 		14         -- AverageDeliveryTime - smallint
 		)
+	END
 	
 	IF @MaterialType = 1
-	IF NOT EXISTS (SELECT * FROM dbo.Materiales WHERE RefernciaBase = @ReferenciaBase)
+	BEGIN
+	IF NOT EXISTS (SELECT * FROM dbo.Perfiles WHERE ReferenciaBase = @ReferenceBase)
 	INSERT INTO dbo.Perfiles
 	(
 		MakerId,
@@ -875,7 +856,7 @@ BEGIN
 	)
 	VALUES
 	(   'AE8D70E6-C414-412A-B272-AE141FCFA63F', -- MakerId - uniqueidentifier
-		@Reference,  -- ReferenciaBase - nchar(25)
+		@ReferenceBase,  -- ReferenciaBase - nchar(25)
 		@PackageQuantity*1000,  -- LongitudBarra - real
 		1,  -- AnchoExterior - real
 		0.0,  -- AnchoInterior - real
@@ -925,9 +906,11 @@ BEGIN
 		0,    -- WeightPriceCalculation - smallint
 		0     -- PaintPriceCalculation - smallint
 		)
+	END
 
-	IF @MaterialType = 2
-	IF NOT EXISTS (SELECT * FROM dbo.Materiales WHERE RefernciaBase = @ReferenciaBase)
+	ELSE IF @MaterialType = 2
+	BEGIN
+	IF NOT EXISTS (SELECT * FROM dbo.Metros WHERE ReferenciaBase = @ReferenceBase)
 	INSERT INTO dbo.Metros
 	(
 		MakerId,
@@ -939,15 +922,17 @@ BEGIN
 	)
 	VALUES
 	(   'AE8D70E6-C414-412A-B272-AE141FCFA63F', -- MakerId - uniqueidentifier
-		@Reference,  -- ReferenciaBase - nchar(25)
+		@ReferenceBase,  -- ReferenciaBase - nchar(25)
 		2,    -- PriceUnitsType - smallint
-		0.0,  -- LinearWeightKg_m - real
+		@Weight,  -- LinearWeightKg_m - real
 		0,    -- LossType - smallint
 		0.0   -- CustomLoss - float
 		)
+	END
 
-	IF @MaterialType = 3
-		IF NOT EXISTS (SELECT * FROM dbo.Materiales WHERE RefernciaBase = @ReferenciaBase)
+	ELSE IF @MaterialType = 3
+	BEGIN
+	IF NOT EXISTS (SELECT * FROM dbo.Piezas WHERE ReferenciaBase = @ReferenceBase)
 	INSERT INTO dbo.Piezas
 		(
 			MakerId,
@@ -956,12 +941,14 @@ BEGIN
 		)
 		VALUES
 		(   'AE8D70E6-C414-412A-B272-AE141FCFA63F', -- MakerId - uniqueidentifier
-			@Reference,  -- ReferenciaBase - nchar(25)
+			@ReferenceBase,  -- ReferenciaBase - nchar(25)
 			0.0   -- UnitWeightKg - real
 			)
-	
-	IF @MaterialType = 4 OR @MaterialType = 5   
-	IF NOT EXISTS (SELECT * FROM dbo.Materiales WHERE RefernciaBase = @ReferenciaBase)
+	END
+
+	ELSE IF @MaterialType = 4 OR @MaterialType = 5
+	BEGIN
+	IF NOT EXISTS (SELECT * FROM dbo.Superficies WHERE ReferenciaBase = @ReferenceBase)
 	INSERT INTO dbo.Superficies
 	(
 		MakerId,
@@ -1011,10 +998,10 @@ BEGIN
 	)
 	VALUES
 	(   'AE8D70E6-C414-412A-B272-AE141FCFA63F', -- MakerId - uniqueidentifier
-		@Reference,  -- ReferenciaBase - nchar(25)
+		@ReferenceBase,  -- ReferenciaBase - nchar(25)
 		0.0,  -- MultiploVertical - float
 		0.0,  -- MultiploHorizontal - float
-		0.0,  -- PesoSuperficial - real
+		@weight,  -- PesoSuperficial - real
 		1,  -- Espesor - real
 		0.0,  -- MinimoM2 - float
 		0.0,  -- DescuentoBarrotillo - float
@@ -1055,58 +1042,6 @@ BEGIN
 		0    -- SubType - smallint
 		)
 	END
-	
-	/* Possibly materialbase exists , but final reference not*/
-	IF NOT EXISTS (SELECT * FROM Materiales WHERE Referencia = @Reference)
-	INSERT INTO dbo.Materiales
-	(
-		MakerId,
-		RowId,
-		ReferenciaBase,
-		Referencia,
-		Color,
-		Almacen,
-		UE1,
-		UE2,
-		ControlDeStock,
-		PedirBajoDemanda,
-		ManageRemnants,
-		LongitudBarra,
-		WastageAllowance,
-		UseWastageAllowanceInMN,
-		UseFullRodsInMN,
-		IsModel,
-		TargetLevel,
-		PrefShopStatus,
-		DefaultValue,
-		MaterialSupplierCode,
-		ProductionPreparationTime,
-		AverageDeliveryTime
-	)
-	VALUES
-	(   'AE8D70E6-C414-412A-B272-AE141FCFA63F',      -- MakerId - uniqueidentifier
-		NewId(),      -- RowId - uniqueidentifier
-		@Reference,       -- ReferenciaBase - nchar(25)
-		@Reference,       -- Referencia - nchar(25)
-		@Color,       -- Color - nchar(50)
-		988,         -- Almacen - smallint
-		1,         -- UE1 - int
-		@PackageQuantity,         -- UE2 - int
-		1,         -- ControlDeStock - smallint
-		1,         -- PedirBajoDemanda - smallint
-		0,         -- ManageRemnants - smallint
-		0.0,       -- LongitudBarra - real
-		0.000000,      -- WastageAllowance - decimal(19, 6)
-		0,         -- UseWastageAllowanceInMN - smallint
-		0,         -- UseFullRodsInMN - smallint
-		0,         -- IsModel - smallint
-		1,         -- TargetLevel - int
-		0,         -- PrefShopStatus - smallint
-		0,         -- DefaultValue - smallint
-		979,         -- MaterialSupplierCode - int
-		1,         -- ProductionPreparationTime - int
-		14         -- AverageDeliveryTime - smallint
-		)
 	
 END
 

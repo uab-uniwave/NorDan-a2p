@@ -4,6 +4,9 @@ using System.Text;
 using a2p.Shared;
 using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Infrastructure.Interfaces;
+using a2p.Shared.Infrastructure.Services;
+
+using DocumentFormat.OpenXml.Wordprocessing;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,15 +34,18 @@ namespace a2p.WinForm
             _ = _services.GetRequiredService<IMapperSapaV1>();
             _ = _services.GetRequiredService<IMapperSapaV2>();
             _ = _services.GetRequiredService<IMapperSchuco>();
-            DataCache dataCache = _services.GetRequiredService<DataCache>();
+         
             _ = _services.GetRequiredService<IWriteMaterialService>();
             _ = _services.GetRequiredService<IWriteItemService>();
+            _ = _services.GetRequiredService<SettingsManager>();
+            _ = _services.GetRequiredService<IUserSettingsService>();
+
+            DataCache dataCache = _services.GetRequiredService<DataCache>();
             IOrderReadProcessor readService = _services.GetRequiredService<IOrderReadProcessor>();
             IExcelReadService excelReadService = _services.GetRequiredService<IExcelReadService>();
             IFileService fileService = _services.GetRequiredService<IFileService>();
-
             IOrderWriteProcessor orderProcessingService = _services.GetRequiredService<IOrderWriteProcessor>();
-
+            IUserSettingsService userSettingsService = _services.GetRequiredService<IUserSettingsService>();
             logService.Information("Application started.");
 
             using SplashScreenForm splashScreen = new();
@@ -47,7 +53,7 @@ namespace a2p.WinForm
             splashScreen.FadeIn();
             Task.Delay(2000).Wait();
 
-            MainForm mainWindow = new(readService, excelReadService, orderProcessingService, configuration, logService, fileService, dataCache);
+            MainForm mainWindow = new(readService, excelReadService, orderProcessingService, configuration, logService, fileService, dataCache, userSettingsService);
 
             splashScreen.FadeOut();
             splashScreen.Close();

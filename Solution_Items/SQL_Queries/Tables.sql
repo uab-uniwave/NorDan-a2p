@@ -23,6 +23,7 @@
         [Item]                   [nvarchar] (25)    null, 
         [SortOrder]              [int]              null,
         --==================================================================================
+        [ReferenceBase]              [nvarchar] (25)    not null,
         [Reference]              [nvarchar] (25)    not null,
         [Description]            [nvarchar] (255)   null,
         [Color]                  [nvarchar] (50)    not null,
@@ -88,7 +89,7 @@
     GO
     CREATE NONCLUSTERED INDEX [IX_Uniwave_a2p_Materials_SalesDocument]
         ON [dbo].[Uniwave_a2p_Materials]([SalesDocumentVersion] ASC, [SalesDocumentNumber] ASC)
-        INCLUDE([Reference], [Worksheet], [Line], [Order]);
+        INCLUDE([ReferenceBase],[Reference], [Worksheet], [Line], [Order]);
 
     GO
 

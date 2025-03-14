@@ -1,5 +1,5 @@
-﻿    namespace a2p.Shared.Domain.Enums
-    {
+﻿namespace a2p.Shared.Application.Domain.Enums
+{
         public enum ErrorLevel
         {
             Warning = 10,

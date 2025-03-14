@@ -61,11 +61,22 @@ namespace a2p.Shared.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Property.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static string LogForm_InitializeDataGridViews_Property {
+        internal static byte[] Item {
             get {
-                return ResourceManager.GetString("LogForm_InitializeDataGridViews_Property", resourceCulture);
+                object obj = ResourceManager.GetObject("Item", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] PrefCMD {
+            get {
+                object obj = ResourceManager.GetObject("PrefCMD", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }

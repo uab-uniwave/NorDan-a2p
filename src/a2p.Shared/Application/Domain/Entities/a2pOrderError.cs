@@ -1,7 +1,6 @@
 ﻿using a2p.Shared.Application.Domain.Enums;
-using a2p.Shared.Domain.Enums;
 
-namespace a2p.Shared.Application.Services.Domain.Entities
+namespace a2p.Shared.Application.Domain.Entities
 {
     public class A2POrderError
     {

@@ -1,5 +1,5 @@
-﻿using a2p.Shared.Application.DTO;
-using a2p.Shared.Application.Services.Domain.Entities;
+﻿using a2p.Shared.Application.Domain.Entities;
+using a2p.Shared.Application.DTO;
 
 namespace a2p.Shared.Infrastructure.Interfaces
 {
@@ -7,7 +7,7 @@ namespace a2p.Shared.Infrastructure.Interfaces
     {
         Task InsertListAsync(ProgressValue progressValue, IProgress<ProgressValue>? progress = null);
 
-        Task DeleteAsync(string order);
+        Task DeleteAsync(int salesDocumentNumber, int salesDocumentVersion, string order);
 
     }
 }

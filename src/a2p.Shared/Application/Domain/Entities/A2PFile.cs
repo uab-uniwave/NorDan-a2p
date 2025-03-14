@@ -1,6 +1,4 @@
-﻿using a2p.Shared.Application.Domain.Entities;
-
-namespace a2p.Shared.Application.Services.Domain.Entities
+﻿namespace a2p.Shared.Application.Domain.Entities
 {
     public class A2PFile
     {

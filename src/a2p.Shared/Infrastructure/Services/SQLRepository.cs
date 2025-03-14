@@ -1,25 +1,34 @@
-﻿using System.Data;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Data;
+
+using a2p.Shared.Application.Models;
 using a2p.Shared.Infrastructure.Interfaces;
 
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 
 namespace a2p.Shared.Infrastructure.Services
 {
     public class SqlRepository : ISqlRepository
     {
-        private readonly IConfiguration _configuration;
+        private readonly IUserSettingsService _userSettingsService;
+        private SettingsContainer _settingsContainer;
+        private AppSettings _appSettings;
         private readonly string _connectionString;
+
         private readonly ILogService _logService;
 
-        public SqlRepository(IConfiguration configuration, ILogService logService)
+        public SqlRepository(IUserSettingsService userSettingsService, ILogService logService)
         {
 
-            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _userSettingsService = userSettingsService;
+
+            _appSettings = _userSettingsService.LoadSettings();
+
+            _settingsContainer = _userSettingsService.LoadAllSettings( );
+            _connectionString = _settingsContainer.ConnectionStrings[("DefaultConnection")] ?? string.Empty;
             _logService = logService ?? throw new ArgumentNullException(nameof(logService));
-            _connectionString = _configuration.GetConnectionString("DefaultConnection")
-                 ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
         }
         /// <summary>
         /// Executes a SQL command and returns a DataTable (useful for SELECT queries).

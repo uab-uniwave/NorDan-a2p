@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-using a2p.Shared.Domain.Enums;
+using a2p.Shared.Application.Domain.Enums;
 
 namespace a2p.Shared.Application.DTO
 {

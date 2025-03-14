@@ -31,7 +31,7 @@ namespace a2p.WinForm
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            toolStripStatusLabel1 = new ToolStripStatusLabel();
+            slbPathTitle = new ToolStripStatusLabel();
             tplHeader = new TableLayoutPanel();
             plNordanHeaderLogo = new Panel();
             lbHeader1 = new Label();
@@ -46,8 +46,10 @@ namespace a2p.WinForm
             plTitleBar = new Panel();
             plTitleBarAppName = new Label();
             plTBPanel = new Panel();
-            slbPath = new ToolStripStatusLabel();
+            slbPathValue = new ToolStripStatusLabel();
             statusStrip = new StatusStrip();
+            slbDataSourceTitle = new ToolStripStatusLabel();
+            slbDataSourceValue = new ToolStripStatusLabel();
             plSideBarMain = new Panel();
             btnProperties = new Button();
             btnExit = new Button();
@@ -63,12 +65,16 @@ namespace a2p.WinForm
             plSideBarMain.SuspendLayout();
             SuspendLayout();
             // 
-            // toolStripStatusLabel1
+            // slbPathTitle
             // 
-            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            toolStripStatusLabel1.Size = new Size(109, 32);
-            toolStripStatusLabel1.Text = "FilePath: ";
-            toolStripStatusLabel1.TextAlign = ContentAlignment.MiddleLeft;
+            slbPathTitle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            slbPathTitle.ForeColor = Color.White;
+            slbPathTitle.Margin = new Padding(6, 6, 0, 6);
+            slbPathTitle.MergeIndex = 1;
+            slbPathTitle.Name = "slbPathTitle";
+            slbPathTitle.Size = new Size(117, 32);
+            slbPathTitle.Text = "FilePath: ";
+            slbPathTitle.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // tplHeader
             // 
@@ -323,10 +329,16 @@ namespace a2p.WinForm
             plTBPanel.Size = new Size(2072, 50);
             plTBPanel.TabIndex = 8;
             // 
-            // slbPath
+            // slbPathValue
             // 
-            slbPath.Name = "slbPath";
-            slbPath.Size = new Size(0, 32);
+            slbPathValue.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            slbPathValue.ForeColor = Color.White;
+            slbPathValue.Margin = new Padding(0, 6, 6, 6);
+            slbPathValue.MergeIndex = 1;
+            slbPathValue.Name = "slbPathValue";
+            slbPathValue.Size = new Size(105, 32);
+            slbPathValue.Text = "c:\\Temp";
+            slbPathValue.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // statusStrip
             // 
@@ -334,13 +346,35 @@ namespace a2p.WinForm
             statusStrip.BackColor = Color.FromArgb(239, 112, 32);
             statusStrip.GripStyle = ToolStripGripStyle.Visible;
             statusStrip.ImageScalingSize = new Size(32, 32);
-            statusStrip.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, slbPath });
-            statusStrip.Location = new Point(0, 1274);
+            statusStrip.Items.AddRange(new ToolStripItem[] { slbPathTitle, slbPathValue, slbDataSourceTitle, slbDataSourceValue });
+            statusStrip.Location = new Point(0, 1272);
             statusStrip.Name = "statusStrip";
             statusStrip.Padding = new Padding(2, 0, 16, 0);
-            statusStrip.Size = new Size(2072, 42);
+            statusStrip.Size = new Size(2072, 44);
             statusStrip.TabIndex = 0;
             statusStrip.Text = "statusStrip";
+            // 
+            // slbDataSourceTitle
+            // 
+            slbDataSourceTitle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            slbDataSourceTitle.ForeColor = Color.White;
+            slbDataSourceTitle.Margin = new Padding(6, 6, 0, 6);
+            slbDataSourceTitle.MergeIndex = 2;
+            slbDataSourceTitle.Name = "slbDataSourceTitle";
+            slbDataSourceTitle.Size = new Size(157, 32);
+            slbDataSourceTitle.Text = "Data source:";
+            slbDataSourceTitle.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // slbDataSourceValue
+            // 
+            slbDataSourceValue.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            slbDataSourceValue.ForeColor = Color.White;
+            slbDataSourceValue.Margin = new Padding(0, 6, 6, 6);
+            slbDataSourceValue.MergeIndex = 2;
+            slbDataSourceValue.Name = "slbDataSourceValue";
+            slbDataSourceValue.Size = new Size(90, 32);
+            slbDataSourceValue.Text = "source";
+            slbDataSourceValue.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // plSideBarMain
             // 
@@ -355,7 +389,7 @@ namespace a2p.WinForm
             plSideBarMain.Location = new Point(0, 178);
             plSideBarMain.Margin = new Padding(6);
             plSideBarMain.Name = "plSideBarMain";
-            plSideBarMain.Size = new Size(400, 1096);
+            plSideBarMain.Size = new Size(400, 1094);
             plSideBarMain.TabIndex = 46;
             // 
             // btnProperties
@@ -388,7 +422,7 @@ namespace a2p.WinForm
             btnExit.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
             btnExit.ForeColor = Color.LightGray;
             btnExit.ImageAlign = ContentAlignment.MiddleLeft;
-            btnExit.Location = new Point(0, 1016);
+            btnExit.Location = new Point(0, 1014);
             btnExit.Margin = new Padding(6);
             btnExit.Name = "btnExit";
             btnExit.Size = new Size(400, 80);
@@ -471,7 +505,7 @@ namespace a2p.WinForm
             plFormContainer.Margin = new Padding(6);
             plFormContainer.MinimumSize = new Size(10, 10);
             plFormContainer.Name = "plFormContainer";
-            plFormContainer.Size = new Size(1672, 1096);
+            plFormContainer.Size = new Size(1672, 1094);
             plFormContainer.TabIndex = 60;
             // 
             // MainForm
@@ -536,14 +570,12 @@ namespace a2p.WinForm
 
   
         private Panel plTBPanel;
-        private ToolStripStatusLabel slbPath;
-        private StatusStrip statusStrip;
 
         private Panel plSideBarMain;
         private Button btnMaximize;
         private Button btnClose;
         private Button btnMinimize;
-        private ToolStripStatusLabel toolStripStatusLabel1;
+        private ToolStripStatusLabel slbPathTitle;
         private Button btnLoad;
         private Button btnLog;
         private Button btnImport;
@@ -564,5 +596,9 @@ namespace a2p.WinForm
         private Button btnProperties;
         private Panel plFormContainer;
         private Panel plNordanHeaderLogo;
+        private ToolStripStatusLabel slbDataSourceTitle;
+        public StatusStrip statusStrip;
+        public ToolStripStatusLabel slbPathValue;
+        public ToolStripStatusLabel slbDataSourceValue;
     }
 }

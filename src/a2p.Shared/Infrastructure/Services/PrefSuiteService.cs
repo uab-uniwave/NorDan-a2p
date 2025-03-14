@@ -5,8 +5,6 @@ using System.Data;
 
 using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.Domain.Enums;
-using a2p.Shared.Application.Services.Domain.Entities;
-using a2p.Shared.Domain.Enums;
 using a2p.Shared.Infrastructure.Interfaces;
 
 using Microsoft.Data.SqlClient;
@@ -138,39 +136,34 @@ namespace a2p.Shared.Infrastructure.Services
 
                     _progressValue.ProgressTitle = $"Reading Order States # {a2pOrder.Order}. {ordersCounter} of {a2pOrders.Count}";
                     _progress?.Report(_progressValue);
+                    string sqlCommand = "SELECT Numero, Version FROM PAF WHERE Referencia = " + "'" + a2pOrder.Order + "'";
 
+                    CommandType commandType = System.Data.CommandType.Text;
+                    (int, int) result = await _sqlRepository.ExecuteQueryTupleValuesAsync(sqlCommand, commandType);
                     OrderState orderState = (OrderState)a2pOrder.SalesDocumentState;
-
-                    if (orderState.HasFlag(OrderState.SalesDocumentExist))
+                    if (result.Item1 > 0 && result.Item2 > 0)
                     {
-                        string sqlCommand = "SELECT Numero, Version FROM PAF WHERE Referencia = " + "'" + a2pOrder.Order + "'";
-                        CommandType commandType = System.Data.CommandType.Text;
-                        (int, int) result = await _sqlRepository.ExecuteQueryTupleValuesAsync(sqlCommand, commandType);
-                        if (result.Item1 > 0 && result.Item2 > 0)
+                        _dataCache.UpdateOrderInCache(a2pOrder.Order, a2pOrder =>
                         {
-                            _dataCache.UpdateOrderInCache(a2pOrder.Order, a2pOrder =>
-                            {
-                                a2pOrder.SalesDocumentNumber = result.Item1;
-                                a2pOrder.SalesDocumentVersion = result.Item2;
-                            });
+                            a2pOrder.SalesDocumentNumber = result.Item1;
+                            a2pOrder.SalesDocumentVersion = result.Item2;
+                        });
 
-                        }
-
-                        else
+                    }
+                    else
+                    {
+                        a2pOrder.ReadErrors.Add(new A2POrderError
                         {
-                            a2pOrder.ReadErrors.Add(new A2POrderError
-                            {
-                                Order = a2pOrder.Order,
-                                Level = ErrorLevel.Fatal,
-                                Code = ErrorCode.DatabaseRead_OrderReferenceNotFound,
-                                Message = $"PrefSuite sales document with reference {a2pOrder.Order} not exist."
+                            Order = a2pOrder.Order,
+                            Level = ErrorLevel.Fatal,
+                            Code = ErrorCode.DatabaseRead_OrderReferenceNotFound,
+                            Message = $"PrefSuite sales document with reference {a2pOrder.Order} not exist."
 
-                            });
-                            _errorCount++;
+                        });
+                        _errorCount++;
 
-                            progressValue.ProgressTask2 = $"Errors: {_errorCount}, Warnings: {_warningCount}";
-                            progress?.Report(progressValue);
-                        }
+                        progressValue.ProgressTask2 = $"Errors: {_errorCount}, Warnings: {_warningCount}";
+                        progress?.Report(progressValue);
                     }
 
                     if (orderState.HasFlag(OrderState.A2PItemsImported))
@@ -273,11 +266,29 @@ namespace a2p.Shared.Infrastructure.Services
         {
             try
             {
-                string sqlCommand = "SELECT Color FROM Colors WHERE Color = '" + color + "'";
+                string sqlCommand = $"SELECT Color FROM Colors WHERE Color = '{color}'";
                 CommandType commandType = System.Data.CommandType.Text;
                 object? result = await _sqlRepository.ExecuteScalarAsync(sqlCommand, commandType);
 
+                return result != null ? (result?.ToString()) : null;
+
+            }
+            catch (Exception ex)
+            {
+                _logService.Debug(ex.Message, "Unhandled error: getting color from DB");
+                return null;
+            }
+        }
+
+        public async Task<string?> GetGlassReferenceAsync(string description)
+        {
+            try
+            {
+                string sqlCommand = $"SELECT TOP 1 ReferenciaBase FROM MaterialesBase WHERE tipocalculo = 'Superficies' and Nivel1 = '03 Glass' and Descripcion = '{description}'";
+                CommandType commandType = System.Data.CommandType.Text;
+                object? result = await _sqlRepository.ExecuteScalarAsync(sqlCommand, commandType);
                 return result?.ToString();
+
             }
             catch (Exception ex)
             {
@@ -372,9 +383,9 @@ namespace a2p.Shared.Infrastructure.Services
 
                                 }
                             }
+                            salesDoc.Save();
                         }
                     }
-
                     catch (Exception ex)
                     {
                         _logService.Error("PrefSuite Service: Error inserting items for order {$Order}. Exception {$Exception}", a2pOrders[j].Order, ex.Message);

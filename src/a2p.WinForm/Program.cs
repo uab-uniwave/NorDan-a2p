@@ -1,12 +1,13 @@
-﻿using System.Diagnostics;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System.Diagnostics;
 using System.Text;
 
 using a2p.Shared;
 using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Infrastructure.Interfaces;
 using a2p.Shared.Infrastructure.Services;
-
-using DocumentFormat.OpenXml.Wordprocessing;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,9 +35,8 @@ namespace a2p.WinForm
             _ = _services.GetRequiredService<IMapperSapaV1>();
             _ = _services.GetRequiredService<IMapperSapaV2>();
             _ = _services.GetRequiredService<IMapperSchuco>();
-         
-            _ = _services.GetRequiredService<IWriteMaterialService>();
-            _ = _services.GetRequiredService<IWriteItemService>();
+
+            _ = _services.GetRequiredService<IWriteService>();
             _ = _services.GetRequiredService<SettingsManager>();
             _ = _services.GetRequiredService<IUserSettingsService>();
 
@@ -44,7 +44,7 @@ namespace a2p.WinForm
             IOrderReadProcessor readService = _services.GetRequiredService<IOrderReadProcessor>();
             IExcelReadService excelReadService = _services.GetRequiredService<IExcelReadService>();
             IFileService fileService = _services.GetRequiredService<IFileService>();
-            IOrderWriteProcessor orderProcessingService = _services.GetRequiredService<IOrderWriteProcessor>();
+            IWriteService writeService = _services.GetRequiredService<IWriteService>();
             IUserSettingsService userSettingsService = _services.GetRequiredService<IUserSettingsService>();
             logService.Information("Application started.");
 
@@ -53,7 +53,7 @@ namespace a2p.WinForm
             splashScreen.FadeIn();
             Task.Delay(2000).Wait();
 
-            MainForm mainWindow = new(readService, excelReadService, orderProcessingService, configuration, logService, fileService, dataCache, userSettingsService);
+            MainForm mainWindow = new(readService, excelReadService, writeService, configuration, logService, fileService, dataCache, userSettingsService);
 
             splashScreen.FadeOut();
             splashScreen.Close();
@@ -66,9 +66,6 @@ namespace a2p.WinForm
     {
         public override Encoding Encoding => Encoding.UTF8;
 
-        public override void WriteLine(string? message)
-        {
-            Debug.WriteLine(message);
-        }
+        public override void WriteLine(string? message) => Debug.WriteLine(message);
     }
 }

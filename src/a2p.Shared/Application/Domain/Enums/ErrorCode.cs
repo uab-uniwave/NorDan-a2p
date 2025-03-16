@@ -45,10 +45,8 @@
         DatabaseWrite_Material = 4203,
 
         // Database Delete Errors (43xx)
-        DatabaseDelete_Order = 4301,
-        DatabaseDelete_Item = 4302,
-        DatabaseDelete_Material = 4303,
-
+        DatabaseDelete_Data = 4301,
+        
         // ERP Write Errors (52xx)
         ERPWrite_Order = 5201,
         ERPWrite_Item = 5202,

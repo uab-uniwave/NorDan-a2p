@@ -1,4 +1,7 @@
-﻿using System.Drawing.Drawing2D;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System.Drawing.Drawing2D;
 
 using a2p.Shared.Application.Domain.Entities;
 
@@ -52,7 +55,7 @@ namespace a2p.WinForm.CustomControls
                 else
                 {
                     UpdateProgressInternal(progressValue);
-                } 
+                }
             }
         }
 
@@ -60,7 +63,12 @@ namespace a2p.WinForm.CustomControls
         {
             progressBar.Minimum = progressValue.MinValue;
             progressBar.Maximum = progressValue.MaxValue;
-            progressBar.Value = progressValue.Value;
+
+            if (progressValue.Value > progressBar.Maximum)
+            {
+                progressBar.Value += 0;
+            }
+            else { progressBar.Value = progressValue.Value; }
 
             lbProgressBarTitle.Text = progressValue.ProgressTitle ?? string.Empty;
             lbProgressBarTask1.Text = progressValue.ProgressTask1 ?? string.Empty;
@@ -83,13 +91,6 @@ namespace a2p.WinForm.CustomControls
             this.Region = new Region(path);
         }
 
-        public Task FormReadyAsync()
-        {
-            TaskCompletionSource tcs = new();
-            this.Shown += (s, e) => tcs.SetResult();
-            return tcs.Task;
-        }
-
         private void UpdateProgressBar()
         {
 
@@ -104,9 +105,6 @@ namespace a2p.WinForm.CustomControls
 
         }
 
-        private void ProgressBarForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            this.Cursor = Cursors.Default;
-        }
+        private void ProgressBarForm_FormClosed(object sender, FormClosedEventArgs e) => this.Cursor = Cursors.Default;
     }
 }

@@ -20,6 +20,7 @@ namespace a2p.Shared.Application.Domain.Entities
         public List<A2PFile> Files { get; set; } = [];
         //===================================================================================
         public List<ItemDTO> Items { get; set; } = [];
+
         public List<MaterialDTO> Materials { get; set; } = [];
         //===================================================================================
         public List<A2POrderError> ReadErrors { get; set; } = [];
@@ -32,6 +33,7 @@ namespace a2p.Shared.Application.Domain.Entities
         public string? Currency { get; set; }
         public decimal ExchangeRate { get; set; }
         //===================================================================================
+        public bool Import { get; set; } = false;
 
 
     }

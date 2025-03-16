@@ -35,19 +35,7 @@ namespace a2p.Shared.Application.Services
         public async Task MapItemsAsync(A2PWorksheet a2pWorksheet, ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
         {
 
-            if (a2pWorksheet == null)
-            {
-                _logService.Error("Mapper Sapa 2 Service: Order a2pWorksheet is null!");
-                return;
-
-            }
-
-            if (string.IsNullOrEmpty(a2pWorksheet.Order))
-            {
-                _logService.Error("Mapper Sapa 2 Service: Order a2pWorksheet Order is null!");
-                return;
-            }
-
+ 
             List<ItemDTO> items = [];
 
             A2POrder? a2pOrder = _dataCache.GetOrder(a2pWorksheet.Order);
@@ -57,31 +45,10 @@ namespace a2p.Shared.Application.Services
 
                 _progressValue = progressValue;
                 _progress = progress ?? new Progress<ProgressValue>();
-                _progressValue.ProgressTask3 = $"Reading rows";
-                _progress?.Report(_progressValue);
-
+         
                 int line = -1;
                 int column = -1;
-
-                if (a2pWorksheet.RowCount == 0)
-                {
-                    _logService.Error("Mapper Sapa 2 Service: Mapping Item. Order {$Order}, File: {$File}, Worksheet {$Worksheet}, No rows or data found!", a2pWorksheet.Order, a2pWorksheet.FileName, a2pWorksheet.Name);
-
-                    A2POrderError writeError = new()
-                    {
-                        Order = a2pWorksheet.Order,
-                        Level = ErrorLevel.Error,
-                        Code = ErrorCode.MappingService_MapItem,
-                        Message = $"Mapper Sapa V2: Unhandled error in order: {a2pWorksheet.Order}."
-                    };
-
-                    a2pOrder!.WriteErrors.Add(writeError);
-                    _dataCache.UpdateOrderInCache(a2pOrder.Order, updatedOrder =>
-                    {
-                        updatedOrder.WriteErrors.Add(writeError);
-                    });
-
-                }
+              
                 await Task.Run(() =>
                 {
 
@@ -274,20 +241,8 @@ namespace a2p.Shared.Application.Services
         public async Task MapMaterialsAsync(A2PWorksheet a2pWorksheet, ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
         {
 
-            if (a2pWorksheet == null)
-            {
-                _logService.Error("Mapper Sapa 2 Service: Order a2pWorksheet is null!");
-                return;
-            }
-            if (a2pWorksheet.RowCount == 0)
 
-            {
-                _logService.Error("Mapper Sapa 2 Service: Order {$Order},a2pWorksheet {$Worksheet} has no rows. File {$File}", a2pWorksheet.Order, a2pWorksheet.FileName, a2pWorksheet.Name);
-
-                return;
-            }
-
-            string lastItem = string.Empty;
+            
             int sortOrder = -1;
             int line = -1;
             int column = -1;
@@ -297,30 +252,16 @@ namespace a2p.Shared.Application.Services
             List<MaterialDTO> materials = [];
             try
             {
+             
                 await Task.Run(async () =>
                 {
-
+             
                     for (int i = 4; i < a2pWorksheet.RowCount; i++)
                     {
-
+             
                         line = i + 1;
                         try
                         {
-                            if (string.IsNullOrEmpty(a2pWorksheet.WorksheetData[i][1].ToString()))
-                            {
-                                _logService.Warning("Mapper Sapa 2: Reference (Sapa article) field empty. Line will be skipped. Order: {$Order}, Worksheet: {$Worksheet}, LineNumber: {$Line}.", a2pWorksheet.Order ?? string.Empty, a2pWorksheet.Name ?? string.Empty, line);
-
-                                if (a2pOrder != null)
-                                {
-                                    a2pOrderErrors.Add(new()
-                                    {
-                                        Order = a2pWorksheet.Order!,
-                                        Level = ErrorLevel.Error,
-                                        Code = ErrorCode.MappingService_MapMaterial,
-                                        Message = $"Mapper Sapa 2 : Reference (Sapa article) field empty. Line will be skipped. Order: {a2pWorksheet.Order}, Worksheet: {a2pWorksheet.Name}, LineNumber: {line}."
-                                    });
-                                }
-                            }
 
                             MaterialDTO material = new()
                             {
@@ -328,6 +269,7 @@ namespace a2p.Shared.Application.Services
                                 Column = column,
                                 WorksheetType = a2pWorksheet.WorksheetType
                             };
+
 
                             if (a2pWorksheet.Name is "ND_Glasses")
                             {
@@ -339,7 +281,7 @@ namespace a2p.Shared.Application.Services
 
                                 if (string.IsNullOrEmpty(material.Description))
                                 {
-                                    _logService.Error("Mapper Sapa 2 Service: Error. Glass description is empty. Can't get reference.Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}.", a2pWorksheet.Order ?? "Unknown", a2pWorksheet.Name, line);
+                                    _logService.Error("Mapper Sapa V2: Error. Glass description is empty. Can't get reference.Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}.", a2pWorksheet.Order ?? "Unknown", a2pWorksheet.Name, line);
                                     if (a2pOrder != null)
                                     {
                                         a2pOrderErrors.Add(new()
@@ -347,7 +289,7 @@ namespace a2p.Shared.Application.Services
                                             Order = a2pWorksheet.Order!,
                                             Level = ErrorLevel.Error,
                                             Code = ErrorCode.MappingService_MapMaterial,
-                                            Message = $"Mapper Sapa 2 :Glass Description is missing. Line will be skipped. Order: {a2pWorksheet.Order}, Worksheet: {a2pWorksheet.Name}, LineNumber: {line}."
+                                            Message = $"Mapper Sapa V2: Glass Description is missing. Line will be skipped. Order: {a2pWorksheet.Order}, Worksheet: {a2pWorksheet.Name}, LineNumber: {line}."
                                         });
                                     }
 
@@ -429,11 +371,8 @@ namespace a2p.Shared.Application.Services
                                 material.Item = a2pWorksheet.WorksheetData[i][1].ToString() ?? string.Empty;
                                 //Reset Sort Order if new item
                                 //===================================================================================================
-                                if (material.Item != lastItem)
-                                {
-                                    lastItem = material.Item;
-                                    sortOrder = 0;
-                                }
+
+                           
                                 sortOrder++;
                                 material.SortOrder = sortOrder;
                                 //===================================================================================================
@@ -860,7 +799,8 @@ namespace a2p.Shared.Application.Services
                         }
                         catch (Exception ex)
                         {
-                            _logService.Error("Mapper Sapa 2 Service: Unhandled Error. Map single material from material list.  Last known success action. Order: {$Order}, a2pWorksheet: {$Worksheet}, line {$Line}. Exception  ${Exception} ", a2pWorksheet.Order ?? string.Empty, a2pWorksheet.Name ?? string.Empty, line, ex.Message);
+                            _logService.Error("Mapper Sapa V2: Unhandled Error. Map single material from material list." +
+                                "\nLast known success action. Order: {$Order}, a2pWorksheet: {$Worksheet}, line {$Line}. Exception  ${Exception} ", a2pWorksheet.Order ?? string.Empty, a2pWorksheet.Name ?? string.Empty, line, ex.Message);
                             continue;
                         }
                     }
@@ -875,7 +815,8 @@ namespace a2p.Shared.Application.Services
             }
             catch (Exception ex)
             {
-                _logService.Error("Mapper Sapa 2 Service: Unhandled Error. Mapping material map materials. Last known success action. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}+ ${Exception}", a2pWorksheet.Order ?? string.Empty, a2pWorksheet.Name ?? string.Empty, line, ex.Message);
+                _logService.Error("Mapper Sapa 2 Service: Unhandled Error. Mapping material map materials. " +
+                    "\nLast known success action. Order: {$Order}, FileName: {$Worksheet}, LineNumber: {$Line}+ ${Exception}", a2pWorksheet.Order ?? string.Empty, a2pWorksheet.Name ?? string.Empty, line, ex.Message);
             }
         }
 
@@ -890,8 +831,8 @@ namespace a2p.Shared.Application.Services
                 // Log an error if both fields are empty
                 if (string.IsNullOrEmpty(sapaArticle_v2) && string.IsNullOrEmpty(sapaColor_v2))
                 {
-                    _logService.Error(
-                        "Mapper Sapa 2 Service: Mapping material Article and Color fields are empty. Line will be skipped. Order: {Order}, FileName: {Worksheet}, LineNumber: {Line}.",
+                    _logService.Error("Mapper Sapa V2: Mapping material Article and Color fields are empty." +
+                        "\nLine will be skipped. Order: {Order}, FileName: {Worksheet}, LineNumber: {Line}.",
                         order ?? string.Empty, worksheetName ?? string.Empty, line
                     );
 
@@ -900,7 +841,8 @@ namespace a2p.Shared.Application.Services
                         Order = order!,
                         Level = ErrorLevel.Error,
                         Code = ErrorCode.MappingService_MapMaterial,
-                        Message = $"Mapper Sapa 2: Mapping material Article and Color fields are empty. Line will be skipped. Order: {order}, FileName: {worksheetName}, LineNumber: {line}.",
+                        Message = $"Mapper Sapa V2: Mapping material Article and Color fields are empty. " +
+                        $"\nLine will be skipped. Order: {order}, FileName: {worksheetName}, LineNumber: {line}.",
                     };
 
                     a2pOrder!.WriteErrors.Add(writeError);
@@ -945,11 +887,15 @@ namespace a2p.Shared.Application.Services
                 if (reference.Length > 25)
                 {
                     string newReference = $"*{reference[..24]}";
-                    _logService.Error(
-                        "Mapper Sapa 2 Service: Warning. " +
-                        "Reference > 25 characters. \nOrder:{Order}, Worksheet: {Worksheet}, Line: {Line}, " +
-                        "\nSapa Article: {SapaArticle}({SapaArticleLength}):, Sapa Color: {SapaColor}({SapaColorLength}). " +
-                        "\n Generated PrefSuite Reference: {Reference}({ReferenceLength})." +
+                    _logService.Error("Mapper Sapa 2 Service: Warning." +
+                        "Reference > 25 characters." +
+                        "\nOrder: {Order}, " +
+                        "\nWorksheet: {Worksheet}," +
+                        "\nLine: {Line}," +
+                        "\nSapa Article: {SapaArticle}({SapaArticleLength}):, " +
+                        "\nSapa Color: {SapaColor}({SapaColorLength})." +
+                        "\n"+
+                        "\nGenerated PrefSuite Reference: {Reference}({ReferenceLength})." +
                         "\nReference inserted into DB Reference {NewReference}({NewReferenceLength}).",
                         order ?? string.Empty,
                         worksheetName ?? string.Empty,
@@ -970,10 +916,15 @@ namespace a2p.Shared.Application.Services
                         Level = ErrorLevel.Error,
                         Code = ErrorCode.MappingService_MapMaterial,
                         Message = $"Mapper Sapa 2: Generated material Reference is  > 25 characters!" +
-                        $"\n Line will be skipped. Order: {order}, FileName: {worksheetName}, LineNumber: {line}." +
-                        $"\nSapa Article: {sapaArticle_v2 ?? string.Empty}({(sapaArticle_v2 ?? string.Empty).Length}), Sapa Color: {sapaColor_v2 ?? string.Empty}({(sapaColor_v2 ?? string.Empty).Length}). " +
-                        $"\n Generated PrefSuite Reference: {reference}({reference.Length})." +
-                        $"Reference inserted into DB: {newReference}({newReference.Length})."
+                        $"\nLine will be skipped." +
+                        $"\nOrder: {order}," +
+                        $"\nWorksheet: {worksheetName}, " +
+                        $"\nLine: {line}," +
+                        $"\nSapa Article: {sapaArticle_v2 ?? string.Empty}({(sapaArticle_v2 ?? string.Empty).Length})." +
+                        $"\nSapa Color: {sapaColor_v2 ?? string.Empty}({(sapaColor_v2 ?? string.Empty).Length})." +
+                        "\n"+
+                        $"\nGenerated PrefSuite Reference: {reference}({reference.Length})." +
+                        $"\nReference inserted into DB: {newReference}({newReference.Length})."
                     };
 
                     a2pOrder!.WriteErrors.Add(writeError);
@@ -991,8 +942,8 @@ namespace a2p.Shared.Application.Services
             {
                 _logService.Error(
                     ex.Message,
-                    "Mapper Sapa 2 Service: Error Order {Order}, a2pWorksheet {Worksheet}, line {Line}. " +
-                    "Can't generate PrefSuite reference using Sapa v.2 article: {Article} and Sapa v.2 Color {Color}.",
+                    "Mapper Sapa V2: Error Order {Order}, a2pWorksheet {Worksheet}, line {Line}." +
+                    "\nCan't generate PrefSuite reference using Sapa v.2 article: {Article} and Sapa v.2 Color {Color}.",
                     order ?? string.Empty, worksheetName ?? string.Empty, line, sapaArticle_v2, sapaColor_v2
                 );
                 return "Unknown";
@@ -1035,8 +986,9 @@ namespace a2p.Shared.Application.Services
 
             if (string.IsNullOrEmpty(reference))
             {
-                _logService.Error("Mapper Sapa 2 Service: Error. Glass not exists in PrefSuite.Order: {$Order}, a2pWorksheet: {$Worksheet}, line {$Line}. Using Sapa description: {SapaDescription}, transforming into PrefSuite description: {PrefsuiteDescription}. " +
-               "Reference, with such description not exists.", order, worksheetName, line, description, tempString);
+                _logService.Error("Mapper Sapa V2: Error glass not exists in PrefSuite.Order: {$Order}, a2pWorksheet: {$Worksheet}, line {$Line}." +
+                    "\nUsing Sapa description: {SapaDescription}, transforming into PrefSuite description: {PrefSuiteDescription}." +
+                    "\nReference, with such description not exists.", order, worksheetName, line, description, tempString);
                 return reference;
 
             }
@@ -1048,10 +1000,6 @@ namespace a2p.Shared.Application.Services
             }
 
         }
-
-        public List<A2PFile> GetNonOrderItemFiles(A2POrder order) => order.Files.Where(file => !file.IsOrderItemsFile).ToList();
-
-        public List<A2PFile> GetOrderItemFiles(A2POrder order) => order.Files.Where(file => file.IsOrderItemsFile).ToList();
 
     }
 }

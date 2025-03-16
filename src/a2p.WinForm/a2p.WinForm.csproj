@@ -100,10 +100,6 @@
         </None>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="NewFolder\" />
-    </ItemGroup>
-
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="xcopy /Y /I &quot;..\..\Solution_Items\Sql_Queries&quot; &quot;..\..\Output\a2p.WinForm\Release\net8.0-windows\Sql_Queries&quot;" />
     <Exec Command="xcopy /Y /I &quot;..\..\Solution_Items\Test_Cases&quot; &quot;..\..\Output\a2p.WinForm\Release\net8.0-windows\Test_Cases&quot;" />

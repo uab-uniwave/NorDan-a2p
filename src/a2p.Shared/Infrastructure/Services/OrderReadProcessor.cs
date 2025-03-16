@@ -40,23 +40,13 @@ namespace a2p.Shared.Infrastructure.Services
             try
             {
 
-                _progressValue = progressValue;
-                _progress = progress ?? new Progress<ProgressValue>();
-
-                _progressValue.ProgressTitle = "Loading Orders Files... ";
-                _progressValue.ProgressTask1 = $"Reading Orders ...";
-
-                await _fileService.GetOrdersAsync(_progressValue, _progress);
-
-                await _prefSuiteService.GetSalesDocumentStates(_progressValue, _progress);
-
-                List<A2POrder> a2pOrders = _dataCache.GetAllOrders();
-
+                _progressValue =  await _fileService.GetOrdersAsync(_progressValue, _progress);
+                _progressValue =  await _prefSuiteService.GetSalesDocumentStates(_progressValue, _progress);
 
             }
             catch (Exception ex)
             {
-                _logService.Error(ex, "Error reading a2pOrders");
+                _logService.Error("Order Read Processor: Unhandled Error reading orders. Exception: {$Exception}", ex.Message);
 
             }
 

@@ -1,4 +1,7 @@
-﻿using a2p.Shared.Application.Interfaces;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Application.Services;
 using a2p.Shared.Infrastructure.Interfaces;
 using a2p.Shared.Infrastructure.Services;
@@ -8,8 +11,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using Serilog;
-
-using System.Diagnostics;
 
 namespace a2p.Shared
 {
@@ -40,13 +41,11 @@ namespace a2p.Shared
             _ = services.AddSingleton<IOrderReadProcessor, OrderReadProcessor>();
             _ = services.AddSingleton<IExcelReadService, ExcelReadService>();
             _ = services.AddSingleton<IPrefSuiteService, PrefSuiteService>();
-            _ = services.AddSingleton<IWriteItemService, WriteItemService>();
-            _ = services.AddSingleton<IWriteMaterialService, WriteMaterialService>();
+            _ = services.AddSingleton<IWriteService, WriteService>();
             _ = services.AddSingleton<IFileService, FileService>();
             _ = services.AddSingleton<IMapperSapaV1, MapperSapaV1>();
             _ = services.AddSingleton<IMapperSapaV2, MapperSapaV2>();
             _ = services.AddSingleton<IMapperSchuco, MapperSchuco>();
-            _ = services.AddSingleton<IOrderWriteProcessor, OrderWritingProcessor>();
             _ = services.AddSingleton<ISqlRepository, SqlRepository>();
 
             return services.BuildServiceProvider();

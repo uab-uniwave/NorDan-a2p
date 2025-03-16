@@ -9,7 +9,7 @@ namespace a2p.Shared.Application.Interfaces
     public interface IFileService
     {
         //Task<List<OrderEntry>> GetSingleOrderFilesAsync(IProgress<ProgressValue>? progress = null, CancellationToken cancellationToken = default);
-        Task GetOrdersAsync(ProgressValue progressValue, IProgress<ProgressValue>? progress = null);
+        Task<ProgressValue> GetOrdersAsync(ProgressValue progressValue, IProgress<ProgressValue>? progress = null);
 
         // Task<A2POrder> GetOrderFilesAsync(A2POrder order);
 

@@ -1,4 +1,7 @@
-﻿using System.Globalization;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System.Globalization;
 
 using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.Domain.Enums;
@@ -27,32 +30,19 @@ namespace a2p.Shared.Application.Services
 
         }
 
-
-
         public async Task<List<A2PWorksheet>> GetWorksheetsAsync(A2PFile file, ProgressValue progressValue, IProgress<ProgressValue>? progress)
         {
 
             XLWorkbook workbook = new(file.File);
             List<A2PWorksheet> worksheets = [];
-            int worksheetCount = 0;
+            int worksheetCounter = 0;
             try
             {
+
                 foreach (IXLWorksheet ixlWorksheet in workbook.Worksheets)
                 {
+                    worksheetCounter++;
 
-                    _progressValue.ProgressTask2 = $"Processing {ixlWorksheet.Name}. Worksheet {worksheetCount + 1} of {workbook.Worksheets.Count()}.";
-                    _progressValue.ProgressTask3 = $"Searching rows...";
-                    _progress?.Report(_progressValue);
-
-                    if (ixlWorksheet == null)
-                    {
-                        continue;
-                    }
-
-                    if (ixlWorksheet.RowsUsed().Count() == 0)
-                    {
-                        continue;
-                    }
 
                     A2PWorksheet worksheet = new()
                     {
@@ -68,17 +58,13 @@ namespace a2p.Shared.Application.Services
 
                     IEnumerable<IXLRow> rows = ixlWorksheet.RowsUsed() ?? Enumerable.Empty<IXLRow>();
 
-                    int totalCount = rows.Count();
-                    int rowCount = 0;
-
-                    _progressValue.ProgressTask3 = $"Found {totalCount} rows.";
-                    _progress?.Report(_progressValue);
+                    int rowCounter = 0;
 
                     //iterate through all rows
                     foreach (IXLRow row in ixlWorksheet.RowsUsed() ?? Enumerable.Empty<IXLRow>())
                     {
-
-                        _progressValue.ProgressTask3 = $"Processing row {rowCount + 1} of {totalCount}...";
+                        rowCounter++;
+                        _progressValue.ProgressTask3 = $"Processing row {rowCounter} of {rows.Count()}.";
                         _progress?.Report(_progressValue);
 
                         List<object> rowValues = [];
@@ -119,18 +105,17 @@ namespace a2p.Shared.Application.Services
 
                         }
                         worksheet.WorksheetData.Add(rowValues);
-                        rowCount++;
                     }
 
                     worksheets.Add(worksheet);
-                    worksheetCount++;
+
                 }
                 return worksheets;
 
             }
             catch (Exception ex)
             {
-                _logService.Error(ex, "ES. Unhandled error: Reading worksheet list from file ${FileName}", file.FileName);
+                _logService.Error("Excel Service. Unhandled error: Reading worksheet list from file {$FileName}. Exception:{$Exception}", file.FileName, ex.Message);
                 return worksheets;
 
             }
@@ -204,19 +189,16 @@ namespace a2p.Shared.Application.Services
             });
         }
 
-        private static async Task<string> GetRawNumericValue(IXLCell cell, IXLWorksheet worksheet)
-        {
-            return await Task.Run(() =>
-            { // If the cell has a value, return it as a string
-                if (!cell.IsEmpty())
-                {
-                    // Return the unformatted numeric value directly from the cell
-                    return cell.Value.ToString();
-                }
+        private static async Task<string> GetRawNumericValue(IXLCell cell, IXLWorksheet worksheet) => await Task.Run(() =>
+                                                                                                               { // If the cell has a value, return it as a string
+                                                                                                                   if (!cell.IsEmpty())
+                                                                                                                   {
+                                                                                                                       // Return the unformatted numeric value directly from the cell
+                                                                                                                       return cell.Value.ToString();
+                                                                                                                   }
 
-                return string.Empty;
-            });
-        }
+                                                                                                                   return string.Empty;
+                                                                                                               });
         private string GetCurrency(string customFormat)
         {
 

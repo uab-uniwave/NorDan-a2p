@@ -8,7 +8,6 @@ using a2p.Shared.Application.Domain.Enums;
 using a2p.Shared.Infrastructure.Interfaces;
 
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 
 namespace a2p.Shared.Infrastructure.Services
 {
@@ -18,18 +17,17 @@ namespace a2p.Shared.Infrastructure.Services
         private readonly ISqlRepository _sqlRepository;
 
         private readonly DataCache _dataCache;
-        private readonly IConfiguration _configuration;
         private readonly Interop.PrefDataManager.IPrefDataSource _prefSuiteOLEDBConnection;
         private ProgressValue _progressValue;
         private IProgress<ProgressValue>? _progress;
         private int _errorCount = 0;
         private int _warningCount = 0;
+        private int _progressCounter;
 
-        public PrefSuiteService(ILogService logService, ISqlRepository sqlRepository, IConfiguration configuration, DataCache dataCache)
+        public PrefSuiteService(ILogService logService, ISqlRepository sqlRepository, DataCache dataCache)
         {
             _logService = logService;
             _sqlRepository = sqlRepository;
-            _configuration = configuration;
             _dataCache = dataCache;
             _progressValue = new ProgressValue();
             _progress = new Progress<ProgressValue>();
@@ -37,47 +35,24 @@ namespace a2p.Shared.Infrastructure.Services
             _prefSuiteOLEDBConnection = new Interop.PrefDataManager.PrefDataSource();
         }
 
-        public async Task GetSalesDocumentStates(ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
+        public async Task<ProgressValue> GetSalesDocumentStates(ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
         {
-
-            _progressValue = progressValue;
-            _progress = progress ?? new Progress<ProgressValue>();
-
-            List<A2POrder> a2pOrders = _dataCache.GetAllOrders();
-            _progressValue.MinValue = 0;
-            _progressValue.MaxValue = (a2pOrders.Count * 2) + 3;
-            _progressValue.Value = 0;
-            _progressValue.ProgressTitle = $"Checking orders errors'";
-            _progressValue.ProgressTask1 = string.Empty;
-            _progressValue.ProgressTask2 = string.Empty;
-            _progressValue.ProgressTask3 = string.Empty;
-
-            foreach (A2POrder a2pOrder in a2pOrders)
+            try
             {
-                {
-                    _warningCount += a2pOrder.ReadErrors
-                                 .Where(error => error.Level is ErrorLevel.Warning)
-                                 .Select(error => new { a2pOrder.Order, error.Level, error.Code, error.Message })
-                                 .Distinct()
-                                 .Count();
-                    _errorCount += a2pOrder.ReadErrors
-                                .Where(error => error.Level is ErrorLevel.Error or ErrorLevel.Fatal)
-                                .Select(error => new { error.Level, error.Code, error.Message })
-                                .Distinct()
-                                .Count();
-                }
 
+                _progressValue = progressValue;
+                _progress = progress ?? new Progress<ProgressValue>();
+
+                List<A2POrder> a2pOrders = _dataCache.GetAllOrders();
+
+                _progressValue.ProgressTitle = $"Get Sales Documents States'";
                 int ordersCounter = 0;
-                int progressBarValue = 0;
-
-                foreach (A2POrder a2pOrder2 in a2pOrders)
+                foreach (A2POrder a2pOrder in a2pOrders)
                 {
-                    progressBarValue++;
 
                     ordersCounter++;
-
-                    _progressValue.Value = progressBarValue;
-                    _progressValue.ProgressTask1 = $"Order {ordersCounter} of {a2pOrders.Count} - Order {a2pOrder2.Order}";
+                    _progressValue.Value++; // Increment the progress value - Read per Order 4 
+                    _progressValue.ProgressTask1 = $"Order {ordersCounter} of {a2pOrders.Count} - Order #{a2pOrder.Order}";
                     _progress?.Report(_progressValue);
 
                     SqlCommand cmd = new()
@@ -86,35 +61,29 @@ namespace a2p.Shared.Infrastructure.Services
                         CommandType = CommandType.Text,
                     };
 
-                    _ = cmd.Parameters.AddWithValue("@Order", a2pOrder2.Order);
-                    try
-                    {
-                        try
-                        {
-                            object? result = await _sqlRepository.ExecuteScalarAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
-                            int state = result != DBNull.Value ? (int)result! : 0;
-                            _dataCache.UpdateOrderInCache(a2pOrder2.Order, a2pOrder2 => a2pOrder2.SalesDocumentState = state);
+                    _ = cmd.Parameters.AddWithValue("@Order", a2pOrder.Order);
 
-                            await SetSalesDocumentReadErrors(progressValue, _progress);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logService.Error("PrefSuite service: Error getting sales document status for {$Order}. Exception {$Exception}", a2pOrder2.SalesDocumentState, ex.Message);
-                        }
+                    object? result = await _sqlRepository.ExecuteScalarAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
+                    int state = result != DBNull.Value ? (int)result! : 0;
 
-                        await SetSalesDocumentReadErrors(progressValue, _progress);
-
-                    }
-                    catch (Exception ex)
-                    {
-                        _logService.Error("PrefSuite service: Error getting sales document status for {$Order}. Exception {$Exception}", a2pOrder2.SalesDocumentState, ex.Message);
-
-                    }
-                    progressBarValue++;
-                    _progressValue.Value = progressBarValue;
+                    _progressValue.Value++; // Increment the progress value - Read per Order 5
                     _progress?.Report(_progressValue);
+                    _dataCache.UpdateOrderInCache(a2pOrder.Order, a2pOrder2 => a2pOrder.SalesDocumentState = state);
 
+                    _progressValue.Value++; // Increment the progress value - Read per Order 6
+                    _progress?.Report(_progressValue);
+                    await SetSalesDocumentReadErrors(progressValue, _progress);
+
+                    _progressValue.Value++; // Increment the progress value - Read per Order 6
+                    _progress?.Report(_progressValue);
                 }
+                return _progressValue;
+            }
+            catch (Exception ex)
+            {
+
+                _logService.Error("PrefSuite service: Unhandled error getting sales document status. Exception {$Exception}", ex.Message);
+                return _progressValue;
             }
 
         }
@@ -123,19 +92,21 @@ namespace a2p.Shared.Infrastructure.Services
         {
             _progressValue = progressValue;
             _progress = progress ?? new Progress<ProgressValue>();
+            _progressCounter = 0;
             try
             {
+
                 int ordersCounter = 0;
                 List<A2POrder> a2pOrders = _dataCache.GetAllOrders();
 
                 foreach (A2POrder a2pOrder in a2pOrders)
                 {
+
                     ordersCounter++;
-                    _progressValue.ProgressTitle = $"Checking Errors in Order # {a2pOrder.Order}. {ordersCounter} of {a2pOrders.Count}";
+                    _progressValue.ProgressTitle = $"Checking Errors. {ordersCounter} of {a2pOrders.Count} -  Order # {a2pOrder.Order}.";
                     _progress?.Report(_progressValue);
 
-                    _progressValue.ProgressTitle = $"Reading Order States # {a2pOrder.Order}. {ordersCounter} of {a2pOrders.Count}";
-                    _progress?.Report(_progressValue);
+                    _progressValue.ProgressTitle = $"Reading Order States # {ordersCounter} of {a2pOrders.Count} - Order # {a2pOrder.Order}."; _progress?.Report(_progressValue);
                     string sqlCommand = "SELECT Numero, Version FROM PAF WHERE Referencia = " + "'" + a2pOrder.Order + "'";
 
                     CommandType commandType = System.Data.CommandType.Text;
@@ -160,10 +131,7 @@ namespace a2p.Shared.Infrastructure.Services
                             Message = $"PrefSuite sales document with reference {a2pOrder.Order} not exist."
 
                         });
-                        _errorCount++;
 
-                        progressValue.ProgressTask2 = $"Errors: {_errorCount}, Warnings: {_warningCount}";
-                        progress?.Report(progressValue);
                     }
 
                     if (orderState.HasFlag(OrderState.A2PItemsImported))
@@ -176,11 +144,6 @@ namespace a2p.Shared.Infrastructure.Services
                             Message = $"Order {a2pOrder.Order} items has already been imported to DB."
 
                         });
-
-                        _warningCount++;
-
-                        progressValue.ProgressTask2 = $"Errors: {_errorCount}, Warnings: {_warningCount}";
-                        progress?.Report(progressValue);
 
                     }
 
@@ -195,11 +158,6 @@ namespace a2p.Shared.Infrastructure.Services
 
                         });
 
-                        _warningCount++;
-
-                        progressValue.ProgressTask2 = $"Errors: {_errorCount}, Warnings: {_warningCount}";
-                        progress?.Report(progressValue);
-
                     }
                     if (orderState.HasFlag(OrderState.ItemsCreated))
                     {
@@ -212,10 +170,6 @@ namespace a2p.Shared.Infrastructure.Services
 
                         });
 
-                        _warningCount++;
-
-                        progressValue.ProgressTask2 = $"Errors: {_errorCount}, Warnings: {_warningCount}";
-                        progress?.Report(progressValue);
                     }
 
                     if (orderState.HasFlag(OrderState.MaterialNeedsInserted))
@@ -229,10 +183,6 @@ namespace a2p.Shared.Infrastructure.Services
 
                         });
 
-                        _warningCount++;
-
-                        progressValue.ProgressTask2 = $"Errors: {_errorCount}, Warnings: {_warningCount}";
-                        progress?.Report(progressValue);
                     }
 
                     if (orderState.HasFlag(OrderState.PurchaseOrdersExist))
@@ -245,10 +195,7 @@ namespace a2p.Shared.Infrastructure.Services
                             Message = $"Order {a2pOrder.Order} PrefSuite Material Needs already exist."
 
                         });
-                        _errorCount++;
 
-                        progressValue.ProgressTask2 = $"Errors: {_errorCount}, Warnings: {_warningCount}";
-                        progress?.Report(progressValue);
                     }
 
                 }
@@ -260,6 +207,11 @@ namespace a2p.Shared.Infrastructure.Services
 
             }
 
+            finally
+            {
+
+                _progress?.Report(_progressValue);
+            }
         }
 
         public async Task<string?> GetColorAsync(string color)
@@ -296,39 +248,50 @@ namespace a2p.Shared.Infrastructure.Services
                 return null;
             }
         }
-
-        public async Task InsertItemsAsync(ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
+        public async Task<ProgressValue> InsertItemsAsync(ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
         {
+
+            _progressValue = progressValue;
+            _progress = progress ?? new Progress<ProgressValue>();
+
             try
             {
-                _progressValue = progressValue;
-                _progress = progress ?? new Progress<ProgressValue>();
 
                 List<A2POrder> a2pOrders = _dataCache.GetAllOrders();
-
+                int ordersToProcessCount = a2pOrders.Select(x => x.Import == true).Count();
+                int ordersCounter = 0;
                 for (int j = 0; j < a2pOrders.Count; j++)
                 {
-
                     try
                     {
-                        if (a2pOrders[j].Items.Any())
+
+                        if (a2pOrders[j].Items.Any() && a2pOrders[j].Import == true)
                         {
+                            _progressValue.ProgressTask1 = $"Inserting PrefSuite orders {j + 1} of {a2pOrders[j]} - Order # {a2pOrders[j].Order} {a2pOrders[j].SalesDocumentNumber}/{a2pOrders[j].SalesDocumentVersion}";
+                            _progress?.Report(progressValue);
+                            ordersCounter++;
+
+                            _progressValue.ProgressTask2 = string.Empty;
+                            _progressValue.ProgressTask3 = string.Empty;
+                            _progress?.Report(progressValue);
                             Interop.PrefSales.SalesDoc salesDoc = new()
                             {
                                 ConnectionString = _prefSuiteOLEDBConnection.ConnectionString
                             };
 
-                            _progressValue.ProgressTask2 = $"Loading PrefSuite Sales Document {a2pOrders[j].SalesDocumentNumber}/{a2pOrders[j].SalesDocumentVersion}";
-                            _progress?.Report(progressValue);
                             salesDoc.Load(a2pOrders[j].SalesDocumentNumber, a2pOrders[j].SalesDocumentVersion);
+
+                            //==============================================================================
+                            // Insert Items 
+                            //==============================================================================
                             for (int i = 0; i < a2pOrders[j].Items.Count; i++)
                             {
-                                _progressValue.ProgressTask3 = _warningCount > 0 || _errorCount > 0 ? $"Errors: {_errorCount}, Warnings: {_warningCount}" : string.Empty;
-                                _progressValue.ProgressTask2 = $"Inserting item into PrefSuite {i + 1} of {a2pOrders[j].Items.Count} - Item {a2pOrders[j].Items[i].Item}";
-                                _progress?.Report(progressValue);
-
                                 try
                                 {
+
+                                    _progressValue.ProgressTask2 = $"Inserting PrefSuite items. Item {i + 1} of {a2pOrders[j].Items.Count} - Item # {a2pOrders[j].Items[i].Item}";
+                                    _progress?.Report(progressValue);
+
                                     string Command =
                                         "<cmd:Commands name=\"CommandName\" xmlns:cmd=\"http://www.preference.com/XMLSchemas/2006/PrefCAD.Command\">" +
                                         "<cmd:Command name=\"Model.SetDimensions\">" +
@@ -363,6 +326,7 @@ namespace a2p.Shared.Infrastructure.Services
 
                                     a2pOrders[j].Items[i].SalesDocumentIdPos = idPos;
                                     _dataCache.UpdateOrderInCache(a2pOrders[j].Order, a2pOrder => a2pOrder.Items[i].SalesDocumentIdPos = idPos);
+
                                 }
                                 catch (Exception ex)
                                 {
@@ -374,14 +338,21 @@ namespace a2p.Shared.Infrastructure.Services
                                         Code = ErrorCode.ERPWrite_Item,
                                         Message = $"Order {a2pOrders[j].Order}. Error inserting items into PrefSuite. Exception {ex.Message}"
                                     });
-                                    _errorCount++;
 
                                     _progressValue.ProgressTask3 = _warningCount > 0 || _errorCount > 0 ? $"Errors: {_errorCount}, Warnings: {_warningCount}" : string.Empty;
                                     _progressValue.ProgressTask2 = $"Saving PrefSuite Sales Document {a2pOrders[j].SalesDocumentNumber}/{a2pOrders[j].SalesDocumentVersion}.";
                                     _progress?.Report(progressValue);
                                     salesDoc.Save();
 
+                                    continue;
+
                                 }
+
+                                finally
+                                {
+
+                                }
+
                             }
                             salesDoc.Save();
                         }
@@ -396,18 +367,23 @@ namespace a2p.Shared.Infrastructure.Services
                             Code = ErrorCode.ERPWrite_Item,
                             Message = $"PrefSuite Service: Error inserting items for order {a2pOrders[j].Order}. Exception {ex.Message}",
                         });
-                        _errorCount++;
-                        _progressValue.ProgressTask3 = $"Errors: {_errorCount}, Warnings: {_warningCount}";
-                        _progress?.Report(progressValue);
+
+                    }
+
+                    finally
+                    {
 
                     }
                 }
+                return _progressValue;
             }
             catch (Exception ex)
             {
                 _logService.Error("PrefSuite Service: Unhandled error inserting items. Exception {$Exception}", ex.Message);
+                return _progressValue;
 
             }
+
         }
     }
 }

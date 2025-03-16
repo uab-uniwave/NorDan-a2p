@@ -6,21 +6,21 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_DeleteExistsingData]
-	@SlaesDocumentNumber int, 
-	@SlaesDocumentVersion int
+ALTER   PROCEDURE [dbo].[Uniwave_a2p_DeleteExistsingData]
+	@SalesDocumentNumber int, 
+	@SalesDocumentVersion int
 AS
 BEGIN
 	
 	SET NOCOUNT ON;
-	UPDATE Uniwave_a2p_Items Set DeletedUTCDateTime = GETDATE() Where SalesDocumentNumber = @SlaesDocumentNumber  and SalesDocumentVersion = @SlaesDocumentVersion
-	UPDATE Uniwave_a2p_Materials Set DeletedUTCDateTime = GETDATE() Where SalesDocumentNumber = @SlaesDocumentNumber  and SalesDocumentVersion = @SlaesDocumentVersion
-	DELETE FROM ContenidoPAF Where Numero = @SlaesDocumentNumber  and [Version] = @SlaesDocumentVersion
-	DELETE FROM MaterialNeeds  Where Number = @SlaesDocumentNumber  and [Version] = @SlaesDocumentVersion
-	DELETE FROM MaterialNeedsMaster Where Number = @SlaesDocumentNumber  and [Version] = @SlaesDocumentVersion
+	UPDATE Uniwave_a2p_Items Set DeletedUTCDateTime = GETDATE() Where SalesDocumentNumber = @SalesDocumentNumber  and SalesDocumentVersion = @SalesDocumentVersion
+	UPDATE Uniwave_a2p_Materials Set DeletedUTCDateTime = GETDATE() Where SalesDocumentNumber = @SalesDocumentNumber  and SalesDocumentVersion = @SalesDocumentVersion
+	DELETE FROM ContenidoPAF Where Numero = @SalesDocumentNumber  and [Version] = @SalesDocumentVersion
+    DELETE FROM MaterialNeeds  Where Number = @SalesDocumentNumber  and [Version] = @SalesDocumentVersion
+	DELETE FROM MaterialNeedsMaster Where Number = @SalesDocumentNumber  and [Version] = @SalesDocumentVersion
 
 END
-GO
+
 
 /****** Object:  StoredProcedure [dbo].[Uniwave_a2p_InsertItem]    Script Date: 2025-02-25 12:39:34 ******/
 SET ANSI_NULLS ON

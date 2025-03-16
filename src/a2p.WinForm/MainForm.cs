@@ -13,6 +13,8 @@ using a2p.WinForm.ChildForms;
 
 using Microsoft.Extensions.Configuration;
 
+using Newtonsoft.Json;
+
 namespace a2p.WinForm
 {
     public partial class MainForm : Form
@@ -24,7 +26,7 @@ namespace a2p.WinForm
 
         private readonly IOrderReadProcessor _orderReadProcessor;
         private readonly IExcelReadService _excelReadService;
-        private readonly IOrderWriteProcessor _orderProcessingService;
+        private readonly IWriteService _orderProcessingService;
         private readonly IUserSettingsService _userSettingsService;
         private readonly ILogService _logService;
         private readonly IFileService _fileService;
@@ -56,7 +58,7 @@ namespace a2p.WinForm
 
         #endregion -== Custom Form Design Componenets ==-
 
-        public MainForm(IOrderReadProcessor orderReadProcessor, IExcelReadService excelReadService, IOrderWriteProcessor orderProcessingService,
+        public MainForm(IOrderReadProcessor orderReadProcessor, IExcelReadService excelReadService, IWriteService orderProcessingService,
             IConfiguration configuration, ILogService logService, IFileService fileService, DataCache dataCache, IUserSettingsService userSettingsService)
         {
             _orderReadProcessor = orderReadProcessor;
@@ -84,12 +86,17 @@ namespace a2p.WinForm
             this.ResumeLayout(true); // Resume layout
             this.KeyPreview = true; // Allows the form to capture key events before controls do
             this.KeyDown += MainForm_KeyDown; // Attach key event handler
+            this.KeyDown += MainForm_Json_KeyDown;
             slbDataSourceValue.Text = _settingForm.ExtractValueFromConnectionString("Data Source") + "\\" + _settingForm.ExtractValueFromConnectionString("Initial Catalog");
             slbPathValue.Text = _appSettings.Folders.RootFolder.Replace("/", "\\");
+
+            // Attach key event handler
+
         }
 
-        #region -== Initialization ==-
-
+        //=============================================================================
+        // -== Initialization ==-
+        //=============================================================================
         private void InitializeToolTip()
         {
             _toolTip = new ToolTip
@@ -109,9 +116,10 @@ namespace a2p.WinForm
             _toolTip.SetToolTip(btnExit, "Exit");
         }
 
-        #endregion -== Initialization ==-
+        //=============================================================================
+        // -== Form ==-
+        //=============================================================================
 
-        #region --== Form Events ==-
         private void MainForm_Load(object sender, EventArgs e)
         {
 
@@ -266,9 +274,9 @@ namespace a2p.WinForm
         private void MainForm_ResizeBegin(object sender, EventArgs e) => this.SuspendLayout();
         private void MainForm_ResizeEnd(object sender, EventArgs e) => this.PerformLayout();
 
-        #endregion -== Main Form Events ==-
-
-        #region -== Child Forms Methods ==-
+        //=============================================================================
+        //  -== Child Forms Methods ==-
+        //=============================================================================
 
         private async Task ShowFormAsync<T>(T formInstance, Func<T> formCreator) where T : Form
         {
@@ -297,9 +305,9 @@ namespace a2p.WinForm
             childForm.Show();
         }
 
-        #endregion -== Child Forms Methods ==-
-
-        #region -== Setup Buttons ==-
+        //=============================================================================
+        //  -==Buttons ==-
+        //=============================================================================
 
         private void SetupButtons()
         {
@@ -440,9 +448,9 @@ namespace a2p.WinForm
             return resizedBitmap;
         }
 
-        #endregion -== Setup Buttons ==-
-
-        #region -== Title Bar buttons Events ==-
+        //=============================================================================
+        //  -== Title Bar Buttons ==-
+        //=============================================================================
 
         // Maximize window
         //===========================================================
@@ -465,15 +473,12 @@ namespace a2p.WinForm
         //===============================================================
         private void btClose_Click(object sender, EventArgs e) => Application.Exit();
 
-        #endregion -== Title Bar buttons Events ==-
-
-        #region -== Side Bar Buttons Events ==-
-
         //SideBar buttons
         //================================================================
 
         private async void BtnLoad_Click(object sender, EventArgs? e)
         {
+
             await Task.Run(DisableButtons); // Disable buttons at the beginning
             plSideBarMain.SuspendLayout(); // Suspend layout before expanding
             _processType = ProcessType.FileImport;
@@ -494,12 +499,13 @@ namespace a2p.WinForm
             finally
             {
                 await Task.Run(EnableButtons);  // Enable buttons at the end
+                _orderForm.lbTitle.Text = "LOADED";
                 plSideBarMain.PerformLayout(); // Resume layout after expanding
             }
         }
         private async void BtnImport_Click(object sender, EventArgs e)
         {
-
+            _orderForm.lbTitle.Text = "";
             try
             {
                 await Task.Run(DisableButtons); // Disable buttons at the beginning
@@ -507,7 +513,7 @@ namespace a2p.WinForm
 
                 await ShowFormAsync(_orderForm,
                      () => new OrdersForm(_userSettingsService, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService, _dataCache));
-                await _orderForm.ImportFilesAsync();
+                await _orderForm.ImportAsync();
             }
             catch (Exception ex)
             {
@@ -517,6 +523,8 @@ namespace a2p.WinForm
             finally
             {
                 _processType = ProcessType.None;
+                _orderForm.lbTitle.Text = "IMPORTED";
+
                 await Task.Run(EnableButtons); // Enable buttons at the end 
 
             }
@@ -618,9 +626,6 @@ namespace a2p.WinForm
             }
         }
 
-        #endregion -== Side Bar Buttons Events ==-
-
-        #region -== Overrides Custom Form Methods==-
         protected override void WndProc(ref Message m)
         {
             const int WM_DPICHANGED = 0x02E0;
@@ -673,8 +678,6 @@ namespace a2p.WinForm
             _isResizing = false; // Stop resizing
         }
 
-        #endregion -== Overrides Custom Form Methods==-
-
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
@@ -710,6 +713,26 @@ namespace a2p.WinForm
                 plFormContainer.Size = new Size(this.ClientSize.Width - plFormContainer.Left, this.ClientSize.Height - plFormContainer.Top);
             }
 
+        }
+        private void MainForm_Json_KeyDown(object? sender, KeyEventArgs e)
+        {
+            // Check if "Ctrl + D" is pressed
+            if (e.Control && e.Control && e.KeyCode == Keys.J)
+            {
+                SaveFileDialog saveFileDialog = new()
+                {
+                    Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*",
+                    FilterIndex = 1,
+                    RestoreDirectory = true
+                };
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string json = JsonConvert.SerializeObject(_dataCache.GetAllOrders());
+                    File.WriteAllText(saveFileDialog.FileName, json);
+                }
+
+            }
         }
 
     }

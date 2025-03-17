@@ -55,7 +55,6 @@ namespace a2p.Shared.Application.Services
                     CultureInfo culture = CultureInfo.InvariantCulture;
                     int totalColumns = ixlWorksheet.LastColumnUsed()?.ColumnNumber() ?? 0;
                     string tempTask3 = _progressValue.ProgressTask3;
-
                     IEnumerable<IXLRow> rows = ixlWorksheet.RowsUsed() ?? Enumerable.Empty<IXLRow>();
 
                     int rowCounter = 0;

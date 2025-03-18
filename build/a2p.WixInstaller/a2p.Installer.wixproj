@@ -1,0 +1,30 @@
+﻿<Project Sdk="WixToolset.Sdk/5.0.2">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DefineConstants>Debug</DefineConstants>
+  </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <DefineConstants>Release</DefineConstants>
+  </PropertyGroup>
+
+    <PropertyGroup>
+        <BaseOutputPath>..\</BaseOutputPath>
+        <OutputPath>$(BaseOutputPath)$(Configuration)</OutputPath>
+     </PropertyGroup>
+    
+  <ItemGroup>
+    <Content Include="a2p.WixInstaller.wax" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="License.rtf" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\a2p.WinForm\a2p.WinForm.csproj">
+      <Name>a2p.WinForm</Name>
+      <Project>{220cd5ba-7d5e-437d-ba4b-ef3f9ec349f1}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>TARGETDIR</RefTargetDir>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-16"?>
+<Configuration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DeployedProjects>
+    <string>..\src\a2p.WinForm\a2p.WinForm.csproj</string>
+  </DeployedProjects>
+  <DirectoryMappings>
+    <Item Key="Install" Value="INSTALLFOLDER" />
+    <Item Key="Excel" Value="INSTALLFOLDER\Excel" />
+      <Item Key="SQL" Value="INSTALLFOLDER\SQL" />
+   </DirectoryMappings>
+  <FileMappings />
+  <DeploySymbols>false</DeploySymbols>
+  <DeployLocalizations>true</DeployLocalizations>
+  <DeployExternalLocalizations>true</DeployExternalLocalizations>
+  <ExcludedProjectItems>-</ExcludedProjectItems>
+</Configuration>

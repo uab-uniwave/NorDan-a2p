@@ -1,0 +1,322 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.0">
+	<xsd:element name="PrefHardware">
+		<xsd:complexType>
+			<xsd:all>
+				<xsd:element name="Fittings">
+					<xsd:annotation>
+						<xsd:documentation>Definition of all the fitting materials. This fittings will be used later for define the fitting sets.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:choice minOccurs="0" maxOccurs="unbounded">
+							<xsd:element name="Fitting">
+								<xsd:annotation>
+									<xsd:documentation>Definition of a fitting material</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:attribute name="id" type="xsd:positiveInteger" use="required">
+										<xsd:annotation>
+											<xsd:documentation>Numeric identifier of the fitting within this document</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+									<xsd:attribute name="ref" type="xsd:string" use="required">
+										<xsd:annotation>
+											<xsd:documentation>Article or material reference</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+									<xsd:attribute name="location" use="required">
+										<xsd:annotation>
+											<xsd:documentation>Determines if this is a frame or a sash material</xsd:documentation>
+										</xsd:annotation>
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:enumeration value="frame"/>
+												<xsd:enumeration value="sash"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:attribute>
+									<xsd:attribute name="fittingType" use="optional" default="drive">
+										<xsd:annotation>
+											<xsd:documentation>Type of fitting that will be displayed in a graphical representation</xsd:documentation>
+										</xsd:annotation>
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:enumeration value="drive"/>
+												<xsd:enumeration value="corner"/>
+												<xsd:enumeration value="mushroom"/>
+												<xsd:enumeration value="handledrive"/>
+												<xsd:enumeration value="simplelock"/>
+												<xsd:enumeration value="tiltlock"/>
+												<xsd:enumeration value="sashhinge"/>
+												<xsd:enumeration value="framehinge"/>
+												<xsd:enumeration value="handle"/>
+												<xsd:enumeration value="shear"/>
+												<xsd:enumeration value="screw"/>
+												<xsd:enumeration value="other"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:attribute>
+									<xsd:attribute name="length" type="xsd:double" use="required">
+										<xsd:annotation>
+											<xsd:documentation>Length of the fitting. For fittings with main and secondary parts, this is the length of the main part.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+									<xsd:attribute name="secondaryLength" type="xsd:double" use="optional">
+										<xsd:annotation>
+											<xsd:documentation>For fittings with main and senondary part, this is the length of the secondary.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+									<xsd:attribute name="backset" type="xsd:double" use="optional">
+										<xsd:annotation>
+											<xsd:documentation>Backset distance for this material</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+									<xsd:attribute name="handlePositionType" use="optional" default="fix">
+										<xsd:annotation>
+											<xsd:documentation>Determines if this materials is for fix or variable handle position.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:enumeration value="fix"/>
+												<xsd:enumeration value="variable"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:attribute>
+									<xsd:attribute name="handlePosition" type="xsd:double" use="optional">
+										<xsd:annotation>
+											<xsd:documentation>Distance to the handle position</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+									<xsd:attribute name="price" type="xsd:double" use="optional">
+										<xsd:annotation>
+											<xsd:documentation>Price of the material</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+									<xsd:attribute name="Description" type="xsd:string">
+										<xsd:annotation>
+											<xsd:documentation>Description of the piece</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+									<xsd:attribute name="CanBeMountedBeforeWelding" type="xsd:boolean">
+										<xsd:annotation>
+											<xsd:documentation>Specifies if this piece can be mounted in the profile before the welding</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+									<xsd:attribute name="StartCuttable" type="xsd:boolean" use="optional">
+										<xsd:annotation>
+											<xsd:documentation>Indicates if the piece can be cut at the start side</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+									<xsd:attribute name="EndCuttable" type="xsd:boolean" use="optional">
+										<xsd:annotation>
+											<xsd:documentation>Indicates if the piece can be cut at the end side</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+									<xsd:attribute name="StartCutMaxLength" type="xsd:double" use="optional">
+										<xsd:annotation>
+											<xsd:documentation>Maximum length of the piece that can be cut at the start side</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+									<xsd:attribute name="EndCutMaxLength" type="xsd:double" use="optional">
+										<xsd:annotation>
+											<xsd:documentation>Maximum length of the piece that can be cut at the end side</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:choice>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="Set">
+					<xsd:annotation>
+						<xsd:documentation>Definition of a fitting set. Each set is defined for a specific opening type. This opening type is defined in the child Opening node. The set has a collection of SetDescriptionNodes. Each one of this node refers to a fitting material included in the set.</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="Opening">
+								<xsd:annotation>
+									<xsd:documentation>Determines for which type of opening is defined the current set</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:attribute name="active" type="xsd:boolean" use="optional" default="false"/>
+									<xsd:attribute name="tilt" type="xsd:boolean" use="optional" default="false"/>
+									<xsd:attribute name="turn" type="xsd:boolean" use="optional" default="false"/>
+									<xsd:attribute name="swinging" type="xsd:boolean" use="optional" default="false"/>
+									<xsd:attribute name="sliding" type="xsd:boolean" use="optional" default="false"/>
+									<xsd:attribute name="lift" type="xsd:boolean" use="optional" default="false"/>
+									<xsd:attribute name="outer" type="xsd:boolean" use="optional" default="false"/>
+									<xsd:attribute name="left" type="xsd:boolean" use="optional" default="false"/>
+									<xsd:attribute name="right" type="xsd:boolean" use="optional" default="false"/>
+									<xsd:attribute name="top" type="xsd:boolean" use="optional" default="false"/>
+									<xsd:attribute name="bottom" type="xsd:boolean" use="optional" default="false"/>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="Operation" minOccurs="0" maxOccurs="unbounded">
+								<xsd:annotation>
+									<xsd:documentation>Generated operations</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="Placement" minOccurs="0">
+											<xsd:complexType>
+												<xsd:attribute name="x" type="xsd:double" use="required">
+													<xsd:annotation>
+														<xsd:documentation>Position where the operation is generated</xsd:documentation>
+													</xsd:annotation>
+												</xsd:attribute>
+											</xsd:complexType>
+										</xsd:element>
+									</xsd:sequence>
+									<xsd:attribute name="name" type="xsd:string" use="required">
+										<xsd:annotation>
+											<xsd:documentation>Name of the operation</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+									<xsd:attribute name="position" type="xsd:nonNegativeInteger" use="required">
+										<xsd:annotation>
+											<xsd:documentation>Determines the segment in which the operation is applied</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+									<xsd:attribute name="location" use="required">
+										<xsd:annotation>
+											<xsd:documentation>Determines if this is a frame or a sash material</xsd:documentation>
+										</xsd:annotation>
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:enumeration value="frame"/>
+												<xsd:enumeration value="sash"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:attribute>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="SetDescription" minOccurs="0" maxOccurs="unbounded">
+								<xsd:annotation>
+									<xsd:documentation>Each of the fittings used in the set.</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="Placement" minOccurs="0">
+											<xsd:complexType>
+												<xsd:attribute name="x" type="xsd:double" use="required">
+													<xsd:annotation>
+														<xsd:documentation>Position where the operation is generated</xsd:documentation>
+													</xsd:annotation>
+												</xsd:attribute>
+											</xsd:complexType>
+										</xsd:element>
+									</xsd:sequence>
+									<xsd:attribute name="fittingId" type="xsd:positiveInteger" use="required">
+										<xsd:annotation>
+											<xsd:documentation>Reference to a fitting id delcared in the Fittings section of this document</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+									<xsd:attribute name="horizontal" type="xsd:boolean" use="optional">
+										<xsd:annotation>
+											<xsd:documentation>Determines the direction of the fitting piece</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+									<xsd:attribute name="chainPosition" type="xsd:nonNegativeInteger" use="required">
+										<xsd:annotation>
+											<xsd:documentation>Position order</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+									<xsd:attribute name="movement" use="optional" default="direct">
+										<xsd:annotation>
+											<xsd:documentation>Determines if the movement of this piece is direct or indirect</xsd:documentation>
+										</xsd:annotation>
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:enumeration value="direct"/>
+												<xsd:enumeration value="indirect"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:attribute>
+									<xsd:attribute name="position" type="xsd:nonNegativeInteger" use="required">
+										<xsd:annotation>
+											<xsd:documentation>Determines the segment in which the operation is applied</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+									<xsd:attribute name="referencePoint" use="optional">
+										<xsd:annotation>
+											<xsd:documentation>Determines the corner from which this piece is positionated</xsd:documentation>
+										</xsd:annotation>
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:enumeration value="start">
+													<xsd:annotation>
+														<xsd:documentation>start corner of current piece</xsd:documentation>
+													</xsd:annotation>
+												</xsd:enumeration>
+												<xsd:enumeration value="end">
+													<xsd:annotation>
+														<xsd:documentation>end corner of current piece</xsd:documentation>
+													</xsd:annotation>
+												</xsd:enumeration>
+												<xsd:enumeration value="handle">
+													<xsd:annotation>
+														<xsd:documentation>Reference Point is the handle position</xsd:documentation>
+													</xsd:annotation>
+												</xsd:enumeration>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:attribute>
+									<xsd:attribute name="inverted" type="xsd:boolean" use="optional" default="false">
+										<xsd:annotation>
+											<xsd:documentation>Determines if the piece is placed against the hardware movement</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+						<xsd:attribute name="code" type="xsd:string" use="required">
+							<xsd:annotation>
+								<xsd:documentation>Code used to identify the set</xsd:documentation>
+							</xsd:annotation>
+						</xsd:attribute>
+						<xsd:attribute name="sashStopSide" type="xsd:nonNegativeInteger" use="optional"/>
+						<xsd:attribute name="movement" use="required">
+							<xsd:annotation>
+								<xsd:documentation>Hardware sense movement (clockwise /counterclockwise)</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:enumeration value="clockwise"/>
+									<xsd:enumeration value="counterclockwise"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:attribute>
+						<xsd:attribute name="associated" use="required">
+							<xsd:annotation>
+								<xsd:documentation>Associated Opening of neighbour sash</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:enumeration value="none"/>
+									<xsd:enumeration value="turn"/>
+									<xsd:enumeration value="tiltandturn"/>
+									<xsd:enumeration value="slide"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:attribute>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:all>
+		</xsd:complexType>
+		<xsd:key name="keyFitting">
+			<xsd:selector xpath="Fittings/Fitting"/>
+			<xsd:field xpath="@id"/>
+		</xsd:key>
+		<xsd:key name="keyFittingRef">
+			<xsd:selector xpath="Fittings/Fitting"/>
+			<xsd:field xpath="@ref"/>
+		</xsd:key>
+		<xsd:keyref name="keyrefSetDescription" refer="keyFitting">
+			<xsd:selector xpath="Set/SetDescription"/>
+			<xsd:field xpath="@fittingId"/>
+		</xsd:keyref>
+		<xsd:keyref name="keyrefComplementaryHandFitting" refer="keyFitting">
+			<xsd:selector xpath="Fittings/Fitting"/>
+			<xsd:field xpath="@complementaryHandFitting"/>
+		</xsd:keyref>
+	</xsd:element>
+</xsd:schema>

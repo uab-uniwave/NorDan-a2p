@@ -1,0 +1,22 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="a2p.Installer !(bind.Property.Version)" Manufacturer="Uniwave UAB" Version="1.0.0.1"  UpgradeCode="c41837b1-3ac0-4fb3-b178-9433e536d4c3">
+    <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
+
+    <Feature Id="Application ">
+      <ComponentGroupRef Id="ExampleComponents" />
+    <ComponentGroupRef Id="ComponentsProduct" />
+    <ComponentGroupRef Id="ComponentsSQL" />
+    <ComponentGroupRef Id="ComponenetsExecutable" />
+    </Feature>
+    <Feature Id ="Test Cases">
+          <ComponentGroupRef Id="ComponentsExcel" />
+   </Feature>
+  </Package>
+
+
+
+
+
+
+    
+</Wix>

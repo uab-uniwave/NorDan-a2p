@@ -1,5 +1,7 @@
 ﻿
-namespace a2p.WinForm.CustomControls
+namespace a2p.WinForm.ChildForms
+
+
 {
     partial class ProgressBarForm
     {

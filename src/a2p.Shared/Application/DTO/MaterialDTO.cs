@@ -45,12 +45,12 @@ namespace a2p.Shared.Application.DTO
         //============================================================================================================================  
         public double Waste { get; set; } = 0;
         //============================================================================================================================  
-        public decimal Price { get; set; } = 0;
-        public decimal TotalPrice { get; set; } = 0;
-        public decimal RequiredPrice { get; set; } = 0;
-        public decimal LeftOverPrice { get; set; } = 0;
+        public double  Price { get; set; } = 0;
+        public double  TotalPrice { get; set; } = 0;
+        public double  RequiredPrice { get; set; } = 0;
+        public double  LeftOverPrice { get; set; } = 0;
         //============================================================================================================================  
-        public decimal SquareMeterPrice { get; set; } = 0;
+        public double  SquareMeterPrice { get; set; } = 0;
         //============================================================================================================================
         [MaxLength(255)] public string? Pallet { get; set; }
         //============================================================================================================================

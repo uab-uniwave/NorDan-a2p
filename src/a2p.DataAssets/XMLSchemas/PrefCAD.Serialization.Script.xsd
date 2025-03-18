@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:psr="http://www.preference.com/XMLSchemas/2006/Serialization" targetNamespace="http://www.preference.com/XMLSchemas/2006/Serialization" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xsd:include schemaLocation="PrefCAD.Serialization.Common.xsd"/>
+	<xsd:element name="Script" type="psr:typeScript"/>
+	<xsd:complexType name="typeScript">
+		<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="Options" type="psr:typeOptions" minOccurs="0"/>
+			<xsd:element name="Color" type="psr:typeColor" minOccurs="0"/>
+			<xsd:element name="Variables" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+						<xsd:element name="Variable" minOccurs="0" maxOccurs="unbounded">
+							<xsd:complexType>
+								<xsd:attribute name="name" type="xsd:string" use="required"/>
+								<xsd:attribute name="value" type="xsd:double" use="required"/>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="code" type="xsd:string" use="required"/>
+		<xsd:attribute name="modificationTime" type="xsd:long" use="optional"/>
+	</xsd:complexType>
+</xsd:schema>

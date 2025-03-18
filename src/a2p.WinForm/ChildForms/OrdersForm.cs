@@ -9,7 +9,7 @@ using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Application.Models;
 using a2p.Shared.Core.DTO.a2p.Shared.Core.DTO;
 using a2p.Shared.Infrastructure.Interfaces;
-using a2p.WinForm.CustomControls;
+
 
 namespace a2p.WinForm.ChildForms
 {
@@ -25,7 +25,7 @@ namespace a2p.WinForm.ChildForms
 
         private IProgress<ProgressValue>? _progress;
         private ProgressValue _progressValue;
-        private System.Data.DataTable _dataTable;
+        private DataTable _dataTable;
         private BindingSource _bindingSource;
         private SettingsContainer _settingsContainer;
         private AppSettings _appSettings;
@@ -42,7 +42,7 @@ namespace a2p.WinForm.ChildForms
 
             _writeService = writeService;
             _logService = logService;
-            _dataTable = new System.Data.DataTable();
+            _dataTable = new DataTable();
             _bindingSource = [];
             _progressValue = new ProgressValue();
             _progress = new Progress<ProgressValue>();
@@ -52,14 +52,14 @@ namespace a2p.WinForm.ChildForms
 
             _readServices = orderReadProcessor;
             _excelReadServices = excelReadServices;
-            _dataTable = new System.Data.DataTable();
+            _dataTable = new DataTable();
             _bindingSource = [];
             _dataCache = dataCache;
             _fileService = fileService;
 
-            this.SuspendLayout();
-            this.AutoScaleMode = AutoScaleMode.Dpi;
-            this.AutoScaleDimensions = new SizeF(96F, 96F);
+            SuspendLayout();
+            AutoScaleMode = AutoScaleMode.Dpi;
+            AutoScaleDimensions = new SizeF(96F, 96F);
             InitializeComponent();
             InitializeGrid();
             InitializeTable();
@@ -469,27 +469,27 @@ namespace a2p.WinForm.ChildForms
         // -= Form Events =-
         //===============================================================
 
-        private void OrdersForm_Load(object sender, EventArgs e) => this.PerformAutoScale();
+        private void OrdersForm_Load(object sender, EventArgs e) => PerformAutoScale();
         private void FileForm_Shown(object sender, EventArgs e)
         {
             this.lbTitle.Text = "";
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
         }
         private void OrdersForm_DpiChanged(object sender, DpiChangedEventArgs e)
         {
-            this.PerformAutoScale();
+            PerformAutoScale();
             plGridPanel.ResumeLayout(true);
             plTbSBInfo.ResumeLayout(true);
             dataGridViewFiles.ResumeLayout(true);
-            this.ResumeLayout(true);
+            ResumeLayout(true);
 
         }
-        private void FileForm_ResizeBegin(object sender, EventArgs e) => this.SuspendLayout();
+        private void FileForm_ResizeBegin(object sender, EventArgs e) => SuspendLayout();
         private void FileForm_ResizeEnd(object sender, EventArgs e)
         {
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         //===============================================================
@@ -520,43 +520,54 @@ namespace a2p.WinForm.ChildForms
                 }
 
                 dataGridViewFiles.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+                if (dataGridViewFiles.Columns["Items"] != null && e.ColumnIndex == dataGridViewFiles.Columns["Items"].Index && e.Value != null)
+                {
+                    string? itemList = dataGridViewFiles.Rows[e.RowIndex].Cells["ItemList"].Value.ToString();
+                    dataGridViewFiles.Rows[e.RowIndex].Cells["Items"].ToolTipText = itemList;
+                }
+
                 if (dataGridViewFiles.Columns["FileCount"] != null && e.ColumnIndex == dataGridViewFiles.Columns["FileCount"].Index && e.Value != null)
                 {
                     string? fileList = dataGridViewFiles.Rows[e.RowIndex].Cells["FileList"].Value.ToString();
-                    dataGridViewFiles.Rows[e.RowIndex].Cells[e.ColumnIndex].ToolTipText = fileList;
+                    dataGridViewFiles.Rows[e.RowIndex].Cells["FileCount"].ToolTipText = fileList;
                 }
-                if (dataGridViewFiles.Columns["Items"] != null && e.ColumnIndex == dataGridViewFiles.Columns["Items"].Index && e.Value != null)
-                {
-                    string? fileList = dataGridViewFiles.Rows[e.RowIndex].Cells["ItemList"].Value.ToString();
-                    dataGridViewFiles.Rows[e.RowIndex].Cells[e.ColumnIndex].ToolTipText = fileList;
-                }
+
                 if (dataGridViewFiles.Columns["WorksheetCount"] != null && e.ColumnIndex == dataGridViewFiles.Columns["WorksheetCount"].Index && e.Value != null)
                 {
                     string? worksheetList = dataGridViewFiles.Rows[e.RowIndex].Cells["WorksheetList"].Value.ToString();
-                    dataGridViewFiles.Rows[e.RowIndex].Cells[e.ColumnIndex].ToolTipText = worksheetList;
+                    dataGridViewFiles.Rows[e.RowIndex].Cells["WorksheetCount"].ToolTipText = worksheetList;
                 }
 
                 if (Convert.ToInt32(dataGridViewFiles.Rows[e.RowIndex].Cells["WarningCount"].Value) > 0)
                 {
-                    e.CellStyle.ForeColor = System.Drawing.Color.Yellow;
-                    string? fatalList = dataGridViewFiles.Rows[e.RowIndex].Cells["WarningList"].Value.ToString();
-                    dataGridViewFiles.Rows[e.RowIndex].Cells["WarningCount"].ToolTipText = fatalList;
+                    e.CellStyle.ForeColor = Color.Yellow;
+                    string? warningList = dataGridViewFiles.Rows[e.RowIndex].Cells["WarningList"].Value.ToString();
+                    dataGridViewFiles.Rows[e.RowIndex].Cells["WarningCount"].ToolTipText = warningList;
                 }
 
                 if (Convert.ToInt32(dataGridViewFiles.Rows[e.RowIndex].Cells["ErrorCount"].Value) > 0)
                 {
-                    e.CellStyle.ForeColor = System.Drawing.Color.Orange;
-                    string? fatalList = dataGridViewFiles.Rows[e.RowIndex].Cells["ErrorList"].Value.ToString();
-                    dataGridViewFiles.Rows[e.RowIndex].Cells["ErrorCount"].ToolTipText = fatalList;
+                    e.CellStyle.ForeColor = Color.Orange;
+                    string? errorList = dataGridViewFiles.Rows[e.RowIndex].Cells["ErrorList"].Value.ToString();
+                    dataGridViewFiles.Rows[e.RowIndex].Cells["ErrorCount"].ToolTipText = errorList;
                 }
 
-                if (Convert.ToInt32(dataGridViewFiles.Rows[e.RowIndex].Cells["FatalCount"].Value) + Convert.ToInt32(dataGridViewFiles.Rows[e.RowIndex].Cells["ErrorCount"].Value) + Convert.ToInt32(dataGridViewFiles.Rows[e.RowIndex].Cells["WarningCount"].Value) + Convert.ToInt32(dataGridViewFiles.Rows[e.RowIndex].Cells["WarningCount"].Value) == 0)
+                if (Convert.ToInt32(dataGridViewFiles.Rows[e.RowIndex].Cells["FatalCount"].Value) > 0)
                 {
-                    e.CellStyle.ForeColor = System.Drawing.Color.GreenYellow;
+                    e.CellStyle.ForeColor = Color.Red;
                     string? fatalList = dataGridViewFiles.Rows[e.RowIndex].Cells["FatalList"].Value.ToString();
                     dataGridViewFiles.Rows[e.RowIndex].Cells["FatalCount"].ToolTipText = fatalList;
-                }
 
+                }
+                if (Convert.ToInt32(dataGridViewFiles.Rows[e.RowIndex].Cells["FatalCount"].Value) +
+                    Convert.ToInt32(dataGridViewFiles.Rows[e.RowIndex].Cells["ErrorCount"].Value) +
+
+                    Convert.ToInt32(dataGridViewFiles.Rows[e.RowIndex].Cells["WarningCount"].Value) +
+                    Convert.ToInt32(dataGridViewFiles.Rows[e.RowIndex].Cells["WarningCount"].Value) == 0)
+                {
+                    e.CellStyle.ForeColor = Color.YellowGreen;
+                }
 
             }
             catch (Exception ex)
@@ -709,8 +720,8 @@ namespace a2p.WinForm.ChildForms
                     progressBarForm.Load += (sender, args) =>
                     {
                         progressBarForm.Location = new Point(
-                            this.Location.X + ((this.Width - progressBarForm.Width) / 2),
-                            this.Location.Y + ((this.Height - progressBarForm.Height) / 2)
+                            Location.X + (Width - progressBarForm.Width) / 2,
+                            Location.Y + (Height - progressBarForm.Height) / 2
                         );
                     };
 
@@ -850,11 +861,11 @@ namespace a2p.WinForm.ChildForms
                     progressBarForm.Load += (sender, args) =>
                     {
                         progressBarForm.Location = new Point(
-                            this.Location.X + ((this.Width - progressBarForm.Width) / 2),
-                            this.Location.Y + ((this.Height - progressBarForm.Height) / 2)
+                            Location.X + (Width - progressBarForm.Width) / 2,
+                            Location.Y + (Height - progressBarForm.Height) / 2
                             );
                         progressBarForm.progressBar.Style = ProgressBarStyle.Continuous;
-                        progressBarForm.progressBar.ForeColor = System.Drawing.Color.FromArgb(239, 112, 32);
+                        progressBarForm.progressBar.ForeColor = Color.FromArgb(239, 112, 32);
                     };
                     Progress<ProgressValue> progress = new(progressBarForm.UpdateProgress);
                     _progress = progress;
@@ -922,6 +933,7 @@ namespace a2p.WinForm.ChildForms
                 int warningCount = 0;
                 int errorCount = 0;
                 int fatalCount = 0;
+
                 await Task.Run(() =>
                 {
                     orderDTO.Order = a2pOrder.Order;
@@ -956,6 +968,7 @@ namespace a2p.WinForm.ChildForms
                                     .Where(error => error.Level is ErrorLevel.Warning)
                                     .Select(error => $"ErrorLevel: {error.Level}, ErrorCode: {error.Code}, Message: {error.Message}")
                                     .Distinct());
+
                         errorCount = a2pOrder.ReadErrors
                             .Where(error => error.Level is ErrorLevel.Error)
                             .Select(error => new { error.Level, error.Code, error.Message })
@@ -1155,6 +1168,14 @@ namespace a2p.WinForm.ChildForms
             foreach (A2POrder a2pOrder in a2pOrders)
             {
 
+                if (a2pOrder.Files.SelectMany(f => f.Worksheets).Count(w => w.WorksheetType == WorksheetType.Items) == 0)
+                {
+
+                    _logService.Warning("Found order {$Order}, files, but items worksheet  is missing", a2pOrder.Order);
+                    continue;
+
+                }
+
                 if (type == 1)
                 {
                     dataGridViewFiles.Columns["Import"].Visible = true;
@@ -1181,8 +1202,8 @@ namespace a2p.WinForm.ChildForms
                     double area = 0;
                     double weight = 0;
                     double hours = 0;
-                    decimal cost = 0;
-                    decimal amount = 0;
+                    double  cost = 0;
+                    double  amount = 0;
                     int materialCount = 0;
                     int warningCount = 0;
                     int errorCount = 0;

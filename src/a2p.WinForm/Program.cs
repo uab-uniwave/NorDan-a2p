@@ -2,12 +2,16 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics;
+using System.Globalization;
 using System.Text;
 
 using a2p.Shared;
 using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Infrastructure.Interfaces;
 using a2p.Shared.Infrastructure.Services;
+using a2p.WinForm;
+
+using a2p.WinForm.ChildForms;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +25,13 @@ namespace a2p.WinForm
         [STAThread]
         private static void Main()
         {
+            // Get the current culture of the PC
+            CultureInfo currentCulture = CultureInfo.CurrentCulture;
+
+            // Set the culture globally
+            Thread.CurrentThread.CurrentCulture = currentCulture;
+            Thread.CurrentThread.CurrentUICulture = currentCulture;
+
             _ = Application.SetHighDpiMode(HighDpiMode.PerMonitorV2); // ✅ Critical for DPI scaling
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

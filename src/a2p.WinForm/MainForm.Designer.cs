@@ -1,7 +1,13 @@
-﻿using a2p.WinForm.CustomControls;
+﻿using a2p.WinForm;
+using a2p.WinForm.Properties;
+
+using System.Windows.Forms;
+using System.Windows;
+using System.Drawing;
+
 
 namespace a2p.WinForm
-{
+    {
     partial class MainForm
     {
         /// <summary>
@@ -97,7 +103,7 @@ namespace a2p.WinForm
             // 
             // plNordanHeaderLogo
             // 
-            plNordanHeaderLogo.BackgroundImage = Properties.Resources.NordanLogoInversed;
+            plNordanHeaderLogo.BackgroundImage = (Image)resources.GetObject("NordanLogoInversed");
             plNordanHeaderLogo.BackgroundImageLayout = ImageLayout.Zoom;
             plNordanHeaderLogo.Dock = DockStyle.Fill;
             plNordanHeaderLogo.Location = new Point(718, 2);

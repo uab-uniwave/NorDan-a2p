@@ -14,14 +14,19 @@
 
      
      
- <BaseOutputPath>..\..\Output\a2p.WinForm</BaseOutputPath>
-     <OutputPath>$(BaseOutputPath)\$(Configuration)\</OutputPath>
+ <BaseOutputPath>..\..\build\</BaseOutputPath>
+    <OutputPath>$(BaseOutputPath)$(Configuration)\a2p.WinForm\</OutputPath>
+
+ 
  <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
  <ApplicationIcon>Icon.ico</ApplicationIcon>
- <Configurations>Debug;Release;Test</Configurations>
+ <Configurations>Debug;Release</Configurations>
+ <Platforms>AnyCPU;x64</Platforms>
  </PropertyGroup>
 
  <ItemGroup>
+ <Compile Remove="ChildForms\MainForm.cs" />
+ <Compile Remove="ChildForms\MainForm.Designer.cs" />
  <Compile Remove="Mappers\A2PLogRecord.cs" />
  <Compile Remove="ThemeColor.cs" />
  </ItemGroup>
@@ -38,13 +43,6 @@
    </COMReference>
  </ItemGroup>
 
- <ItemGroup>
-   <Content Include="Icon.ico" />
- </ItemGroup>
-
- <ItemGroup>
-   <None Include="Mappers\A2PLogRecord.cs" />
- </ItemGroup>
 
     <ItemGroup>
 
@@ -83,7 +81,7 @@
 
  <ItemGroup>
  <EmbeddedResource Update="Properties\Resources.resx">
-  <Generator>ResXFileCodeGenerator</Generator>
+  <Generator>PublicResXFileCodeGenerator</Generator>
   <LastGenOutput>Resources.Designer.cs</LastGenOutput>
  </EmbeddedResource>
  </ItemGroup>
@@ -92,17 +90,11 @@
         <None Update="..\a2p.Shared\appsettings.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="..\a2p.Shared\appsettings.Development.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="..\a2p.Shared\appsettings.Production.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
     </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="xcopy /Y /I &quot;..\..\Solution_Items\Sql_Queries&quot; &quot;..\..\Output\a2p.WinForm\Release\net8.0-windows\Sql_Queries&quot;" />
-    <Exec Command="xcopy /Y /I &quot;..\..\Solution_Items\Test_Cases&quot; &quot;..\..\Output\a2p.WinForm\Release\net8.0-windows\Test_Cases&quot;" />
+    <Exec Command="xcopy /Y /I ..\..\src\a2p.DataAssets\SQL $(OutputPath)\SQL" />
+    <Exec Command="xcopy /Y /I ..\..\src\a2p.DataAssets\Excel $(OutputPath)\Excel" />
   </Target>
 
 </Project>

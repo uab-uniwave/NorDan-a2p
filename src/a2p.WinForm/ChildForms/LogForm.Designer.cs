@@ -1,5 +1,5 @@
 ﻿
-using a2p.WinForm;
+
 namespace a2p.WinForm.ChildForms
 {
     partial class LogForm

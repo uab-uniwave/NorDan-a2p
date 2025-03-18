@@ -12,65 +12,138 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "a2p.WinForm", "src\a2p.WinF
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShellScripts", "PowerShellScripts", "{5DB87A85-F247-4178-B216-BFD4DCF4DFB5}"
-	ProjectSection(SolutionItems) = preProject
-		Items\PowerShell_Scripts\FileTree.ps1 = Items\PowerShell_Scripts\FileTree.ps1
-		Items\PowerShell_Scripts\FileTreeWithMethods.ps1 = Items\PowerShell_Scripts\FileTreeWithMethods.ps1
-	EndProjectSection
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{02EA681E-C7D8-13C7-8484-4AC65E1B71B8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "a2p.GraphicAssets", "a2p.GraphicAssets", "{0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "a2p.DataAssets", "a2p.DataAssets", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SqlQueries", "SqlQueries", "{58E421E3-1FDA-4904-8877-B0639EB6CF9D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{58E421E3-1FDA-4904-8877-B0639EB6CF9D}"
 	ProjectSection(SolutionItems) = preProject
-		CleanDB.sql = CleanDB.sql
-		Solution_Items\SQL_Queries\Procedures.sql = Solution_Items\SQL_Queries\Procedures.sql
-		Solution_Items\SQL_Queries\Tables.sql = Solution_Items\SQL_Queries\Tables.sql
-		Solution_Items\SQL_Queries\Test.sql = Solution_Items\SQL_Queries\Test.sql
+		src\a2p.DataAssets\SQL\CleanDB.sql = src\a2p.DataAssets\SQL\CleanDB.sql
+		src\a2p.DataAssets\SQL\Procedures.sql = src\a2p.DataAssets\SQL\Procedures.sql
+		src\a2p.DataAssets\SQL\Tables.sql = src\a2p.DataAssets\SQL\Tables.sql
+		src\a2p.DataAssets\SQL\Test.sql = src\a2p.DataAssets\SQL\Test.sql
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XML", "XML", "{62709BAA-6BE0-4843-BCB1-EEE9D5EA440E}"
-	ProjectSection(SolutionItems) = preProject
-		Solution_Items\XML\Item.xml = Solution_Items\XML\Item.xml
-		Solution_Items\XML\PrefCMD.xml = Solution_Items\XML\PrefCMD.xml
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XMLSchemas", "XMLSchemas", "{FC75C943-5C01-458F-989F-F0BAB88EDC43}"
 	ProjectSection(SolutionItems) = preProject
-		Solution_Items\XML\XMLSchemas\ConfigurableProperties.xsd = Solution_Items\XML\XMLSchemas\ConfigurableProperties.xsd
-		Solution_Items\XML\XMLSchemas\Constructive.xsd = Solution_Items\XML\XMLSchemas\Constructive.xsd
-		Solution_Items\XML\XMLSchemas\PrefCAD.Command.xsd = Solution_Items\XML\XMLSchemas\PrefCAD.Command.xsd
-		Solution_Items\XML\XMLSchemas\PrefCAD.Model.xsd = Solution_Items\XML\XMLSchemas\PrefCAD.Model.xsd
-		Solution_Items\XML\XMLSchemas\PrefCAD.Serialization.Common.xsd = Solution_Items\XML\XMLSchemas\PrefCAD.Serialization.Common.xsd
-		Solution_Items\XML\XMLSchemas\PrefCAD.Serialization.Items.xsd = Solution_Items\XML\XMLSchemas\PrefCAD.Serialization.Items.xsd
-		Solution_Items\XML\XMLSchemas\PrefCAD.Serialization.Material.xsd = Solution_Items\XML\XMLSchemas\PrefCAD.Serialization.Material.xsd
-		Solution_Items\XML\XMLSchemas\PrefCAD.Serialization.Model.xsd = Solution_Items\XML\XMLSchemas\PrefCAD.Serialization.Model.xsd
-		Solution_Items\XML\XMLSchemas\PrefCAD.Serialization.Script.xsd = Solution_Items\XML\XMLSchemas\PrefCAD.Serialization.Script.xsd
-		Solution_Items\XML\XMLSchemas\PrefCAD.WindowListGrammar.xsd = Solution_Items\XML\XMLSchemas\PrefCAD.WindowListGrammar.xsd
-		Solution_Items\XML\XMLSchemas\PrefCommand.xsd = Solution_Items\XML\XMLSchemas\PrefCommand.xsd
-		Solution_Items\XML\XMLSchemas\PrefDatabase.xsd = Solution_Items\XML\XMLSchemas\PrefDatabase.xsd
-		Solution_Items\XML\XMLSchemas\Preference.Documents.xsd = Solution_Items\XML\XMLSchemas\Preference.Documents.xsd
-		Solution_Items\XML\XMLSchemas\Preference.Production.CentralCut.xsd = Solution_Items\XML\XMLSchemas\Preference.Production.CentralCut.xsd
-		Solution_Items\XML\XMLSchemas\Preference.Vfo.xsd = Solution_Items\XML\XMLSchemas\Preference.Vfo.xsd
-		Solution_Items\XML\XMLSchemas\PrefExpenses.Document.xsd = Solution_Items\XML\XMLSchemas\PrefExpenses.Document.xsd
-		Solution_Items\XML\XMLSchemas\PrefHardware.xsd = Solution_Items\XML\XMLSchemas\PrefHardware.xsd
-		Solution_Items\XML\XMLSchemas\PrefMessages.xsd = Solution_Items\XML\XMLSchemas\PrefMessages.xsd
-		Solution_Items\XML\XMLSchemas\PrefOpenHardwareSet.xsd = Solution_Items\XML\XMLSchemas\PrefOpenHardwareSet.xsd
-		Solution_Items\XML\XMLSchemas\PrefProduction.ProductionLot.xsd = Solution_Items\XML\XMLSchemas\PrefProduction.ProductionLot.xsd
-		Solution_Items\XML\XMLSchemas\PrefSales.MaterialNeeds.xsd = Solution_Items\XML\XMLSchemas\PrefSales.MaterialNeeds.xsd
-		Solution_Items\XML\XMLSchemas\PrefSales.PurchaseOrdersFromMaterialNeeds.xsd = Solution_Items\XML\XMLSchemas\PrefSales.PurchaseOrdersFromMaterialNeeds.xsd
-		Solution_Items\XML\XMLSchemas\PrefSales.SalesDoc.xsd = Solution_Items\XML\XMLSchemas\PrefSales.SalesDoc.xsd
-		Solution_Items\XML\XMLSchemas\PrefSales.SalesDocuments.xsd = Solution_Items\XML\XMLSchemas\PrefSales.SalesDocuments.xsd
-		Solution_Items\XML\XMLSchemas\PrefSales.UpdateSalesDoc.xsd = Solution_Items\XML\XMLSchemas\PrefSales.UpdateSalesDoc.xsd
-		Solution_Items\XML\XMLSchemas\PrefSuite.Messages.xsd = Solution_Items\XML\XMLSchemas\PrefSuite.Messages.xsd
-		Solution_Items\XML\XMLSchemas\PrefSuite.Serialization.xsd = Solution_Items\XML\XMLSchemas\PrefSuite.Serialization.xsd
-		Solution_Items\XML\XMLSchemas\PrefWiseDDECommand.xsd = Solution_Items\XML\XMLSchemas\PrefWiseDDECommand.xsd
-		Solution_Items\XML\XMLSchemas\PrefWiseURI.xsd = Solution_Items\XML\XMLSchemas\PrefWiseURI.xsd
+		src\a2p.DataAssets\XMLSchemas\ConfigurableProperties.xsd = src\a2p.DataAssets\XMLSchemas\ConfigurableProperties.xsd
+		src\a2p.DataAssets\XMLSchemas\Constructive.xsd = src\a2p.DataAssets\XMLSchemas\Constructive.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefCAD.Command.xsd = src\a2p.DataAssets\XMLSchemas\PrefCAD.Command.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefCAD.Model.xsd = src\a2p.DataAssets\XMLSchemas\PrefCAD.Model.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefCAD.Serialization.Common.xsd = src\a2p.DataAssets\XMLSchemas\PrefCAD.Serialization.Common.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefCAD.Serialization.Items.xsd = src\a2p.DataAssets\XMLSchemas\PrefCAD.Serialization.Items.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefCAD.Serialization.Material.xsd = src\a2p.DataAssets\XMLSchemas\PrefCAD.Serialization.Material.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefCAD.Serialization.Model.xsd = src\a2p.DataAssets\XMLSchemas\PrefCAD.Serialization.Model.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefCAD.Serialization.Script.xsd = src\a2p.DataAssets\XMLSchemas\PrefCAD.Serialization.Script.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefCAD.WindowListGrammar.xsd = src\a2p.DataAssets\XMLSchemas\PrefCAD.WindowListGrammar.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefCommand.xsd = src\a2p.DataAssets\XMLSchemas\PrefCommand.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefDatabase.xsd = src\a2p.DataAssets\XMLSchemas\PrefDatabase.xsd
+		src\a2p.DataAssets\XMLSchemas\Preference.Documents.xsd = src\a2p.DataAssets\XMLSchemas\Preference.Documents.xsd
+		src\a2p.DataAssets\XMLSchemas\Preference.Production.CentralCut.xsd = src\a2p.DataAssets\XMLSchemas\Preference.Production.CentralCut.xsd
+		src\a2p.DataAssets\XMLSchemas\Preference.Vfo.xsd = src\a2p.DataAssets\XMLSchemas\Preference.Vfo.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefExpenses.Document.xsd = src\a2p.DataAssets\XMLSchemas\PrefExpenses.Document.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefHardware.xsd = src\a2p.DataAssets\XMLSchemas\PrefHardware.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefMessages.xsd = src\a2p.DataAssets\XMLSchemas\PrefMessages.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefOpenHardwareSet.xsd = src\a2p.DataAssets\XMLSchemas\PrefOpenHardwareSet.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefProduction.ProductionLot.xsd = src\a2p.DataAssets\XMLSchemas\PrefProduction.ProductionLot.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefSales.MaterialNeeds.xsd = src\a2p.DataAssets\XMLSchemas\PrefSales.MaterialNeeds.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefSales.PurchaseOrdersFromMaterialNeeds.xsd = src\a2p.DataAssets\XMLSchemas\PrefSales.PurchaseOrdersFromMaterialNeeds.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefSales.SalesDoc.xsd = src\a2p.DataAssets\XMLSchemas\PrefSales.SalesDoc.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefSales.SalesDocuments.xsd = src\a2p.DataAssets\XMLSchemas\PrefSales.SalesDocuments.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefSales.UpdateSalesDoc.xsd = src\a2p.DataAssets\XMLSchemas\PrefSales.UpdateSalesDoc.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefSuite.Messages.xsd = src\a2p.DataAssets\XMLSchemas\PrefSuite.Messages.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefSuite.Serialization.xsd = src\a2p.DataAssets\XMLSchemas\PrefSuite.Serialization.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefWiseDDECommand.xsd = src\a2p.DataAssets\XMLSchemas\PrefWiseDDECommand.xsd
+		src\a2p.DataAssets\XMLSchemas\PrefWiseURI.xsd = src\a2p.DataAssets\XMLSchemas\PrefWiseURI.xsd
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Excel", "Excel", "{E1A78A32-DF5F-4F65-A987-6FEF96E2B856}"
+	ProjectSection(SolutionItems) = preProject
+		src\a2p.DataAssets\Excel\0000Z00001-1 Price_Details.xlsx = src\a2p.DataAssets\Excel\0000Z00001-1 Price_Details.xlsx
+		src\a2p.DataAssets\Excel\0000Z00001-1 SumList.xlsx = src\a2p.DataAssets\Excel\0000Z00001-1 SumList.xlsx
+		src\a2p.DataAssets\Excel\0000Z00001-2 Price_Details.xlsx = src\a2p.DataAssets\Excel\0000Z00001-2 Price_Details.xlsx
+		src\a2p.DataAssets\Excel\0000Z00001-2 SumList.xlsx = src\a2p.DataAssets\Excel\0000Z00001-2 SumList.xlsx
+		src\a2p.DataAssets\Excel\0000Z00001-3 Price_Details.xlsx = src\a2p.DataAssets\Excel\0000Z00001-3 Price_Details.xlsx
+		src\a2p.DataAssets\Excel\0000Z00001-3 SumList.xlsx = src\a2p.DataAssets\Excel\0000Z00001-3 SumList.xlsx
+		src\a2p.DataAssets\Excel\0000Z00001-4 Price_Details.xlsx = src\a2p.DataAssets\Excel\0000Z00001-4 Price_Details.xlsx
+		src\a2p.DataAssets\Excel\0000Z00001-4 SumList.xlsx = src\a2p.DataAssets\Excel\0000Z00001-4 SumList.xlsx
+		src\a2p.DataAssets\Excel\0000Z00001-5 Price_Details.xlsx = src\a2p.DataAssets\Excel\0000Z00001-5 Price_Details.xlsx
+		src\a2p.DataAssets\Excel\0000Z00001-5 SumList.xlsx = src\a2p.DataAssets\Excel\0000Z00001-5 SumList.xlsx
+		src\a2p.DataAssets\Excel\0000Z00001-6 Price_Details.xlsx = src\a2p.DataAssets\Excel\0000Z00001-6 Price_Details.xlsx
+		src\a2p.DataAssets\Excel\0000Z00001-6 SumList.xlsx = src\a2p.DataAssets\Excel\0000Z00001-6 SumList.xlsx
+		src\a2p.DataAssets\Excel\0000Z00001-7 Price_Details.xlsx = src\a2p.DataAssets\Excel\0000Z00001-7 Price_Details.xlsx
+		src\a2p.DataAssets\Excel\0000Z00001-7 SumList.xlsx = src\a2p.DataAssets\Excel\0000Z00001-7 SumList.xlsx
+		src\a2p.DataAssets\Excel\0000Z00001-8 Price_Details.xlsx = src\a2p.DataAssets\Excel\0000Z00001-8 Price_Details.xlsx
+		src\a2p.DataAssets\Excel\0000Z00001-8 SumList.xlsx = src\a2p.DataAssets\Excel\0000Z00001-8 SumList.xlsx
+		src\a2p.DataAssets\Excel\0000Z00001-9 Price_Details.xlsx = src\a2p.DataAssets\Excel\0000Z00001-9 Price_Details.xlsx
+		src\a2p.DataAssets\Excel\0000Z00001-9 SumList.xlsx = src\a2p.DataAssets\Excel\0000Z00001-9 SumList.xlsx
+		src\a2p.DataAssets\Excel\0000Z00021-1 Price_Details_decimal_LT.xlsx = src\a2p.DataAssets\Excel\0000Z00021-1 Price_Details_decimal_LT.xlsx
+		src\a2p.DataAssets\Excel\0000Z00021-1 SumList_decimal_LT.xlsx = src\a2p.DataAssets\Excel\0000Z00021-1 SumList_decimal_LT.xlsx
+		src\a2p.DataAssets\Excel\0000Z00021-2 Price_Details_decimal_US.xlsx = src\a2p.DataAssets\Excel\0000Z00021-2 Price_Details_decimal_US.xlsx
+		src\a2p.DataAssets\Excel\0000Z00021-2 SumList_decimal_US_.xlsx = src\a2p.DataAssets\Excel\0000Z00021-2 SumList_decimal_US_.xlsx
+		src\a2p.DataAssets\Excel\0000Z00021-3 Price_Details_decimal_Mix.xlsx = src\a2p.DataAssets\Excel\0000Z00021-3 Price_Details_decimal_Mix.xlsx
+		src\a2p.DataAssets\Excel\0000Z00021-3 SumList__decimal_Mix.xlsx = src\a2p.DataAssets\Excel\0000Z00021-3 SumList__decimal_Mix.xlsx
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "a2p.PowerShellScripts", "a2p.PowerShellScripts", "{58A4D13F-3B73-48F5-959A-94ACCB93A37C}"
+	ProjectSection(SolutionItems) = preProject
+		build\a2p.PowerShellScripts\FileTree.ps1 = build\a2p.PowerShellScripts\FileTree.ps1
+		build\a2p.PowerShellScripts\FileTreeWithMethods.ps1 = build\a2p.PowerShellScripts\FileTreeWithMethods.ps1
+		build\a2p.PowerShellScripts\wixComponents.ps1 = build\a2p.PowerShellScripts\wixComponents.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Icons", "Icons", "{8A34791D-ECFC-4587-8470-71001591D2FA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{6BD4C0B4-3748-45A1-B82D-3CA6488AF6C8}"
+	ProjectSection(SolutionItems) = preProject
+		src\a2p.GraphicAssets\Images\SpalshScreen.jpg = src\a2p.GraphicAssets\Images\SpalshScreen.jpg
+		src\a2p.GraphicAssets\Images\st_grean.png = src\a2p.GraphicAssets\Images\st_grean.png
+		src\a2p.GraphicAssets\Images\st_orange.png = src\a2p.GraphicAssets\Images\st_orange.png
+		src\a2p.GraphicAssets\Images\st_red.png = src\a2p.GraphicAssets\Images\st_red.png
+		src\a2p.GraphicAssets\Images\st_yellow.png = src\a2p.GraphicAssets\Images\st_yellow.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logos", "Logos", "{20789F8C-2157-4093-AECF-679B4A64D086}"
+	ProjectSection(SolutionItems) = preProject
+		src\a2p.GraphicAssets\Logos\NordanLogoInversed.png = src\a2p.GraphicAssets\Logos\NordanLogoInversed.png
+		src\a2p.GraphicAssets\Logos\UniwaveLogo.png = src\a2p.GraphicAssets\Logos\UniwaveLogo.png
+		src\a2p.GraphicAssets\Logos\UniwaveLogoInversed.png = src\a2p.GraphicAssets\Logos\UniwaveLogoInversed.png
+		src\a2p.GraphicAssets\Logos\UniwaveLogoMini.png = src\a2p.GraphicAssets\Logos\UniwaveLogoMini.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AppIcons", "AppIcons", "{BE5A1548-E891-4D17-A688-AB698536FEFB}"
+	ProjectSection(SolutionItems) = preProject
+		src\a2p.GraphicAssets\Icons\AppIcons\Icon.ico = src\a2p.GraphicAssets\Icons\AppIcons\Icon.ico
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SideBarIcons", "SideBarIcons", "{25482F05-7FD2-4CF9-8B83-18936537C3A6}"
+	ProjectSection(SolutionItems) = preProject
+		src\a2p.GraphicAssets\Icons\SideBarIcons\btExit.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btExit.png
+		src\a2p.GraphicAssets\Icons\SideBarIcons\btImport.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btImport.png
+		src\a2p.GraphicAssets\Icons\SideBarIcons\btLoad.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btLoad.png
+		src\a2p.GraphicAssets\Icons\SideBarIcons\btLog.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btLog.png
+		src\a2p.GraphicAssets\Icons\SideBarIcons\btProperties.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btProperties.png
+		src\a2p.GraphicAssets\Icons\SideBarIcons\btSideBar.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btSideBar.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TitleBarIcons", "TitleBarIcons", "{1A97C381-26F0-4D9C-9EFA-1FA5C64960E1}"
+	ProjectSection(SolutionItems) = preProject
+		src\a2p.GraphicAssets\Icons\TitleBarIcons\btClose.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btClose.png
+		src\a2p.GraphicAssets\Icons\TitleBarIcons\btCloseHover.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btCloseHover.png
+		src\a2p.GraphicAssets\Icons\TitleBarIcons\btMaximize.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btMaximize.png
+		src\a2p.GraphicAssets\Icons\TitleBarIcons\btMaximizeHover.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btMaximizeHover.png
+		src\a2p.GraphicAssets\Icons\TitleBarIcons\btMinimize.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btMinimize.png
+		src\a2p.GraphicAssets\Icons\TitleBarIcons\btMinimizeHover.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btMinimizeHover.png
+	EndProjectSection
+EndProject
+Project("{B7DD6F7E-DEF8-4E67-B5B7-07EF123DB6F0}") = "a2p.Installer", "build\a2p.Installer\a2p.Installer.wixproj", "{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -88,34 +161,50 @@ Global
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|ARM64.ActiveCfg = Debug|Any CPU
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x64.Build.0 = Debug|Any CPU
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x64.ActiveCfg = Debug|x64
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x64.Build.0 = Debug|x64
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x86.Build.0 = Debug|Any CPU
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|ARM64.ActiveCfg = Release|Any CPU
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|ARM64.Build.0 = Release|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x64.ActiveCfg = Release|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x64.Build.0 = Release|Any CPU
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x64.ActiveCfg = Release|x64
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x64.Build.0 = Release|x64
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x86.ActiveCfg = Release|Any CPU
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x86.Build.0 = Release|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|ARM64.ActiveCfg = Debug|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x64.Build.0 = Debug|Any CPU
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x64.ActiveCfg = Debug|x64
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x64.Build.0 = Debug|x64
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x86.Build.0 = Debug|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|ARM64.ActiveCfg = Release|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|ARM64.Build.0 = Release|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x64.ActiveCfg = Release|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x64.Build.0 = Release|Any CPU
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x64.ActiveCfg = Release|x64
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x64.Build.0 = Release|x64
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x86.ActiveCfg = Release|Any CPU
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x86.Build.0 = Release|Any CPU
+		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Debug|Any CPU.Build.0 = Debug|x64
+		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Debug|ARM64.Build.0 = Debug|ARM64
+		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Debug|x64.ActiveCfg = Debug|x64
+		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Debug|x64.Build.0 = Debug|x64
+		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Debug|x86.ActiveCfg = Debug|x86
+		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Debug|x86.Build.0 = Debug|x86
+		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Release|Any CPU.ActiveCfg = Release|x64
+		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Release|Any CPU.Build.0 = Release|x64
+		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Release|ARM64.ActiveCfg = Release|ARM64
+		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Release|ARM64.Build.0 = Release|ARM64
+		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Release|x64.ActiveCfg = Release|x64
+		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Release|x64.Build.0 = Release|x64
+		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Release|x86.ActiveCfg = Release|x86
+		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -123,15 +212,24 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-		{5DB87A85-F247-4178-B216-BFD4DCF4DFB5} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
-		{0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
+		{0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{58E421E3-1FDA-4904-8877-B0639EB6CF9D} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
 		{62709BAA-6BE0-4843-BCB1-EEE9D5EA440E} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
 		{FC75C943-5C01-458F-989F-F0BAB88EDC43} = {62709BAA-6BE0-4843-BCB1-EEE9D5EA440E}
+		{E1A78A32-DF5F-4F65-A987-6FEF96E2B856} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
+		{58A4D13F-3B73-48F5-959A-94ACCB93A37C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71B8}
+		{8A34791D-ECFC-4587-8470-71001591D2FA} = {0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF}
+		{6BD4C0B4-3748-45A1-B82D-3CA6488AF6C8} = {0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF}
+		{20789F8C-2157-4093-AECF-679B4A64D086} = {0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF}
+		{BE5A1548-E891-4D17-A688-AB698536FEFB} = {8A34791D-ECFC-4587-8470-71001591D2FA}
+		{25482F05-7FD2-4CF9-8B83-18936537C3A6} = {8A34791D-ECFC-4587-8470-71001591D2FA}
+		{1A97C381-26F0-4D9C-9EFA-1FA5C64960E1} = {8A34791D-ECFC-4587-8470-71001591D2FA}
+		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71B8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {02931AC6-E3AF-4E96-A144-EE9EE4BE10E7}
-		BuildVersion_StartDate = 2000/1/1
 		BuildVersion_BuildVersioningStyle = None.None.None.Increment
+		BuildVersion_StartDate = 2000/1/1
 	EndGlobalSection
 EndGlobal

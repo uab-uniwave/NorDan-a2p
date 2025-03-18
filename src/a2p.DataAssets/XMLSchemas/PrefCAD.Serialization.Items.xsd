@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:psr="http://www.preference.com/XMLSchemas/2006/Serialization" targetNamespace="http://www.preference.com/XMLSchemas/2006/Serialization" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xsd:include schemaLocation="PrefCAD.Serialization.Material.xsd"/>
+	<xsd:include schemaLocation="PrefCAD.Serialization.Model.xsd"/>
+	<xsd:include schemaLocation="PrefCAD.Serialization.Script.xsd"/>
+	<xsd:element name="ItemFilter" type="psr:typeItemFilter"/>
+	<xsd:complexType name="typeItemFilter">
+		<xsd:sequence>
+			<xsd:element name="Partitions" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Partition" minOccurs="0" maxOccurs="unbounded">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="Classes" minOccurs="0">
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="Class" minOccurs="0" maxOccurs="unbounded">
+													<xsd:complexType>
+														<xsd:attribute name="name" use="required"/>
+													</xsd:complexType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+								</xsd:sequence>
+								<xsd:attribute name="name" use="required"/>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+					<xsd:attribute name="excludeAll" type="xsd:boolean" use="optional" default="0"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="Structure" minOccurs="0">
+				<xsd:complexType>
+					<xsd:choice minOccurs="0" maxOccurs="unbounded">
+						<xsd:element name="Include" type="psr:typeItemFilterStructureRule"/>
+						<xsd:element name="Exclude" type="psr:typeItemFilterStructureRule"/>
+					</xsd:choice>
+					<xsd:attribute name="excludingByDefault" type="xsd:boolean" use="optional" default="0"/>
+					<xsd:attribute name="digest" type="xsd:string" use="optional"/>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeItemFilterStructureRule">
+		<xsd:attribute name="type" type="xsd:string" use="required"/>
+		<xsd:attribute name="id" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typePrefItem">
+		<xsd:sequence>
+			<xsd:element name="ItemFilter" type="psr:typeItemFilter" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="modificationTime" type="xsd:long" use="optional"/>
+	</xsd:complexType>
+	<xsd:element name="PrefItemModel" type="psr:typePrefItemModel"/>
+	<xsd:complexType name="typePrefItemModel">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typePrefItem">
+				<xsd:sequence>
+					<xsd:element name="Model" type="psr:typeModel"/>
+					<xsd:element name="Commands" type="psr:typeCommands" minOccurs="0"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:element name="PrefItemScript" type="psr:typePrefItemScript"/>
+	<xsd:complexType name="typePrefItemScript">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typePrefItem">
+				<xsd:sequence>
+					<xsd:element name="Script" type="psr:typeScript"/>
+					<xsd:element name="Commands" type="psr:typeCommands" minOccurs="0"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:element name="PrefItemMaterial" type="psr:typePrefItemMaterial"/>
+	<xsd:complexType name="typePrefItemMaterial">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typePrefItem">
+				<xsd:sequence>
+					<xsd:element name="Material" type="psr:typeMaterial"/>
+					<xsd:element name="Commands" type="psr:typeCommands" minOccurs="0"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:element name="PrefItemIndirection" type="psr:typePrefItemIndirection"/>
+	<xsd:complexType name="typePrefItemIndirection">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typePrefItem">
+				<xsd:sequence>
+					<xsd:element name="Commands" type="psr:typeCommands" minOccurs="0"/>
+				</xsd:sequence>
+				<xsd:attribute name="targetId" type="xsd:string"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:element name="PrefItemCustom" type="psr:typePrefItemCustom"/>
+	<xsd:complexType name="typePrefItemCustom">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typePrefItem">
+				<xsd:choice minOccurs="0">
+					<xsd:any namespace="##other" processContents="skip"/>
+				</xsd:choice>
+				<xsd:attribute name="type" type="xsd:string" use="required"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+</xsd:schema>

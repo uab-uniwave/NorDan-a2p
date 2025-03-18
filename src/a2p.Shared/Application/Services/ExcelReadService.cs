@@ -43,7 +43,6 @@ namespace a2p.Shared.Application.Services
                 {
                     worksheetCounter++;
 
-
                     A2PWorksheet worksheet = new()
                     {
                         WorksheetType = GetWorksheetType(file.FileName, ixlWorksheet.Name),
@@ -52,7 +51,7 @@ namespace a2p.Shared.Application.Services
                         FileName = file.FileName
                     };
 
-                    CultureInfo culture = CultureInfo.InvariantCulture;
+                    //   CultureInfo culture = CultureInfo.InvariantCulture;
                     int totalColumns = ixlWorksheet.LastColumnUsed()?.ColumnNumber() ?? 0;
                     string tempTask3 = _progressValue.ProgressTask3;
                     IEnumerable<IXLRow> rows = ixlWorksheet.RowsUsed() ?? Enumerable.Empty<IXLRow>();
@@ -83,12 +82,12 @@ namespace a2p.Shared.Application.Services
                                 }
 
                                 // Attempt to parse numeric values
-                                double numericValue = await GetRawNumericValueAsDoubleAsync(cell, ixlWorksheet, culture);
+                                double numericValue = await ParseNumberToDoubleOrZero(cell, ixlWorksheet);
 
                                 if (numericValue != 0)
                                 {
                                     _logService.Verbose("Extracting from cell {Cell} Numeric Value: {Double}", cell.Address.ToString() ?? "", numericValue);
-                                    cell.Value = numericValue.ToString(culture);
+                                    cell.Value = numericValue.ToString();
                                     rowValues.Add(cell.Value);
                                 }
                                 else
@@ -171,33 +170,40 @@ namespace a2p.Shared.Application.Services
             // SAPA V2 Positions
             return worksheetType;
         }
-        private static async Task<double> GetRawNumericValueAsDoubleAsync(IXLCell cell, IXLWorksheet worksheet, CultureInfo culture)
+
+        private async Task<double> ParseNumberToDoubleOrZero(IXLCell cell, IXLWorksheet worksheet) => await Task.Run(() =>
         {
-            // Get the raw value as a string
+            string input = cell.Value.ToString();
+            bool parsed = false;
 
-            string rawValue = await Task.Run(() =>
+            // First try: current culture
+            parsed = double.TryParse(input, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.CurrentCulture, out double value);
 
-             GetRawNumericValue(cell, worksheet));
-
-            return await Task.Run(() =>
+            if (!parsed)
             {
-                // Attempt to parse the raw value as a double using the specified culture
-                return !double.TryParse(rawValue, NumberStyles.Any, culture, out double result)
-        ? 0
-        : double.Parse(rawValue, NumberStyles.Any, culture);
-            });
-        }
+                // Try invariant culture
+                parsed = double.TryParse(input, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value);
+            }
 
-        private static async Task<string> GetRawNumericValue(IXLCell cell, IXLWorksheet worksheet) => await Task.Run(() =>
-                                                                                                               { // If the cell has a value, return it as a string
-                                                                                                                   if (!cell.IsEmpty())
-                                                                                                                   {
-                                                                                                                       // Return the unformatted numeric value directly from the cell
-                                                                                                                       return cell.Value.ToString();
-                                                                                                                   }
+            if (!parsed)
+            {
+                // Try common fallback cultures (optional)
+                string[] fallbackCultures = new[] { "en-US", "fr-FR", "de-DE", "es-ES", "ru-RU" };
+                foreach (string? cultureName in fallbackCultures)
+                {
+                    var culture = CultureInfo.GetCultureInfo(cultureName);
+                    parsed = double.TryParse(input, NumberStyles.Float | NumberStyles.AllowThousands, culture, out value);
+                    if (parsed)
+                    {
+                        break;
+                    }
+                }
+            }
 
-                                                                                                                   return string.Empty;
-                                                                                                               });
+            return parsed ? value : 0;
+        });
+
+
         private string GetCurrency(string customFormat)
         {
 

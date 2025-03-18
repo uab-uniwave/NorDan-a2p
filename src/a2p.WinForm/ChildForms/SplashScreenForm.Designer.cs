@@ -1,6 +1,6 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-using Color = System.Drawing.Color;
-using Font = System.Drawing.Font;
+﻿using a2p.WinForm.Properties;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace a2p.WinForm
 {
@@ -63,9 +63,10 @@ namespace a2p.WinForm
             panel1.TabIndex = 0;
             // 
             // panel2
-            // 
+
+            var resources = new System.ComponentModel.ComponentResourceManager(typeof(SplashScreenForm));
             panel2.BackColor = Color.Transparent;
-            panel2.BackgroundImage = Properties.Resources.SpalshScreen;
+            panel2.BackgroundImage = (Image)resources.GetObject("NordanLogoInversed");
             panel2.BackgroundImageLayout = ImageLayout.Zoom;
             panel2.Dock = DockStyle.Fill;
             panel2.Location = new Point(0, 90);
@@ -186,7 +187,8 @@ namespace a2p.WinForm
             // 
             // plUniwaveHeaderLogo
             // 
-            plUniwaveHeaderLogo.BackgroundImage = Properties.Resources.UniwaveLogo;
+         
+            plUniwaveHeaderLogo.BackgroundImage = (Image) resources.GetObject("UniwaveLogo");
             plUniwaveHeaderLogo.BackgroundImageLayout = ImageLayout.Zoom;
             plUniwaveHeaderLogo.Dock = DockStyle.Top;
             plUniwaveHeaderLogo.Location = new Point(994, 6);

@@ -109,7 +109,7 @@ namespace a2p.Shared.Infrastructure.Services
                     _progressValue.ProgressTitle = $"Reading Order States # {ordersCounter} of {a2pOrders.Count} - Order # {a2pOrder.Order}."; _progress?.Report(_progressValue);
                     string sqlCommand = "SELECT Numero, Version FROM PAF WHERE Referencia = " + "'" + a2pOrder.Order + "'";
 
-                    CommandType commandType = System.Data.CommandType.Text;
+                    CommandType commandType = CommandType.Text;
                     (int, int) result = await _sqlRepository.ExecuteQueryTupleValuesAsync(sqlCommand, commandType);
                     OrderState orderState = (OrderState)a2pOrder.SalesDocumentState;
                     if (result.Item1 > 0 && result.Item2 > 0)
@@ -219,7 +219,7 @@ namespace a2p.Shared.Infrastructure.Services
             try
             {
                 string sqlCommand = $"SELECT Color FROM Colors WHERE Color = '{color}'";
-                CommandType commandType = System.Data.CommandType.Text;
+                CommandType commandType = CommandType.Text;
                 object? result = await _sqlRepository.ExecuteScalarAsync(sqlCommand, commandType);
 
                 return result != null ? (result?.ToString()) : null;
@@ -237,7 +237,7 @@ namespace a2p.Shared.Infrastructure.Services
             try
             {
                 string sqlCommand = $"SELECT TOP 1 ReferenciaBase FROM MaterialesBase WHERE tipocalculo = 'Superficies' and Nivel1 = '03 Glass' and Descripcion = '{description}'";
-                CommandType commandType = System.Data.CommandType.Text;
+                CommandType commandType = CommandType.Text;
                 object? result = await _sqlRepository.ExecuteScalarAsync(sqlCommand, commandType);
                 return result?.ToString();
 

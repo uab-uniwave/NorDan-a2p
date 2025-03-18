@@ -13,8 +13,8 @@ namespace a2p.Shared.Core.DTO
             public double Area { get; set; } = 0;
             public double Weight { get; set; } = 0;
             public double Hours { get; set; } = 0;
-            public decimal Cost { get; set; } = 0;
-            public decimal Amount { get; set; } = 0;
+            public double  Cost { get; set; } = 0;
+            public double  Amount { get; set; } = 0;
             public string Currency { get; set; } = string.Empty;
             public int FileCount { get; set; } = 0;
             public string FileList { get; set; } = string.Empty;

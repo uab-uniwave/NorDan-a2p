@@ -1,0 +1,1072 @@
+<!-- edited with XMLSpy v2011 rel. 2 (http://www.altova.com) by Vero (Pref) -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:psr="http://www.preference.com/XMLSchemas/2006/Serialization" targetNamespace="http://www.preference.com/XMLSchemas/2006/Serialization" elementFormDefault="qualified">
+	<xsd:include schemaLocation="PrefCAD.Serialization.Common.xsd"/>
+	<xsd:complexType name="typeReference">
+		<xsd:attribute name="keyRef" type="xsd:string" use="optional" form="qualified"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeText">
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:string">
+				<xsd:attribute name="acum" type="xsd:boolean" use="optional"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeElement">
+		<xsd:sequence>
+			<xsd:element name="XmlParam" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="CommonScript" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ConstructiveScript" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="Options" type="psr:typeOptions" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="key" type="xsd:string" use="optional" form="qualified"/>
+		<xsd:attribute name="id" type="xsd:string" use="optional"/>
+		<xsd:attribute name="order" type="xsd:int" use="optional"/>
+		<xsd:attribute name="groupName" type="xsd:string" use="optional"/>
+		<xsd:attribute name="elementName" type="xsd:string" use="optional"/>
+		<xsd:attribute name="elementLabel" type="xsd:string" use="optional"/>
+		<xsd:attribute name="visibleInTree" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="visible" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="generate" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="mounted" type="xsd:boolean" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeLouvre">
+		<xsd:sequence>
+			<xsd:element name="Blades" type="psr:typeBlades" minOccurs="0"/>
+			<xsd:element name="Color" type="psr:typeColor" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="script" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeBlades">
+		<xsd:attribute name="angle" type="xsd:double" use="optional"/>
+		<xsd:attribute name="openingAngle" type="xsd:double" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeOuterRodPiece">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeProfilePiece"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeDelimiterPiece">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeProfilePiece"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeGlazingPiece">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeProfilePiece">
+				<xsd:attribute name="glazingReference" type="xsd:string" use="required"/>
+				<xsd:attribute name="glazing" type="xsd:int" use="required"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typePolyline2D">
+		<xsd:attribute name="path" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeProfilePiece">
+		<xsd:sequence>
+			<xsd:element name="Profile" type="psr:typeProfile" minOccurs="0"/>
+			<xsd:element name="Machinings" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:any processContents="skip"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="InnerStack" type="psr:typeProfilePieces" minOccurs="0"/>
+			<xsd:element name="OuterStack" type="psr:typeProfilePieces" minOccurs="0"/>
+			<xsd:element name="Options" type="psr:typeOptions" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="key" type="xsd:string" use="optional" form="qualified"/>
+		<xsd:attribute name="initialPiece" type="xsd:int" use="required"/>
+		<xsd:attribute name="lastPiece" type="xsd:int" use="required"/>
+		<xsd:attribute name="id" type="xsd:string" use="optional"/>
+    <xsd:attribute name="alternateId" type="xsd:string" use="optional"/>
+		<xsd:attribute name="mirrorX" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="mirrorY" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="visible" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="mounted" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="generate" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="parameter" type="xsd:string" use="optional"/>
+		<xsd:attribute name="productionRemark" type="xsd:string" use="optional"/>
+		<xsd:attribute name="extA" type="xsd:double" use="optional"/>
+		<xsd:attribute name="extB" type="xsd:double" use="optional"/>
+		<xsd:attribute name="width" type="xsd:double" use="optional"/>
+		<xsd:attribute name="extAEnabled" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="extBEnabled" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="innerSurfile" type="xsd:boolean" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeProfilePieces">
+		<xsd:sequence>
+			<xsd:element name="ProfilePiece" type="psr:typeProfilePiece" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeProfileUnion">
+		<xsd:attribute name="type" type="xsd:int" use="optional"/>
+		<xsd:attribute name="automatical" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="piece" type="xsd:string" use="optional"/>
+		<xsd:attribute name="order" type="xsd:int" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeRod">
+		<xsd:sequence>
+			<xsd:element name="Profile" minOccurs="0">
+				<xsd:complexType>
+					<xsd:complexContent>
+						<xsd:extension base="psr:typeProfile">
+							<xsd:attribute name="key" type="xsd:string" use="optional" form="qualified"/>
+						</xsd:extension>
+					</xsd:complexContent>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="ProfilePieces" type="psr:typeProfilePieces" minOccurs="0"/>
+			<xsd:element name="Unions" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Union" type="psr:typeProfileUnion" minOccurs="0" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="RodDividings" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="RodDividing" type="psr:typeRodDividing" minOccurs="0" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="id" type="xsd:string" use="optional"/>
+		<xsd:attribute name="welded" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="mirrorable" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="aligningAngle" type="xsd:double" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typePerimetralMuntinRod">
+		<xsd:sequence>
+			<xsd:element name="Rod" type="psr:typeRod"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeCADPolyline">
+		<xsd:sequence>
+			<xsd:element name="Polyline2D" type="psr:typePolyline2D"/>
+			<xsd:element name="PointReferences" type="psr:typePointReferences" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="key" type="xsd:string" use="optional" form="qualified"/>
+	</xsd:complexType>
+	<xsd:complexType name="typePolyline">
+		<xsd:sequence>
+			<xsd:element name="Element" type="psr:typeElement"/>
+			<xsd:element name="CADPolyline" type="psr:typeCADPolyline"/>
+			<xsd:element name="Rod" type="psr:typeRod"/>
+		</xsd:sequence>
+		<xsd:attribute name="closed" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="angle" type="xsd:double" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeHoleBoundary">
+		<xsd:sequence>
+			<xsd:element name="Polyline2D" type="psr:typePolyline2D"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeOuterHoleBoundary">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeHoleBoundary"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeOpening">
+		<xsd:attribute name="value" type="xsd:int" use="optional"/>
+		<xsd:attribute name="angle" type="xsd:double" use="optional"/>
+		<xsd:attribute name="handleHeight" type="xsd:double" use="optional"/>
+		<xsd:attribute name="middleHandle" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="defaultHandleHeight" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="axis" type="xsd:int" use="optional"/>
+		<xsd:attribute name="handlePosition" type="xsd:double" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeDelimiter">
+		<xsd:sequence>
+			<xsd:element name="Polyline" type="psr:typePolyline"/>
+		</xsd:sequence>
+		<xsd:attribute name="compositeOrder" type="xsd:int" use="optional"/>
+		<xsd:attribute name="compositeInsertOrder" type="xsd:int" use="optional"/>
+		<xsd:attribute name="alignOffset" type="xsd:double" use="optional"/>
+		<xsd:attribute name="alignOffsetSide" type="xsd:int" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeOuterRod">
+		<xsd:sequence>
+			<xsd:element name="Element" type="psr:typeElement"/>
+			<xsd:element name="Rod" type="psr:typeRod"/>
+			<xsd:element name="OuterRodChild" type="psr:typeOuterRod" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="type" type="xsd:int" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeHole">
+		<xsd:sequence>
+			<xsd:element name="Element" type="psr:typeElement"/>
+			<xsd:element name="Rod" type="psr:typeRod"/>
+			<xsd:element name="HoleDelimiters" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="HoleDelimiter" type="psr:typeBaseDelimiter" minOccurs="0" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="Holes" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Hole" type="psr:typeBaseHole" minOccurs="0" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="Boundary" type="psr:typeOuterHoleBoundary" minOccurs="0"/>
+			<xsd:element name="Glass" type="psr:typeGlass" minOccurs="0"/>
+			<xsd:element name="Louvre" type="psr:typeLouvre" minOccurs="0"/>
+			<xsd:element name="ClonedHoles" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:choice>
+							<xsd:element name="ClonedHole" type="psr:typeClonedHole" minOccurs="0" maxOccurs="unbounded"/>
+						</xsd:choice>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="ActiveHole" type="psr:typeReference" minOccurs="0"/>
+			<xsd:element name="HardwareLink" type="psr:typeLink" minOccurs="0"/>
+			<xsd:element name="SubModelAttributes" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Text" type="psr:typeText" minOccurs="0"/>
+						<xsd:element name="ProductionText" type="psr:typeText" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:attribute name="code" type="xsd:string" use="required"/>
+					<xsd:attribute name="family" type="xsd:string" use="optional"/>
+					<xsd:attribute name="description" type="xsd:string" use="optional"/>
+					<xsd:attribute name="system" type="xsd:string" use="optional"/>
+					<xsd:attribute name="productionType" type="xsd:string" use="optional"/>
+					<xsd:attribute name="order" type="xsd:int" use="optional"/>
+					<xsd:attribute name="align" type="xsd:int" use="optional"/>
+					<xsd:attribute name="insertOrder" type="xsd:int" use="optional"/>
+					<xsd:attribute name="side" type="xsd:int" use="optional"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="Opening" type="psr:typeOpening" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="onlyChild" type="xsd:boolean" use="required"/>
+		<xsd:attribute name="level" type="xsd:int" use="optional"/>
+		<xsd:attribute name="generateSashHW" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="generateFrameHW" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="disable" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="clipped" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="insertedModel" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeBaseHole" abstract="true">
+		<xsd:sequence>
+			<xsd:element name="Hole" type="psr:typeHole"/>
+		</xsd:sequence>
+		<xsd:attribute name="key" type="xsd:string" use="optional" form="qualified"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeBinaryHole">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeBaseHole"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typePartitionHole">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeBaseHole"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeClonedHole">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeBinaryHole"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeRoller">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeClonedHole">
+				<xsd:sequence>
+					<xsd:element name="RollerBoxPieces" minOccurs="0">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="RollerBoxPiece" type="psr:typeRollerBoxPiece" minOccurs="0" maxOccurs="unbounded"/>
+							</xsd:sequence>
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="FalseRod" type="psr:typeMaterial" minOccurs="0"/>
+				</xsd:sequence>
+				<xsd:attribute name="script" type="xsd:string" use="optional"/>
+				<xsd:attribute name="scriptPanels" type="xsd:string" use="optional"/>
+				<xsd:attribute name="scriptAxis" type="xsd:string" use="optional"/>
+				<xsd:attribute name="scriptBox" type="xsd:string" use="optional"/>
+				<xsd:attribute name="onOuterRod" type="xsd:boolean" use="optional"/>
+				<xsd:attribute name="variables" type="xsd:string" use="optional"/>
+				<xsd:attribute name="variablesPanel" type="xsd:string" use="optional"/>
+				<xsd:attribute name="variablesAxis" type="xsd:string" use="optional"/>
+				<xsd:attribute name="variablesBox" type="xsd:string" use="optional"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeBaseDelimiter" abstract="true">
+		<xsd:attribute name="key" type="xsd:string" use="optional" form="qualified"/>
+	</xsd:complexType>
+	<xsd:complexType name="typePartitionDelimiter">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeBaseDelimiter">
+				<xsd:sequence>
+					<xsd:element name="Delimiter" type="psr:typeDelimiter"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeBinaryDelimiter">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeBaseDelimiter">
+				<xsd:sequence>
+					<xsd:element name="Delimiter" type="psr:typeDelimiter"/>
+				</xsd:sequence>
+				<xsd:attribute name="rollerBoxDivisor" type="xsd:boolean" use="optional"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeRollerDelimiter">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeBaseDelimiter">
+				<xsd:sequence>
+					<xsd:element name="BinaryDelimiter" type="psr:typeBinaryDelimiter"/>
+				</xsd:sequence>
+				<xsd:attribute name="type" type="xsd:int" use="optional"/>
+				<xsd:attribute name="divisor" type="xsd:boolean" use="optional"/>
+				<xsd:attribute name="relativePosition" type="xsd:double" use="optional"/>
+				<xsd:attribute name="absolutePosition" type="xsd:double" use="optional"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeClosedDelimiter">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeBaseDelimiter">
+				<xsd:sequence>
+					<xsd:element name="PartitionDelimiter" type="psr:typePartitionDelimiter"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeGlazingLedge">
+		<xsd:sequence>
+			<xsd:element name="Rod" type="psr:typeRod"/>
+		</xsd:sequence>
+		<xsd:attribute name="glazingCut" type="xsd:int" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeOuterGlazingLedge">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeGlazingLedge"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeInnerGlazingLedge">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeGlazingLedge"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeGlass">
+		<xsd:sequence>
+			<xsd:element name="Element" type="psr:typeElement"/>
+			<xsd:element name="Material" type="psr:typeMaterial" minOccurs="0"/>
+			<xsd:element name="GlazingLedges" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="GlazingLedge" type="psr:typeGlazingLedge" minOccurs="0" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="GeorgianBar" type="psr:typeGeorgianBar" minOccurs="0"/>
+			<xsd:element name="Muntin" type="psr:typeMuntin" minOccurs="0"/>
+			<xsd:element name="GlassComponents" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="GlassComponent" type="psr:typeGlassComponent" minOccurs="0" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="key" type="xsd:string" use="optional" form="qualified"/>
+		<xsd:attribute name="angle" type="xsd:double" use="optional"/>
+		<xsd:attribute name="mirror" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="generateGlazing" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="slab" type="xsd:string" use="optional"/>
+		<xsd:attribute name="horizontalDimensionBlocked" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="verticalDimensionBlocked" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="preSettingValue" type="xsd:string" use="optional"/>
+		<xsd:attribute name="default" type="xsd:boolean" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeGeorgianBarStick">
+		<xsd:sequence>
+			<xsd:element name="Polyline" type="psr:typePolyline"/>
+			<xsd:element name="StickPieces" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="StickPiece" minOccurs="0" maxOccurs="unbounded">
+							<xsd:complexType>
+								<xsd:attribute name="index" type="xsd:integer" use="required"/>
+								<xsd:attribute name="null" type="xsd:boolean" use="required"/>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="internal" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="inner" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="location" type="xsd:int" use="optional"/>
+		<xsd:attribute name="distance" type="xsd:double" use="optional"/>
+		<xsd:attribute name="adjustA" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="adjustB" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="type" type="xsd:int" use="optional"/>
+		<xsd:attribute name="null" type="xsd:boolean" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeGeorgianBar">
+		<xsd:sequence>
+			<xsd:element name="CrossMaterial" type="psr:typeMaterial" minOccurs="0"/>
+			<xsd:element name="InternalVertical" type="psr:typeProfile" minOccurs="0"/>
+			<xsd:element name="InternalHorizontal" type="psr:typeProfile" minOccurs="0"/>
+			<xsd:element name="OuterVertical" type="psr:typeProfile" minOccurs="0"/>
+			<xsd:element name="OuterHorizontal" type="psr:typeProfile" minOccurs="0"/>
+			<xsd:element name="InnerVertical" type="psr:typeProfile" minOccurs="0"/>
+			<xsd:element name="InnerHorizontal" type="psr:typeProfile" minOccurs="0"/>
+			<xsd:element name="InternalSticks" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="GeorgianBarStick" type="psr:typeGeorgianBarStick" minOccurs="0" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="OuterSticks" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="GeorgianBarStick" type="psr:typeGeorgianBarStick" minOccurs="0" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="InnerSticks" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="GeorgianBarStick" type="psr:typeGeorgianBarStick" minOccurs="0" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="LocatorContainer" type="psr:typeLocatorContainer" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="internalType" type="xsd:int" use="optional"/>
+		<xsd:attribute name="externalType" type="xsd:int" use="optional"/>
+		<xsd:attribute name="internal" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="external" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="inner" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="outer" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="proportional" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="spacedHorizontal" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="spacedVertical" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="fixedToGlass" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="dimensionToVisibleGlass" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="template" type="xsd:string" use="optional"/>
+		<xsd:attribute name="templateModified" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="generateCrossPieces" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="distribution" type="xsd:int" use="optional"/>
+		<xsd:attribute name="fixedPositionReference" type="xsd:int" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeMuntin">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeGeorgianBar">
+				<xsd:sequence>
+					<xsd:element name="PerimetralInnerProfile" type="psr:typeProfile" minOccurs="0"/>
+					<xsd:element name="PerimetralOuterProfile" type="psr:typeProfile" minOccurs="0"/>
+					<xsd:element name="PerimetralInnerRod" type="psr:typePerimetralMuntinRod"/>
+					<xsd:element name="PerimetralOuterRod" type="psr:typePerimetralMuntinRod"/>
+				</xsd:sequence>
+				<xsd:attribute name="perimetralInner" type="xsd:boolean" use="optional"/>
+				<xsd:attribute name="perimetralOuter" type="xsd:boolean" use="optional"/>
+				<xsd:attribute name="perimetralInnerType" type="xsd:int" use="optional"/>
+				<xsd:attribute name="perimetralOuterType" type="xsd:int" use="optional"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeRollerBoxPiece">
+		<xsd:sequence>
+			<xsd:element name="Axes" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Axis" type="psr:typeAxis" minOccurs="0" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="LeftDelimiter" type="psr:typeReference" minOccurs="0"/>
+			<xsd:element name="RightDelimiter" type="psr:typeReference" minOccurs="0"/>
+			<xsd:element name="LeftGuide" type="psr:typeReference" minOccurs="0"/>
+			<xsd:element name="RightGuide" type="psr:typeReference" minOccurs="0"/>
+			<xsd:element name="Color" type="psr:typeColor" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="leftOffset" type="xsd:double" use="optional"/>
+		<xsd:attribute name="rightOffset" type="xsd:double" use="optional"/>
+		<xsd:attribute name="height" type="xsd:double" use="optional"/>
+		<xsd:attribute name="type" type="xsd:string" use="optional"/>
+		<xsd:attribute name="box" type="xsd:int" use="optional"/>
+		<xsd:attribute name="mounted" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="automaticHeight" type="xsd:boolean" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeAxis">
+		<xsd:sequence>
+			<xsd:element name="RollerSystem" type="psr:typeRollerSystem" minOccurs="0"/>
+			<xsd:element name="LeftGuide" type="psr:typeReference" minOccurs="0"/>
+			<xsd:element name="RightGuide" type="psr:typeReference" minOccurs="0"/>
+			<xsd:element name="BladesColor" type="psr:typeColor" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="bladesType" type="xsd:string" use="optional"/>
+		<xsd:attribute name="bladesWidth" type="xsd:double" use="optional"/>
+		<xsd:attribute name="mounted" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="holesMounted" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="blades" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="automaticBlades" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="rollerSystem" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="automaticRollerSystem" type="xsd:boolean" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeRollerSystem">
+		<xsd:sequence>
+			<xsd:element name="Color" type="psr:typeColor" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="position" type="xsd:int" use="optional"/>
+		<xsd:attribute name="height" type="xsd:double" use="optional"/>
+		<xsd:attribute name="type" type="xsd:int" use="optional"/>
+		<xsd:attribute name="offset" type="xsd:double" use="optional"/>
+		<xsd:attribute name="automaticHeight" type="xsd:boolean" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeContour">
+		<xsd:sequence>
+			<xsd:element name="Polyline" type="psr:typePolyline"/>
+			<xsd:element name="ContourHole" type="psr:typeBaseHole"/>
+			<xsd:element name="Roller" type="psr:typeReference" minOccurs="0"/>
+			<xsd:element name="OuterRod" type="psr:typeOuterRod" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeModel">
+		<xsd:sequence>
+			<xsd:element name="GlobalScript" minOccurs="0">
+				<xsd:complexType>
+					<xsd:simpleContent>
+						<xsd:extension base="xsd:string">
+							<xsd:attribute name="generate" type="xsd:boolean" use="optional"/>
+						</xsd:extension>
+					</xsd:simpleContent>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="XmlParam" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="Color" type="psr:typeColor" minOccurs="0"/>
+			<xsd:element name="Text" type="psr:typeText" minOccurs="0"/>
+			<xsd:element name="ProductionText" type="psr:typeText" minOccurs="0"/>
+			<xsd:element name="Options" type="psr:typeOptions" minOccurs="0"/>
+			<xsd:element name="DividingLines" type="psr:typeDividingLineList" minOccurs="0"/>
+			<xsd:element name="DesignLines" type="psr:typeDesignLinesList" minOccurs="0"/>
+			<xsd:element name="Contour" type="psr:typeContour" minOccurs="0"/>
+			<xsd:element name="PointLinks" type="psr:typePointLinks" minOccurs="0"/>
+			<xsd:element name="Dimensions" type="psr:typeDimensions" minOccurs="0"/>
+			<xsd:element name="DimensionsExt" type="psr:typeDimensionsExt" minOccurs="0"/>
+			<xsd:element name="GlassesLists" type="psr:typeGlassesLists" minOccurs="0"/>
+			<xsd:element name="SectionLines" type="psr:typeSectionLineList" minOccurs="0"/>
+			<xsd:element name="GuideLines" type="psr:typeGuideLineMap" minOccurs="0"/>
+			<xsd:element name="ProfileAligners" type="psr:typeProfileAligners" minOccurs="0"/>
+			<xsd:element name="LocatorContainer" type="psr:typeLocatorContainer" minOccurs="0"/>
+			<xsd:element name="FamilyColors" type="psr:typeFamilyColors" minOccurs="0"/>
+			<xsd:element name="UserFamilyColors" type="psr:typeFamilyColors" minOccurs="0"/>
+			<xsd:element name="CDRatios" type="psr:typeCDRatios" minOccurs="0"/>
+			<xsd:element name="CustomDimensions" type="psr:typeCustomDimensions" minOccurs="0"/>
+			<xsd:element name="Commands" type="psr:typeCommands" minOccurs="0"/>
+			<xsd:element name="ModelVariables" type="psr:typeVariables" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="code" type="xsd:string" use="required"/>
+		<xsd:attribute name="family" type="xsd:string" use="optional"/>
+		<xsd:attribute name="description" type="xsd:string" use="optional"/>
+		<xsd:attribute name="system" type="xsd:string" use="optional"/>
+		<xsd:attribute name="glass" type="xsd:string" use="optional"/>
+		<xsd:attribute name="glazingCut" type="xsd:int" use="optional"/>
+		<xsd:attribute name="constructiveFlags" type="xsd:long" use="optional"/>
+		<xsd:attribute name="visualFlags" type="xsd:long" use="optional"/>
+		<xsd:attribute name="familyColor" type="xsd:string" use="optional"/>
+		<xsd:attribute name="template" type="xsd:string" use="optional"/>
+		<xsd:attribute name="outerPattern" type="xsd:string" use="optional"/>
+		<xsd:attribute name="guid" type="xsd:string"/>
+		<xsd:attribute name="productType" type="xsd:int" use="optional"/>
+		<xsd:attribute name="mirrorable" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="outerView" type="xsd:boolean"/>
+		<xsd:attribute name="elementsOptionSync" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="draftMode" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="subModel" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="defaultMountGlasses" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="zCamera" type="xsd:double" use="optional"/>
+		<xsd:attribute name="panX" type="xsd:double" use="optional"/>
+		<xsd:attribute name="panY" type="xsd:double" use="optional"/>
+		<xsd:attribute name="angleCamera" type="xsd:double" use="optional"/>
+		<xsd:attribute name="xCoordAxis" type="xsd:double" use="optional"/>
+		<xsd:attribute name="yCoordAxis" type="xsd:double" use="optional"/>
+		<xsd:attribute name="zCoordAxis" type="xsd:double" use="optional"/>
+		<xsd:attribute name="nearDistance" type="xsd:double" use="optional"/>
+		<xsd:attribute name="farDistance" type="xsd:double" use="optional"/>
+		<xsd:attribute name="focalDistance" type="xsd:double" use="optional"/>
+		<xsd:attribute name="baybowWidth" type="xsd:double" use="optional"/>
+		<xsd:attribute name="baybowDepth" type="xsd:double" use="optional"/>
+		<xsd:attribute name="baybowStyle" type="xsd:int" use="optional"/>
+		<xsd:attribute name="compositeStyle" type="xsd:int" use="optional"/>
+		<xsd:attribute name="productionType" type="xsd:string" use="optional"/>
+		<xsd:attribute name="modificationTime" type="xsd:long" use="optional"/>
+		<xsd:attribute name="viewPartitionMode" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="activePartition" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeGlassesList">
+		<xsd:sequence>
+			<xsd:element name="GlassReference" type="psr:typeReference" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeGlassesLists">
+		<xsd:sequence>
+			<xsd:element name="GlassesList" type="psr:typeGlassesList" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeDividingLine">
+		<xsd:sequence>
+			<xsd:element name="GuideLine" type="psr:typeGuideLine"/>
+		</xsd:sequence>
+		<xsd:attribute name="key" type="xsd:string" use="optional" form="qualified"/>
+		<xsd:attribute name="type" type="xsd:int" use="optional"/>
+		<xsd:attribute name="level" type="xsd:int" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeDividingLineList">
+		<xsd:sequence>
+			<xsd:element name="DividingLine" type="psr:typeDividingLine" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeSectionLine">
+		<xsd:sequence>
+			<xsd:element name="GuideLine" type="psr:typeGuideLine"/>
+			<xsd:element name="Hole" type="psr:typeReference" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="linked" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="changeOrientation" type="xsd:boolean" use="optional"/>
+    <xsd:attribute name="isSlice" type="xsd:boolean" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeSectionLineList">
+		<xsd:sequence>
+			<xsd:element name="SectionLine" type="psr:typeSectionLine" maxOccurs="unbounded"/>
+		</xsd:sequence>
+    <xsd:attribute name="automatic" type="xsd:boolean" use="optional" default="false"/>
+	</xsd:complexType>
+  <xsd:complexType name="typeGuideLineAttribute">
+    <xsd:attribute name="name" use="required" type="xsd:string"/>
+    <xsd:attribute name="value" use="required"/>
+    <xsd:attribute name="type" use="required" type="xsd:nonNegativeInteger"/>
+  </xsd:complexType>
+  <xsd:complexType name="typeGuideLineAttributesList">
+    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="Attribute" type="psr:typeGuideLineAttribute"/>
+    </xsd:sequence>
+  </xsd:complexType>
+	<xsd:complexType name="typeGuideLine">
+		<xsd:sequence>
+			<xsd:element name="ParentGuideLine" type="psr:typeReference" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="key" type="xsd:string" use="optional" form="qualified"/>
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="type" type="xsd:int" use="optional"/>
+		<xsd:attribute name="relativePosition" type="xsd:double" use="optional"/>
+		<xsd:attribute name="formula" type="xsd:string" use="optional"/>
+		<xsd:attribute name="color" type="xsd:long" use="optional"/>
+		<xsd:attribute name="width" type="xsd:int" use="optional"/>
+		<xsd:attribute name="dashStyle" type="xsd:int" use="optional"/>
+    <xsd:attribute name="hidden" type="xsd:boolean" use="optional"/>
+    <xsd:attribute name="description" type="xsd:string" use="optional"/>
+    <xsd:attribute name="displayIndex" type="xsd:unsignedInt" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeGuideLineMap">
+		<xsd:sequence>
+			<xsd:element name="GuideLine" type="psr:typeGuideLine" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeProfileAligners">
+		<xsd:sequence>
+			<xsd:element name="ASideAligner" type="psr:typeSideAligner" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="BSideAligner" type="psr:typeSideAligner" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeProfileAligner">
+		<xsd:sequence>
+			<xsd:element name="MasterRod" type="psr:typeReference"/>
+		</xsd:sequence>
+		<xsd:attribute name="extremeAxis" type="xsd:int" use="optional"/>
+		<xsd:attribute name="priority" type="xsd:int" use="optional"/>
+		<xsd:attribute name="simple" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="piece" type="xsd:int" use="optional"/>
+		<xsd:attribute name="masterSide" type="xsd:int" use="optional"/>
+		<xsd:attribute name="masterPiece" type="xsd:int" use="optional"/>
+		<xsd:attribute name="axis" type="xsd:int" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeRodDividing">
+		<xsd:sequence>
+			<xsd:element name="DividingLine" type="psr:typeReference" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="ProfilePiece" type="psr:typeReference" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="forgedNodeType" type="xsd:int" use="optional"/>
+		<xsd:attribute name="piece" type="xsd:string" use="optional"/>
+		<xsd:attribute name="divideRod" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="order" type="xsd:int" use="optional"/>
+				<xsd:attribute name="pointX" type="xsd:double" use="optional"/>
+								<xsd:attribute name="pointY" type="xsd:double" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeSideAligner">
+		<xsd:sequence>
+			<xsd:element name="Rod" type="psr:typeReference"/>
+			<xsd:element name="ProfileAligner" type="psr:typeProfileAligner"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typePointReference">
+		<xsd:attribute name="key" type="xsd:string" use="optional" form="qualified"/>
+		<xsd:attribute name="piece" type="xsd:int" use="optional"/>
+		<xsd:attribute name="type" type="xsd:int" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typePointReferences">
+		<xsd:sequence>
+			<xsd:element name="PointReference" type="psr:typePointReference" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeGenericVariable">
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="namespace" type="xsd:string" use="required"/>
+		<xsd:attribute name="value" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeNumericalVariable">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeGenericVariable"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeVariables">
+		<xsd:sequence>
+			<xsd:element name="Variable" type="psr:typeGenericVariable" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeConstructivePoint">
+		<xsd:sequence>
+			<xsd:element name="PointReference" type="psr:typeReference" minOccurs="0"/>
+			<xsd:element name="Locator" type="psr:typeLocatorBase"/>
+		</xsd:sequence>
+		<xsd:attribute name="id" type="xsd:string" use="required"/>
+		<xsd:attribute name="type" type="xsd:int" use="optional"/>
+		<xsd:attribute name="pointType" type="xsd:int" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeConstructivePoints">
+		<xsd:sequence>
+			<xsd:element name="ConstructivePoint" type="psr:typeConstructivePoint" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeLocatorContainer">
+		<xsd:sequence>
+			<xsd:element name="Variables" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Variable" minOccurs="0" maxOccurs="unbounded">
+							<xsd:complexType>
+								<xsd:attribute name="name" type="xsd:string" use="required"/>
+								<xsd:attribute name="value" type="xsd:double" use="required"/>
+								<xsd:attribute name="restriction" type="xsd:string" use="optional"/>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="ConstructivePoints" type="psr:typeConstructivePoints" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeLocatorBase" abstract="true">
+		<xsd:sequence>
+			<xsd:element name="Locator" type="psr:typeLocator"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typePointLocator">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeLocatorBase">
+				<xsd:sequence>
+					<xsd:element name="ComponentLocatorX" type="psr:typePointComponentLocator"/>
+					<xsd:element name="ComponentLocatorY" type="psr:typePointComponentLocator"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typePolarLocator">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeLocatorBase">
+				<xsd:attribute name="formulaOriginX" type="xsd:string" use="optional"/>
+				<xsd:attribute name="formulaOriginY" type="xsd:string" use="optional"/>
+				<xsd:attribute name="formulaDistance" type="xsd:string" use="optional"/>
+				<xsd:attribute name="formulaAngle" type="xsd:string" use="optional"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeLocator">
+		<xsd:sequence>
+			<xsd:element name="Variables" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Variable" type="psr:typeLocatorVariable" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeLocatorVariable">
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="formula" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typePointComponentLocator">
+		<xsd:attribute name="formula" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typePointLink">
+		<xsd:sequence>
+			<xsd:element name="PointReference" type="psr:typeReference" minOccurs="0"/>
+			<xsd:element name="LinkedPointsA" type="psr:typePointReferenceList" minOccurs="0"/>
+			<xsd:element name="LinkedPointsB" type="psr:typePointReferenceList" minOccurs="0"/>
+			<xsd:element name="LinkedPointsC" type="psr:typePointReferenceList" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="key" type="xsd:string" use="optional" form="qualified"/>
+	</xsd:complexType>
+	<xsd:complexType name="typePointLinks">
+		<xsd:sequence>
+			<xsd:element name="PointLink" type="psr:typePointLink" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typePointReferenceList">
+		<xsd:sequence>
+			<xsd:element name="PointReference" type="psr:typeReference" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeAutomaticLink">
+		<xsd:sequence>
+			<xsd:element name="PointReference" type="psr:typeReference" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="beta" type="xsd:double" use="optional"/>
+		<xsd:attribute name="cr" type="xsd:double" use="optional"/>
+		<xsd:attribute name="dn" type="xsd:double" use="optional"/>
+		<xsd:attribute name="subDivide" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="unidimensional" type="xsd:boolean" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeDimension">
+		<xsd:sequence>
+			<xsd:element name="Element" type="psr:typeElement"/>
+			<xsd:element name="AutomaticLinks" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="AutomaticLink" type="psr:typeAutomaticLink" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="PointLinkA" type="psr:typeReference" minOccurs="0"/>
+			<xsd:element name="PointLinkB" type="psr:typeReference" minOccurs="0"/>
+			<xsd:element name="PointLinkC" type="psr:typeReference" minOccurs="0"/>
+			<xsd:element name="Variables" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Variable" maxOccurs="unbounded">
+							<xsd:complexType>
+								<xsd:attribute name="index" type="xsd:int"/>
+								<xsd:attribute name="value" type="xsd:string"/>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="constructive" type="xsd:int" use="optional"/>
+		<xsd:attribute name="sense" type="xsd:int" use="optional"/>
+		<xsd:attribute name="dimension" type="xsd:double" use="optional"/>
+		<xsd:attribute name="baseDistance" type="xsd:double" use="optional"/>
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="subDivided" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="direction" type="xsd:int" use="optional"/>
+		<xsd:attribute name="normalized" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="multiple" type="xsd:double" use="optional"/>
+		<xsd:attribute name="minimum" type="xsd:double" use="optional"/>
+		<xsd:attribute name="subdivided" type="xsd:boolean" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeDimensions">
+		<xsd:sequence>
+			<xsd:element name="Dimension" type="psr:typeDimension" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeDimensionExt">
+		<xsd:sequence>
+			<xsd:element name="Element" type="psr:typeElement"/>
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:string" use="optional"/>
+		<xsd:attribute name="visible" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="value" type="xsd:double" use="optional"/>
+		<xsd:attribute name="rangeLeft" type="xsd:double" use="optional"/>
+		<xsd:attribute name="rangeRight" type="xsd:double" use="optional"/>
+		<xsd:attribute name="rangeTop" type="xsd:double" use="optional"/>
+		<xsd:attribute name="rangeBottom" type="xsd:double" use="optional"/>
+		<xsd:attribute name="direction" type="xsd:int" use="optional"/>
+		<xsd:attribute name="sense" type="xsd:int" use="optional"/>
+		<xsd:attribute name="main" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="collapsed" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="expanded" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="mainCollapsed" type="xsd:boolean" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeDimensionsExt">
+		<xsd:sequence>
+			<xsd:element name="DimensionExt" type="psr:typeDimensionExt" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeFamilyColor">
+		<xsd:sequence>
+			<xsd:element name="Color" type="psr:typeColor"/>
+		</xsd:sequence>
+		<xsd:attribute name="family" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeBlockedSubDimension">
+		<xsd:attribute name="level" type="xsd:int" use="optional"/>
+		<xsd:attribute name="startIndex" type="xsd:int" use="optional"/>
+		<xsd:attribute name="endIndex" type="xsd:int" use="optional"/>
+		<xsd:attribute name="value" type="xsd:double" use="optional"/>
+		<xsd:attribute name="acum" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="order" type="xsd:int" use="optional"/>
+		<xsd:attribute name="horizontal" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="type" type="xsd:int" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeCustomDimension">
+		<xsd:sequence>
+			<xsd:element name="Element" type="psr:typeElement"/>
+			<xsd:element name="BlockedSubdimensions" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="BlockedSubdimension" type="psr:typeBlockedSubDimension" minOccurs="0" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="SubdimensionNames" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Name" maxOccurs="unbounded">
+							<xsd:complexType>
+								<xsd:attribute name="value" type="xsd:string" use="required"/>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="type" type="xsd:string" use="optional"/>
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="order" type="xsd:int" use="optional"/>
+		<xsd:attribute name="horizontal" type="xsd:boolean" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeParametrizedCD">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeCustomDimension"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeCustomDimensions">
+		<xsd:sequence>
+			<xsd:element name="List" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="CustomDimension" type="psr:typeCustomDimension" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="ParametrizedCDManagers" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="ParametrizedCDManager" type="psr:typeParametrizedCDManager" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="master" type="xsd:string" use="optional"/>
+		<xsd:attribute name="constructive" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeCDRatios">
+		<xsd:sequence>
+			<xsd:element name="HorizontalCDRatiosManager" type="psr:typeCDRatiosManager" minOccurs="0"/>
+			<xsd:element name="VerticalCDRatiosManager" type="psr:typeCDRatiosManager" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeCDRatiosManager">
+		<xsd:sequence>
+			<xsd:element name="CDRatios" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="CDRatio" type="psr:typeCDRatio" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="horizontal" type="xsd:boolean" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeCDRatio">
+		<xsd:attribute name="level" type="xsd:int" use="optional"/>
+		<xsd:attribute name="order" type="xsd:int" use="optional"/>
+		<xsd:attribute name="ratio" type="xsd:int" use="optional"/>
+		<xsd:attribute name="type" type="xsd:string" use="optional"/>
+		<xsd:attribute name="fixed" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="fixedRatio" type="xsd:double" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeFamilyColors">
+		<xsd:sequence>
+			<xsd:element name="FamilyColor" type="psr:typeFamilyColor" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeLink">
+		<xsd:sequence>
+			<xsd:element name="Color" type="psr:typeColor" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="variables" type="xsd:string" use="optional"/>
+		<xsd:attribute name="code" type="xsd:string" use="optional"/>
+		<xsd:attribute name="script" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeParametrizedCDManager">
+		<xsd:sequence>
+			<xsd:element name="Axis" type="psr:typePolyline2D" minOccurs="0"/>
+			<xsd:element name="MasterAxis" type="psr:typePolyline2D" minOccurs="0"/>
+			<xsd:element name="ParametrizedOffsets" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="ParametrizedOffset" type="psr:typeParametrizedOffset" minOccurs="0" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="type" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeParametrizedOffset">
+		<xsd:attribute name="value" type="xsd:double" use="required"/>
+		<xsd:attribute name="start" type="xsd:int" use="required"/>
+		<xsd:attribute name="end" type="xsd:int" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeForgedLine">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeGuideLine">
+				<xsd:attribute name="sectionWidth" type="xsd:double" use="optional"/>
+				<xsd:attribute name="sectionZ" type="xsd:double" use="optional"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeNodePieceLine">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeGuideLine"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeAnchorLine">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeNodePieceLine"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeDivideLine">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeGuideLine">
+				<xsd:attribute name="level" type="xsd:int" use="optional"/>
+				<xsd:attribute name="updateOffsets" type="xsd:boolean" use="optional"/>
+				<xsd:attribute name="previousOffset" type="xsd:double" use="optional"/>
+				<xsd:attribute name="laterOffset" type="xsd:double" use="optional"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeDesignLinesList">
+		<xsd:sequence>
+			<xsd:element name="DesignLine" type="psr:typeGuideLine" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="Model" type="psr:typeModel"/>
+</xsd:schema>

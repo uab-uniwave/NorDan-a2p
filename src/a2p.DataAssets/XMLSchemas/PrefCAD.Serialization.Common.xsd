@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2006 sp2 U (http://www.altova.com) by www.serials.ws (www.serials.ws) -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:psr="http://www.preference.com/XMLSchemas/2006/Serialization" targetNamespace="http://www.preference.com/XMLSchemas/2006/Serialization" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xsd:complexType name="typeMaterial">
+		<xsd:sequence>
+			<xsd:element name="Color" type="psr:typeColor" minOccurs="0"/>
+			<xsd:element name="PartitionClasses" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element maxOccurs="unbounded" name="PartitionClass">
+							<xsd:complexType>
+								<xsd:attribute name="partition" type="xsd:string" use="required"/>
+								<xsd:attribute name="partitionClass" type="xsd:string" use="required"/>
+								<xsd:attribute name="partitionInstance" type="xsd:int" use="required"/>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="key" type="xsd:string" use="optional" form="qualified"/>
+		<xsd:attribute name="reference" type="xsd:string" use="optional"/>
+		<xsd:attribute name="option" type="xsd:string" use="optional"/>
+		<xsd:attribute name="param" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeGlassComponent">
+		<xsd:sequence>
+			<xsd:element name="Material" type="psr:typeMaterial" minOccurs="0"/>
+			<xsd:element name="PerimetralProfile" type="psr:typeMaterial" minOccurs="0"/>
+			<xsd:element name="GasMaterial" type="psr:typeMaterial" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="colorable" type="xsd:string" use="optional"/>
+		<xsd:attribute name="angle" type="xsd:double" use="optional"/>
+		<xsd:attribute name="mirror" type="xsd:boolean" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeProfile">
+		<xsd:sequence>
+			<xsd:element name="Material" type="psr:typeMaterial" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeColorLayer">
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="side" use="required">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="inner"/>
+					<xsd:enumeration value="outer"/>
+					<xsd:enumeration value="full"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="typeColor">
+		<xsd:sequence>
+			<xsd:element name="ColorLayersConfiguration" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Layer" type="psr:typeColorLayer" minOccurs="0" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:string"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeOption">
+		<xsd:attribute name="name" type="xsd:string"/>
+		<xsd:attribute name="value" type="xsd:string"/>
+		<xsd:attribute name="text" type="xsd:string"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeValuedOption">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeOption"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeVolatileOption">
+		<xsd:complexContent>
+			<xsd:extension base="psr:typeOption"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeOptions">
+		<xsd:sequence>
+			<xsd:element name="List" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Option" type="psr:typeOption" minOccurs="0" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="Levels" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Level" minOccurs="0" maxOccurs="unbounded">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string"/>
+							</xsd:simpleType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+    <xsd:attribute name="elementsOptionSync" type="xsd:boolean" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeCommands">
+		<xsd:choice>
+			<xsd:any namespace="http://www.preference.com/XMLSchemas/2006/PrefCAD.Command" processContents="lax"/>
+		</xsd:choice>
+	</xsd:complexType>
+</xsd:schema>

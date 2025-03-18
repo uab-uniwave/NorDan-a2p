@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:simpleType name="typeTopicEnum">
+		<xs:annotation>
+			<xs:documentation>Topics Enumeration</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="BaseMaterials"/>
+			<xs:enumeration value="Materials"/>
+			<xs:enumeration value="Colors"/>
+			<xs:enumeration value="RawMaterials"/>
+			<xs:enumeration value="Series"/>
+			<xs:enumeration value="GlassWall"/>
+			<xs:enumeration value="Sections"/>
+			<xs:enumeration value="Dimensions"/>
+			<xs:enumeration value="Distances"/>
+			<xs:enumeration value="CustomDimensions"/>
+			<xs:enumeration value="PieceRules"/>
+			<xs:enumeration value="MechanizedRules"/>
+			<xs:enumeration value="GlazingWedgeRules"/>
+			<xs:enumeration value="BarRules"/>
+			<xs:enumeration value="MeterRules"/>
+			<xs:enumeration value="Glazings"/>
+			<xs:enumeration value="DXF"/>
+			<xs:enumeration value="Symbols"/>
+			<xs:enumeration value="PrefErrors"/>
+			<xs:enumeration value="OperationsEditor"/>
+			<xs:enumeration value="ProfileOperations"/>
+			<xs:enumeration value="OperationsDistributions"/>
+			<xs:enumeration value="GlobalOptions"/>
+			<xs:enumeration value="Machine"/>
+			<xs:enumeration value="UserSymbols"/>
+			<xs:enumeration value="Tools"/>
+			<xs:enumeration value="Synchronize"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="typeDistanceTypeEnum">
+		<xs:annotation>
+			<xs:documentation>Distance Type Enumeration</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Interior"/>
+			<xs:enumeration value="Exterior"/>
+			<xs:enumeration value="Mecanizado Interior"/>
+			<xs:enumeration value="Mecanizado Exterior"/>
+			<xs:enumeration value="Batiente Interior"/>
+			<xs:enumeration value="Batiente Exterior"/>
+			<xs:enumeration value="Soldado Interior"/>
+			<xs:enumeration value="Soldado Exterior"/>
+			<xs:enumeration value="Ensamblado Interior"/>
+			<xs:enumeration value="Ensamblado Exterior"/>
+			<xs:enumeration value=""/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="typeGlobalVariableEnum">
+		<xs:annotation>
+			<xs:documentation>All global variables enumeration</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Soldado"/>
+			<xs:enumeration value="Soldado Formas"/>
+			<xs:enumeration value="Soldado Postes"/>
+			<xs:enumeration value="mm Curvadora"/>
+			<xs:enumeration value="mm Curvas"/>
+			<xs:enumeration value="Despl. Accionamiento"/>
+			<xs:enumeration value="Recargo MO"/>
+			<xs:enumeration value="Color"/>
+			<xs:enumeration value="Vidrio"/>
+			<xs:enumeration value="ColorVidrio"/>
+			<xs:enumeration value="CamaraDefecto"/>
+			<xs:enumeration value="Tarifa"/>
+			<xs:enumeration value="Conector Herraje"/>
+			<xs:enumeration value="Escandallo Herraje"/>
+			<xs:enumeration value="Escandallo Persiana"/>
+			<xs:enumeration value="Perfil Persiana"/>
+			<xs:enumeration value="Opcion Lamas"/>
+			<xs:enumeration value="Opcion Cajon"/>
+			<xs:enumeration value="DXFProfile"/>
+			<xs:enumeration value="PatternModelDefault"/>
+			<xs:enumeration value="CotasACuerpo"/>
+			<xs:enumeration value="ManoObraDatos"/>
+			<xs:enumeration value="AgrupaInforme"/>
+			<xs:enumeration value="InvertirMedidas"/>
+			<xs:enumeration value="CorregirSoldado"/>
+			<xs:enumeration value="RedondeaCotas"/>
+			<xs:enumeration value="FiltrarColores"/>
+			<xs:enumeration value="SquaresByProfileFamily"/>
+			<xs:enumeration value="InvertTurnOpenings"/>
+			<xs:enumeration value="InvertSlidingOpenings"/>
+			<xs:enumeration value="DimensionColor"/>
+			<xs:enumeration value="Opciones Genéricas"/>
+			<xs:enumeration value="Angle Union Lost"/>
+			<xs:enumeration value="UseFaces"/>
+			<xs:enumeration value="UseFacesInPrefCam"/>
+			<xs:enumeration value="SpacerExtension"/>
+			<xs:enumeration value="OuterViewMode"/>
+			<xs:enumeration value="Constructive XML"/>
+			<xs:enumeration value="CalculateMachining"/>
+			<xs:enumeration value="PrefUserDLLName"/>
+			<xs:enumeration value="ProductionTablesMode"/>
+			<xs:enumeration value="WeldingChamfer"/>
+			<xs:enumeration value="OpeningDefinitionMode"/>
+			<xs:enumeration value="UnmountedGlassWeight"/>
+			<xs:enumeration value="UnmountedGlassWeightModel"/>
+			<xs:enumeration value="XMLOptionsForOrders"/>
+			<xs:enumeration value="XMLOptionsForProduction"/>
+			<xs:enumeration value="WindowListGrammar"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="PrefWiseURI">
+		<xs:annotation>
+			<xs:documentation>PrefWise URI</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="Topic" type="typeTopicEnum" use="required"/>
+			<xs:attribute name="Param1" type="xs:string" use="optional"/>
+			<xs:attribute name="Param2" type="xs:string" use="optional"/>
+			<xs:attribute name="Param3" type="xs:string" use="optional"/>
+			<xs:attribute name="Param4" type="xs:string" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<!--Generally, Param1=Reference to load.
+In Global variables form, Param1 is name of global variable.
+In Colors, Param1 is the name of the color to load.
+In global options, param1 is option name and level2 is option value.
+In distances form, param1 = master ref.; param2 = slave ref.; param3 = distance type; param4 = level (int).
+In glazing form, param1 = glass width; param2 = baseref; param3 = glass stop; param4 = glazing type(int=1/2/3). 
+In any rules form, param 1 is generating reference and param2 is generated reference.
+In Operations Editor, param1 = operation name; param2 = outer(boolean=true/false).
+In Operation Distribution form, param1 = operation name.
+In Profile Operations form, param1 is OperationName, param2 is Outer(boolean=true/false), param is the Profile.
+In Machines form, param1 = machine id(int).
+In Tools form, param1 = machine id(int); param2 = tool name
+Otherwise, param1 is the reference to load. -->
+</xs:schema>

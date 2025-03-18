@@ -16,6 +16,9 @@ namespace a2p.Shared
 {
     public static class DependencyInjection
     {
+
+        // Get the current culture of the PC
+
         public static IServiceProvider ConfigureServices()
         {
             // Load configuration

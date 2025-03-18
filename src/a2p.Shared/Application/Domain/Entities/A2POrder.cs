@@ -31,7 +31,7 @@ namespace a2p.Shared.Application.Domain.Entities
         public int SalesDocumentState { get; set; }
         //===================================================================================
         public string? Currency { get; set; }
-        public decimal ExchangeRate { get; set; }
+        public double  ExchangeRate { get; set; }
         //===================================================================================
         public bool Import { get; set; } = false;
 

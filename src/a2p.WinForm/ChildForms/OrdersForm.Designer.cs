@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
-
 namespace a2p.WinForm.ChildForms
+
 {
  partial class OrdersForm
  {

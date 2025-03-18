@@ -5,17 +5,17 @@ using System.Drawing.Drawing2D;
 
 using a2p.Shared.Application.Domain.Entities;
 
-namespace a2p.WinForm.CustomControls
+namespace a2p.WinForm.ChildForms
 {
     public partial class ProgressBarForm : Form
     {
         public ProgressBarForm()
         {
 
-            this.SuspendLayout();
-            this.AutoScaleMode = AutoScaleMode.Dpi;
-            this.AutoScaleDimensions = new SizeF(96F, 96F);
-            this.PerformAutoScale();
+            SuspendLayout();
+            AutoScaleMode = AutoScaleMode.Dpi;
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            PerformAutoScale();
             InitializeComponent();
         }
 
@@ -24,22 +24,22 @@ namespace a2p.WinForm.CustomControls
 
             UpdateProgressBar();
             SetRoundedCorners(20);
-            this.PerformAutoScale();
+            PerformAutoScale();
 
         }
 
         private void ProgressBarForm_Shown(object? sender, EventArgs e)
         {
             plMainPanel.Visible = true;
-            this.Cursor = Cursors.WaitCursor;
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            Cursor = Cursors.WaitCursor;
+            ResumeLayout(false);
+            PerformLayout();
         }
         private void ProgressBarForm_DpiChanged(object sender, DpiChangedEventArgs e)
         {
-            this.PerformAutoScale();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            PerformAutoScale();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
         #region -== Form Evenets ==-
@@ -84,11 +84,11 @@ namespace a2p.WinForm.CustomControls
             GraphicsPath path = new();
             path.StartFigure();
             path.AddArc(new Rectangle(0, 0, radius, radius), 180, 90);
-            path.AddArc(new Rectangle(this.Width - radius, 0, radius, radius), 270, 90);
-            path.AddArc(new Rectangle(this.Width - radius, this.Height - radius, radius, radius), 0, 90);
-            path.AddArc(new Rectangle(0, this.Height - radius, radius, radius), 90, 90);
+            path.AddArc(new Rectangle(Width - radius, 0, radius, radius), 270, 90);
+            path.AddArc(new Rectangle(Width - radius, Height - radius, radius, radius), 0, 90);
+            path.AddArc(new Rectangle(0, Height - radius, radius, radius), 90, 90);
             path.CloseFigure();
-            this.Region = new Region(path);
+            Region = new Region(path);
         }
 
         private void UpdateProgressBar()
@@ -105,6 +105,6 @@ namespace a2p.WinForm.CustomControls
 
         }
 
-        private void ProgressBarForm_FormClosed(object sender, FormClosedEventArgs e) => this.Cursor = Cursors.Default;
+        private void ProgressBarForm_FormClosed(object sender, FormClosedEventArgs e) => Cursor = Cursors.Default;
     }
 }

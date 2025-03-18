@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pcm="http://www.preference.com/XMLSchemas/2006/PrefCAD.Model" targetNamespace="http://www.preference.com/XMLSchemas/2006/PrefCAD.Model" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xsd:complexType name="TypeModel">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="Dimensions" minOccurs="0">
+				<xsd:complexType>
+					<xsd:choice minOccurs="0" maxOccurs="unbounded">
+						<xsd:element name="Dimension">
+							<xsd:complexType>
+								<xsd:attribute name="name" type="xsd:string" use="required"/>
+								<xsd:attribute name="subDimensionIndex" type="xsd:integer" use="optional"/>
+								<xsd:attribute name="value" type="xsd:double" use="required"/>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:choice>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="Colors" minOccurs="0">
+				<xsd:complexType>
+					<xsd:choice minOccurs="0" maxOccurs="unbounded">
+						<xsd:element name="Color">
+							<xsd:complexType>
+								<xsd:attribute name="name" type="xsd:string" use="required"/>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:choice>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="Options" minOccurs="0">
+				<xsd:complexType>
+					<xsd:choice>
+						<xsd:element name="Option" minOccurs="0" maxOccurs="unbounded">
+							<xsd:complexType>
+								<xsd:attribute name="name" type="xsd:string" use="required"/>
+								<xsd:attribute name="value" type="xsd:string" use="required"/>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:choice>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="Glass" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:attribute name="material" type="xsd:string" use="optional"/>
+					<xsd:attribute name="enable" type="xsd:boolean" use="optional" default="true"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="MirrorHorizontal" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="MirrorVertical" minOccurs="0" maxOccurs="unbounded"/>			
+		</xsd:choice>
+		<xsd:attribute name="code" type="xsd:string" use="required"/>
+		<xsd:attribute name="alias" type="xsd:string" use="optional"/>
+		<xsd:attribute name="usesPattern" type="xsd:boolean" use="optional" default="true"/>
+	</xsd:complexType>
+</xsd:schema>

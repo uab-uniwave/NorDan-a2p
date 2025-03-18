@@ -9,6 +9,7 @@ using a2p.Shared.Application.Domain.Enums;
 using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Application.Models;
 using a2p.Shared.Infrastructure.Interfaces;
+
 using a2p.WinForm.ChildForms;
 
 using Microsoft.Extensions.Configuration;
@@ -126,13 +127,16 @@ namespace a2p.WinForm
             string settingsPath = _userSettingsService.GetSettingsFilePath();
             if (!File.Exists(settingsPath))
             {
-                // This will still copy from default via the service constructor
-                _ = _userSettingsService.LoadSettings();
 
-                // Optional: inform user or log
-                _logService.Information("User settings file was missing. Default settings were created.");
-                _ = MessageBox.Show("Default settings have been created. You can now adjust them in Settings.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                _appSettings.Folders.RootFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                _appSettings.Folders.ImportFailed = "Import_Failed";
+                _appSettings.Folders.ImportSuccess = "Import_Success";
+                _appSettings.Folders.Log = "Log";
+
+                _userSettingsService.SaveSettings(_appSettings);
+
             }
+
             else
             {
                 _logService.Information("User settings file loaded successfully.");

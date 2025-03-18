@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ps="http://www.preference.com/XMLSchemas/2006/PrefSales.UpdateSalesDoc" xmlns:cmd="http://www.preference.com/XMLSchemas/2006/PrefCAD.Command" targetNamespace="http://www.preference.com/XMLSchemas/2006/PrefSales.UpdateSalesDoc" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xsd:import namespace="http://www.preference.com/XMLSchemas/2006/PrefCAD.Command" schemaLocation="http://www.preference.com/XMLSchemas/2006/PrefCAD.Command/PrefCAD.Command.xsd"/>
+	<xsd:complexType name="typeDocumentNumber">
+		<xsd:attribute name="number" type="xsd:long" use="required"/>
+		<xsd:attribute name="version" type="xsd:long" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeDocumentReference">
+		<xsd:attribute name="id" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeUpdateHeader">
+		<xsd:choice>
+			<xsd:element name="Document" type="ps:typeDocumentNumber"/>
+			<xsd:element name="Reference" type="ps:typeDocumentReference"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="typeNomenclature">
+		<xsd:attribute name="value" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeIdPos">
+		<xsd:attribute name="value" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeQuantity">
+		<xsd:attribute name="value" type="xsd:long" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeComments">
+		<xsd:attribute name="value" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeCommands">
+		<xsd:sequence maxOccurs="unbounded">
+			<xsd:any processContents="lax"/>
+			<!-- A commands xsd is needed -->
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeItemId">
+		<xsd:choice>
+			<xsd:element name="IdPos" type="ps:typeIdPos"/>
+			<xsd:element name="Nomenclature" type="ps:typeNomenclature"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="typeUpdateItem">
+		<xsd:sequence>
+			<xsd:element name="ItemId" type="ps:typeItemId" maxOccurs="unbounded"/>
+			<xsd:element name="Quantity" type="ps:typeQuantity" minOccurs="0"/>
+			<xsd:element name="Comments" type="ps:typeComments" minOccurs="0"/>
+			<xsd:element name="Commands" type="cmd:typeCommands" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeSplitItem">
+		<xsd:sequence>
+			<xsd:element name="FromItemId" type="ps:typeItemId" maxOccurs="1"/>
+			<xsd:element name="IdPos" type="ps:typeIdPos"/>
+			<xsd:element name="Quantity" type="ps:typeQuantity"/>
+			<xsd:element name="Nomenclature" type="ps:typeNomenclature"/>
+			<xsd:element name="Comments" type="ps:typeComments" minOccurs="0"/>
+			<xsd:element name="Commands" type="ps:typeCommands" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeDeleteItem">
+		<xsd:choice>
+			<xsd:element name="ItemId" type="ps:typeItemId" maxOccurs="unbounded"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="typeUpdateDetail">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="SplitItem" type="ps:typeSplitItem"/>
+			<xsd:element name="UpdateItem" type="ps:typeUpdateItem"/>
+			<xsd:element name="DeleteItem" type="ps:typeDeleteItem"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="typeUpdateSalesDocument">
+		<xsd:sequence>
+			<xsd:element name="Header" type="ps:typeUpdateHeader"/>
+			<xsd:element name="Detail" type="ps:typeUpdateDetail"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeSalesDocuments">
+		<xsd:choice maxOccurs="unbounded">
+			<xsd:element name="UpdateSalesDocument" type="ps:typeUpdateSalesDocument"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:element name="SalesDocuments" type="ps:typeSalesDocuments"/>
+</xsd:schema>

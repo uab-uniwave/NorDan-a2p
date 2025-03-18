@@ -1,4 +1,4 @@
-﻿namespace a2p.WinForm.Mappers
+﻿namespace a2p.Winform.Mappers
 {
     public class A2POrderRecordMapper
     {

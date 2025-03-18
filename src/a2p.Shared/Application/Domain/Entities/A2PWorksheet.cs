@@ -16,9 +16,9 @@ namespace a2p.Shared.Application.Domain.Entities
         public int RowCount { get; set; } = 0;
         public List<List<object>> WorksheetData { get; set; } = [];
 
-        public decimal Price { get; set; } = 0;
-        public decimal DiscountAmount { get; set; } = 0;
-        public decimal FinalPrice { get; set; } = 0;
+        public double  Price { get; set; } = 0;
+        public double  DiscountAmount { get; set; } = 0;
+        public double  FinalPrice { get; set; } = 0;
 
     }
 

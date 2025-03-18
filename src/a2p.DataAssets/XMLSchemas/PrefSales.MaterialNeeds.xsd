@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:mn="http://www.preference.com/XMLSchemas/2008/PrefSales.MaterialNeeds" targetNamespace="http://www.preference.com/XMLSchemas/2008/PrefSales.MaterialNeeds" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xsd:element name="MaterialNeeds">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:choice>
+					<xsd:element name="SalesDocument">
+						<xsd:complexType>
+							<xsd:attribute name="number" type="xsd:positiveInteger" use="required"/>
+							<xsd:attribute name="version" type="xsd:positiveInteger" use="required"/>
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="PendingOrders"/>
+					<xsd:element name="ProductionLot">
+						<xsd:complexType>
+							<xsd:attribute name="number" type="xsd:positiveInteger" use="required"/>
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="ReproductionNeeds">
+						<xsd:complexType>
+							<xsd:attribute name="code" type="xsd:nonNegativeInteger" use="optional"/>
+							<xsd:attribute name="productionLineId" type="mn:guid" use="optional"/>
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:choice>
+				<xsd:element name="Attributes" minOccurs="0">
+					<xsd:complexType>
+						<xsd:all>
+							<xsd:element name="ReserveMaterial" type="mn:typeElementWithBooleanValue" minOccurs="0"/>
+							<xsd:element name="OptimizeRods" type="mn:typeOptimizationAttributes" minOccurs="0"/>
+							<xsd:element name="UseWastageAllowance" type="mn:typeElementWithBooleanValue" minOccurs="0"/>
+							<xsd:element name="UseFullRods" type="mn:typeElementWithBooleanValue" minOccurs="0"/>
+							<xsd:element name="Description" type="mn:typeElementWithStringValue" minOccurs="0"/>
+							<xsd:element name="DeleteOtherDocumentNeeds" type="mn:typeElementWithBooleanValue" minOccurs="0"/>
+							<xsd:element name="ProductionPlant" type="mn:typeElementWithNonNegativeLongValue" minOccurs="0"/>
+							<xsd:element name="IncludeOrdersWithShopEntryDate" type="mn:typeElementWithBooleanValue" minOccurs="0"/>
+							<xsd:element name="ReproductionWindowsState" type="mn:typeElementWithNonNegativeLongValue" minOccurs="0"/>
+						</xsd:all>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:simpleType name="guid">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="typeElementWithBooleanValue">
+		<xsd:sequence/>
+		<xsd:attribute name="value" type="xsd:boolean" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeElementWithStringValue">
+		<xsd:attribute name="value" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeElementWithNonNegativeLongValue">
+		<xsd:attribute name="value" type="xsd:nonNegativeInteger" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeOptimizationAttributes">
+		<xsd:all minOccurs="0">
+			<xsd:element name="OptimizationLevel" minOccurs="0">
+				<xsd:complexType>
+					<xsd:attribute name="value" use="required">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:integer">
+								<xsd:enumeration value="1"/>
+								<xsd:enumeration value="2"/>
+								<xsd:enumeration value="3"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:attribute>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="UseWaste" type="mn:typeElementWithBooleanValue" minOccurs="0"/>
+			<xsd:element name="DontUseMaxRodsAllowed" type="mn:typeElementWithBooleanValue" minOccurs="0"/>
+		</xsd:all>
+		<xsd:attribute name="value" type="xsd:boolean" use="required"/>
+	</xsd:complexType>
+</xsd:schema>

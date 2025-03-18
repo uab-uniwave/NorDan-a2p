@@ -26,8 +26,8 @@ namespace a2p.Shared.Infrastructure.Services
 
             _appSettings = _userSettingsService.LoadSettings();
 
-            _settingsContainer = _userSettingsService.LoadAllSettings( );
-            _connectionString = _settingsContainer.ConnectionStrings[("DefaultConnection")] ?? string.Empty;
+            _settingsContainer = _userSettingsService.LoadAllSettings();
+            _connectionString = _settingsContainer.ConnectionStrings["DefaultConnection"] ?? string.Empty;
             _logService = logService ?? throw new ArgumentNullException(nameof(logService));
         }
         /// <summary>
@@ -180,7 +180,7 @@ namespace a2p.Shared.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                _logService.Error(ex.Message, "SQL Repository: Unhandled error Executing scalar query {$sqlCommand}", sqlCommand);
+                _logService.Error(ex.Message, "SQL Repository: Unhandled error Executing scalar query {$sqlCommand}. Exception{$Exception}", sqlCommand, ex.Message);
                 return DBNull.Value;
             }
         }

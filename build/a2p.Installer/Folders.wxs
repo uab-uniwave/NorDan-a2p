@@ -1,0 +1,25 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+    <StandardDirectory Id="ProgramFiles6432Folder">
+      <Directory Id="INSTALLFOLDER" Name="!(bind.Property.Manufacturer) !(bind.Property.ProductName)" />
+        <Directory Id="Excel" Name="Test Cases" />
+        <Directory Id="Excel" Name="SQL" />
+    </StandardDirectory>
+     <StandardDirectory Id= "DesktopFolder" >
+         <Component Location="source"  Id="DesktopShortcut" Guid="1e1ab27b-4f03-44d3-885a-643730675866" KeyPath="yes" Directory="DesktopFolder" Feature="Application" UninstallWhenSuperseded="yes" WorkingFolder ="INSTALLFOLDER"/>
+                        </Component>
+     
+     </StandardDirectory>
+  </Fragment>
+</Wix
+
+
+
+    <!--
+
+       <Component Id="ApplicationShortcut" Guid="1e1ab27b-4f03-44d3-885a-643730675866">
+            
+                <RegistryValue Root="HKCU" Key="Software\MANUFACTURER\Alu2Prefsuite" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+            </Component>
+
+-->

@@ -10,14 +10,13 @@ using a2p.Shared.Infrastructure.Interfaces;
 
 using ClosedXML.Excel;
 
-
 namespace a2p.WinForm.ChildForms
 {
     public partial class LogForm : Form
     {
 
         private readonly ILogService _logService;
-        private readonly System.Drawing.Color _backColor = System.Drawing.Color.FromArgb(56, 57, 60);
+        private readonly Color _backColor = Color.FromArgb(56, 57, 60);
         private IProgress<ProgressValue>? _progress;
         private IUserSettingsService _userSettingsService;
         private ProgressValue _progressValue;
@@ -42,12 +41,11 @@ namespace a2p.WinForm.ChildForms
             _appSettings = _userSettingsService.LoadSettings();
             _settingsContainer = _userSettingsService.LoadAllSettings();
 
-
             _file = Path.Combine(_appSettings.Folders.RootFolder, _appSettings.Folders.Log, "a2pLog.json");
 
             SuspendLayout();
-            this.AutoScaleMode = AutoScaleMode.Dpi;
-            this.AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
+            AutoScaleDimensions = new SizeF(96F, 96F);
             InitializeComponent();
             InitializeGrid();
             InitializeTable();
@@ -132,11 +130,21 @@ namespace a2p.WinForm.ChildForms
                 });
                 _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
                 {
+                    HeaderText = "Line",
+                    DataPropertyName = "Line",
+                    Name = "Line",
+                    ReadOnly = true,
+                    Visible = true,
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                });
+
+                _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
+                {
                     HeaderText = "Properties",
                     DataPropertyName = "Properties",
                     Name = "Properties",
                     ReadOnly = true,
-                    Visible = true,
+                    Visible = false,
                     AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
 
                 });
@@ -275,7 +283,7 @@ namespace a2p.WinForm.ChildForms
                 string methodName = nameof(InitializeTable); // Replace with the actual method name if different
 
                 // Log the error
-                this._logService?.Error(ex2, "Error in {Class}.{Method} {Message}", className, methodName, ex2.Message);
+                _logService?.Error(ex2, "Error in {Class}.{Method} {Message}", className, methodName, ex2.Message);
 
                 // Display the error in a MessageBox
                 _ = MessageBox.Show($@"Error in {className}.{methodName}: {ex2.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -288,29 +296,29 @@ namespace a2p.WinForm.ChildForms
 
         #region -== Form Events ==-
 
-        private void LogForm_Load(object sender, EventArgs e) => this.PerformAutoScale();
+        private void LogForm_Load(object sender, EventArgs e) => PerformAutoScale();
 
         private void LogForm_Shown(object sender, EventArgs e)
         {
             ApplyFilter();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         private void LogForm_DpiChanged(object sender, DpiChangedEventArgs e)
         {
-            this.PerformAutoScale();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            PerformAutoScale();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
-        private void LogForm_ResizeBegin(object sender, EventArgs e) => this.SuspendLayout();
+        private void LogForm_ResizeBegin(object sender, EventArgs e) => SuspendLayout();
 
         private void LogForm_ResizeEnd(object sender, EventArgs e)
         {
-            this.PerformAutoScale();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            PerformAutoScale();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion -== Form Events ==-
@@ -356,30 +364,30 @@ namespace a2p.WinForm.ChildForms
                         // Apply the style if the log level matches
                         if (e.Value.ToString() == "Fatal")
                         {
-                            e.CellStyle.ForeColor = System.Drawing.Color.DarkRed;
+                            e.CellStyle.ForeColor = Color.DarkRed;
                         }
                         else if (e.Value.ToString() == "Error")
                         {
-                            e.CellStyle.ForeColor = System.Drawing.Color.Red;
+                            e.CellStyle.ForeColor = Color.Red;
                         }
                         else if (e.Value.ToString() == "Warning")
                         {
-                            e.CellStyle.ForeColor = System.Drawing.Color.Yellow;
+                            e.CellStyle.ForeColor = Color.Yellow;
                         }
 
                         else if (e.Value.ToString() == "Warning")
                         {
-                            e.CellStyle.ForeColor = System.Drawing.Color.LightGreen;
+                            e.CellStyle.ForeColor = Color.LightGreen;
 
                         }
 
                         else if (e.Value.ToString() == "Debug")
                         {
-                            e.CellStyle.ForeColor = System.Drawing.Color.LightBlue;
+                            e.CellStyle.ForeColor = Color.LightBlue;
                         }
                         else if (e.Value.ToString() == "Verbose")
                         {
-                            e.CellStyle.ForeColor = System.Drawing.Color.LightGray;
+                            e.CellStyle.ForeColor = Color.LightGray;
                         }
 
                     }

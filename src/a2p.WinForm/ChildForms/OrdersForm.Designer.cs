@@ -423,9 +423,10 @@ namespace a2p.WinForm.ChildForms
             ClientSize = new Size(1600, 800);
             Controls.Add(plGridPanel);
             FormBorderStyle = FormBorderStyle.None;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(12);
             Name = "OrdersForm";
-            Text = "FileForm";
+            Text = "A2P-Order Form ";
             Load += OrdersForm_Load;
             Shown += FileForm_Shown;
             DpiChanged += OrdersForm_DpiChanged;

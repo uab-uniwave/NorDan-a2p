@@ -21,10 +21,6 @@ namespace a2p.Shared.Infrastructure.Services
         private IProgress<ProgressValue>? _progress;
         private DataCache _dataCache;
 
-        //private int _progressMax = 0;
-        private int _progressCounter
-            = 0;
-
         public WriteService(ISqlRepository sqlRepository, ILogService logService, DataCache dataCache, IPrefSuiteService prefSuiteService)
         {
             _sqlRepository = sqlRepository ?? throw new ArgumentNullException(nameof(sqlRepository));
@@ -96,7 +92,7 @@ namespace a2p.Shared.Infrastructure.Services
 
                         _logService.Debug("Write Item Service: Order:{$Order} Sales Document : {$SalesDocument} marked as deleted in the database.",
                             a2pOrder.Order, a2pOrder.SalesDocumentNumber.ToString() + "/" + a2pOrder.SalesDocumentVersion.ToString());
-
+                        _progressValue.ProgressTitle = $"Importing Orders...";
                         _progressValue.Value += 20; // Increment the progress value - write per Order
                         _progress?.Report(_progressValue);
 

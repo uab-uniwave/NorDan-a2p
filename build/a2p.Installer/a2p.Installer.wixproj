@@ -1,6 +1,16 @@
 ﻿<Project Sdk="WixToolset.Sdk/5.0.2">
-    <PackageReference Include="WixToolset.Util.wixext" Version="5.*" />
-    <PackageReference Include="WixToolset.Netfx.wixext" Version="5.*" />
-    <PackageReference Include="WixToolset.UI.wixext" Version="5.*" />
-    
+  <PropertyGroup>
+    <BaseOutputPath>..\..\</BaseOutputPath>
+    <OutputPath>$(BaseOutputPath)\build\</OutputPath>
+    <Platforms>x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <BindVariable Include="WixUILicenseRtf=EULA\a2p_EULA.rtf" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="WixToolset.Netfx.wixext" Version="5.0.2" />
+    <PackageReference Include="WixToolset.Sql.wixext" Version="5.0.2" />
+    <PackageReference Include="WixToolset.UI.wixext" Version="5.0.2" />
+    <PackageReference Include="WixToolset.Util.wixext" Version="5.0.2" />
+  </ItemGroup>
 </Project>

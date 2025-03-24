@@ -62,6 +62,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XMLSchemas", "XMLSchemas", 
 		src\a2p.DataAssets\XMLSchemas\PrefSuite.Serialization.xsd = src\a2p.DataAssets\XMLSchemas\PrefSuite.Serialization.xsd
 		src\a2p.DataAssets\XMLSchemas\PrefWiseDDECommand.xsd = src\a2p.DataAssets\XMLSchemas\PrefWiseDDECommand.xsd
 		src\a2p.DataAssets\XMLSchemas\PrefWiseURI.xsd = src\a2p.DataAssets\XMLSchemas\PrefWiseURI.xsd
+		wix.xsd = wix.xsd
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Excel", "Excel", "{E1A78A32-DF5F-4F65-A987-6FEF96E2B856}"
@@ -125,86 +126,94 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AppIcons", "AppIcons", "{BE
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SideBarIcons", "SideBarIcons", "{25482F05-7FD2-4CF9-8B83-18936537C3A6}"
 	ProjectSection(SolutionItems) = preProject
-		src\a2p.GraphicAssets\Icons\SideBarIcons\btExit.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btExit.png
-		src\a2p.GraphicAssets\Icons\SideBarIcons\btImport.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btImport.png
-		src\a2p.GraphicAssets\Icons\SideBarIcons\btLoad.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btLoad.png
-		src\a2p.GraphicAssets\Icons\SideBarIcons\btLog.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btLog.png
-		src\a2p.GraphicAssets\Icons\SideBarIcons\btProperties.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btProperties.png
-		src\a2p.GraphicAssets\Icons\SideBarIcons\btSideBar.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btSideBar.png
+		src\a2p.GraphicAssets\Icons\SideBarIcons\btnExit.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btnExit.png
+		src\a2p.GraphicAssets\Icons\SideBarIcons\btnImport.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btnImport.png
+		src\a2p.GraphicAssets\Icons\SideBarIcons\btnLoad.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btnLoad.png
+		src\a2p.GraphicAssets\Icons\SideBarIcons\btnLog.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btnLog.png
+		src\a2p.GraphicAssets\Icons\SideBarIcons\btnProperties.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btnProperties.png
+		src\a2p.GraphicAssets\Icons\SideBarIcons\btnSideBar.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btnSideBar.png
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TitleBarIcons", "TitleBarIcons", "{1A97C381-26F0-4D9C-9EFA-1FA5C64960E1}"
 	ProjectSection(SolutionItems) = preProject
-		src\a2p.GraphicAssets\Icons\TitleBarIcons\btClose.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btClose.png
-		src\a2p.GraphicAssets\Icons\TitleBarIcons\btCloseHover.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btCloseHover.png
-		src\a2p.GraphicAssets\Icons\TitleBarIcons\btMaximize.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btMaximize.png
-		src\a2p.GraphicAssets\Icons\TitleBarIcons\btMaximizeHover.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btMaximizeHover.png
-		src\a2p.GraphicAssets\Icons\TitleBarIcons\btMinimize.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btMinimize.png
-		src\a2p.GraphicAssets\Icons\TitleBarIcons\btMinimizeHover.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btMinimizeHover.png
+		src\a2p.GraphicAssets\Icons\TitleBarIcons\btnClose.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btnClose.png
+		src\a2p.GraphicAssets\Icons\TitleBarIcons\btnCloseHover.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btnCloseHover.png
+		src\a2p.GraphicAssets\Icons\TitleBarIcons\btnMaximize.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btnMaximize.png
+		src\a2p.GraphicAssets\Icons\TitleBarIcons\btnMaximizeHover.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btnMaximizeHover.png
+		src\a2p.GraphicAssets\Icons\TitleBarIcons\btnMinimize.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btnMinimize.png
+		src\a2p.GraphicAssets\Icons\TitleBarIcons\btnMinimizeHover.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btnMinimizeHover.png
 	EndProjectSection
 EndProject
-Project("{B7DD6F7E-DEF8-4E67-B5B7-07EF123DB6F0}") = "a2p.Installer", "build\a2p.Installer\a2p.Installer.wixproj", "{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "a2p.Installer", "a2p.Installer", "{33FD462D-4B12-4501-92BD-81095ACABC95}"
+	ProjectSection(SolutionItems) = preProject
+		build\a2p.Installer\EULA\a2p_EULA.rtf = build\a2p.Installer\EULA\a2p_EULA.rtf
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PrefSuiteBackup", "PrefSuiteBackup", "{794D2BF2-915F-4498-BA2A-271BAA957386}"
+EndProject
+Project("{B7DD6F7E-DEF8-4E67-B5B7-07EF123DB6F0}") = "a2p.Installer", "build\a2p.Installer\a2p.Installer.wixproj", "{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1} = {220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8} = {BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{80D579FC-77B1-4965-934F-61FBE27F9DF2}"
+	ProjectSection(SolutionItems) = preProject
+		DirectoryPackages.props.xml = DirectoryPackages.props.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{9368B7BC-31DF-47A0-8C2B-FFAED986B074}"
+	ProjectSection(SolutionItems) = preProject
+		build\a2p.Installer\Images\WixUIBannerBmp_493_58.png = build\a2p.Installer\Images\WixUIBannerBmp_493_58.png
+		build\a2p.Installer\Images\WixUIDialogBmp_493_312.png = build\a2p.Installer\Images\WixUIDialogBmp_493_312.png
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
 		Debug|ARM64 = Debug|ARM64
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
-		Release|Any CPU = Release|Any CPU
 		Release|ARM64 = Release|ARM64
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|ARM64.ActiveCfg = Debug|x64
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|ARM64.Build.0 = Debug|x64
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x64.ActiveCfg = Debug|x64
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x64.Build.0 = Debug|x64
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x86.Build.0 = Debug|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|ARM64.Build.0 = Release|Any CPU
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x86.ActiveCfg = Debug|x64
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x86.Build.0 = Debug|x64
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|ARM64.ActiveCfg = Release|x64
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|ARM64.Build.0 = Release|x64
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x64.ActiveCfg = Release|x64
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x64.Build.0 = Release|x64
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x86.ActiveCfg = Release|Any CPU
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x86.Build.0 = Release|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x86.ActiveCfg = Release|x64
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x86.Build.0 = Release|x64
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|ARM64.ActiveCfg = Debug|x64
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|ARM64.Build.0 = Debug|x64
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x64.ActiveCfg = Debug|x64
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x64.Build.0 = Debug|x64
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x86.Build.0 = Debug|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|ARM64.Build.0 = Release|Any CPU
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x86.ActiveCfg = Debug|x64
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x86.Build.0 = Debug|x64
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|ARM64.ActiveCfg = Release|x64
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|ARM64.Build.0 = Release|x64
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x64.ActiveCfg = Release|x64
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x64.Build.0 = Release|x64
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x86.ActiveCfg = Release|Any CPU
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x86.Build.0 = Release|Any CPU
-		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Debug|Any CPU.Build.0 = Debug|x64
-		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Debug|ARM64.ActiveCfg = Debug|ARM64
-		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Debug|ARM64.Build.0 = Debug|ARM64
-		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Debug|x64.ActiveCfg = Debug|x64
-		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Debug|x64.Build.0 = Debug|x64
-		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Debug|x86.ActiveCfg = Debug|x86
-		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Debug|x86.Build.0 = Debug|x86
-		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Release|Any CPU.ActiveCfg = Release|x64
-		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Release|Any CPU.Build.0 = Release|x64
-		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Release|ARM64.ActiveCfg = Release|ARM64
-		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Release|ARM64.Build.0 = Release|ARM64
-		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Release|x64.ActiveCfg = Release|x64
-		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Release|x64.Build.0 = Release|x64
-		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Release|x86.ActiveCfg = Release|x86
-		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E}.Release|x86.Build.0 = Release|x86
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x86.ActiveCfg = Release|x64
+		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x86.Build.0 = Release|x64
+		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Debug|ARM64.Build.0 = Debug|ARM64
+		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Debug|x64.ActiveCfg = Debug|x64
+		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Debug|x64.Build.0 = Debug|x64
+		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Debug|x86.ActiveCfg = Debug|x86
+		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Debug|x86.Build.0 = Debug|x86
+		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Release|ARM64.ActiveCfg = Release|ARM64
+		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Release|ARM64.Build.0 = Release|ARM64
+		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Release|x64.ActiveCfg = Release|x64
+		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Release|x64.Build.0 = Release|x64
+		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Release|x86.ActiveCfg = Release|x86
+		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -225,11 +234,14 @@ Global
 		{BE5A1548-E891-4D17-A688-AB698536FEFB} = {8A34791D-ECFC-4587-8470-71001591D2FA}
 		{25482F05-7FD2-4CF9-8B83-18936537C3A6} = {8A34791D-ECFC-4587-8470-71001591D2FA}
 		{1A97C381-26F0-4D9C-9EFA-1FA5C64960E1} = {8A34791D-ECFC-4587-8470-71001591D2FA}
-		{8781D535-C76B-44D9-AD2B-9CF09FD01D9E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71B8}
+		{33FD462D-4B12-4501-92BD-81095ACABC95} = {02EA681E-C7D8-13C7-8484-4AC65E1B71B8}
+		{794D2BF2-915F-4498-BA2A-271BAA957386} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
+		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D} = {33FD462D-4B12-4501-92BD-81095ACABC95}
+		{9368B7BC-31DF-47A0-8C2B-FFAED986B074} = {33FD462D-4B12-4501-92BD-81095ACABC95}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {02931AC6-E3AF-4E96-A144-EE9EE4BE10E7}
-		BuildVersion_BuildVersioningStyle = None.None.None.Increment
 		BuildVersion_StartDate = 2000/1/1
+		BuildVersion_BuildVersioningStyle = None.None.None.Increment
 	EndGlobalSection
 EndGlobal

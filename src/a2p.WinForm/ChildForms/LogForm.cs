@@ -17,7 +17,6 @@ namespace a2p.WinForm.ChildForms
 
         private readonly ILogService _logService;
         private readonly Color _backColor = Color.FromArgb(56, 57, 60);
-        private IProgress<ProgressValue>? _progress;
         private IUserSettingsService _userSettingsService;
         private ProgressValue _progressValue;
         private AppSettings _appSettings;

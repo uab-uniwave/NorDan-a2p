@@ -878,8 +878,8 @@ namespace a2p.Shared.Application.Services
                         sapaColor_v2 = sapaColor_v2[..^1]; // Remove last character
                     }
 
-                    // Regex pattern to replace cases like "A | R" with "|R"
-                    sapaColor_v2 = Regex.Replace(sapaColor_v2, @"[A-Z] \| ([RN])", "|$1");
+
+                    sapaColor_v2 = Regex.Replace(sapaColor_v2, @"[A-Z] \| ([A-Z])", "|$1");
                 }
 
                 // Merge the fields with a '-'
@@ -899,9 +899,9 @@ namespace a2p.Shared.Application.Services
                         "\nLine: {Line}," +
                         "\nSapa Article: {SapaArticle}({SapaArticleLength}):, " +
                         "\nSapa Color: {SapaColor}({SapaColorLength})." +
-                        "\n" +
                         "\nGenerated PrefSuite Reference: {Reference}({ReferenceLength})." +
-                        "\nReference inserted into DB Reference {NewReference}({NewReferenceLength}).",
+                        "\nReference inserted into DB Reference {NewReference}({NewReferenceLength})." +
+                        "\n",
                         order ?? string.Empty,
                         worksheetName ?? string.Empty,
                         line,
@@ -927,9 +927,9 @@ namespace a2p.Shared.Application.Services
                         $"\nLine: {line}," +
                         $"\nSapa Article: {sapaArticle_v2 ?? string.Empty}({(sapaArticle_v2 ?? string.Empty).Length})." +
                         $"\nSapa Color: {sapaColor_v2 ?? string.Empty}({(sapaColor_v2 ?? string.Empty).Length})." +
-                        "\n" +
                         $"\nGenerated PrefSuite Reference: {reference}({reference.Length})." +
-                        $"\nReference inserted into DB: {newReference}({newReference.Length})."
+                        $"\nReference inserted into DB: {newReference}({newReference.Length})." +
+                        "\n"
                     };
 
                     a2pOrder!.WriteErrors.Add(writeError);

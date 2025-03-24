@@ -1,0 +1,411 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+
+    <ComponentGroup Id="Components" Directory="INSTALLFOLDER">
+        <Component>
+            <File Source="..\Release\a2p.Shared.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\a2p.Shared.pdb" />
+        </Component>
+        <Component>
+            <File Source="..\Release\a2p.WinForm.deps.json" />
+        </Component>
+        <Component>
+            <File Source="..\Release\a2p.WinForm.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\a2p.WinForm.exe" />
+        </Component>
+        <Component>
+            <File Source="..\Release\a2p.WinForm.pdb" />
+        </Component>
+        <Component>
+            <File Source="..\Release\a2p.WinForm.runtimeconfig.json" />
+        </Component>
+        <Component>
+            <File Source="..\Release\appsettings.json" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Azure.Core.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Azure.Identity.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\ClosedXML.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\ClosedXML.Parser.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\DocumentFormat.OpenXml.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\DocumentFormat.OpenXml.Framework.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Eris.Serilog.Formatting.Json.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\ExcelNumberFormat.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Interop.MSXML2.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Interop.PrefCAD.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Interop.PrefComponents.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Interop.PrefDataManager.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Interop.PrefErrors.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Interop.PrefImagen.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Interop.PrefPrices.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Interop.PrefSales.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\MathNet.Numerics.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Bcl.AsyncInterfaces.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Bcl.Cryptography.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Data.SqlClient.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Extensions.Caching.Abstractions.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Extensions.Caching.Memory.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Extensions.Configuration.Abstractions.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Extensions.Configuration.Binder.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Extensions.Configuration.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Extensions.Configuration.FileExtensions.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Extensions.Configuration.Json.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Extensions.DependencyInjection.Abstractions.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Extensions.DependencyInjection.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Extensions.DependencyModel.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Extensions.Diagnostics.Abstractions.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Extensions.FileProviders.Abstractions.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Extensions.FileProviders.Physical.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Extensions.FileSystemGlobbing.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Extensions.Hosting.Abstractions.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Extensions.Logging.Abstractions.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Extensions.Logging.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Extensions.Logging.EventLog.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Extensions.Options.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Extensions.Primitives.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Identity.Client.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.Identity.Client.Extensions.Msal.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.IdentityModel.Abstractions.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.IdentityModel.JsonWebTokens.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.IdentityModel.Logging.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.IdentityModel.Protocols.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.IdentityModel.Tokens.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Microsoft.SqlServer.Server.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Newtonsoft.Json.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\RBush.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Serilog.AspNetCore.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Serilog.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Serilog.Enrichers.Environment.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Serilog.Enrichers.Thread.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Serilog.Exceptions.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Serilog.Expressions.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Serilog.Extensions.Hosting.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Serilog.Extensions.Logging.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Serilog.Extensions.Logging.File.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Serilog.Formatting.Compact.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Serilog.Formatting.Compact.Reader.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Serilog.Settings.Configuration.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Serilog.Sinks.Async.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Serilog.Sinks.Console.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Serilog.Sinks.Debug.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Serilog.Sinks.EventLog.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Serilog.Sinks.File.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\Serilog.Sinks.Seq.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\SixLabors.Fonts.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\System.ClientModel.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\System.Configuration.ConfigurationManager.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\System.Diagnostics.DiagnosticSource.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\System.Diagnostics.EventLog.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\System.Formats.Asn1.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\System.IdentityModel.Tokens.Jwt.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\System.IO.Packaging.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\System.IO.Pipelines.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\System.Memory.Data.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\System.Security.Cryptography.Pkcs.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\System.Security.Cryptography.ProtectedData.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\System.Text.Encodings.Web.dll" />
+        </Component>
+        <Component>
+            <File Source="..\Release\System.Text.Json.dll" />
+        </Component>
+    </ComponentGroup>
+          <ComponentGroup Id="PrefSuiteBackupFile" Directory="PrefSuiteBackupFolder">
+              <Component>
+                  <File Source="..\Release\PrefSuiteBackup\PrefSuiteTestCases.bkp" />
+              </Component>
+
+      </ComponentGroup>
+      <ComponentGroup Id="RuntimeWin" Directory="net8_0Folder">
+          <Component>
+              <File Source="..\Release\runtimes\win\lib\net8.0\Microsoft.Data.SqlClient.dll" />
+          </Component>
+                  <Component>
+              <File Source="..\Release\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.dll" />
+          </Component>
+          <Component>
+              <File Source="..\Release\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.Messages.dll" />
+          </Component>
+          <Component>
+              <File Source="..\Release\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll" />
+          </Component>
+      </ComponentGroup>
+      <ComponentGroup Id="RuntimeWinx64" Directory="nativeFolder">
+          <Component>
+              <File Source="..\Release\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll" />
+          </Component>
+      </ComponentGroup>
+      <ComponentGroup Id="SQL" Directory="SQLFolder">
+          <Component>
+              <File Source="..\Release\SQL\CleanDB.sql" />
+          </Component>
+          <Component>
+              <File Source="..\Release\SQL\Procedures.sql" />
+          </Component>
+          <Component>
+              <File Source="..\Release\SQL\Tables.sql" />
+          </Component>
+          <Component>
+              <File Source="..\Release\SQL\Test.sql" />
+          </Component>
+      </ComponentGroup>
+
+      <ComponentGroup Id="ExcelFiles" Directory="ExcelFolder">
+          <Component>
+              <File Source="..\Release\Excel\0000Z00001-1 Price_Details.xlsx" />
+          </Component>
+          <Component>
+              <File Source="..\Release\Excel\0000Z00001-1 SumList.xlsx" />
+          </Component>
+          <Component>
+              <File Source="..\Release\Excel\0000Z00001-2 Price_Details.xlsx" />
+          </Component>
+          <Component>
+              <File Source="..\Release\Excel\0000Z00001-2 SumList.xlsx" />
+          </Component>
+          <Component>
+              <File Source="..\Release\Excel\0000Z00001-3 Price_Details.xlsx" />
+          </Component>
+          <Component>
+              <File Source="..\Release\Excel\0000Z00001-3 SumList.xlsx" />
+          </Component>
+          <Component>
+              <File Source="..\Release\Excel\0000Z00001-4 Price_Details.xlsx" />
+          </Component>
+          <Component>
+              <File Source="..\Release\Excel\0000Z00001-4 SumList.xlsx" />
+          </Component>
+          <Component>
+              <File Source="..\Release\Excel\0000Z00001-5 Price_Details.xlsx" />
+          </Component>
+          <Component>
+              <File Source="..\Release\Excel\0000Z00001-5 SumList.xlsx" />
+          </Component>
+          <Component>
+              <File Source="..\Release\Excel\0000Z00001-6 Price_Details.xlsx" />
+          </Component>
+          <Component>
+              <File Source="..\Release\Excel\0000Z00001-6 SumList.xlsx" />
+          </Component>
+          <Component>
+              <File Source="..\Release\Excel\0000Z00001-7 Price_Details.xlsx" />
+          </Component>
+          <Component>
+              <File Source="..\Release\Excel\0000Z00001-7 SumList.xlsx" />
+          </Component>
+          <Component>
+              <File Source="..\Release\Excel\0000Z00001-8 Price_Details.xlsx" />
+          </Component>
+          <Component>
+              <File Source="..\Release\Excel\0000Z00001-8 SumList.xlsx" />
+          </Component>
+          <Component>
+              <File Source="..\Release\Excel\0000Z00001-9 Price_Details.xlsx" />
+          </Component>
+          <Component>
+              <File Source="..\Release\Excel\0000Z00001-9 SumList.xlsx" />
+          </Component>
+          <Component>
+              <File Source="..\Release\Excel\0000Z00021-1 Price_Details_decimal_LT.xlsx" />
+          </Component>
+          <Component>
+              <File Source="..\Release\Excel\0000Z00021-1 SumList_decimal_LT.xlsx" />
+          </Component>
+          <Component>
+              <File Source="..\Release\Excel\0000Z00021-2 Price_Details_decimal_US.xlsx" />
+          </Component>
+          <Component>
+              <File Source="..\Release\Excel\0000Z00021-2 SumList_decimal_US_.xlsx" />
+          </Component>
+          <Component>
+              <File Source="..\Release\Excel\0000Z00021-3 Price_Details_decimal_Mix.xlsx" />
+          </Component>
+          <Component>
+              <File Source="..\Release\Excel\0000Z00021-3 SumList__decimal_Mix.xlsx" />
+          </Component>
+      </ComponentGroup>
+
+     <ComponentGroup Id="ApplicationComponents" Directory="DesktopFolder">
+         <Component Id="ApplicationShortcutDesktop" Guid="D5C6C12C-CE81-418F-914F-92B853177C76">
+             <Shortcut Id="ApplicationDesktopShortcut"
+                       Name="Alu2Prefsuite"
+                       Description="Import Aluminium Files into PrefSuite"
+                       Target="[INSTALLFOLDER]a2p.WinForm.exe"
+                       WorkingDirectory="INSTALLFOLDER"/>
+             <RemoveFolder Id="DesktopFolder" On="uninstall"/>
+             <RegistryValue Root="HKCU"
+                            Key="Software\!(bind.Property.Manufacturer)\[ProductName]"
+                            Name="installed"
+                            Type="integer"
+                            Value="1"
+                            KeyPath="yes"/>
+         </Component>
+     </ComponentGroup>
+  </Fragment>
+</Wix>

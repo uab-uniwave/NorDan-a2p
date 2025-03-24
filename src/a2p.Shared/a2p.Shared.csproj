@@ -4,14 +4,10 @@
 		<TargetFramework>net8.0-Windows</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-    <BaseOutputPath>..\..\build\</BaseOutputPath>
-    <OutputPath>$(BaseOutputPath)$(Configuration)\a2p.sShared\</OutputPath>
-
-    <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
 		<OutputType>Library</OutputType>
 		<Version>$(VersionPrefix)</Version>
-		<Configurations>Debug;Release;Test</Configurations>
-		<Platforms>AnyCPU;x64</Platforms>
+		<Configurations>Debug;Release</Configurations>
+		<Platforms>x64</Platforms>
 	</PropertyGroup>
 
 
@@ -91,22 +87,22 @@
 
 	<ItemGroup>
 		<None Update="appsettings.json">
-  	
+		
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="appsettings.Development.json">
+	<ItemGroup>
+		<None Update="appsettings.Development.json">
 
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+
+
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
 
 	</Target>
 

@@ -22,7 +22,6 @@ namespace a2p.Shared.Infrastructure.Services
         private IProgress<ProgressValue>? _progress;
         private int _errorCount = 0;
         private int _warningCount = 0;
-        private int _progressCounter;
 
         public PrefSuiteService(ILogService logService, ISqlRepository sqlRepository, DataCache dataCache)
         {
@@ -92,7 +91,6 @@ namespace a2p.Shared.Infrastructure.Services
         {
             _progressValue = progressValue;
             _progress = progress ?? new Progress<ProgressValue>();
-            _progressCounter = 0;
             try
             {
 
@@ -267,7 +265,7 @@ namespace a2p.Shared.Infrastructure.Services
 
                         if (a2pOrders[j].Items.Any() && a2pOrders[j].Import == true)
                         {
-                            _progressValue.ProgressTask1 = $"Inserting PrefSuite orders {j + 1} of {a2pOrders[j]} - Order # {a2pOrders[j].Order} {a2pOrders[j].SalesDocumentNumber}/{a2pOrders[j].SalesDocumentVersion}";
+                            _progressValue.ProgressTask1 = $"Inserting PrefSuite orders {j + 1} of {a2pOrders.Count} - Order # {a2pOrders[j].Order} {a2pOrders[j].SalesDocumentNumber}/{a2pOrders[j].SalesDocumentVersion}";
                             _progress?.Report(progressValue);
                             ordersCounter++;
 

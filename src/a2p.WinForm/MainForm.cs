@@ -5,7 +5,6 @@ using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 
 using a2p.Shared.Application.Domain.Entities;
-using a2p.Shared.Application.Domain.Enums;
 using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Application.Models;
 using a2p.Shared.Infrastructure.Interfaces;
@@ -35,7 +34,6 @@ namespace a2p.WinForm
 
         private static ProgressValue? _progressValue;
         private IProgress<ProgressValue> _progress;
-        private static ProcessType _processType = ProcessType.None;
         private ToolTip _toolTip;
         private readonly OrdersForm _orderForm;
         private readonly LogForm _logForm;
@@ -485,7 +483,6 @@ namespace a2p.WinForm
 
             await Task.Run(DisableButtons); // Disable buttons at the beginning
             plSideBarMain.SuspendLayout(); // Suspend layout before expanding
-            _processType = ProcessType.FileImport;
 
             try
             {
@@ -513,7 +510,7 @@ namespace a2p.WinForm
             try
             {
                 await Task.Run(DisableButtons); // Disable buttons at the beginning
-                _processType = ProcessType.LogRefresh;
+
 
                 await ShowFormAsync(_orderForm,
                      () => new OrdersForm(_userSettingsService, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService, _dataCache));
@@ -526,7 +523,7 @@ namespace a2p.WinForm
             }
             finally
             {
-                _processType = ProcessType.None;
+
                 _orderForm.lbTitle.Text = "IMPORTED";
 
                 await Task.Run(EnableButtons); // Enable buttons at the end 
@@ -544,7 +541,6 @@ namespace a2p.WinForm
 
                 await ShowFormAsync(_logForm,
                   () => new LogForm(_userSettingsService, _logService));
-                _processType = ProcessType.LogRefresh;
 
                 await _logForm.LogRefreshAsync();
 
@@ -556,7 +552,6 @@ namespace a2p.WinForm
             }
             finally
             {
-                _processType = ProcessType.None;
 
                 await Task.Run(EnableButtons);
 

@@ -253,28 +253,35 @@ namespace a2p.WinForm.ChildForms
 
         private string BuildConnectionStringFromForm()
         {
-            var builder = new SqlConnectionStringBuilder
+            try
             {
-                DataSource = txbServerName.Text,
-                InitialCatalog = txbDatabaseName.Text,
-                IntegratedSecurity = chxTrusted.Checked
-            };
+                var builder = new SqlConnectionStringBuilder
+                {
+                    DataSource = txbServerName.Text,
+                    InitialCatalog = txbDatabaseName.Text,
+                    IntegratedSecurity = chxTrusted.Checked
+                };
 
-            if (!chxTrusted.Checked)
-            {
-                // Retrieve username and password from UserSecrets
-                string username = _configuration["DbUsername"];
-                string password = _configuration["DbPassword"];
+                if (chxTrusted.Checked == false)
+                {
+                    // Retrieve username and password from UserSecrets
+                    string username = _configuration["DbUsername"];
+                    string password = _configuration["DbPassword"];
 
-                builder.UserID = username;
-                builder.Password = password;
+                    builder.UserID = username;
+                    builder.Password = password;
+                }
+
+                builder.TrustServerCertificate = true; // Optional, based on your defaults
+                builder.Encrypt = false;
+                builder.ConnectTimeout = 30;
+                return builder.ToString();
             }
-
-            builder.TrustServerCertificate = true; // Optional, based on your defaults
-            builder.Encrypt = false;
-            builder.ConnectTimeout = 30;
-
-            return builder.ToString();
+            catch
+            {
+                _logService.Error("Check Settings. User name password, SQL Server and DB!");
+                return "";
+            }
         }
 
         public string ExtractValueFromConnectionString(string key)

@@ -45,6 +45,8 @@
     <PackageVersion Include="Serilog.Sinks.EventLog" Version="4.0.1-dev-00087" />
     <PackageVersion Include="Serilog.Sinks.File" Version="6.0.0" />
     <PackageVersion Include="Serilog.Sinks.Seq" Version="9.0.0" />
+    <PackageVersion Include="WixToolset.Util.wixext" Version="5.0.2" />
+    <PackageVersion Include="WixToolset.Netfx.wixext" Version="5.0.2" />
 
   </ItemGroup> 
 </Project>

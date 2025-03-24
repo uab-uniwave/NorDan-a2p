@@ -21,14 +21,21 @@ namespace a2p.Shared.Infrastructure.Services
 
         public SqlRepository(IUserSettingsService userSettingsService, ILogService logService)
         {
+            try
+            {
+                _userSettingsService = userSettingsService;
 
-            _userSettingsService = userSettingsService;
+                _appSettings = _userSettingsService.LoadSettings();
 
-            _appSettings = _userSettingsService.LoadSettings();
-
-            _settingsContainer = _userSettingsService.LoadAllSettings();
-            _connectionString = _settingsContainer.ConnectionStrings["DefaultConnection"] ?? string.Empty;
-            _logService = logService ?? throw new ArgumentNullException(nameof(logService));
+                _settingsContainer = _userSettingsService.LoadAllSettings();
+                _connectionString = _settingsContainer.ConnectionStrings["DefaultConnection"] ?? string.Empty;
+                _logService = logService ?? throw new ArgumentNullException(nameof(logService));
+            }
+            catch (Exception ex)
+            {
+                _logService = logService;
+                _logService.Error(ex.Message, "SQL Repository: Unhandled error initializing SQL Repository. Please check Settings.");
+            }
         }
         /// <summary>
         /// Executes a SQL command and returns a DataTable (useful for SELECT queries).

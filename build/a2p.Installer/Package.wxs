@@ -1,22 +1,38 @@
-﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
-  <Package Name="a2p.Installer !(bind.Property.Version)" Manufacturer="Uniwave UAB" Version="1.0.0.1"  UpgradeCode="c41837b1-3ac0-4fb3-b178-9433e536d4c3">
-    <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+  <Package Name="Alu2PrefSuite" Manufacturer="Uniwave UAB" Version="1.0.0.6" UpgradeCode="fb75dc18-d78c-4129-9bc6-916cbc626645">
+      <ui:WixUI
+        Id="WixUI_Minimal"
+            
+  />
+      <WixVariable
+        Id="WixUIDialogBmp"
+        Value="Images\WixUIDialogBmp_493_312.png"
+  />
+      <WixVariable
+        Id="WixUIBannerBmp"
+        Value="Images\WixUIBannerBmp_493_58.png"
+  />
 
-    <Feature Id="Application ">
-      <ComponentGroupRef Id="ExampleComponents" />
-    <ComponentGroupRef Id="ComponentsProduct" />
-    <ComponentGroupRef Id="ComponentsSQL" />
-    <ComponentGroupRef Id="ComponenetsExecutable" />
+
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+      <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="ApplicationFeature">
+      <ComponentGroupRef Id="Components" />
+      <ComponentGroupRef Id="SQL" />
+     <ComponentGroupRef Id="ApplicationComponents" />
+     <ComponentGroupRef Id="ExcelFiles" />
+        <ComponentGroupRef Id="PrefSuiteBackupFile" />
+        <ComponentGroupRef Id="RuntimeWinx64" />
+        <ComponentGroupRef Id="RuntimeWin" />
+        
     </Feature>
-    <Feature Id ="Test Cases">
-          <ComponentGroupRef Id="ComponentsExcel" />
-   </Feature>
+
+
+  
   </Package>
 
 
-
-
-
-
-    
 </Wix>

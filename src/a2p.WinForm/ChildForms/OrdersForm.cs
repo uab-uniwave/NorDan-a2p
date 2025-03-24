@@ -10,7 +10,6 @@ using a2p.Shared.Application.Models;
 using a2p.Shared.Core.DTO.a2p.Shared.Core.DTO;
 using a2p.Shared.Infrastructure.Interfaces;
 
-
 namespace a2p.WinForm.ChildForms
 {
     public partial class OrdersForm : Form
@@ -720,8 +719,8 @@ namespace a2p.WinForm.ChildForms
                     progressBarForm.Load += (sender, args) =>
                     {
                         progressBarForm.Location = new Point(
-                            Location.X + (Width - progressBarForm.Width) / 2,
-                            Location.Y + (Height - progressBarForm.Height) / 2
+                            Location.X + ((Width - progressBarForm.Width) / 2),
+                            Location.Y + ((Height - progressBarForm.Height) / 2)
                         );
                     };
 
@@ -861,8 +860,8 @@ namespace a2p.WinForm.ChildForms
                     progressBarForm.Load += (sender, args) =>
                     {
                         progressBarForm.Location = new Point(
-                            Location.X + (Width - progressBarForm.Width) / 2,
-                            Location.Y + (Height - progressBarForm.Height) / 2
+                            Location.X + ((Width - progressBarForm.Width) / 2),
+                            Location.Y + ((Height - progressBarForm.Height) / 2)
                             );
                         progressBarForm.progressBar.Style = ProgressBarStyle.Continuous;
                         progressBarForm.progressBar.ForeColor = Color.FromArgb(239, 112, 32);
@@ -1164,7 +1163,20 @@ namespace a2p.WinForm.ChildForms
             _dataTable.Rows.Clear();
 
             List<A2POrder> a2pOrders = _dataCache.GetAllOrders();
-
+            int orderCount = 0;
+            int fileCount = 0;
+            int worksheetCount = 0;
+            int itemCount = 0;
+            int quantity = 0;
+            double area = 0;
+            double weight = 0;
+            double hours = 0;
+            double cost = 0;
+            double amount = 0;
+            int materialCount = 0;
+            int warningCount = 0;
+            int errorCount = 0;
+            int fatalCount = 0;
             foreach (A2POrder a2pOrder in a2pOrders)
             {
 
@@ -1194,20 +1206,7 @@ namespace a2p.WinForm.ChildForms
                 try
                 {
 
-                    int orderCount = 0;
-                    int fileCount = 0;
-                    int worksheetCount = 0;
-                    int itemCount = 0;
-                    int quantity = 0;
-                    double area = 0;
-                    double weight = 0;
-                    double hours = 0;
-                    double  cost = 0;
-                    double  amount = 0;
-                    int materialCount = 0;
-                    int warningCount = 0;
-                    int errorCount = 0;
-                    int fatalCount = 0;
+
 
                     lbInfoOrdersCount.Text = orderCount.ToString();
                     lbInfoFilesCount.Text = fileCount.ToString();

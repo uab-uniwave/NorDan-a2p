@@ -32,6 +32,7 @@ namespace a2p.WinForm
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SplashScreenForm));
             panel1 = new Panel();
             panel2 = new Panel();
             panel4 = new Panel();
@@ -63,10 +64,9 @@ namespace a2p.WinForm
             panel1.TabIndex = 0;
             // 
             // panel2
-
-            var resources = new System.ComponentModel.ComponentResourceManager(typeof(SplashScreenForm));
+            // 
             panel2.BackColor = Color.Transparent;
-            panel2.BackgroundImage = (Image)resources.GetObject("NordanLogoInversed");
+            panel2.BackgroundImage = (Image)resources.GetObject("panel2.BackgroundImage");
             panel2.BackgroundImageLayout = ImageLayout.Zoom;
             panel2.Dock = DockStyle.Fill;
             panel2.Location = new Point(0, 90);
@@ -187,8 +187,7 @@ namespace a2p.WinForm
             // 
             // plUniwaveHeaderLogo
             // 
-         
-            plUniwaveHeaderLogo.BackgroundImage = (Image) resources.GetObject("UniwaveLogo");
+            plUniwaveHeaderLogo.BackgroundImage = Resources.UniwaveLogo;
             plUniwaveHeaderLogo.BackgroundImageLayout = ImageLayout.Zoom;
             plUniwaveHeaderLogo.Dock = DockStyle.Top;
             plUniwaveHeaderLogo.Location = new Point(994, 6);
@@ -222,7 +221,7 @@ namespace a2p.WinForm
             label1.Name = "label1";
             label1.Size = new Size(160, 40);
             label1.TabIndex = 10;
-            label1.Text = "v.1.0.0.1";
+            label1.Text = "v.1.0.0.6";
             label1.TextAlign = ContentAlignment.MiddleCenter;
             label1.UseWaitCursor = true;
             // 

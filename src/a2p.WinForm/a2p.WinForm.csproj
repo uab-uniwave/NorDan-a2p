@@ -10,21 +10,26 @@
      <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
      <!--<ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>-->
 <!--<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>	-->
-    
 
-     
-     
- <BaseOutputPath>..\..\build\</BaseOutputPath>
-    <OutputPath>$(BaseOutputPath)$(Configuration)\a2p.WinForm\</OutputPath>
+ 
 
  
  <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
  <ApplicationIcon>Icon.ico</ApplicationIcon>
  <Configurations>Debug;Release</Configurations>
- <Platforms>AnyCPU;x64</Platforms>
+ <Platforms>x64</Platforms>
  </PropertyGroup>
 
- <ItemGroup>
+
+  <PropertyGroup>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <BaseOutputPath>..\..\build\</BaseOutputPath>
+    <OutputPath>$(BaseOutputPath)\$(Configuration)\$(ProjectName)\</OutputPath>
+    <PackageIcon>128_128.png</PackageIcon>
+  </PropertyGroup>
+
+
+  <ItemGroup>
  <Compile Remove="ChildForms\MainForm.cs" />
  <Compile Remove="ChildForms\MainForm.Designer.cs" />
  <Compile Remove="Mappers\A2PLogRecord.cs" />
@@ -92,9 +97,23 @@
         </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Resources\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="..\a2p.GraphicAssets\Icons\AppIcons\128_128.png">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
+    </ItemGroup>
+
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="xcopy /Y /I ..\..\src\a2p.DataAssets\SQL $(OutputPath)\SQL" />
     <Exec Command="xcopy /Y /I ..\..\src\a2p.DataAssets\Excel $(OutputPath)\Excel" />
+    <Exec Command="xcopy /Y /I ..\..\src\a2p.DataAssets\PrefSuiteBackup $(OutputPath)\PrefSuiteBackup" />
+
+
   </Target>
 
 </Project>

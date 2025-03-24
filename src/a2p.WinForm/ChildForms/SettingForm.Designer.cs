@@ -26,6 +26,7 @@
 
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingForm));
             chxLoadOnStart = new CheckBox();
             btnSave = new Button();
             btnWorkingFolder = new Button();
@@ -535,9 +536,11 @@
             Controls.Add(tlpSettings);
             ForeColor = Color.FromArgb(248, 248, 249);
             FormBorderStyle = FormBorderStyle.None;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(20, 108, 20, 20);
             MinimumSize = new Size(640, 640);
             Name = "SettingForm";
+            Text = "A2P-Settings Form";
             Load += SettingForm_Load;
             Shown += SettingForm_Shown;
             tlpSettings.ResumeLayout(false);

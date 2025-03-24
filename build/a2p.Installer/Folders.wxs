@@ -1,25 +1,26 @@
 ﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
-  <Fragment>
-    <StandardDirectory Id="ProgramFiles6432Folder">
-      <Directory Id="INSTALLFOLDER" Name="!(bind.Property.Manufacturer) !(bind.Property.ProductName)" />
-        <Directory Id="Excel" Name="Test Cases" />
-        <Directory Id="Excel" Name="SQL" />
-    </StandardDirectory>
-     <StandardDirectory Id= "DesktopFolder" >
-         <Component Location="source"  Id="DesktopShortcut" Guid="1e1ab27b-4f03-44d3-885a-643730675866" KeyPath="yes" Directory="DesktopFolder" Feature="Application" UninstallWhenSuperseded="yes" WorkingFolder ="INSTALLFOLDER"/>
-                        </Component>
-     
-     </StandardDirectory>
-  </Fragment>
-</Wix
+    <Fragment>
+        <StandardDirectory Id="ProgramFiles6432Folder">
+            <Directory Id="ManufacturerFolder" Name="!(bind.Property.Manufacturer)">
+                <Directory Id="INSTALLFOLDER" Name="!(bind.Property.ProductName)">
 
+                    <Directory Id="runtimesFolder" Name="runtimes" >
+                        <Directory Id="win_x64Folder" Name="win-x64">
+                            <Directory Id="nativeFolder" Name="native" />
+                        </Directory>
+                        <Directory Id="winFolder" Name="win">
+                            <Directory Id="libFolder" Name="lib">
+                                <Directory Id="net8_0Folder" Name="net8.0" />
+                            </Directory>
+                        </Directory>
+                    </Directory>
+                    <Directory Id="ExcelFolder" Name="Excel" />
+                    <Directory Id="SQLFolder" Name="SQL" />
+                    <Directory Id="PrefSuiteBackupFolder" Name="PrefSuiteBackup" />
+                    <!-- <Directory Id="PrefSuiteBackupFolder" Name="PrefSuiteBackup" /> -->
 
-
-    <!--
-
-       <Component Id="ApplicationShortcut" Guid="1e1ab27b-4f03-44d3-885a-643730675866">
-            
-                <RegistryValue Root="HKCU" Key="Software\MANUFACTURER\Alu2Prefsuite" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
-            </Component>
-
--->
+                            </Directory>
+            </Directory>
+        </StandardDirectory>
+    </Fragment>
+</Wix>

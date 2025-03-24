@@ -1,6 +1,6 @@
 ﻿param (
-    [string]$sourcePath = ".\Output\Release\net8.0-windows",
-    [string]$outputPath = ".\src\a2p.Installer"
+    [string]$sourcePath = "C:\Repos\Nordan-Alu2Prefsuite\build\Release",
+    [string]$outputPath = "C:\Repos\Nordan-Alu2Prefsuite\build\a2p.Installer"
 )
 
 # Resolve the paths to absolute paths
@@ -8,8 +8,8 @@ $sourcePath = (Resolve-Path -Path $sourcePath).Path
 $outputPath = (Resolve-Path -Path $outputPath).Path
 
 # Define the output file paths
-$outputFilePath = Join-Path -Path $outputPath -ChildPath "Components.wxs"
-$productFilePath = Join-Path -Path $outputPath -ChildPath "Product.wxs"
+$outputFilePath = Join-Path -Path $outputPath -ChildPath "ComponentsExcelTemp3.wxs"
+$productFilePath = Join-Path -Path $outputPath -ChildPath "Product3.wxs"
 
 # Clear Host
 Clear-Host

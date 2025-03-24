@@ -14,7 +14,7 @@ namespace a2p.Shared.Infrastructure.Services
     public class UserSettingsService : IUserSettingsService
     {
 
-        private readonly string _appName = "Aluminum2PrefSuite";
+        private readonly string _appName = "Alu2PrefSuite";
         private readonly string _settingsFile;
         private readonly string _defaultSettingsFile;
 
@@ -34,8 +34,8 @@ namespace a2p.Shared.Infrastructure.Services
             {
                 File.Copy(_defaultSettingsFile, _settingsFile);
             }
-        }
 
+        }
 
         public void SaveSettings(AppSettings updatedAppSettings)
         {
@@ -70,7 +70,7 @@ namespace a2p.Shared.Infrastructure.Services
         {
             var settings = new SettingsContainer();
             IConfigurationRoot config = new ConfigurationBuilder()
-                .AddJsonFile(_settingsFile, optional: false, reloadOnChange: false)
+                .AddJsonFile(_settingsFile, optional: false, reloadOnChange: true)
                 .Build();
 
             config.Bind(settings); // Binds both AppSettings and ConnectionStrings at root level
@@ -88,11 +88,9 @@ namespace a2p.Shared.Infrastructure.Services
             return settings;
         }
 
-
-
         public string LoadSerilogMinimumLevel()
         {
-            var jsonText = File.ReadAllText(_settingsFile);
+            string jsonText = File.ReadAllText(_settingsFile);
             var json = JsonNode.Parse(jsonText);
 
             return json?["Serilog"]?["MinimumLevel"]?["Default"]?.ToString() ?? "Information";
@@ -100,17 +98,20 @@ namespace a2p.Shared.Infrastructure.Services
 
         public void SaveSerilogMinimumLevel(string level)
         {
-            var jsonText = File.ReadAllText(_settingsFile);
+            string jsonText = File.ReadAllText(_settingsFile);
             var json = JsonNode.Parse(jsonText) as JsonObject;
 
-            if (json == null)
-                json = new JsonObject();
+            json ??= [];
 
             if (json["Serilog"] is not JsonObject serilogNode)
-                serilogNode = new JsonObject();
+            {
+                serilogNode = [];
+            }
 
             if (serilogNode["MinimumLevel"] is not JsonObject levelNode)
-                levelNode = new JsonObject();
+            {
+                levelNode = [];
+            }
 
             levelNode["Default"] = level;
             serilogNode["MinimumLevel"] = levelNode;

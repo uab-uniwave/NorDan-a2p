@@ -7,18 +7,18 @@ namespace a2p.Shared.Application.DTO
     public class ItemDTO
     {
         public string SalesDocumentIdPos { get; set; } = Guid.NewGuid().ToString();
-        [Required, MaxLength(50)] required public string Order { get; set; } = string.Empty;
-        [Required, MaxLength(255)] required public string Worksheet { get; set; } = string.Empty;
-        [Required] required public int Line { get; set; } = -1;
-        [Required] required public int Column { get; set; } = -1;
+        [MaxLength(50)] public string Order { get; set; } = string.Empty;
+        [MaxLength(255)] public string Worksheet { get; set; } = string.Empty;
+         public int Line { get; set; } = -1;
+       public int Column { get; set; } = -1;
         //============================================================================================================================
         [MaxLength(50)] public string? Project { get; set; }
 
-        [Required, MaxLength(50)] required public string Item { get; set; } = string.Empty;
-        [Required] required public int SortOrder { get; set; } = -1;
+        [ MaxLength(50)] public string Item { get; set; } = string.Empty;
+         public int SortOrder { get; set; } = -1;
         [MaxLength(255)] public string? Description { get; set; }
         //============================================================================================================================
-        [Required] required public int Quantity { get; set; } = 0;
+        public int Quantity { get; set; } = 0;
         //============================================================================================================================
         public double Width { get; set; } = 0;
         public double Height { get; set; } = 0;
@@ -48,8 +48,8 @@ namespace a2p.Shared.Application.DTO
         public double  Price { get; set; } = 0;
         public double  TotalPrice { get; set; } = 0;
         //============================================================================================================================
-        public required string CurrencyCode { get; set; } = "NOK";
-        public double  ExchangeRateEUR { get; set; } = 1;
+        public string CurrencyCode { get; set; } = "Unknown";
+        public double ExchangeRateEUR { get; set; } = 1;
 
         //============================================================================================================================
         public double  MaterialCostEUR { get; set; } = 0;
@@ -63,7 +63,7 @@ namespace a2p.Shared.Application.DTO
         public double  PriceEUR { get; set; } = 0;
         public double  TotalPriceEUR { get; set; } = 0;
         //============================================================================================================================
-        [Required] required public WorksheetType WorksheetType { get; set; } = 0;
+        public WorksheetType WorksheetType { get; set; } = 0;
 
     }
 }

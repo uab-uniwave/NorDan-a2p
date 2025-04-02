@@ -233,6 +233,7 @@ namespace a2p.Shared.Infrastructure.Services
             catch (Exception ex)
             {
                 _logService.Error("Write Service: Unhandled error: Inserting Sapa v2 itemDTO to DB. Exception { $Exception}", ex.Message);
+                InsertWriteError(a2pOrder.Order, ErrorLevel.Error, ErrorCode.DatabaseDelete_Data, $"Order: {a2pOrder.Order}. Error deleting items from DB. {ex.Message}");
             }
         }
         private async Task InsertMaterialsAsync(A2POrder a2pOrder)
@@ -437,6 +438,7 @@ namespace a2p.Shared.Infrastructure.Services
             {
 
                 _logService.Error(ex, "Unhandled error: inserting Sapa v2 Material to DB");
+                
                 return -1;
 
             }

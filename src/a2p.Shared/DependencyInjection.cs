@@ -41,15 +41,15 @@ namespace a2p.Shared
             _ = services.AddSingleton<DataCache>();
             _ = services.AddSingleton<IUserSettingsService, UserSettingsService>();
             _ = services.AddSingleton<SettingsManager>();
-            _ = services.AddSingleton<IOrderReadProcessor, OrderReadProcessor>();
-            _ = services.AddSingleton<IExcelReadService, ExcelReadService>();
+            _ = services.AddSingleton<IReadService, ReadService>();
+            _ = services.AddSingleton<IExcelService, ExcelService>();
             _ = services.AddSingleton<IPrefSuiteService, PrefSuiteService>();
-            _ = services.AddSingleton<IWriteService, WriteService>();
+            _ = services.AddSingleton<ISQLRepository, SQLRepository>();
             _ = services.AddSingleton<IFileService, FileService>();
             _ = services.AddSingleton<IMapperSapaV1, MapperSapaV1>();
             _ = services.AddSingleton<IMapperSapaV2, MapperSapaV2>();
             _ = services.AddSingleton<IMapperSchuco, MapperSchuco>();
-            _ = services.AddSingleton<ISqlRepository, SqlRepository>();
+            _ = services.AddSingleton<ISQLService, SQLService>();
 
             return services.BuildServiceProvider();
         }

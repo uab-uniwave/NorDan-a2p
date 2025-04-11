@@ -1,19 +1,13 @@
-﻿using a2p.Shared.Application.Domain.Enums;
+using a2p.Shared.Application.Domain.Enums;
 
 namespace a2p.Shared.Application.Domain.Entities
 {
-    public class A2POrderError
+    public class A2PError
     {
-        required public string Order { get; set; }
+        public string Order { get; set; } = string.Empty;
+        public ErrorLevel Level { get; set; } = ErrorLevel.Fatal;
+        public ErrorCode Code { get; set; } = ErrorCode.Application;
+        public string Message { get; set; } = string.Empty;
 
-
-        required public ErrorLevel Level { get; set; }
-        required public ErrorCode Code { get; set; }
-
-
-        required public string Message { get; set; }
-
-
-    
     }
 }

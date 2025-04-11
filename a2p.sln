@@ -24,6 +24,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{58E421E3-1FDA-4904-8877-B0639EB6CF9D}"
 	ProjectSection(SolutionItems) = preProject
 		src\a2p.DataAssets\SQL\CleanDB.sql = src\a2p.DataAssets\SQL\CleanDB.sql
+		Functions.sql = Functions.sql
 		src\a2p.DataAssets\SQL\Procedures.sql = src\a2p.DataAssets\SQL\Procedures.sql
 		src\a2p.DataAssets\SQL\Tables.sql = src\a2p.DataAssets\SQL\Tables.sql
 		src\a2p.DataAssets\SQL\Test.sql = src\a2p.DataAssets\SQL\Test.sql
@@ -159,6 +160,7 @@ Project("{B7DD6F7E-DEF8-4E67-B5B7-07EF123DB6F0}") = "a2p.Installer", "build\a2p.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{80D579FC-77B1-4965-934F-61FBE27F9DF2}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		DirectoryPackages.props.xml = DirectoryPackages.props.xml
 	EndProjectSection
 EndProject
@@ -170,50 +172,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{9368B7
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|ARM64 = Debug|ARM64
 		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
-		Release|ARM64 = Release|ARM64
 		Release|x64 = Release|x64
-		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|ARM64.ActiveCfg = Debug|x64
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|ARM64.Build.0 = Debug|x64
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x64.ActiveCfg = Debug|x64
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x64.Build.0 = Debug|x64
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x86.ActiveCfg = Debug|x64
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x86.Build.0 = Debug|x64
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|ARM64.ActiveCfg = Release|x64
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|ARM64.Build.0 = Release|x64
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x64.ActiveCfg = Release|x64
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x64.Build.0 = Release|x64
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x86.ActiveCfg = Release|x64
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x86.Build.0 = Release|x64
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|ARM64.ActiveCfg = Debug|x64
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|ARM64.Build.0 = Debug|x64
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x64.ActiveCfg = Debug|x64
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x64.Build.0 = Debug|x64
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x86.ActiveCfg = Debug|x64
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x86.Build.0 = Debug|x64
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|ARM64.ActiveCfg = Release|x64
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|ARM64.Build.0 = Release|x64
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x64.ActiveCfg = Release|x64
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x64.Build.0 = Release|x64
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x86.ActiveCfg = Release|x64
-		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x86.Build.0 = Release|x64
-		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Debug|ARM64.ActiveCfg = Debug|ARM64
-		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Debug|ARM64.Build.0 = Debug|ARM64
 		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Debug|x64.ActiveCfg = Debug|x64
 		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Debug|x64.Build.0 = Debug|x64
-		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Debug|x86.ActiveCfg = Debug|x86
-		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Debug|x86.Build.0 = Debug|x86
-		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Release|ARM64.ActiveCfg = Release|ARM64
-		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Release|ARM64.Build.0 = Release|ARM64
 		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Release|x64.ActiveCfg = Release|x64
 		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Release|x64.Build.0 = Release|x64
-		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Release|x86.ActiveCfg = Release|x86
-		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

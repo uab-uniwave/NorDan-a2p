@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Drawing.Drawing2D;
@@ -8,10 +8,7 @@ using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Application.Models;
 using a2p.Shared.Infrastructure.Interfaces;
-
 using a2p.WinForm.ChildForms;
-
-using Microsoft.Extensions.Configuration;
 
 using Newtonsoft.Json;
 
@@ -24,13 +21,14 @@ namespace a2p.WinForm
         private int borderWidth = 1;
         private Button? selectedButton = null;
 
-        private readonly IOrderReadProcessor _orderReadProcessor;
-        private readonly IExcelReadService _excelReadService;
-        private readonly IWriteService _orderProcessingService;
+        private readonly IReadService _readService;
+        private readonly IWriteService _writeService;
+        private readonly IExcelService _excelService;
+        private readonly ISQLRepository _sqlRepository;
         private readonly IUserSettingsService _userSettingsService;
         private readonly ILogService _logService;
-        private readonly IFileService _fileService;
         private readonly DataCache _dataCache;
+        private readonly IFileService _fileService;
 
         private static ProgressValue? _progressValue;
         private IProgress<ProgressValue> _progress;
@@ -57,15 +55,20 @@ namespace a2p.WinForm
 
         #endregion -== Custom Form Design Componenets ==-
 
-        public MainForm(IOrderReadProcessor orderReadProcessor, IExcelReadService excelReadService, IWriteService orderProcessingService,
-            IConfiguration configuration, ILogService logService, IFileService fileService, DataCache dataCache, IUserSettingsService userSettingsService)
+        public MainForm(IReadService readService,
+                        IExcelService excelService,
+                        ISQLRepository sqlRepository,
+                        ILogService logService,
+                        IFileService fileService,
+                        IUserSettingsService userSettingsService,
+                        IWriteService writeService)
         {
-            _orderReadProcessor = orderReadProcessor;
-            _excelReadService = excelReadService;
-            _orderProcessingService = orderProcessingService;
+            _readService = readService;
+            _writeService = writeService;
+            _excelService = excelService;
             _logService = logService;
+            _dataCache = new DataCache(logService);
             _fileService = fileService;
-            _dataCache = dataCache;
             _userSettingsService = userSettingsService;
             _appSettings = _userSettingsService.LoadSettings();
             _settingsContainer = _userSettingsService.LoadAllSettings();
@@ -73,7 +76,8 @@ namespace a2p.WinForm
             _progressValue = new ProgressValue();
             _progress = new Progress<ProgressValue>();
             _toolTip = new ToolTip();
-            _orderForm = new OrdersForm(userSettingsService, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService, _dataCache);
+            _orderForm = new OrdersForm(userSettingsService, _logService, _fileService, _excelService, _sqlRepository, _readService, _writeService, _dataCache);
+
             _logForm = new LogForm(userSettingsService, _logService);
             _settingForm = new SettingForm(_logService, _userSettingsService);
 
@@ -149,9 +153,9 @@ namespace a2p.WinForm
                 this.PerformAutoScale(); // Ensure everything is scaled correctly (optional)
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logService.Error(ex, "MF: Unhanded Error while loading main form");
+                _logService.Error("MF: Unhanded Error while loading main form");
 
             }
         }
@@ -162,7 +166,7 @@ namespace a2p.WinForm
             try
             {
                 await ShowFormAsync(_orderForm,
-                    () => new OrdersForm(_userSettingsService, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService, _dataCache));
+                    () => new OrdersForm(_userSettingsService, _logService, _fileService, _excelService, _sqlRepository, _readService, _writeService, _dataCache));
                 if (_appSettings.RefreshFilesOnStartup)
                 {
 
@@ -171,9 +175,9 @@ namespace a2p.WinForm
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logService.Error(ex, "MF: Unhanded Error while showing main form");
+                _logService.Error("MF: Unhanded Error while showing main form");
             }
             finally
             {
@@ -220,7 +224,7 @@ namespace a2p.WinForm
                 float dpiX = g.DpiX; // Get DPI X (horizontal)
                 float dpiY = g.DpiY; // Get DPI Y (vertical)
 
-                _ = MessageBox.Show($@"Current DPI: {dpiX} x {dpiY}", "DPI Debug",
+                _ = MessageBox.Show($@"Current DPI: {dpiX} x {dpiY}", "DPI Debug(",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 Console.WriteLine($"Current DPI: {dpiX} x {dpiY}");
@@ -271,10 +275,20 @@ namespace a2p.WinForm
             }
         }
 
-        private void MainForm_FormClosed(object sender, FormClosedEventArgs e) => _logService.DeleteLogFiles();
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            _logService.DeleteLogFiles();
+        }
 
-        private void MainForm_ResizeBegin(object sender, EventArgs e) => this.SuspendLayout();
-        private void MainForm_ResizeEnd(object sender, EventArgs e) => this.PerformLayout();
+        private void MainForm_ResizeBegin(object sender, EventArgs e)
+        {
+            this.SuspendLayout();
+        }
+
+        private void MainForm_ResizeEnd(object sender, EventArgs e)
+        {
+            this.PerformLayout();
+        }
 
         //=============================================================================
         //  -== Child Forms Methods ==-
@@ -427,7 +441,7 @@ namespace a2p.WinForm
             try
             {
 
-                Image? image = (Image?)Properties.Resources.ResourceManager.GetObject(imageName);
+                Image? image = (Image?) Properties.Resources.ResourceManager.GetObject(imageName);
                 return image ?? null;
             }
             catch
@@ -469,11 +483,17 @@ namespace a2p.WinForm
 
         // Minimize window
         //============================================================
-        private void btMinimize_Click(object sender, EventArgs e) => this.WindowState = FormWindowState.Minimized;
+        private void btMinimize_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
+        }
 
         // Close window
         //===============================================================
-        private void btClose_Click(object sender, EventArgs e) => Application.Exit();
+        private void btClose_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
 
         //SideBar buttons
         //================================================================
@@ -487,7 +507,7 @@ namespace a2p.WinForm
             try
             {
                 await ShowFormAsync(_orderForm,
-                    () => new OrdersForm(_userSettingsService, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService, _dataCache));
+                        () => new OrdersForm(_userSettingsService, _logService, _fileService, _excelService, _sqlRepository, _readService, _writeService, _dataCache));
 
                 await _orderForm.OrdersLoad();
 
@@ -511,9 +531,8 @@ namespace a2p.WinForm
             {
                 await Task.Run(DisableButtons); // Disable buttons at the beginning
 
-
                 await ShowFormAsync(_orderForm,
-                     () => new OrdersForm(_userSettingsService, _orderProcessingService, _logService, _orderReadProcessor, _excelReadService, _fileService, _dataCache));
+                         () => new OrdersForm(_userSettingsService, _logService, _fileService, _excelService, _sqlRepository, _readService, _writeService, _dataCache));
                 await _orderForm.ImportAsync();
             }
             catch (Exception ex)
@@ -540,7 +559,7 @@ namespace a2p.WinForm
                 await Task.Run(DisableButtons); // Disable buttons at the beginning
 
                 await ShowFormAsync(_logForm,
-                  () => new LogForm(_userSettingsService, _logService));
+                        () => new LogForm(_userSettingsService, _logService));
 
                 await _logForm.LogRefreshAsync();
 
@@ -549,6 +568,7 @@ namespace a2p.WinForm
             {
                 _ = MessageBox.Show($@"An error occurred during the import: {ex.Message}", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             }
             finally
             {
@@ -561,10 +581,16 @@ namespace a2p.WinForm
 
         // SideBar Other Buttons
         //========================================================================
-        private async void BtnProperties_Click(object sender, EventArgs e) => await ShowFormAsync(_settingForm,
+        private async void BtnProperties_Click(object sender, EventArgs e)
+        {
+            await ShowFormAsync(_settingForm,
                 () => new SettingForm(_logService, _userSettingsService));
+        }
 
-        private void BtnExit_Click(object sender, EventArgs e) => Application.Exit();
+        private void BtnExit_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
 
         //Buttons style
         //========================================================================

@@ -1,12 +1,12 @@
 ﻿
-
-/****** Object:  StoredProcedure [dbo].[Uniwave_a2p_DeleteMaterials]    Script Date: 2025-02-25 12:39:34 ******/
+/****** Object:  StoredProcedure [dbo].[Uniwave_a2p_DeleteExistingData]    Script Date: 2025-04-08 16:42:06 ******/
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
 
-ALTER   PROCEDURE [dbo].[Uniwave_a2p_DeleteExistsingData]
+CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_DeleteExistingData]
 	@SalesDocumentNumber int, 
 	@SalesDocumentVersion int
 AS
@@ -18,17 +18,10 @@ BEGIN
 	DELETE FROM ContenidoPAF Where Numero = @SalesDocumentNumber  and [Version] = @SalesDocumentVersion
     DELETE FROM MaterialNeeds  Where Number = @SalesDocumentNumber  and [Version] = @SalesDocumentVersion
 	DELETE FROM MaterialNeedsMaster Where Number = @SalesDocumentNumber  and [Version] = @SalesDocumentVersion
-
 END
 
 
-/****** Object:  StoredProcedure [dbo].[Uniwave_a2p_InsertItem]    Script Date: 2025-02-25 12:39:34 ******/
-SET ANSI_NULLS ON
 GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
 
 CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertItem]
 	@SalesDocumentNumber [int],
@@ -65,30 +58,30 @@ CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertItem]
 	@Hours [float]  null,
 	@TotalHours [float]  null,      
 	--==================  
-	@MaterialCost [double ](38, 6) null,
-	@LaborCost [double ](38, 6) null,
-	@Cost [double ](38, 6) null,
+	@MaterialCost [decimal](38, 6) null,
+	@LaborCost [decimal](38, 6) null,
+	@Cost [decimal](38, 6) null,
 	--==================  
-	@TotalMaterialCost [double ](38, 6) null,
-	@TotalLaborCost [double ](38, 6) null,
-	@TotalCost [double ](38, 6) null,
+	@TotalMaterialCost [decimal](38, 6) null,
+	@TotalLaborCost [decimal](38, 6) null,
+	@TotalCost [decimal](38, 6) null,
 	--==================  
-	@Price [double ](38, 6) null,
-	@TotalPrice [double ](38, 6) null,
+	@Price [decimal](38, 6) null,
+	@TotalPrice [decimal](38, 6) null,
 	--==================
 	@CurrencyCode [nvarchar](50) null,
-	@ExchangeRateEUR [double ](18, 4) null,
+	@ExchangeRateEUR [decimal](18, 4) null,
 	--==================
-	@MaterialCostEUR [double ](38, 6) null,
-	@LaborCostEUR [double ](38, 6) null,
-	@CostEUR [double ](38, 6) null,   
+	@MaterialCostEUR [decimal](38, 6) null,
+	@LaborCostEUR [decimal](38, 6) null,
+	@CostEUR [decimal](38, 6) null,   
 	--==================
-	@TotalMaterialCostEUR [double ](38, 6) null,
-	@TotalLaborCostEUR [double ](38, 6) null,
-	@TotalCostEUR [double ](38, 6) null,
+	@TotalMaterialCostEUR [decimal](38, 6) null,
+	@TotalLaborCostEUR [decimal](38, 6) null,
+	@TotalCostEUR [decimal](38, 6) null,
 	--==================
-	@PriceEUR [double ](38, 6) null,
-	@TotalPriceEUR [double ](38, 6) null,
+	@PriceEUR [decimal](38, 6) null,
+	@TotalPriceEUR [decimal](38, 6) null,
 	--==================
 	@WorksheetType [int],
 	--==================
@@ -232,15 +225,6 @@ END;
 
 GO
 
-/****** Object:  StoredProcedure [dbo].[Uniwave_a2p_InsertMaterial]    Script Date: 2025-02-25 12:39:34 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
 CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertMaterial] 
 	  @SalesDocumentNumber [int]
 	, @SalesDocumentVersion [int]
@@ -281,12 +265,12 @@ CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertMaterial]
 	--==============================      
 	, @Waste [float] null
 	--==============================  
-	, @Price [double ] (38 , 6) null
-	, @TotalPrice [double ] (38 , 6) null
-	, @RequiredPrice [double ] (38 , 6) null
-	, @LeftOverPrice [double ] (38 , 6) null
+	, @Price [decimal] (38 , 6) null
+	, @TotalPrice [decimal] (38 , 6) null
+	, @RequiredPrice [decimal] (38 , 6) null
+	, @LeftOverPrice [decimal] (38 , 6) null
 	--==============================      
-	, @SquareMeterPrice [double ] (38 , 6) null
+	, @SquareMeterPrice [decimal] (38 , 6) null
 	--==============================  
 	, @Pallet [nvarchar] (255) null
 	--==============================  
@@ -448,15 +432,7 @@ BEGIN
 END;
 GO
 
-/****** Object:  StoredProcedure [dbo].[Uniwave_a2p_InsertPrefColor]    Script Date: 2025-02-25 12:39:34 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE  OR ALTER  PROCEDURE [dbo].[Uniwave_a2p_InsertPrefColor] 
+CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteColor] 
 	
 	@Color nvarchar(50), 
 	@ColorDescription nvarchar (120)
@@ -549,7 +525,7 @@ BEGIN
 		0.0,  -- AngleTexture - float
 		0.0,  -- TextureScaleX - float
 		0.0,  -- TextureScaleY - float
-		N'_SAPA',  -- Family - nchar(25)
+		N'_SAPA_V2',  -- Family - nchar(25)
 		0,    -- FamilyOrder - int
 		N'',  -- BasicRawMaterial - nchar(25)
 		0,    -- RawMaterial - int
@@ -572,6 +548,23 @@ BEGIN
 		)
 	END 
 
+END
+
+
+
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteColorConfiguration] 
+	
+	@Color nvarchar(50)
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	/*Check color, if not exists than insert*/
+	/*======================================*/
+	
 
 	IF NOT EXISTS (SELECT * FROM ColorConfigurations WHERE ColorName = @Color)
 	INSERT INTO dbo.ColorConfigurations
@@ -587,30 +580,16 @@ BEGIN
 		NULL, -- InnerColor - nvarchar(50)
 		NULL  -- OuterColor - nvarchar(50)
 		)
+
 END
 
 
 
 GO
 
-/****** Object:  StoredProcedure [dbo].[Uniwave_a2p_InsertPrefMaterial]    Script Date: 2025-02-25 12:39:34 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-
--- =============================================
--- Author:		MJ
--- Create date: 
--- Description:	
--- =============================================
-CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefMaterial] 
-	-- Add the parameters for the stored procedure here
+CREATE OR ALTER PROCEDURE[dbo].[Uniwave_a2p_InsertPrefSuiteMaterial] 
 	@ReferenceBase NVARCHAR(25),
 	@Reference NVARCHAR(25),
-	@Description NVARCHAR(255),
 	@Color NVARCHAR(50),
 	@PackageQuantity FLOAT,
 	@Weight FLOAT,
@@ -621,21 +600,75 @@ AS
 BEGIN
 
 
-Declare @ConfigurationCode INT 
 
 
+	IF NOT EXISTS (SELECT * FROM dbo.Materiales WHERE Referencia = @Reference)
+	INSERT INTO dbo.Materiales
+	(
+		MakerId,
+		RowId,
+		ReferenciaBase,
+		Referencia,
+		Color,
+		Almacen,
+		UE1,
+		UE2,
+		ControlDeStock,
+		PedirBajoDemanda,
+		ManageRemnants,
+		LongitudBarra,
+		WastageAllowance,
+		UseWastageAllowanceInMN,
+		UseFullRodsInMN,
+		IsModel,
+		TargetLevel,
+		PrefShopStatus,
+		DefaultValue,
+		MaterialSupplierCode,
+		ProductionPreparationTime,
+		AverageDeliveryTime
+	)
+	VALUES
+	(   'AE8D70E6-C414-412A-B272-AE141FCFA63F',      -- MakerId - uniqueidentifier
+		NEWID(),      -- RowId - uniqueidentifier
+		@ReferenceBase,       -- ReferenciaBase - nchar(25)
+		@Reference,       -- Referencia - nchar(25)
+		@Color,       -- Color - nchar(50)
+		988,         -- Almacen - smallint
+		1,         -- UE1 - int
+		@PackageQuantity,         -- UE2 - int
+		1,         -- ControlDeStock - smallint
+		1,         -- PedirBajoDemanda - smallint
+		0,         -- ManageRemnants - smallint
+		Case When @MaterialType = 1   -- LongitudBarra - real
+		THEN @PackageQuantity*1000
+		ELSE 0
+		END,
+		0.000000,      -- WastageAllowance - double (19, 6)
+		0,         -- UseWastageAllowanceInMN - smallint
+		0,         -- UseFullRodsInMN - smallint
+		0,         -- IsModel - smallint
+		1,         -- TargetLevel - int
+		0,         -- PrefShopStatus - smallint
+		0,         -- DefaultValue - smallint
+		988,         -- MaterialSupplierCode - int
+		1,         -- ProductionPreparationTime - int
+		14         -- AverageDeliveryTime - smallint
+		)
 
+END	
+GO
 
+CREATE OR ALTER PROCEDURE[dbo].[Uniwave_a2p_InsertPrefSuiteMaterialBase] 
+	@ReferenceBase NVARCHAR(25),
+	@Description NVARCHAR(255),
+	@MaterialType INT
+	
 
-SELECT Top 1 @ConfigurationCode = ConfigurationCode FROM ColorConfigurations WHERE ColorName = @Color and innerColor  is null and outerColor  is null
-
--- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
+AS
+BEGIN
 	SET NOCOUNT ON;
-
-	/* Check material base not exists*/
 	IF NOT EXISTS (SELECT * FROM dbo.MaterialesBase WHERE ReferenciaBase = @ReferenceBase)
-	BEGIN
 	INSERT INTO dbo.MaterialesBase
 	(
 		MakerId,
@@ -703,7 +736,7 @@ SELECT Top 1 @ConfigurationCode = ConfigurationCode FROM ColorConfigurations WHE
 			 WHEN @MaterialType = 4 THEN 'Superficies'
 			 WHEN @MaterialType =  5 THEN 'Superficies'
 		ELSE 'Piezas' END,  -- TipoCalculo - nchar(15)
-		979,    -- CodigoProveedor - int
+		988,    -- CodigoProveedor - int
 		0,    -- NoIncluirEnHojaDeTrabajo - smallint
 		0,    -- NoOptimizar - smallint
 		2,    -- NoIncluirEnMaterialNeeds - smallint
@@ -715,7 +748,7 @@ SELECT Top 1 @ConfigurationCode = ConfigurationCode FROM ColorConfigurations WHE
 		0,    -- OrdenOptimizacion - smallint
 		0,    -- Valorador - smallint
 		0,    -- IsFrameFitting - smallint
-		CASE WHEN @MaterialType = 5 THEN 'Glass'
+		CASE WHEN @MaterialType = 5 THEN 'Glass' --Role,
 			 ELSE 'Unknown' END,
 		0,    -- WorkPlace - smallint
 		0,    -- ConditionalWorkPlace - smallint
@@ -743,62 +776,230 @@ SELECT Top 1 @ConfigurationCode = ConfigurationCode FROM ColorConfigurations WHE
 		0,    -- PrefShopStatus - smallint
 		0    -- DontIncludeInMaterialReport - smallint
 		)
-	END
+END
+GO
 
-	IF NOT EXISTS (SELECT * FROM dbo.Materiales WHERE Referencia = @Reference)
+CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialMeter] 
+
+	@ReferenceBase NVARCHAR(25),
+	@Weight FLOAT
+
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	
 	BEGIN
-	INSERT INTO dbo.Materiales
+	IF NOT EXISTS (SELECT * FROM dbo.Metros WHERE ReferenciaBase = @ReferenceBase)
+	INSERT INTO dbo.Metros
 	(
 		MakerId,
-		RowId,
 		ReferenciaBase,
-		Referencia,
-		Color,
-		Almacen,
-		UE1,
-		UE2,
-		ControlDeStock,
-		PedirBajoDemanda,
-		ManageRemnants,
-		LongitudBarra,
-		WastageAllowance,
-		UseWastageAllowanceInMN,
-		UseFullRodsInMN,
-		IsModel,
-		TargetLevel,
-		PrefShopStatus,
-		DefaultValue,
-		MaterialSupplierCode,
-		ProductionPreparationTime,
-		AverageDeliveryTime
+		PriceUnitsType,
+		LinearWeightKg_m,
+		LossType,
+		CustomLoss
 	)
 	VALUES
-	(   'AE8D70E6-C414-412A-B272-AE141FCFA63F',      -- MakerId - uniqueidentifier
-		NEWID(),      -- RowId - uniqueidentifier
-		@ReferenceBase,       -- ReferenciaBase - nchar(25)
-		@Reference,       -- Referencia - nchar(25)
-		@Color,       -- Color - nchar(50)
-		988,         -- Almacen - smallint
-		1,         -- UE1 - int
-		@PackageQuantity,         -- UE2 - int
-		1,         -- ControlDeStock - smallint
-		1,         -- PedirBajoDemanda - smallint
-		0,         -- ManageRemnants - smallint
-		@PackageQuantity*1000,       -- LongitudBarra - real
-		0.000000,      -- WastageAllowance - double (19, 6)
-		0,         -- UseWastageAllowanceInMN - smallint
-		0,         -- UseFullRodsInMN - smallint
-		0,         -- IsModel - smallint
-		1,         -- TargetLevel - int
-		0,         -- PrefShopStatus - smallint
-		0,         -- DefaultValue - smallint
-		979,         -- MaterialSupplierCode - int
-		1,         -- ProductionPreparationTime - int
-		14         -- AverageDeliveryTime - smallint
+	(   'AE8D70E6-C414-412A-B272-AE141FCFA63F', -- MakerId - uniqueidentifier
+		@ReferenceBase,  -- ReferenciaBase - nchar(25)
+		2,    -- PriceUnitsType - smallint
+		@Weight,  -- LinearWeightKg_m - real
+		0,    -- LossType - smallint
+		0.0   -- CustomLoss - float
 		)
 	END
+	END
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialNeeds] 
+	-- Add the parameters for the stored procedure here
+	@Number INT, 
+    @Version  INT
+
+
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+
 	
-	IF @MaterialType = 1
+	IF NOT EXISTS (SELECT * FROM MaterialNeeds Where  Number=@Number AND Version=@Version)
+	INSERT INTO dbo.MaterialNeeds
+	(
+	    GUID,
+	    Number,
+	    Version,
+	    ProductionSet,
+	    ReproductionNeedsCode,
+	    MNSet,
+	    Position,
+	    SquareId,
+	    HoleId,
+	    ElementId,
+	    MaterialType,
+	    Complex,
+	    Reference,
+	    ColorConfiguration,
+	    RawMaterialColorConfiguration,
+	    RawReference,
+	    Quantity,
+	    Length,
+	    Height,
+	    Volume,
+	    ProviderCode,
+	    WarehouseCode,
+	    XMLDoc,
+	    AllowToOrder,
+	    QuantityToOrder,
+	    QuantityToDiscount,
+	    DiscountedQuantity,
+	    ReservedQuantity,
+	    IsCopy,
+	    FromNumber,
+	    FromVersion,
+	    TargetLevel,
+	    Unmounted,
+	    ProductTypeCode,
+	    CustomLengthType,
+	    DeltaQuantity,
+	    OrderComponents,
+	    Weight
+	)
+SELECT
+	    NEWID(), -- GUID - uniqueidentifier
+	    SalesDocumentNumber,    -- Number - int
+	    SalesDocumentVersion,    -- Version - int
+	    -1,    -- ProductionSet - int
+	    -1,    -- ReproductionNeedsCode - int
+	     1,    -- MNSet - smallint
+	    -1,    -- Position - int
+	    -1,    -- SquareId - int
+	    -1,    -- HoleId - int
+	    CASE WHEN MaterialType = '5' THEN 'G'+RTRIM(CAST(SortOrder AS NVARCHAR(9)))
+			 ELSE ''
+			 END,  
+		CASE WHEN MaterialType = 1 THEN 1
+			 WHEN MaterialType = 2 THEN 3
+			 WHEN MaterialType = 3 THEN 2
+			 WHEN MaterialType = 5 THEN 4
+			 WHEN MaterialType = 4 THEN 4
+			 WHEN MaterialType = 4 THEN 4
+			 END,  -- TipoCalculo - nchar(15),    -- MaterialType - smallint
+	    0,    -- Complex - smallint
+	    Reference,  -- Reference - nchar(25)
+	    (dbo.Uniwave_a2p_GetColorConfiguration(Uniwave_a2p_Materials.Color)),
+	    0,    -- RawMaterialColorConfiguration - int
+	    N'',  -- RawReference - nchar(25)
+	    Quantity,  -- Quantity - float
+	    Width,  -- Length - real
+	    Height,  -- Height - real
+	    0.0,  -- Volume - real
+	    ISNULL((SELECT TOP 1 MaterialSupplierCode FROM dbo.Materiales WHERE Referencia = Reference),988),  -- ProviderCode - int
+        ISNULL((SELECT TOP 1 Almacen FROM dbo.Materiales WHERE Referencia = Reference),988),  -- WarehouseCode - smallint
+	     N'',  -- XMLDoc - ntext
+	    RequiredQuantity,    -- AllowToOrder - smallint
+	    TotalQuantity,  -- QuantityToOrder - float
+	    RequiredQuantity,  -- QuantityToDiscount - float
+	    0.0,  -- DiscountedQuantity - float
+	    0.0,  -- ReservedQuantity - float
+	    0,    -- IsCopy - smallint
+	    0,    -- FromNumber - int
+	    0,    -- FromVersion - int
+	    0,    -- TargetLevel - int
+	    0,    -- Unmounted - smallint
+	    0,    -- ProductTypeCode - int
+	    0,    -- CustomLengthType - smallint
+	    0.0,  -- DeltaQuantity - float
+	    0,    -- OrderComponents - smallint
+	    TotalWeight   -- Weight - float
+	 
+FROM Uniwave_a2p_Materials Where SalesDocumentNumber = @Number and SalesDocumentVersion =@Version and DeletedUTCDateTime is null
+
+
+
+END
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialNeedsMaster]
+	@Number int, 
+	@Version int
+AS
+BEGIN
+DELETE FROM dbo.MaterialNeedsMaster	Where Number=@Number and [Version] =@Version
+INSERT INTO dbo.MaterialNeedsMaster
+(
+    [dbo].[Number],
+    [dbo].[Version],
+    [dbo].[ProductionSet],
+    [dbo].[ReproductionNeedsCode],
+    [dbo].[MNSet],
+    [dbo].[CalculationDate],
+    [dbo].[Obsolete],
+    [dbo].[Description],
+    [dbo].[Discounted],
+    [dbo].[TypeMNSet],
+    [dbo].[ComponentsAssemblyUTCDate],
+    [dbo].[CalculationUTCDate]
+)
+ VALUES (@Number,         -- Number - int
+        @Version,         -- Version - int
+       -1,         -- ProductionSet - int
+       -1,         -- ReproductionNeedsCode - int
+       1,         -- MNSet - smallint
+       GETDATE(), -- CalculationDate - datetime
+       0,         -- Obsolete - smallint
+       N'1.- ' +CAST (GETDATE() AS NVARCHAR(16)) , -- Description - nvarchar(50)
+       0,         -- Discounted - smallint
+       1,         -- TypeMNSet - smallint
+      NULL, -- ComponentsAssemblyUTCDate - datetime
+      GETUTCDATE()  -- CalculationUTCDate - datetime
+	  )
+END
+GO
+
+CREATE OR ALTER PROCEDURE[dbo].[Uniwave_a2p_InsertPrefSuiteMaterialPiece] 
+	-- Add the parameters for the stored procedure here
+	@ReferenceBase NVARCHAR(25),
+	@Weight FLOAT
+
+	
+
+AS
+	BEGIN
+	IF NOT EXISTS (SELECT * FROM dbo.Piezas WHERE ReferenciaBase = @ReferenceBase)
+	INSERT INTO dbo.Piezas
+		(
+			MakerId,
+			ReferenciaBase,
+			UnitWeightKg
+		)
+		VALUES
+		(   'AE8D70E6-C414-412A-B272-AE141FCFA63F', -- MakerId - uniqueidentifier
+			@ReferenceBase,  -- ReferenciaBase - nchar(25)
+			@Weight    -- UnitWeightKg - real
+			)
+	END
+
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialProfile] 
+	-- Add the parameters for the stored procedure here
+	@ReferenceBase NVARCHAR(25),
+	@PackageQuantity FLOAT,
+	@Weight FLOAT
+	
+
+AS
+BEGIN
+
+-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
 	BEGIN
 	IF NOT EXISTS (SELECT * FROM dbo.Perfiles WHERE ReferenciaBase = @ReferenceBase)
 	INSERT INTO dbo.Perfiles
@@ -806,6 +1007,7 @@ SELECT Top 1 @ConfigurationCode = ConfigurationCode FROM ColorConfigurations WHE
 		MakerId,
 		ReferenciaBase,
 		LongitudBarra,
+		PesoLineal,
 		AnchoExterior,
 		AnchoInterior,
 		Altura,
@@ -858,9 +1060,10 @@ SELECT Top 1 @ConfigurationCode = ConfigurationCode FROM ColorConfigurations WHE
 	(   'AE8D70E6-C414-412A-B272-AE141FCFA63F', -- MakerId - uniqueidentifier
 		@ReferenceBase,  -- ReferenciaBase - nchar(25)
 		@PackageQuantity*1000,  -- LongitudBarra - real
+		@Weight,
 		1,  -- AnchoExterior - real
 		0.0,  -- AnchoInterior - real
-		1,  -- Altura - real
+		1,     -- Altura - real
 		0.0,  -- CuerpoInterior - real
 		0.0,  -- PerimetroSeccion - real
 		0.0,  -- CuerpoExterior - real
@@ -907,46 +1110,22 @@ SELECT Top 1 @ConfigurationCode = ConfigurationCode FROM ColorConfigurations WHE
 		0     -- PaintPriceCalculation - smallint
 		)
 	END
+	
+END
 
-	ELSE IF @MaterialType = 2
-	BEGIN
-	IF NOT EXISTS (SELECT * FROM dbo.Metros WHERE ReferenciaBase = @ReferenceBase)
-	INSERT INTO dbo.Metros
-	(
-		MakerId,
-		ReferenciaBase,
-		PriceUnitsType,
-		LinearWeightKg_m,
-		LossType,
-		CustomLoss
-	)
-	VALUES
-	(   'AE8D70E6-C414-412A-B272-AE141FCFA63F', -- MakerId - uniqueidentifier
-		@ReferenceBase,  -- ReferenciaBase - nchar(25)
-		2,    -- PriceUnitsType - smallint
-		@Weight,  -- LinearWeightKg_m - real
-		0,    -- LossType - smallint
-		0.0   -- CustomLoss - float
-		)
-	END
 
-	ELSE IF @MaterialType = 3
-	BEGIN
-	IF NOT EXISTS (SELECT * FROM dbo.Piezas WHERE ReferenciaBase = @ReferenceBase)
-	INSERT INTO dbo.Piezas
-		(
-			MakerId,
-			ReferenciaBase,
-			UnitWeightKg
-		)
-		VALUES
-		(   'AE8D70E6-C414-412A-B272-AE141FCFA63F', -- MakerId - uniqueidentifier
-			@ReferenceBase,  -- ReferenciaBase - nchar(25)
-			0.0   -- UnitWeightKg - real
-			)
-	END
 
-	ELSE IF @MaterialType = 4 OR @MaterialType = 5
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPreSuiteMaterialSurface] 
+	-- Add the parameters for the stored procedure here
+	@ReferenceBase NVARCHAR(25),
+	@Weight FLOAT,
+	@MaterialType INT
+	
+
+AS
+BEGIN
 	BEGIN
 	IF NOT EXISTS (SELECT * FROM dbo.Superficies WHERE ReferenciaBase = @ReferenceBase)
 	INSERT INTO dbo.Superficies
@@ -1049,45 +1228,81 @@ END
 
 GO
 
-/****** Object:  StoredProcedure [dbo].[Uniwave_a2p_ItemsExists]    Script Date: 2025-02-25 12:39:34 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_ItemsExists]
-	@Order [nvarchar](50),
-	@ModifiedUTCDateTime DateTime OUTPUT
+CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertSapaProvider] 
+	-- Add the parameters for the stored procedure here
+	@Code int = 988,
+	@Name NVARCHAR(60) =  N'SAPA V2',
+	@Currency NVARCHAR(25) = N'NOK'
 AS
 BEGIN
-	SET @ModifiedUTCDateTime = null;
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
 
-	IF EXISTS (SELECT MAX(ModifiedUTCDateTime) FROM [dbo].[Uniwave_a2p_Materials] WHERE [Order] = @Order AND [DeletedUTCDateTime] IS null)
-	BEGIN
-		SET @ModifiedUTCDateTime = (SELECT MAX(ModifiedUTCDateTime) FROM [dbo].[Uniwave_a2p_Materials] WHERE [Order] = @Order AND [DeletedUTCDateTime] IS null)
-	END
-END;
+    -- Insert statements for procedure here
+    IF NOT EXISTS(SELECT * FROM dbo.Proveedores WHERE CodigoProveedor = @Code)
+	INSERT INTO dbo.Proveedores
+	(
+	    RowId,
+	    CodigoProveedor,
+	    Nombre,
+	    Divisa,
+	    Divisa2
+	    
+	)
+	VALUES
+	(   NEWID(),      -- RowId - uniqueidentifier
+	    @Code,         -- CodigoProveedor - int
+	    @Name,       -- Nombre - nvarchar(60)
+	    @Currency,       -- Divisa - nchar(25)
+	    @Currency       -- Divisa2 - nchar(25)
+	    )
+END
+
 GO
 
-/****** Object:  StoredProcedure [dbo].[Uniwave_a2p_MaterialsExists]    Script Date: 2025-02-25 12:39:34 ******/
-SET ANSI_NULLS ON
-GO
+CREATE OR ALTER PROCEDURE[dbo].[Uniwave_a2p_InsertStock] 
+	-- Add the parameters for the stored procedure here
+	@Code INT =988, 
+    @ProviderCode  INT = 988
 
-SET QUOTED_IDENTIFIER ON
-GO
 
-CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_MaterialsExists]
-	@Order [nvarchar](50),
-	@ModifiedUTCDateTime DateTime OUTPUT
 AS
 BEGIN
-	SET @ModifiedUTCDateTime = null;
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
 
-	IF EXISTS (SELECT MAX(ModifiedUTCDateTime) FROM [dbo].[Uniwave_a2p_Materials] WHERE [Order] = @Order AND [DeletedUTCDateTime] IS null)
-	BEGIN
-		SET @ModifiedUTCDateTime = (SELECT MAX(ModifiedUTCDateTime) FROM [dbo].[Uniwave_a2p_Materials] WHERE [Order] = @Order AND [DeletedUTCDateTime] IS null)
-	END
-END;
+		IF NOT EXISTS (SELECT * FROM dbo.Almacenes WHERE Codigo =@Code)
+		INSERT INTO dbo.Almacenes
+		(
+		    Codigo,
+		    Descripcion,
+		    Externo,
+		    ProviderCode,
+		    Address,
+		    Address2,
+		    City,
+		    PostalCode,
+		    County,
+		    Country,
+		    UsedInMRP,
+		    Kind
+		)
+		VALUES
+		(   @Code,   -- Codigo - smallint
+		    N'SAPA V2', -- Descripcion - nvarchar(60)
+		    0,   -- Externo - smallint
+		    @ProviderCode,   -- ProviderCode - int
+		    N'', -- Address - nvarchar(60)
+		    N'', -- Address2 - nvarchar(60)
+		    N'', -- City - nvarchar(60)
+		    N'', -- PostalCode - nvarchar(25)
+		    N'', -- County - nvarchar(60)
+		    N'', -- Country - nvarchar(50)
+		    1,   -- UsedInMRP - smallint
+		    0    -- Kind - smallint
+		    )
+END
 GO
 

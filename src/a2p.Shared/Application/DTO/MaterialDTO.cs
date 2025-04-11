@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.ComponentModel.DataAnnotations;
@@ -9,6 +9,7 @@ namespace a2p.Shared.Application.DTO
 {
     public class MaterialDTO
     {
+
         [MaxLength(50)] public string Order { get; set; } = string.Empty;
         [MaxLength(255)] public string Worksheet { get; set; } = string.Empty;
         [Required] public int Line { get; set; } = -1;
@@ -17,8 +18,8 @@ namespace a2p.Shared.Application.DTO
         public string? Item { get; set; } = string.Empty;
         public int SortOrder { get; set; } = -1;
         //============================================================================================================================
-        [Required, MaxLength(25)] public string ReferenceBase { get; set; } = string.Empty;
-        [Required, MaxLength(25)] public string Reference { get; set; } = string.Empty;
+        [MaxLength(25)] public string ReferenceBase { get; set; } = string.Empty;
+        [MaxLength(25)] public string Reference { get; set; } = string.Empty;
         [MaxLength(255)] public string? Description { get; set; }
         //============================================================================================================================
         [MaxLength(50)] public string Color { get; set; } = string.Empty;

@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Text.Json;
@@ -175,13 +175,13 @@ namespace a2p.WinForm.ChildForms
                 {
                     Invoke(new Action(() =>
                     {
-                        _logService.Error(ex, "Failed to save settings.");
+                        _logService.Error("Failed to save settings.");
                         _ = MessageBox.Show($"Failed to save settings: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }));
                 }
                 else
                 {
-                    _logService.Error(ex, "Failed to save settings.");
+                    _logService.Error("Failed to save settings.");
                     _ = MessageBox.Show($"Failed to save settings: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }

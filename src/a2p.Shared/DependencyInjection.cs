@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using a2p.Shared.Application.Interfaces;
@@ -41,6 +41,7 @@ namespace a2p.Shared
             _ = services.AddSingleton<DataCache>();
             _ = services.AddSingleton<IUserSettingsService, UserSettingsService>();
             _ = services.AddSingleton<SettingsManager>();
+            _ = services.AddSingleton<IWriteService, WriteService>();
             _ = services.AddSingleton<IReadService, ReadService>();
             _ = services.AddSingleton<IExcelService, ExcelService>();
             _ = services.AddSingleton<IPrefSuiteService, PrefSuiteService>();

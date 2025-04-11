@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Data;
@@ -282,7 +282,7 @@ namespace a2p.WinForm.ChildForms
                 string methodName = nameof(InitializeTable); // Replace with the actual method name if different
 
                 // Log the error
-                _logService?.Error(ex2, "Error in {Class}.{Method} {Message}", className, methodName, ex2.Message);
+                _logService?.Error("Error in {Class}.{Method}. Exception {Message}", className, methodName, ex2.Message);
 
                 // Display the error in a MessageBox
                 _ = MessageBox.Show($@"Error in {className}.{methodName}: {ex2.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -380,7 +380,7 @@ namespace a2p.WinForm.ChildForms
 
                         }
 
-                        else if (e.Value.ToString() == "Debug")
+                        else if (e.Value.ToString() == "Debug(")
                         {
                             e.CellStyle.ForeColor = Color.LightBlue;
                         }
@@ -529,7 +529,7 @@ namespace a2p.WinForm.ChildForms
             }
             catch (Exception ex)
             {
-                _logService.Error(ex, "LF: Error parsing log entry: {ex.Message}");
+                _logService.Error("LF: Error parsing log entry: {ex.Message}");
                 return new A2PLogRecord();
             }
         }
@@ -590,7 +590,7 @@ namespace a2p.WinForm.ChildForms
             }
             catch (Exception ex)
             {
-                _logService.Error(ex, "Log Form: Error applying filter: {ex.Message}", ex.Message);
+                _logService.Error("Log Form: Error applying filter: {ex.Message}", ex.Message);
             }
         }
         private void LogAddAsync(A2PLogRecord logEntry)
@@ -616,7 +616,7 @@ namespace a2p.WinForm.ChildForms
             }
             catch (Exception ex)
             {
-                _logService.Error(ex, $"LF: Error adding log entry to DataTable: {ex.Message}");
+                _logService.Error("LF: Error adding log entry to DataTable: {ex.Message}");
             }
         }
         public async Task LogRefreshAsync()
@@ -660,7 +660,7 @@ namespace a2p.WinForm.ChildForms
             catch (Exception ex)
             {
                 // Log any errors that occur during processing
-                _logService.Error(ex, $"LF: Error refreshing log entries: {ex.Message}");
+                _logService.Error( $"LF: Error refreshing log entries: {ex.Message}");
             }
 
         }

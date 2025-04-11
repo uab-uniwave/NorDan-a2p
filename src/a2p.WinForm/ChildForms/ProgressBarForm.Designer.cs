@@ -20,17 +20,14 @@ namespace a2p.WinForm.ChildForms
 
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
             plMainPanel = new Panel();
-            progressBar = new ProgressBar();
-            lbProgressBarTitle = new Label();
-            lbProgressBarTask3 = new Label();
             lbProgressBarTask1 = new Label();
             lbProgressBarTask2 = new Label();
-            plMainPanel.Visible=false;
+            lbProgressBarTitle = new Label();
+            progressBar = new ProgressBar();
+            lbProgressBarTask3 = new Label();
             plMainPanel.SuspendLayout();
             SuspendLayout();
-      
             // 
             // plMainPanel
             // 
@@ -49,53 +46,6 @@ namespace a2p.WinForm.ChildForms
             plMainPanel.Size = new Size(800, 300);
             plMainPanel.TabIndex = 29;
             plMainPanel.UseWaitCursor = true;
-            plMainPanel.Visible = false;
-            // 
-            // progressBar
-            // 
-            progressBar.AccessibleRole = AccessibleRole.ProgressBar;
-            progressBar.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            progressBar.BackColor = Color.FromArgb(  96,   97,   100);
-            progressBar.Cursor = Cursors.WaitCursor;
-            progressBar.ForeColor = Color.FromArgb(  239,   112,   32);
-            progressBar.Location = new Point(32, 78);
-            progressBar.Name = "progressBar";
-            progressBar.Size = new Size(735, 47);
-            progressBar.Step = 1;
-            progressBar.TabIndex = 45;
-            progressBar.UseWaitCursor = true;
-            // 
-            // lbProgressBarTitle
-            // 
-            lbProgressBarTitle.BackColor = Color.FromArgb(  96,   97,   100);
-            lbProgressBarTitle.Dock = DockStyle.Top;
-            lbProgressBarTitle.FlatStyle = FlatStyle.Flat;
-            lbProgressBarTitle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lbProgressBarTitle.ForeColor = Color.White;
-            lbProgressBarTitle.Location = new Point(0, 0);
-            lbProgressBarTitle.Margin = new Padding(3);
-            lbProgressBarTitle.Name = "lbProgressBarTitle";
-            lbProgressBarTitle.Size = new Size(800, 50);
-            lbProgressBarTitle.TabIndex = 46;
-            lbProgressBarTitle.Text = "Progress Title";
-            lbProgressBarTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lbProgressBarTitle.UseWaitCursor = true;
-            // 
-            // lbProgressBarTask3
-            // 
-            lbProgressBarTask3.BackColor = Color.Transparent;
-            lbProgressBarTask3.Dock = DockStyle.Bottom;
-            lbProgressBarTask3.FlatStyle = FlatStyle.Flat;
-            lbProgressBarTask3.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lbProgressBarTask3.ForeColor = Color.White;
-            lbProgressBarTask3.Location = new Point(0, 250);
-            lbProgressBarTask3.Margin = new Padding(3);
-            lbProgressBarTask3.Name = "lbProgressBarTask3";
-            lbProgressBarTask3.Size = new Size(800, 50);
-            lbProgressBarTask3.TabIndex = 44;
-            lbProgressBarTask3.Text = "Progress Task 3";
-            lbProgressBarTask3.TextAlign = ContentAlignment.TopCenter;
-            lbProgressBarTask3.UseWaitCursor = true;
             // 
             // lbProgressBarTask1
             // 
@@ -129,10 +79,56 @@ namespace a2p.WinForm.ChildForms
             lbProgressBarTask2.TextAlign = ContentAlignment.TopCenter;
             lbProgressBarTask2.UseWaitCursor = true;
             // 
+            // lbProgressBarTitle
+            // 
+            lbProgressBarTitle.BackColor = Color.FromArgb(96, 97, 100);
+            lbProgressBarTitle.Dock = DockStyle.Top;
+            lbProgressBarTitle.FlatStyle = FlatStyle.Flat;
+            lbProgressBarTitle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lbProgressBarTitle.ForeColor = Color.White;
+            lbProgressBarTitle.Location = new Point(0, 0);
+            lbProgressBarTitle.Margin = new Padding(3);
+            lbProgressBarTitle.Name = "lbProgressBarTitle";
+            lbProgressBarTitle.Size = new Size(800, 50);
+            lbProgressBarTitle.TabIndex = 46;
+            lbProgressBarTitle.Text = "Progress Title";
+            lbProgressBarTitle.TextAlign = ContentAlignment.MiddleCenter;
+            lbProgressBarTitle.UseWaitCursor = true;
+            // 
+            // progressBar
+            // 
+            progressBar.AccessibleRole = AccessibleRole.ProgressBar;
+            progressBar.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            progressBar.BackColor = Color.FromArgb(96, 97, 100);
+            progressBar.Cursor = Cursors.WaitCursor;
+            progressBar.ForeColor = Color.FromArgb(239, 112, 32);
+            progressBar.Location = new Point(32, 78);
+            progressBar.Name = "progressBar";
+            progressBar.Size = new Size(735, 47);
+            progressBar.Step = 1;
+            progressBar.TabIndex = 45;
+            progressBar.UseWaitCursor = true;
+            // 
+            // lbProgressBarTask3
+            // 
+            lbProgressBarTask3.BackColor = Color.Transparent;
+            lbProgressBarTask3.Dock = DockStyle.Bottom;
+            lbProgressBarTask3.FlatStyle = FlatStyle.Flat;
+            lbProgressBarTask3.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lbProgressBarTask3.ForeColor = Color.White;
+            lbProgressBarTask3.Location = new Point(0, 250);
+            lbProgressBarTask3.Margin = new Padding(3);
+            lbProgressBarTask3.Name = "lbProgressBarTask3";
+            lbProgressBarTask3.Size = new Size(800, 50);
+            lbProgressBarTask3.TabIndex = 44;
+            lbProgressBarTask3.Text = "Progress Task 3";
+            lbProgressBarTask3.TextAlign = ContentAlignment.TopCenter;
+            lbProgressBarTask3.UseWaitCursor = true;
+            // 
             // ProgressBarForm
             // 
             AutoSize = true;
-            BackColor = Color.FromArgb(  239,   112,   32);
+            BackColor = Color.FromArgb(239, 112, 32);
             ClientSize = new Size(800, 300);
             ControlBox = false;
             Controls.Add(plMainPanel);
@@ -144,15 +140,13 @@ namespace a2p.WinForm.ChildForms
             Opacity = 0.8D;
             StartPosition = FormStartPosition.CenterParent;
             Text = "ProgressBarForm";
+            TopMost = true;
             UseWaitCursor = true;
             FormClosed += ProgressBarForm_FormClosed;
             Load += ProgressBarForm_Load;
             Shown += ProgressBarForm_Shown;
             DpiChanged += ProgressBarForm_DpiChanged;
-
-            plMainPanel.Visible = true;
             plMainPanel.ResumeLayout(false);
-            plMainPanel.PerformLayout();
             ResumeLayout(false);
         }
 

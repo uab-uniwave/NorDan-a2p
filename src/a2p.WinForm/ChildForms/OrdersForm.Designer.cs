@@ -1,4 +1,4 @@
-﻿using System.Windows.Forms;
+using System.Windows.Forms;
 namespace a2p.WinForm.ChildForms
 
 {
@@ -98,7 +98,6 @@ namespace a2p.WinForm.ChildForms
             dataGridViewFiles.TabIndex = 61;
             dataGridViewFiles.VirtualMode = true;
             dataGridViewFiles.CellFormatting += DataGridViewFiles_CellFormatting;
-            dataGridViewFiles.CellValueChanged += DataGridViewFiles_CellValueChanged;
             // 
             // contextMenuStrip1
             // 
@@ -185,7 +184,7 @@ namespace a2p.WinForm.ChildForms
             lbTitle.TabIndex = 13;
             lbTitle.Text = "LOADED";
             lbTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lbTitle.Click += lbTitle_Click;
+
             // 
             // lbInfoOrders
             // 

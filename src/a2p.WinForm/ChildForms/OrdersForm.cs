@@ -1,6 +1,3 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
 using System.Data;
 
 using a2p.Shared.Application.Domain.Entities;
@@ -14,47 +11,48 @@ namespace a2p.WinForm.ChildForms
 {
     public partial class OrdersForm : Form
     {
-        private readonly IFileService _fileService;
-        private readonly IWriteService _writeService;
-        private readonly ILogService _logService;
-        private readonly DataCache _dataCache;
-        private readonly IOrderReadProcessor _readServices;
-        private readonly IExcelReadService _excelReadServices;
         private readonly IUserSettingsService _userSettingsService;
-
-        private IProgress<ProgressValue>? _progress;
-        private ProgressValue _progressValue;
-        private DataTable _dataTable;
-        private BindingSource _bindingSource;
         private SettingsContainer _settingsContainer;
         private AppSettings _appSettings;
+        private readonly ILogService _logService;
+        private readonly IFileService _fileService;
+        private readonly IExcelService _excelService;
+        private readonly ISQLRepository _sqlRepository;
+        private readonly IReadService _readService;
+        private readonly IWriteService _writeService;
+        private List<A2POrder> _a2pOrders;
 
+        private DataTable _dataTable;
+        private BindingSource _bindingSource;
+        private IProgress<ProgressValue>? _progress;
+        private ProgressValue _progressValue;
         public OrdersForm(IUserSettingsService userSettingsService,
-                           IWriteService writeService,
-
                           ILogService logService,
-                          IOrderReadProcessor orderReadProcessor,
-                          IExcelReadService excelReadServices,
-                          IFileService fileService, DataCache dataCache)
-
+                          IFileService fileService,
+                          IExcelService excelService,
+                          ISQLRepository sqlRepository,
+                          IReadService readService,
+                          IWriteService writeService,
+                          DataCache dataCache)
         {
 
-            _writeService = writeService;
-            _logService = logService;
-            _dataTable = new DataTable();
-            _bindingSource = [];
-            _progressValue = new ProgressValue();
-            _progress = new Progress<ProgressValue>();
             _userSettingsService = userSettingsService;
             _appSettings = _userSettingsService.LoadSettings();
             _settingsContainer = _userSettingsService.LoadAllSettings();
+            _fileService = fileService;
+            _logService = logService;
+            _excelService = excelService;
+            _writeService = writeService;
+            _readService = readService;
+            _sqlRepository = sqlRepository;
 
-            _readServices = orderReadProcessor;
-            _excelReadServices = excelReadServices;
+            _a2pOrders = [];
+            //==================================
             _dataTable = new DataTable();
             _bindingSource = [];
-            _dataCache = dataCache;
-            _fileService = fileService;
+            //==================================
+            _progressValue = new ProgressValue();
+            _progress = new Progress<ProgressValue>();
 
             SuspendLayout();
             AutoScaleMode = AutoScaleMode.Dpi;
@@ -62,9 +60,8 @@ namespace a2p.WinForm.ChildForms
             InitializeComponent();
             InitializeGrid();
             InitializeTable();
-            _readServices = orderReadProcessor;
-        }
 
+        }
         //===============================================================
         // -= Initialization =-
         //===============================================================
@@ -464,11 +461,19 @@ namespace a2p.WinForm.ChildForms
 
         }
 
+        private void Initialize()
+        {
+            _progressValue = new();
+            _progress = new Progress<ProgressValue>();
+
+        }
         //===============================================================
         // -= Form Events =-
         //===============================================================
-
-        private void OrdersForm_Load(object sender, EventArgs e) => PerformAutoScale();
+        private void OrdersForm_Load(object sender, EventArgs e)
+        {
+            PerformAutoScale();
+        }
         private void FileForm_Shown(object sender, EventArgs e)
         {
             this.lbTitle.Text = "";
@@ -484,13 +489,15 @@ namespace a2p.WinForm.ChildForms
             ResumeLayout(true);
 
         }
-        private void FileForm_ResizeBegin(object sender, EventArgs e) => SuspendLayout();
+        private void FileForm_ResizeBegin(object sender, EventArgs e)
+        {
+            SuspendLayout();
+        }
         private void FileForm_ResizeEnd(object sender, EventArgs e)
         {
             ResumeLayout(false);
             PerformLayout();
         }
-
         //===============================================================
         // -= Data Grids =-
         //===============================================================
@@ -569,60 +576,61 @@ namespace a2p.WinForm.ChildForms
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logService.Error(ex, "Order Form: Unhandled Error formatting cells!");
+                _logService.Error("Order Form: Unhandled Error formatting cells!");
             }
             finally
             {
                 isFormatting = false;
             }
         }
-
         private void DataGridViewLogReadOnlyRows()
         {
             try
             {
 
-                foreach (DataGridViewRow row in dataGridViewFiles.Rows)
+                for (int i = 0; i < dataGridViewFiles.Rows.Count; i++)
                 {
-                    int rowIndex = row.Index;
+                    int rowIndex = i;
                     string? orderNumber = dataGridViewFiles.Rows[rowIndex].Cells["Order"].Value.ToString();
                     if (orderNumber == null)
                     {
                         continue;
                     }
 
-                    A2POrder? a2pOrder = _dataCache.GetOrder(orderNumber);
-
-                    if (a2pOrder == null)
+                    for (int j = 0; j < _a2pOrders.Count; j++)
                     {
-                        return;
+                        if (_a2pOrders[j].Order == orderNumber)
+                        {
+                            rowIndex = j;
 
-                    }
+                            int readFatal = CountReadFatal(_a2pOrders[j]);
+                            int readError = CountReadError(_a2pOrders[j]);
 
-                    int readFatal = CountReadFatal(a2pOrder);
-                    int readError = CountReadError(a2pOrder);
+                            if (readFatal > 0)
+                            {
+                                dataGridViewFiles.Rows[rowIndex].Cells["Import"].Value = false;
+                                dataGridViewFiles.Rows[rowIndex].Cells["Import"].ReadOnly = true;
+                            }
+                            else if (readError > 0)
+                            {
+                                dataGridViewFiles.Rows[rowIndex].Cells["Import"].Value = false;
+                                dataGridViewFiles.Rows[rowIndex].Cells["Import"].ReadOnly = false;
+                            }
+                            else
+                            {
+                                dataGridViewFiles.Rows[rowIndex].Cells["Import"].Value = true;
+                                dataGridViewFiles.Rows[rowIndex].Cells["Import"].ReadOnly = false;
+                            }
 
-                    if (readFatal > 0)
-                    {
-                        dataGridViewFiles.Rows[rowIndex].Cells["Import"].Value = false;
-                        dataGridViewFiles.Rows[rowIndex].Cells["Import"].ReadOnly = true;
-                    }
-                    else if (readError > 0)
-                    {
-                        dataGridViewFiles.Rows[rowIndex].Cells["Import"].Value = false;
-                        dataGridViewFiles.Rows[rowIndex].Cells["Import"].ReadOnly = false;
-                    }
-                    else
-                    {
-                        dataGridViewFiles.Rows[rowIndex].Cells["Import"].Value = true;
-                        dataGridViewFiles.Rows[rowIndex].Cells["Import"].ReadOnly = false;
-                    }
+                            if ((bool) dataGridViewFiles.Rows[rowIndex].Cells["Import"].Value == false)
+                            {
+                                dataGridViewFiles.Rows[rowIndex].Cells["Import"].Style.ForeColor = Color.LightGray;
+                            }
 
-                    if ((bool)dataGridViewFiles.Rows[rowIndex].Cells["Import"].Value == false)
-                    {
-                        dataGridViewFiles.Rows[rowIndex].Cells["Import"].Style.ForeColor = Color.LightGray;
+                            break;
+                        }
                     }
 
                 }
@@ -634,52 +642,6 @@ namespace a2p.WinForm.ChildForms
             }
 
         }
-
-        private void DataGridViewFiles_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-            try
-            {
-                if (e.RowIndex < 0 || e.ColumnIndex < 0)
-                {
-                    return;
-                }
-
-                if (dataGridViewFiles.Columns[e.ColumnIndex].Name == "Import")
-                {
-
-                    DataGridViewRow row = dataGridViewFiles.Rows[e.RowIndex];
-
-                    string order = row.Cells["Order"].Value.ToString()!;
-
-                    if ((bool)row.Cells["Import"].Value)
-                    {
-                        // A2POrder? a2pOrder = _dataCache.GetOrder(row.Cells["Order"].Value.ToString()!);
-                        // a2pOrder!.Import = true;
-                        _dataCache.UpdateOrderInCache(ToString(), order =>
-                        {
-                            order.Import = true;
-                        });
-                    }
-
-                    else
-                    {
-                        //    A2POrder? a2pOrder = _dataCache.GetOrder(row.Cells["Order"].Value.ToString()!);        
-                        //     a2pOrder!.Import = false;
-                        _dataCache.UpdateOrderInCache(ToString(), order =>
-                        {
-                            order.Import = false;
-                        });
-
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-
-                _logService.Error("Order Form: Unhandled error setting grid row readonly. Exception: {$Exception}.", ex.Message);
-            }
-        }
-
         //===============================================================
         // -= Context menu =-
         //===============================================================
@@ -692,7 +654,6 @@ namespace a2p.WinForm.ChildForms
                 dataGridViewFiles.Rows[i].Cells["Import"].Value = true;
             }
         }
-
         private void DeselectAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
@@ -701,123 +662,125 @@ namespace a2p.WinForm.ChildForms
                 dataGridViewFiles.Rows[i].Cells["Import"].Value = false;
             }
         }
-
         //===============================================================
         // -= Main Events =-
         //===============================================================
         public async Task OrdersLoad()
         {
+
             try
             {
-                _dataCache.ClearCache();
-                try
+
+                await ClearData();
+
+                //ProgressBar. Create a new instance of the ProgressBarForm
+                //=====================================================================================================
+                using ProgressBarForm progressBarForm = new()
                 {
-                    using ProgressBarForm progressBarForm = new()
-                    {
-                        StartPosition = FormStartPosition.CenterParent // Set to center relative to parent
-                    };
-                    progressBarForm.Load += (sender, args) =>
-                    {
-                        progressBarForm.Location = new Point(
-                            Location.X + ((Width - progressBarForm.Width) / 2),
-                            Location.Y + ((Height - progressBarForm.Height) / 2)
-                        );
-                    };
+                    StartPosition = FormStartPosition.CenterParent // Set to center relative to parent
+                };
+                progressBarForm.Load += (sender, args) =>
+                {
+                    progressBarForm.Location = new Point(
+                        Location.X + ((Width - progressBarForm.Width) / 2),
+                        Location.Y + ((Height - progressBarForm.Height) / 2)
+                    );
+                };
+                Progress<ProgressValue> progress = new(progressBarForm.UpdateProgress);
+                _progress = progress;
 
-                    Progress<ProgressValue> progress = new(progressBarForm.UpdateProgress);
-                    ProgressValue progressValue = new();
-                    _progress = progress;
-                    _progressValue = progressValue;
+                _progressValue.ProgressTitle = "Loading Orders...";
+                _progressValue.ProgressTask1 = string.Empty;
+                _progressValue.ProgressTask2 = "Start Searching ...";
+                _progressValue.ProgressTask3 = string.Empty;
 
-                    if (_dataTable.Rows.Count > 0)
-                    {
-                        _progressValue.ProgressTitle = "Removing Existing data ...";
-                        _progressValue.ProgressTask1 = "Data table.";
-                        _progress?.Report(_progressValue);
+                _progress?.Report(_progressValue);
+                progressBarForm.Show();
+                await Task.Delay(1000);
 
-                        if (_dataTable.Rows.Count > 0)
-                        {
-                            if (InvokeRequired)
-                            {
-                                Invoke(new Action(_dataTable.Clear));
-                            }
-                            else
-                            {
+                //Read Orders Data
+                //=====================================================================================================
+                List<A2POrder> a2pOrders = await _readService.ReadAsync(_progressValue, _progress);
+                _progress?.Report(_progressValue);
 
-                                _dataTable.Clear();
-                            }
-                        }
-                    }
-                    progressBarForm.Show();
-                    _progressValue.ProgressTitle = "Loading files...";
-                    _progress?.Report(_progressValue);
-                    await _readServices.ReadAsync(_progressValue, _progress);
-                    _progress?.Report(_progressValue);
-                    await UpdateDatable(1);
-
-                    if (InvokeRequired)
-                    {
-                        Invoke(new Action(() =>
-                        {
-
-                            plGridPanel.ResumeLayout(false);
-                            plGridPanel.PerformLayout();
-
-                        }));
-                    }
-                    else
-                    {
-                        plGridPanel.ResumeLayout(false);
-                        plGridPanel.PerformLayout();
-
-                    }
-
-                    progressBarForm.Close();
-
-                    DataGridViewLogReadOnlyRows();
+                if (a2pOrders == null || a2pOrders.Count == 0)
+                {
+                    return;
 
                 }
-                catch (Exception ex)
-                {
-                    _logService.Error("Order Form: Unhandled Error loading Orders. Exception: {$Exception}.", ex.Message);
-                }
+                _a2pOrders = a2pOrders;
+
+                //Populate DataTable
+                //=====================================================================================================
+                await UpdateDatable(a2pOrders, 1);
+                _progressValue.ProgressTask1 = string.Empty;
+                _progressValue.ProgressTask2 = "Loading Finished.";
+                _progressValue.ProgressTask3 = string.Empty;
+                await Task.Delay(1000);
+                progressBarForm.Close();
+
+                DataGridViewLogReadOnlyRows();
 
             }
             catch (Exception ex)
             {
-
-                _logService.Error("Order Form: Unhandled error loading loading Files. Exception: {$Exception}.", ex.Message);
-
-            }
-            finally
-            {
-                dataGridViewFiles.ResumeLayout(false);
-
+                _logService.Error("Order Form: Unhandled Error loading Orders. Exception: {$Exception}.", ex.Message);
             }
 
         }
+        private async Task ClearData()
+        {
 
+            _progressValue.ProgressTitle = string.Empty;
+            _progressValue.ProgressTask1 = string.Empty;
+            _progressValue.ProgressTask2 = string.Empty;
+            _progressValue.ProgressTask3 = string.Empty;
+            _progressValue.Value = 0;
+            _progressValue.MinValue = 0;
+            _progressValue.MaxValue = 100;
+            _progress?.Report(_progressValue);
+
+            await Task.Run(() =>
+            {
+                if (InvokeRequired)
+                {
+                    Invoke(new Action(_dataTable.Clear));
+                }
+
+            });
+
+        }
         public async Task ImportAsync()
         {
+            List<A2POrder> importOrders = [];
+
             try
             {
 
                 Dictionary<string, int> keyValuePairs = [];
                 for (int i = 0; i < dataGridViewFiles.Rows.Count; i++)
                 {
-
-                    if ((bool)dataGridViewFiles.Rows[i].Cells["Import"].Value)
+                    if ((bool) dataGridViewFiles.Rows[i].Cells["Import"].Value)
                     {
 
-                        A2POrder? a2pOrder = _dataCache.GetOrder(dataGridViewFiles.Rows[i].Cells["Order"].Value.ToString()!);
-                        a2pOrder.Import = true;
-
-                        if (a2pOrder != null)
+                        for (int j = 0; j < _a2pOrders.Count; j++)
                         {
-                            if (CountReadExistsError(a2pOrder) > 0)
+
+                            if (_a2pOrders[j].Order == dataGridViewFiles.Rows[i].Cells["Order"].Value.ToString())
                             {
-                                keyValuePairs.Add(a2pOrder.Order, i);
+                                _a2pOrders[j].Import = true;
+
+                                importOrders.Add(_a2pOrders[j]);
+
+                                if (CountReadExistsError(_a2pOrders[j]) > 0)
+                                {
+                                    keyValuePairs.Add(_a2pOrders[j].Order, i);
+                                }
+
+                                break;
+
                             }
+
                         }
 
                     }
@@ -832,97 +795,68 @@ namespace a2p.WinForm.ChildForms
                     {
                         dataGridViewFiles.Rows[keyValuePair.Value].Cells["Import"].Value = false;
                     }
-                    return;
-
-                }
-
-                if (_progressValue != null)
-                {
-                    _progressValue.ProgressTitle = "Importing Files ...";
 
                 }
                 else
                 {
-                    _progressValue = new ProgressValue
+                    try
                     {
-                        ProgressTitle = "Importing Files....",
-                    };
-
-                }
-                try
-                {
-                    //ProgressBar. Create a new instance of the ProgressBarForm   
-                    //=======================================================================================================
-                    using ProgressBarForm progressBarForm = new()
-                    {
-                        StartPosition = FormStartPosition.CenterParent // Set to center relative to parent
-                    };
-                    progressBarForm.Load += (sender, args) =>
-                    {
-                        progressBarForm.Location = new Point(
-                            Location.X + ((Width - progressBarForm.Width) / 2),
-                            Location.Y + ((Height - progressBarForm.Height) / 2)
-                            );
-                        progressBarForm.progressBar.Style = ProgressBarStyle.Continuous;
-                        progressBarForm.progressBar.ForeColor = Color.FromArgb(239, 112, 32);
-                    };
-                    Progress<ProgressValue> progress = new(progressBarForm.UpdateProgress);
-                    _progress = progress;
-                    _progress?.Report(_progressValue);
-                    progressBarForm.plMainPanel.Cursor = Cursors.WaitCursor;
-                    progressBarForm.Show();
-                    await _writeService.WriteAsync(_progressValue, _progress);
-
-                    string root = _appSettings.Folders.RootFolder;
-                    string success = Path.Combine(root, _appSettings.Folders.ImportSuccess);
-                    string failed = Path.Combine(root, _appSettings.Folders.ImportFailed);
-
-                    List<A2POrder> a2pOrders = _dataCache.GetAllOrders();
-
-                    foreach (A2POrder a2pOrder in a2pOrders)
-                    {
-                        if (a2pOrder.Import)
+                        //ProgressBar. Create a new instance of the ProgressBarForm   
+                        //=======================================================================================================
+                        using ProgressBarForm progressBarForm = new()
                         {
-                            string orderNumber = a2pOrder.Order;
-                            string orderPath = Path.Combine(success, orderNumber);
-                            string orderFailedPath = Path.Combine(failed, orderNumber);
-                            if (Directory.Exists(orderPath))
-                            {
-                                Directory.Delete(orderPath, true);
-                            }
-                            if (Directory.Exists(orderFailedPath))
-                            {
-                                Directory.Delete(orderFailedPath, true);
-                            }
+                            StartPosition = FormStartPosition.CenterParent // Set to center relative to parent
+                        };
+                        progressBarForm.Load += (sender, args) =>
+                        {
+                            progressBarForm.Location = new Point(
+                                Location.X + ((Width - progressBarForm.Width) / 2),
+                                Location.Y + ((Height - progressBarForm.Height) / 2)
+                                );
+                            progressBarForm.progressBar.Style = ProgressBarStyle.Continuous;
+                            progressBarForm.progressBar.ForeColor = Color.FromArgb(239, 112, 32);
+                        };
+                        Progress<ProgressValue> progress = new(progressBarForm.UpdateProgress);
+                        _progress = progress;
+                        _progress?.Report(_progressValue);
+                        progressBarForm.Show();
+
+                        for (int i = 0; i < importOrders.Count; i++)
+                        {
+
+                            _progressValue.ProgressTask1 = $"Importing order {i + 1} of {importOrders.Count} = Order # {importOrders[i].Order}";
+                            _progress?.Report(_progressValue);
+                            A2POrder a2POrder = await _writeService.WriteAsync(importOrders[i], _progressValue, _progress);
+
+                            importOrders[i] = a2POrder;
+
                         }
 
-                        plGridPanel.PerformLayout();
+                        await UpdateDatable(importOrders, 2);
+
+                        progressBarForm.Close(); // TODO: on cancel overwrite should stay grid data
                     }
 
-                    await UpdateDatable(2);
-
-                    progressBarForm.Close();
-
-                    _fileService.MoveFilesAsync();
+                    catch (Exception ex)
+                    {
+                        _logService.Error("Order Form: Unhandled error loading importing orders. Exception: {$Exception}.", ex.Message);
+                        _ = MessageBox.Show($"An Error occurred while loading the files." +
+                            $"{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    finally
+                    {
+                        dataGridViewFiles.ResumeLayout(false);
+                    }
                 }
-
-                catch (Exception ex)
-                {
-                    _logService.Error("Order Form: Unhandled error loading importing orders. Exception: {$Exception}.", ex.Message);
-                    _ = MessageBox.Show($"An Error occurred while loading the files." +
-                        $"{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally { dataGridViewFiles.ResumeLayout(false); }
-
             }
             catch (Exception ex)
             {
 
                 _logService.Error("Order Form: Unhandled error setting Importing data. Exception: {$Exception}.", ex.Message);
+
             }
         }
-
-        public async Task<OrderDTO> MapToReadOrderDTOAsync(A2POrder a2pOrder, int type)   // type 1 - read; 2 - write 
+        public async Task<OrderDTO> MapToReadOrderDTOAsync(A2POrder a2pOrder)   // type 1 - read; 2 - write 
         {
             try
             {
@@ -954,81 +888,67 @@ namespace a2p.WinForm.ChildForms
                     orderDTO.WorksheetList = string.Join("\n", a2pOrder.Files.SelectMany(file => file.Worksheets).Select(ws => ws.Name));
                     orderDTO.Materials = a2pOrder.Materials.Count; // Added line to count Materials
 
-                    if (type == 1)
-                    {
-
-                        warningCount = a2pOrder.ReadErrors
-                            .Where(error => error.Level is ErrorLevel.Warning)
-                            .Select(error => new { error.Level, error.Code, error.Message })
-                            .Distinct()
-                            .Count();
-                        orderDTO.WarningCount = warningCount;
-                        orderDTO.WarningList = string.Join("\n", a2pOrder.ReadErrors
-                                    .Where(error => error.Level is ErrorLevel.Warning)
-                                    .Select(error => $"ErrorLevel: {error.Level}, ErrorCode: {error.Code}, Message: {error.Message}")
-                                    .Distinct());
-
-                        errorCount = a2pOrder.ReadErrors
-                            .Where(error => error.Level is ErrorLevel.Error)
-                            .Select(error => new { error.Level, error.Code, error.Message })
-                            .Distinct()
-                            .Count();
-                        orderDTO.ErrorCount = errorCount;
-                        orderDTO.ErrorList = string.Join("\n", a2pOrder.ReadErrors
-                            .Where(error => error.Level is ErrorLevel.Error or ErrorLevel.Fatal)
-                            .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
-                            .Distinct());
-                        fatalCount = a2pOrder.ReadErrors
-                        .Where(error => error.Level is ErrorLevel.Fatal)
+                    warningCount = a2pOrder.ErrorsRead
+                        .Where(error => error.Level is ErrorLevel.Warning)
                         .Select(error => new { error.Level, error.Code, error.Message })
                         .Distinct()
                         .Count();
-                        orderDTO.FatalCount = fatalCount;
-                        orderDTO.FatalList = string.Join("\n", a2pOrder.ReadErrors
-                            .Where(error => error.Level is ErrorLevel.Fatal)
-                            .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
-                            .Distinct());
-                        orderDTO.Import = fatalCount + errorCount + warningCount <= 0;
+                    orderDTO.WarningCount = warningCount;
+                    orderDTO.WarningList = string.Join("\n", a2pOrder.ErrorsRead
+                                .Where(error => error.Level is ErrorLevel.Warning)
+                                .Select(error => $"ErrorLevel: {error.Level}, ErrorCode: {error.Code}, Message: {error.Message}")
+                                .Distinct());
 
-                    }
-
-                    if (type == 2)
-                    {
-
-                        warningCount = a2pOrder.WriteErrors
-                   .Where(error => error.Level is ErrorLevel.Warning)
-                   .Select(error => new { error.Level, error.Code, error.Message })
-                   .Distinct()
-                   .Count();
-                        orderDTO.WarningCount = warningCount;
-                        orderDTO.WarningList = string.Join("\n", a2pOrder.WriteErrors
-                                    .Where(error => error.Level is ErrorLevel.Warning)
-                                    .Select(error => $"ErrorLevel: {error.Level}, ErrorCode: {error.Code}, Message: {error.Message}")
-                                    .Distinct());
-                        errorCount = a2pOrder.WriteErrors
-                            .Where(error => error.Level is ErrorLevel.Error)
-                            .Select(error => new { error.Level, error.Code, error.Message })
-                            .Distinct()
-                            .Count();
-                        orderDTO.ErrorCount = errorCount;
-                        orderDTO.ErrorList = string.Join("\n", a2pOrder.WriteErrors
-                            .Where(error => error.Level is ErrorLevel.Error or ErrorLevel.Fatal)
-                            .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
-                            .Distinct());
-                        fatalCount = a2pOrder.WriteErrors
-                        .Where(error => error.Level is ErrorLevel.Fatal)
+                    errorCount = a2pOrder.ErrorsRead
+                        .Where(error => error.Level is ErrorLevel.Error)
+                        .Select(error => new { error.Level, error.Code, error.Message })
+                        .Distinct()
+                        .Count()
+                    + a2pOrder.ErrorsWrite
+                        .Where(error => error.Level is ErrorLevel.Error)
                         .Select(error => new { error.Level, error.Code, error.Message })
                         .Distinct()
                         .Count();
-                        orderDTO.FatalCount = fatalCount;
-                        orderDTO.FatalList = string.Join("\n", a2pOrder.WriteErrors
-                            .Where(error => error.Level is ErrorLevel.Fatal)
-                            .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
-                            .Distinct());
-                        orderDTO.Import = fatalCount + errorCount + warningCount <= 0;
-                    }
 
+                    orderDTO.ErrorCount = errorCount;
+
+                    orderDTO.ErrorList = string.Join("\n", a2pOrder.ErrorsRead
+                        .Where(error => error.Level is ErrorLevel.Error or ErrorLevel.Fatal)
+                        .Select(error => $"Level: {error.Level}, Code: {(int) error.Code}, Message: {error.Message}")
+                        .Distinct()) +
+
+                    string.Join("\n", a2pOrder.ErrorsWrite
+                        .Where(error => error.Level is ErrorLevel.Error or ErrorLevel.Fatal)
+                        .Select(error => $"Level: {error.Level}, Code: {(int) error.Code}, Message: {error.Message}")
+                        .Distinct());
+
+                    fatalCount = a2pOrder.ErrorsRead
+                    .Where(error => error.Level is ErrorLevel.Fatal)
+                    .Select(error => new { error.Level, error.Code, error.Message })
+                    .Distinct()
+                    .Count() + a2pOrder.ErrorsWrite
+                    .Where(error => error.Level is ErrorLevel.Fatal)
+                    .Select(error => new { error.Level, error.Code, error.Message })
+                    .Distinct()
+                    .Count();
+
+                    orderDTO.FatalCount = fatalCount;
+                    orderDTO.FatalList = string.Join("\n", a2pOrder.ErrorsRead
+                        .Where(error => error.Level is ErrorLevel.Fatal)
+                        .Select(error => $"Level: {error.Level}, Code: {(int) error.Code}, Message: {error.Message}")
+                        .Distinct()) +
+                                        string.Join("\n", a2pOrder.ErrorsWrite
+                                               .Where(error => error.Level is ErrorLevel.Fatal)
+                                               .Select(error => $"Level: {error.Level}, Code: {(int) error.Code}, Message: {error.Message}")
+                                               .Distinct());
+
+                    orderDTO.Import = fatalCount + errorCount + warningCount <= 0;
                 });
+
+
+
+
+
                 return orderDTO;
 
             }
@@ -1042,22 +962,50 @@ namespace a2p.WinForm.ChildForms
         //===============================================================
         // -= Read Errors =-
         //===============================================================
+        private int CountReadWarning(A2POrder a2pOrder)
+        {
+            return a2pOrder.ErrorsRead.Count(error => error.Level == ErrorLevel.Warning);
+        }
 
-        private int CountReadWarning(A2POrder a2pOrder) => a2pOrder.ReadErrors.Count(error => error.Level == ErrorLevel.Warning);
-        private int CountReadError(A2POrder a2pOrder) => a2pOrder.ReadErrors.Count(error => error.Level == ErrorLevel.Error);
-        private int CountReadFatal(A2POrder a2pOrder) => a2pOrder.ReadErrors.Count(error => error.Level == ErrorLevel.Fatal);
-        private int CountReadExistsError(A2POrder a2pOrder) => a2pOrder.ReadErrors.Count(error => error.Code == ErrorCode.DatabaseRead_OrderAlreadyImported);
-        private int CountReadTotalError(A2POrder a2pOrder) => a2pOrder.ReadErrors.Count(error => error.Level is ErrorLevel.Warning or ErrorLevel.Error or ErrorLevel.Fatal);
+        private int CountReadError(A2POrder a2pOrder)
+        {
+            return a2pOrder.ErrorsRead.Count(error => error.Level == ErrorLevel.Error);
+        }
 
-        //===============================================================
-        // -= Write Errors =-
-        //===============================================================
+        private int CountReadFatal(A2POrder a2pOrder)
+        {
+            return a2pOrder.ErrorsRead.Count(error => error.Level == ErrorLevel.Fatal);
+        }
 
-        private int CountWriteFatal(A2POrder a2pOrder) => a2pOrder.WriteErrors.Count(error => error.Level == ErrorLevel.Fatal);
+        private int CountReadExistsError(A2POrder a2pOrder)
+        {
+            return a2pOrder.ErrorsRead.Count(error => error.Code == ErrorCode.DatabaseRead_OrderAlreadyImported);
+        }
 
-        private int CountWriteError(A2POrder a2pOrder) => a2pOrder.WriteErrors.Count(error => error.Level == ErrorLevel.Error);
-        private int CountWriteWarning(A2POrder a2pOrder) => a2pOrder.WriteErrors.Count(error => error.Level == ErrorLevel.Warning);
-        private int CountWriteTotalError(A2POrder a2pOrder) => a2pOrder.WriteErrors.Count(error => error.Level is ErrorLevel.Warning or ErrorLevel.Error or ErrorLevel.Fatal);
+        private int CountReadTotalError(A2POrder a2pOrder)
+        {
+            return a2pOrder.ErrorsRead.Count(error => error.Level is ErrorLevel.Warning or ErrorLevel.Error or ErrorLevel.Fatal);
+        }
+
+        private int CountWriteFatal(A2POrder a2pOrder)
+        {
+            return a2pOrder.ErrorsWrite.Count(error => error.Level == ErrorLevel.Fatal);
+        }
+
+        private int CountWriteError(A2POrder a2pOrder)
+        {
+            return a2pOrder.ErrorsWrite.Count(error => error.Level == ErrorLevel.Error);
+        }
+
+        private int CountWriteWarning(A2POrder a2pOrder)
+        {
+            return a2pOrder.ErrorsWrite.Count(error => error.Level == ErrorLevel.Warning);
+        }
+
+        private int CountWriteTotalError(A2POrder a2pOrder)
+        {
+            return a2pOrder.ErrorsWrite.Count(error => error.Level is ErrorLevel.Warning or ErrorLevel.Error or ErrorLevel.Fatal);
+        }
 
         private bool OrdersToOverwrite(Dictionary<string, int> keyValuePairs)
         {
@@ -1152,17 +1100,11 @@ namespace a2p.WinForm.ChildForms
         //    }
         //}
 
-        private void lbTitle_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private async Task UpdateDatable(int type)
+        private async Task UpdateDatable(List<A2POrder> a2pOrders, int type)
         {
 
             _dataTable.Rows.Clear();
 
-            List<A2POrder> a2pOrders = _dataCache.GetAllOrders();
             int orderCount = 0;
             int fileCount = 0;
             int worksheetCount = 0;
@@ -1206,8 +1148,6 @@ namespace a2p.WinForm.ChildForms
                 try
                 {
 
-
-
                     lbInfoOrdersCount.Text = orderCount.ToString();
                     lbInfoFilesCount.Text = fileCount.ToString();
                     lbInfoWorksheetsCount.Text = worksheetCount.ToString();
@@ -1216,7 +1156,7 @@ namespace a2p.WinForm.ChildForms
                     lbInfoWarningCount.Text = warningCount.ToString();
                     lbInfoErrorCount.Text = errorCount.ToString();
 
-                    OrderDTO orderDTO = await MapToReadOrderDTOAsync(a2pOrder, type);   // 2 means import and should be used write errors
+                    OrderDTO orderDTO = await MapToReadOrderDTOAsync(a2pOrder);   // 2 means import and should be used write errors
 
                     Image image;
 
@@ -1302,7 +1242,7 @@ namespace a2p.WinForm.ChildForms
                 }
                 catch (Exception ex)
                 {
-                    _logService.Debug(ex, "Error adding individual a2pOrder to data table");
+                    _logService.Debug("Error adding individual a2pOrder to data table. Excepton: {$Exceptiom}", ex.Message);
                 }
             }
             if (InvokeRequired)

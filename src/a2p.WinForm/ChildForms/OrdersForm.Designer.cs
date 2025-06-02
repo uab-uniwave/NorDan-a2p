@@ -98,6 +98,7 @@ namespace a2p.WinForm.ChildForms
             dataGridViewFiles.TabIndex = 61;
             dataGridViewFiles.VirtualMode = true;
             dataGridViewFiles.CellFormatting += DataGridViewFiles_CellFormatting;
+            dataGridViewFiles.CurrentCellDirtyStateChanged += DataGridViewFiles_CurrentCellDirtyStateChanged;
             // 
             // contextMenuStrip1
             // 
@@ -442,7 +443,7 @@ namespace a2p.WinForm.ChildForms
 
         }
 
-        #endregion
+         #endregion
         private TableLayoutPanel plTbSBInfo;
         private Label lbInfoErrors;
         private Label lbInfoFiles;

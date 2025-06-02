@@ -17,8 +17,11 @@
 
 	<ItemGroup>
 		<Compile Remove="Application\Utils\**" />
+		<Compile Remove="Infrastructure\Services\PrefSuite\**" />
 		<EmbeddedResource Remove="Application\Utils\**" />
+		<EmbeddedResource Remove="Infrastructure\Services\PrefSuite\**" />
 		<None Remove="Application\Utils\**" />
+		<None Remove="Infrastructure\Services\PrefSuite\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -98,10 +101,6 @@
 
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Infrastructure\Services\PrefSuite\" />
 	</ItemGroup>
 
 

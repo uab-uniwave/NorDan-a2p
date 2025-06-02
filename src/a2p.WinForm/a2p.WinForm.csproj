@@ -8,8 +8,6 @@
  <ImplicitUsings>enable</ImplicitUsings>
 
      <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
-     <!--<ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>-->
-<!--<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>	-->
 
  
 
@@ -111,9 +109,9 @@
     </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="xcopy /Y /I ..\..\src\a2p.DataAssets\SQL $(OutputPath)\SQL" />
-    <Exec Command="xcopy /Y /I ..\..\src\a2p.DataAssets\Excel $(OutputPath)\Excel" />
-    <Exec Command="xcopy /Y /I ..\..\src\a2p.DataAssets\PrefSuiteBackup $(OutputPath)\PrefSuiteBackup" />
+    <Exec Command="xcopy /Y /I ..\..\src\a2p.DataAssets\SQL $(OutputPath)\SQL" /> 
+	     <Exec Command="xcopy /Y /I ..\..\src\a2p.DataAssets\Excel $(OutputPath)\Excel" /> 
+   <Exec Command="xcopy /Y /I ..\..\src\a2p.DataAssets\PrefSuiteBackup $(OutputPath)\PrefSuiteBackup" /> 
 
 
   </Target>

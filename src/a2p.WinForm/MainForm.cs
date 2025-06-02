@@ -143,9 +143,7 @@ namespace a2p.WinForm
             {
                 _logService.Information("User settings file loaded successfully.");
             }
-
-            SetRoundedCorners(20); // Set the radius for rounded corners
-            try
+              try
             {
 
                 slbPathValue.Text = _appSettings.Folders.RootFolder;
@@ -191,9 +189,6 @@ namespace a2p.WinForm
             ResizeControls();
             tplHeader.ResumeLayout(false);
             tplHeader.PerformLayout();
-            tlpTitleBar.ResumeLayout(false);
-            tlpTitleBar.PerformLayout();
-            plTitleBar.ResumeLayout(false);
             plTBPanel.ResumeLayout(false);
             plTBPanel.PerformLayout();
             statusStrip.ResumeLayout(false);
@@ -204,10 +199,6 @@ namespace a2p.WinForm
             plNordanHeaderLogo.PerformLayout();
             plTbSBInfo.ResumeLayout(false);
             plTbSBInfo.PerformLayout();
-            plMiniLogo.ResumeLayout(false);
-            plMiniLogo.PerformLayout();
-            plTitleBarAppName.ResumeLayout(false);
-            plTitleBarAppName.PerformLayout();
             plSideBarMain.ResumeLayout(false);
             plSideBarMain.PerformLayout();
             this.ResumeLayout(false);
@@ -251,23 +242,12 @@ namespace a2p.WinForm
             }
         }
 
-        private void SetRoundedCorners(int radius)
-        {
-            GraphicsPath path = new();
-            path.StartFigure();
-            path.AddArc(new Rectangle(0, 0, radius, radius), 180, 90);
-            path.AddArc(new Rectangle(this.Width - radius, 0, radius, radius), 270, 90);
-            path.AddArc(new Rectangle(this.Width - radius, this.Height - radius, radius, radius), 0, 90);
-            path.AddArc(new Rectangle(0, this.Height - radius, radius, radius), 90, 90);
-            path.CloseFigure();
-            this.Region = new Region(path);
-        }
+     
 
         protected override void OnSizeChanged(EventArgs e)
         {
             base.OnSizeChanged(e);
-            SetRoundedCorners(20); // Update the rounded corners when the form is resized
-            if (plFormContainer != null)
+          if (plFormContainer != null)
             {
                 plFormContainer.Size = new Size(this.ClientSize.Width - plFormContainer.Left,
                     this.ClientSize.Height - plFormContainer.Top);
@@ -329,10 +309,6 @@ namespace a2p.WinForm
         {
             // Circular buttons
 
-            SetupCircularButton(btnMaximize);
-            SetupCircularButton(btnMinimize);
-            SetupCircularButton(btnClose);
-
             // Group buttons with selection
             SetupGroupButton(btnLoad);
             SetupGroupButton(btnProperties);
@@ -340,28 +316,6 @@ namespace a2p.WinForm
             SetupGroupButton(btnLog);
             SetupGroupButton(btnExit);
 
-        }
-
-        /// <summary>
-        /// Sets up circular buttons with hover effect.
-        /// </summary>
-        private void SetupCircularButton(Button btn)
-        {
-            btn.FlatStyle = FlatStyle.Flat;
-            btn.FlatAppearance.BorderSize = 0;
-            btn.BackColor = System.Drawing.Color.FromArgb(56, 57, 60);
-
-            // Set circular shape
-            GraphicsPath path = new();
-            path.AddEllipse(0, 0, btn.Width, btn.Height);
-            btn.Region = new Region(path);
-
-            // Load images
-            btn.Image = LoadImage(btn.Name, btn.Width - 4, btn.Height - 4);
-
-            // Hover effect
-            btn.MouseEnter += (s, e) => btn.Image = LoadImage(btn.Name + "Hover", btn.Width, btn.Height);
-            btn.MouseLeave += (s, e) => btn.Image = LoadImage(btn.Name, btn.Width - 4, btn.Height - 4);
         }
 
         /// <summary>
@@ -711,9 +665,6 @@ namespace a2p.WinForm
             ResizeControls();
             tplHeader.ResumeLayout(false);
             tplHeader.PerformLayout();
-            tlpTitleBar.ResumeLayout(false);
-            tlpTitleBar.PerformLayout();
-            plTitleBar.ResumeLayout(false);
             plTBPanel.ResumeLayout(false);
             plTBPanel.PerformLayout();
             statusStrip.ResumeLayout(false);
@@ -721,11 +672,6 @@ namespace a2p.WinForm
             plFormContainer.ResumeLayout(false);
             plFormContainer.PerformLayout();
             plNordanHeaderLogo.ResumeLayout(false);
-            plMiniLogo.ResumeLayout(false);
-            plMiniLogo.PerformLayout();
-            plTitleBarAppName.ResumeLayout(false);
-            plTitleBarAppName.PerformLayout();
-            plSideBarMain.ResumeLayout(false);
             plSideBarMain.PerformLayout();
             ResumeLayout(false);
             PerformLayout();

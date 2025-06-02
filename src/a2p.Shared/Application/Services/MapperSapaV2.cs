@@ -368,6 +368,11 @@ namespace a2p.Shared.Application.Services
                         materialDTO.ReferenceBase = a2pWorksheet.WorksheetData[i][1].ToString() ?? string.Empty;
 
                         (string, A2PError?) result = TransformReference(materialDTO.ReferenceBase, materialDTO.SourceColor ?? string.Empty, a2pWorksheet, line);
+                        if (string.IsNullOrEmpty(result.Item1))
+                        {
+                            continue;
+                        }
+
                         materialDTO.Reference = result.Item1;
 
                         if (result.Item2 != null)
@@ -576,6 +581,11 @@ namespace a2p.Shared.Application.Services
                             if (materialDTO.Color != "Without")
                             {
                                 (string, A2PError?) result = TransformReference(materialDTO.ReferenceBase, materialDTO.Color, a2pWorksheet, line);
+                                if (string.IsNullOrEmpty(result.Item1))
+                                {
+                                    continue;
+                                }
+
                                 materialDTO.Reference = result.Item1;
                                 if (result.Item2 != null)
                                 {
@@ -772,6 +782,10 @@ namespace a2p.Shared.Application.Services
                             if (materialDTO.Color != "Without")
                             {
                                 (string, A2PError?) result = TransformReference(materialDTO.ReferenceBase, materialDTO.Color, a2pWorksheet, line);
+                                if (string.IsNullOrEmpty(result.Item1))
+                                {
+                                    continue;
+                                }
                                 materialDTO.Reference = result.Item1;
                                 if (result.Item2 != null)
                                 {
@@ -965,6 +979,10 @@ namespace a2p.Shared.Application.Services
                             {
 
                                 (string, A2PError?) result = TransformReference("AluSheet1", a2pWorksheet.WorksheetData[i][2].ToString() ?? string.Empty, a2pWorksheet, line);
+                                if (string.IsNullOrEmpty(result.Item1))
+                                {
+                                    continue;
+                                }
                                 materialDTO.Reference = result.Item1;
                                 if (result.Item2 != null)
                                 {
@@ -975,6 +993,11 @@ namespace a2p.Shared.Application.Services
                             else
                             {
                                 (string, A2PError?) result = TransformReference(a2pWorksheet.WorksheetData[i][1].ToString() ?? string.Empty, a2pWorksheet.WorksheetData[i][2].ToString() ?? string.Empty, a2pWorksheet, line);
+
+                                if (string.IsNullOrEmpty(result.Item1))
+                                {
+                                    continue;
+                                }
 
                                 materialDTO.Reference = result.Item1;
 
@@ -1387,6 +1410,10 @@ namespace a2p.Shared.Application.Services
                             {
 
                                 (string, A2PError?) result = TransformReference(materialDTO.ReferenceBase, materialDTO.Color, a2pWorksheet, line);
+                                if (string.IsNullOrEmpty(result.Item1))
+                                {
+                                    continue;
+                                }
                                 materialDTO.Reference = result.Item1;
                                 if (result.Item2 != null)
                                 {
@@ -1792,7 +1819,7 @@ namespace a2p.Shared.Application.Services
                         Order = a2pWorksheet.Order ?? string.Empty,
                         Level = ErrorLevel.Error,
                         Code = ErrorCode.MappingService_MapMaterial,
-                        Message = $"Mapper Sapa 2: Generated material Reference is > 25 characters!" +
+                        Message = $"Error Sapa article and color are empty" +
                        $"\nLine will be skipped." +
                        $"\nOrder: {a2pWorksheet.Order ?? string.Empty}, " +
                        $"\nWorksheet: {a2pWorksheet.Name ?? string.Empty}, " +
@@ -1837,6 +1864,8 @@ namespace a2p.Shared.Application.Services
                     if (reference.Length > 25)
                     {
                         string newReference = $"*{reference[..24]}";
+
+
                         _logService.Error("Mapper Sapa 2 Service: Warning." +
                            "Reference > 25 characters." +
                            "\nOrder: {Order}, " +
@@ -1875,6 +1904,8 @@ namespace a2p.Shared.Application.Services
                            $"\nReference inserted into DB: {newReference}({newReference.Length})." +
                            "\n"
                         };
+
+                        reference = newReference; // Use the new reference
                         return (reference, a2pError);
                     }
 

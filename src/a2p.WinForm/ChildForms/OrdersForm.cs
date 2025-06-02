@@ -1,11 +1,10 @@
-using System.Data;
-
 using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.Domain.Enums;
 using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Application.Models;
 using a2p.Shared.Core.DTO.a2p.Shared.Core.DTO;
 using a2p.Shared.Infrastructure.Interfaces;
+using System.Data;
 
 namespace a2p.WinForm.ChildForms
 {
@@ -531,18 +530,21 @@ namespace a2p.WinForm.ChildForms
                 {
                     string? itemList = dataGridViewFiles.Rows[e.RowIndex].Cells["ItemList"].Value.ToString();
                     dataGridViewFiles.Rows[e.RowIndex].Cells["Items"].ToolTipText = itemList;
+                    e.CellStyle.Font = new Font(e.CellStyle.Font, FontStyle.Bold);
                 }
 
                 if (dataGridViewFiles.Columns["FileCount"] != null && e.ColumnIndex == dataGridViewFiles.Columns["FileCount"].Index && e.Value != null)
                 {
                     string? fileList = dataGridViewFiles.Rows[e.RowIndex].Cells["FileList"].Value.ToString();
                     dataGridViewFiles.Rows[e.RowIndex].Cells["FileCount"].ToolTipText = fileList;
+                    e.CellStyle.Font = new Font(e.CellStyle.Font, FontStyle.Bold);
                 }
 
                 if (dataGridViewFiles.Columns["WorksheetCount"] != null && e.ColumnIndex == dataGridViewFiles.Columns["WorksheetCount"].Index && e.Value != null)
                 {
                     string? worksheetList = dataGridViewFiles.Rows[e.RowIndex].Cells["WorksheetList"].Value.ToString();
                     dataGridViewFiles.Rows[e.RowIndex].Cells["WorksheetCount"].ToolTipText = worksheetList;
+                    e.CellStyle.Font = new Font(e.CellStyle.Font, FontStyle.Bold);
                 }
 
                 if (Convert.ToInt32(dataGridViewFiles.Rows[e.RowIndex].Cells["WarningCount"].Value) > 0)
@@ -550,6 +552,7 @@ namespace a2p.WinForm.ChildForms
                     e.CellStyle.ForeColor = Color.Yellow;
                     string? warningList = dataGridViewFiles.Rows[e.RowIndex].Cells["WarningList"].Value.ToString();
                     dataGridViewFiles.Rows[e.RowIndex].Cells["WarningCount"].ToolTipText = warningList;
+                    e.CellStyle.Font = new Font(e.CellStyle.Font, FontStyle.Bold);
                 }
 
                 if (Convert.ToInt32(dataGridViewFiles.Rows[e.RowIndex].Cells["ErrorCount"].Value) > 0)
@@ -557,11 +560,16 @@ namespace a2p.WinForm.ChildForms
                     e.CellStyle.ForeColor = Color.Orange;
                     string? errorList = dataGridViewFiles.Rows[e.RowIndex].Cells["ErrorList"].Value.ToString();
                     dataGridViewFiles.Rows[e.RowIndex].Cells["ErrorCount"].ToolTipText = errorList;
+                    e.CellStyle.Font = new Font(e.CellStyle.Font, FontStyle.Bold);
                 }
 
                 if (Convert.ToInt32(dataGridViewFiles.Rows[e.RowIndex].Cells["FatalCount"].Value) > 0)
                 {
-                    e.CellStyle.ForeColor = Color.Red;
+                    e.CellStyle.ForeColor = Color.WhiteSmoke;
+                    e.CellStyle.BackColor = Color.Red;
+                    // Fix: Font.Bold is read-only, so create a new Font with Bold style
+                    e.CellStyle.Font = new Font(e.CellStyle.Font, FontStyle.Bold);
+                    
                     string? fatalList = dataGridViewFiles.Rows[e.RowIndex].Cells["FatalList"].Value.ToString();
                     dataGridViewFiles.Rows[e.RowIndex].Cells["FatalCount"].ToolTipText = fatalList;
 
@@ -641,6 +649,16 @@ namespace a2p.WinForm.ChildForms
                 _logService.Error("Order Form: Unhandled error setting grid row readonly. Exception: {$Exception}.", ex.Message);
             }
 
+        }
+
+
+
+        private void DataGridViewFiles_CurrentCellDirtyStateChanged(object? sender, EventArgs e)
+        {
+            if (dataGridViewFiles.IsCurrentCellDirty)
+            {
+                dataGridViewFiles.CommitEdit(DataGridViewDataErrorContexts.Commit);
+            }
         }
         //===============================================================
         // -= Context menu =-

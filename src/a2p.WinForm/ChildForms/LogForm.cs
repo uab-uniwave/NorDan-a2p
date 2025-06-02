@@ -1,14 +1,12 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Data;
-using System.Text.Json.Nodes;
-
 using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.Models;
 using a2p.Shared.Infrastructure.Interfaces;
-
 using ClosedXML.Excel;
+using System.Data;
+using System.Text.Json.Nodes;
 
 namespace a2p.WinForm.ChildForms
 {
@@ -62,36 +60,6 @@ namespace a2p.WinForm.ChildForms
                 //=====================================================
                 _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
                 {
-                    HeaderText = "Timestamp",
-                    DataPropertyName = "Timestamp",
-                    Name = "Timestamp",
-                    ReadOnly = true,
-                    Visible = true,
-                    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
-
-                });
-                _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
-                {
-                    HeaderText = "Level",
-                    DataPropertyName = "Level",
-                    Name = "Level",
-                    ReadOnly = true,
-                    Visible = true,
-                    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
-
-                });
-                _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
-                {
-                    HeaderText = "Message",
-                    DataPropertyName = "Message",
-                    Name = "Message",
-                    ReadOnly = true,
-                    Visible = true,
-                    AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
-
-                });
-                _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
-                {
                     HeaderText = "Order",
                     DataPropertyName = "Order",
                     Name = "Order",
@@ -109,68 +77,52 @@ namespace a2p.WinForm.ChildForms
                     AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
 
                 });
+              
+            
                 _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
                 {
-                    HeaderText = "Line",
-                    DataPropertyName = "Line",
-                    Name = "Line",
+                    HeaderText = "Reference",
+                    DataPropertyName = "Reference",
+                    Name = "Reference",
                     ReadOnly = true,
-                    Visible = false,
+                    Visible = true,
 
                 });
                 _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
                 {
-                    HeaderText = "Exception",
-                    DataPropertyName = "Exception",
-                    Name = "Exception",
+                    HeaderText = "Color / Description",
+                    DataPropertyName = "Color",
+                    Name = "Color",
                     ReadOnly = true,
-                    Visible = false,
+                    Visible = true,
+                    SortMode = DataGridViewColumnSortMode.NotSortable
 
                 });
+
                 _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
                 {
-                    HeaderText = "Line",
-                    DataPropertyName = "Line",
-                    Name = "Line",
+                    HeaderText = "Level",
+                    DataPropertyName = "Level",
+                    Name = "Level",
                     ReadOnly = true,
                     Visible = true,
                     AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                });
+                    SortMode = DataGridViewColumnSortMode.NotSortable
 
+                });
                 _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
                 {
-                    HeaderText = "Properties",
-                    DataPropertyName = "Properties",
-                    Name = "Properties",
-                    ReadOnly = true,
-                    Visible = false,
-                    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-
-                });
-
-                // DataGridViewProperties Columns 
-                //=====================================================
-                _ = dataGridViewProperties.Columns.Add(new DataGridViewTextBoxColumn
-                {
-                    HeaderText = "Property",
-                    DataPropertyName = "Properties",
-                    Name = "Properties",
+                    HeaderText = "Message",
+                    DataPropertyName = "Message",
+                    Name = "Message",
                     ReadOnly = true,
                     Visible = true,
-                    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                    SortMode = DataGridViewColumnSortMode.NotSortable
 
                 });
-                _ = dataGridViewProperties.Columns.Add(new DataGridViewTextBoxColumn
-                {
-                    HeaderText = "Value",
-                    DataPropertyName = "Value",
-                    Name = "Value",
-                    ReadOnly = true,
-                    Visible = true,
-                    MinimumWidth = 100,
-                    AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
 
-                });
+
 
                 //DataGrid Header Style 
                 //===================================================================================================================
@@ -178,17 +130,16 @@ namespace a2p.WinForm.ChildForms
                 {
                     BackColor = Color.FromArgb(56, 57, 60),
                     ForeColor = Color.FromArgb(239, 112, 32),
-                    SelectionBackColor = Color.FromArgb(239, 112, 32),
+                    //    SelectionBackColor = Color.FromArgb(239, 112, 32),
                     SelectionForeColor = Color.WhiteSmoke,
+
                     Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0),
                     Padding = new Padding(5),
-                    Alignment = DataGridViewContentAlignment.MiddleLeft,
-
+                    Alignment = DataGridViewContentAlignment.MiddleCenter,
                 };
-
+       
                 dataGridViewLog.ColumnHeadersDefaultCellStyle = ColumnHeadersDefaultCellStyle;
-                dataGridViewProperties.ColumnHeadersDefaultCellStyle = ColumnHeadersDefaultCellStyle;
-
+            
                 //DataGrid Cell and Alternative Rows default Cells Style 
                 //===================================================================================================================
                 DataGridViewCellStyle DefaultCellStyle = new()
@@ -203,8 +154,7 @@ namespace a2p.WinForm.ChildForms
                     WrapMode = DataGridViewTriState.True
                 };
                 dataGridViewLog.DefaultCellStyle = DefaultCellStyle;
-                dataGridViewProperties.DefaultCellStyle = DefaultCellStyle;
-
+           
                 DataGridViewCellStyle AlternatingRowsDefaultCellStyle = new()
                 {
                     BackColor = Color.FromArgb(96, 97, 100),
@@ -218,7 +168,6 @@ namespace a2p.WinForm.ChildForms
 
                 };
                 dataGridViewLog.AlternatingRowsDefaultCellStyle = AlternatingRowsDefaultCellStyle;
-                dataGridViewProperties.AlternatingRowsDefaultCellStyle = AlternatingRowsDefaultCellStyle;
 
                 //DataGrid Default cells 
                 DataGridViewCellStyle RowsDefaultCellStyle = new()
@@ -233,12 +182,9 @@ namespace a2p.WinForm.ChildForms
                     Alignment = DataGridViewContentAlignment.MiddleLeft
                 };
                 dataGridViewLog.RowsDefaultCellStyle = RowsDefaultCellStyle;
-                dataGridViewProperties.RowsDefaultCellStyle = RowsDefaultCellStyle;
-
+            
                 dataGridViewLog.Visible = true;
-                dataGridViewProperties.Visible = true;
                 dataGridViewLog.Enabled = true;
-                dataGridViewProperties.Enabled = true;
 
             }
             catch (Exception ex)
@@ -258,22 +204,16 @@ namespace a2p.WinForm.ChildForms
             try
             {
                 // DataTable for log entries
-                _ = _dataTableLog.Columns.Add("Timestamp", typeof(string));
-                _ = _dataTableLog.Columns.Add("Level", typeof(string));
-                _ = _dataTableLog.Columns.Add("Message", typeof(string));
                 _ = _dataTableLog.Columns.Add("Order", typeof(string));
                 _ = _dataTableLog.Columns.Add("Worksheet", typeof(string));
-                _ = _dataTableLog.Columns.Add("Line", typeof(string));
-                _ = _dataTableLog.Columns.Add("Exception", typeof(string));
-                _ = _dataTableLog.Columns.Add("Properties", typeof(Dictionary<string, object>));
+                _ = _dataTableLog.Columns.Add("Reference", typeof(string));
+                _ = _dataTableLog.Columns.Add("Color", typeof(string));
+                _ = _dataTableLog.Columns.Add("Level", typeof(string));
+                _ = _dataTableLog.Columns.Add("Message", typeof(string));
                 _bindingSourceLog.DataSource = _dataTableLog;
                 dataGridViewLog.DataSource = _bindingSourceLog;
 
-                // DataTable for log properties 
-                _ = _dataTableProperties.Columns.Add("Properties", typeof(string));
-                _ = _dataTableProperties.Columns.Add("Value", typeof(string));
-                _bindingSourceProperties.DataSource = _dataTableProperties;
-                dataGridViewProperties.DataSource = _bindingSourceProperties;
+              
             }
 
             catch (Exception ex2)
@@ -299,7 +239,6 @@ namespace a2p.WinForm.ChildForms
 
         private void LogForm_Shown(object sender, EventArgs e)
         {
-            ApplyFilter();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -332,14 +271,7 @@ namespace a2p.WinForm.ChildForms
 
         }
 
-        private void dataGridViewProperties_DataError(object sender, DataGridViewDataErrorEventArgs e)
-        {
-            // Log any errors that occur during processing
-            _logService.Error("Log Form: GridViewProperties. Error in column {$Column}, row {$Row}: {$Exception}", e.ColumnIndex, e.RowIndex, e.Exception?.Message ?? "Exception details missing.");
-            e.ThrowException = false;
-
-        }
-
+  
         private void LogGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             try
@@ -407,16 +339,7 @@ namespace a2p.WinForm.ChildForms
                         }
                     }
 
-                    // Format the "Timestamp" column
-                    if (columnName == "Timestamp" && e.Value != null)
-                    {
-                        if (DateTime.TryParse(e.Value.ToString(), out DateTime dateValue))
-                        {
-                            e.Value = dateValue.ToString("yyyy-MM-dd HH:mm:ss:ffff");
-                            e.FormattingApplied = true;
-
-                        }
-                    }
+          
                 }
             }
             catch (Exception ex)
@@ -440,25 +363,9 @@ namespace a2p.WinForm.ChildForms
             }
         }
 
-        private void dataGridViewLog_SelectionChanged(object sender, EventArgs e) => _ = PropertiesAddAsync(dataGridViewLog.Rows.IndexOf(dataGridViewLog.CurrentRow));
-
         #endregion -== Grids events == -
 
-        #region -== Log Level Filter Method and Controls Events ==-
 
-        private void chxLogLevelWarning_CheckedChanged(object sender, EventArgs e) => ApplyFilter();
-
-        private void chxLogLevelVerbose_CheckedChanged(object sender, EventArgs e) => ApplyFilter();
-
-        private void chxLogLevelDebug_CheckedChanged(object sender, EventArgs e) => ApplyFilter();
-
-        private void chxLogLevelInfo_CheckedChanged(object sender, EventArgs e) => ApplyFilter();
-
-        private void chxLogLevelError_CheckedChanged(object sender, EventArgs e) => ApplyFilter();
-
-        private void chxLogLevelFatal_CheckedChanged(object sender, EventArgs e) => ApplyFilter();
-
-        #endregion  -== Log Level Filter Method and Controls Events ==-
 
         #region -== Data Table methods ==-
         public async Task LogoMonitorFileAsync()
@@ -502,13 +409,12 @@ namespace a2p.WinForm.ChildForms
 
                 A2PLogRecord logRecord = new()
                 {
-                    Timestamp = root["Timestamp"]?.ToString() ?? string.Empty,
-                    Level = root["Level"]?.ToString() ?? string.Empty,
-                    Message = propertiesNode["RenderedMessage"]?.ToString() ?? string.Empty,
                     Order = propertiesNode["Order"]?.ToString() ?? string.Empty,
                     Worksheet = propertiesNode["Worksheet"]?.ToString() ?? string.Empty,
-                    Line = propertiesNode["Line"]?.ToString() ?? string.Empty,
-                    Exception = propertiesNode["Exception"]?.ToString() ?? string.Empty
+                    Reference = propertiesNode["Reference"]?.ToString() ?? string.Empty,
+                    Color = propertiesNode["Color"]?.ToString() ?? string.Empty,
+                    Level = root["Level"]?.ToString() ?? string.Empty,
+                    Message = propertiesNode["RenderedMessage"]?.ToString() ?? string.Empty,
 
                 };
 
@@ -533,66 +439,6 @@ namespace a2p.WinForm.ChildForms
                 return new A2PLogRecord();
             }
         }
-
-        private void ApplyFilter()
-        {
-            try
-            {
-
-                dataGridViewLog.SuspendLayout();
-
-                List<string> selectedLevels = [];
-
-                if (chxVerbose.Checked)
-                {
-                    selectedLevels.Add("'Verbose'");
-                }
-
-                if (chxDebug.Checked)
-                {
-                    selectedLevels.Add("'Debug'");
-                }
-
-                if (chxInformation.Checked)
-                {
-                    selectedLevels.Add("'Information'");
-                }
-
-                if (chxWarning.Checked)
-                {
-                    selectedLevels.Add("'Warning'");
-                }
-
-                if (chxError.Checked)
-                {
-                    selectedLevels.Add("'Error'");
-                }
-
-                if (chxFatal.Checked)
-                {
-                    selectedLevels.Add("'Fatal'");
-                }
-
-                if (selectedLevels.Count > 0)
-                {
-
-                    string filterExpression = $"Level IN ({string.Join(",", selectedLevels)})";
-                    _bindingSourceLog.Filter = filterExpression;
-
-                }
-                else
-                {
-                    _bindingSourceLog.RemoveFilter(); // Show all data if no checkboxes are selected
-
-                }
-                dataGridViewLog.ResumeLayout(false);
-                dataGridViewLog.PerformLayout();
-            }
-            catch (Exception ex)
-            {
-                _logService.Error("Log Form: Error applying filter: {ex.Message}", ex.Message);
-            }
-        }
         private void LogAddAsync(A2PLogRecord logEntry)
         {
             try
@@ -604,14 +450,13 @@ namespace a2p.WinForm.ChildForms
                 }
 
                 _ = _dataTableLog.Rows.Add(
-                 logEntry.Timestamp,
-                 logEntry.Level,
-                 logEntry.Message,
+   
                  logEntry.Order,
                  logEntry.Worksheet,
-                 logEntry.Line,
-                 logEntry.Exception,
-                 logEntry.Properties // Directly store the dictionary
+                 logEntry.Reference,
+                 logEntry.Color, 
+                 logEntry.Level,
+                 logEntry.Message
                 );
             }
             catch (Exception ex)
@@ -635,15 +480,12 @@ namespace a2p.WinForm.ChildForms
                     List<A2PLogRecord> distinctLogEntries = logEntries
                      .GroupBy(entry => new
                      {
-                         entry.Timestamp,
-                         entry.Level,
-                         entry.Message,
                          entry.Order,
                          entry.Worksheet,
-                         entry.Line,
-                         entry.Exception,
-                         entry.Properties
-
+                         entry.Reference,
+                         entry.Color,
+                         entry.Level,
+                         entry.Message,
                      })
                      .Select(group => group.First())
                      .ToList();
@@ -651,7 +493,7 @@ namespace a2p.WinForm.ChildForms
                     foreach (A2PLogRecord? logEntry in distinctLogEntries)
                     {
 
-                        _ = _dataTableLog.Rows.Add(logEntry.Timestamp, logEntry.Level, logEntry.Message, logEntry.Order, logEntry.Worksheet, logEntry.Line, logEntry.Exception, logEntry.Properties);
+                        _ = _dataTableLog.Rows.Add( logEntry.Order, logEntry.Worksheet, logEntry.Reference,logEntry.Color, logEntry.Level, logEntry.Message);
                     }
 
                 }
@@ -692,60 +534,6 @@ namespace a2p.WinForm.ChildForms
         }
 
         //========================================================
-        private async Task PropertiesAddAsync(int index)
-        {
-            if (InvokeRequired)
-            {
-                Invoke(new Action(async () => await PropertiesAddAsync(index)));
-                return;
-            }
-
-            try
-            {
-                // Ensure the index is within bounds
-                if (index < 0 || index >= dataGridViewLog.Rows.Count)
-                {
-                    _logService.Warning("LF: Row index out of range. Can't get log properties.");
-                    return;
-                }
-
-                // Get the DataRow from the DataGridView's DataBoundItem
-                if (dataGridViewLog.Rows[index].DataBoundItem is DataRowView rowView)
-                {
-                    DataRow selectedRow = rowView.Row;
-
-                    // Get the dictionary from the "Properties" column
-                    if (selectedRow["Properties"] is not Dictionary<string, object> properties || properties.Count == 0)
-                    {
-                        _logService.Warning("LF: Selected row has no valid properties.");
-                        return;
-                    }
-
-                    // Clear the previous properties
-                    if (_dataTableProperties.Rows.Count > 0)
-                    {
-                        _dataTableProperties.Rows.Clear();
-                    }
-
-                    // Add each property to the _dataTableProperties
-                    foreach (KeyValuePair<string, object> property in properties)
-                    {
-                        _ = await Task.Run(() => _dataTableProperties.Rows.Add(property.Key, property.Value?.ToString()));
-                    }
-                }
-                else
-                {
-                    _logService.Warning("LF: Failed to retrieve the DataRow for the selected index.");
-                }
-            }
-            catch (Exception ex)
-            {
-                _logService.Error($"LF: Error processing log entry properties: {ex.Message}");
-            }
-        }
-        #endregion -== Data Table methods ==-
-
-        #region -== Contextual Menu ==-
         private void saveLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string defaultFileName = $"Log_{DateTime.Now:yyyy-MM-dd_HH-mm}.xlsx";
@@ -763,12 +551,51 @@ namespace a2p.WinForm.ChildForms
                 using (XLWorkbook workbook = new())
                 {
                     DataTable dataTable = ((DataTable)_bindingSourceLog.DataSource).Copy();
-                    _ = workbook.Worksheets.Add(dataTable, "LogRecords");
+                    // After creating the worksheet, set column formatting as requested
+                    IXLWorksheet worksheet = workbook.Worksheets.Add(dataTable, "Log Records");
+
+                    // Set word wrap for column 5 (indexing is 1-based in ClosedXML)
+
+                    // Only apply header style to used columns in Row(1)
+                    var HeaderRow = worksheet.Row(1);
+                    int usedColumnCount = worksheet.ColumnsUsed().Count();
+                    for (int i = 1; i <= usedColumnCount; i++)
+                    {
+                        var cell = HeaderRow.Cell(i);
+                        cell.Style.Font.Bold = true;
+                        cell.Style.Font.FontSize = 12;
+                        cell.Style.Fill.BackgroundColor = XLColor.FromArgb(56, 57, 60);
+                        cell.Style.Font.FontColor = XLColor.FromArgb(239, 112, 32);
+                    }
+                    // Set borders for all used cells to color (239, 112, 32)
+                    var borderColor = XLColor.FromArgb(239, 112, 32);
+                    foreach (var cell in worksheet.CellsUsed())
+                    {
+                        cell.Style.Border.TopBorder = XLBorderStyleValues.Thin;
+                        cell.Style.Border.TopBorderColor = borderColor;
+                        cell.Style.Border.BottomBorder = XLBorderStyleValues.Thin;
+                        cell.Style.Border.BottomBorderColor = borderColor;
+                        cell.Style.Border.LeftBorder = XLBorderStyleValues.Thin;
+                        cell.Style.Border.LeftBorderColor = borderColor;
+                        cell.Style.Border.RightBorder = XLBorderStyleValues.Thin;
+                        cell.Style.Border.RightBorderColor = borderColor;
+                    }
+                
+                    var colMessage = worksheet.Column(6);
+                    colMessage.Style.Alignment.WrapText = true;
+
+                    // Auto-size all columns
+                    for (int i = 1; i <= worksheet.ColumnsUsed().Count(); i++)
+                    {
+                        worksheet.Column(i).AdjustToContents();
+                    }
+
                     workbook.SaveAs(fileName);
                 }
                 _logService.Information("Log saved successfully to {FileName}", fileName);
             }
         }
+        
 
         #endregion -== Contextual Menu ==-
     }

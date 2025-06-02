@@ -1,9 +1,9 @@
-﻿namespace a2p.Shared.Application.Domain.Entities
+namespace a2p.Shared.Application.Domain.Entities
 {
     public class A2PFile
     {
 
-       // public string Order { get; set; } = string.Empty;
+        public string Order { get; set; } = string.Empty;
 
        public string Currency { get; set; } = string.Empty;
 

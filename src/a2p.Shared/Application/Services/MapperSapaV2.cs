@@ -451,20 +451,23 @@ namespace a2p.Shared.Application.Services
                         _logService.Error("Unhandled error {$Class}.{Method}." +
                             "\nOrder {$Order}, " +
                             "\nWorksheet: {$Worksheet}, " +
-                            "\nLine {$Line}, " +
-                            "\nReference base {$ReferenceBase}, " +
-                            "\nReference {$Reference}," +
+                            "\nReference: {$Reference }, " +
+                            "\nColor: {$Color }, " +
+                            "\nPrefSuite Reference Base {$ReferenceBase}, " +
+                            "\nPrefSuite Reference {$Reference}," +
                             "\nDescription {$Description}," +
-                            "\nException  ${Exception}",
-                              nameof(MapperSapaV2),
+                            "\nException  {$Exception}",
+                            nameof(MapperSapaV2),
                             nameof(MapProfilesAsync),
                             a2pWorksheet.Order ?? string.Empty,
                             a2pWorksheet.Name ?? string.Empty,
-                            line,
+                            materialDTO.SourceReference ?? string.Empty,
+                            materialDTO.SourceColor ?? string.Empty,
                             materialDTO.ReferenceBase ?? string.Empty,
                             materialDTO.Reference ?? string.Empty,
                             materialDTO.Description ?? string.Empty,
-                             ex.Message);
+                            ex.Message ?? string.Empty);
+                        
 
                         a2pErrors.Add(new A2PError()
                         {
@@ -544,16 +547,15 @@ namespace a2p.Shared.Application.Services
                             if (string.IsNullOrEmpty(materialDTO.SourceReference) && string.IsNullOrEmpty(materialDTO.SourceColor))
                             {
                                 _logService.Error("{$Class}.{$Method}. Sapa article and color are missing. Line will be skipped." +
-                                    "\nOrder {$Order}, " +
-                                    "\nWorksheet: {$Worksheet}, " +
-                                    "\nLine {$Line}, " +
-                                    "\nDescription {$Description}.",
-                                    nameof(MapperSapaV2),
-                                    nameof(MapGasketsAsync),
-                                    a2pWorksheet.Order ?? string.Empty,
-                                    a2pWorksheet.Name ?? string.Empty,
-                                    line,
-                                    materialDTO.Description ?? string.Empty);
+                                  "\nOrder {$Order}, " +
+                                "\nWorksheet: {$Worksheet}, " +
+                                "\nDescription {$Description}," +
+                                nameof(MapperSapaV2),
+                                nameof(MapGasketsAsync),
+                                a2pWorksheet.Order ?? string.Empty,
+                                a2pWorksheet.Name ?? string.Empty,
+                                materialDTO.Description ?? string.Empty
+                             );
 
                                 a2pErrors.Add(new A2PError()
                                 {
@@ -563,7 +565,6 @@ namespace a2p.Shared.Application.Services
                                     Message = $"Sapa article and color are missing. Line will be skipped." +
                                    $"\nOrder: {a2pWorksheet.Order ?? string.Empty}," +
                                    $"\nWorksheet: {a2pWorksheet.Name ?? string.Empty}," +
-                                   $"\nLine {materialDTO.Line}," +
                                    $"\nDescription: {materialDTO.Description ?? string.Empty}," +
                                    $"\nData: {a2pWorksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}"
                                 });
@@ -678,21 +679,22 @@ namespace a2p.Shared.Application.Services
                             _logService.Error("Unhandled error {$Class}.{Method}." +
                                 "\nOrder {$Order}, " +
                                 "\nWorksheet: {$Worksheet}, " +
-                                "\nLine {$Line}, " +
-                                "\nReference base {$ReferenceBase}, " +
-                                "\nReference {$Reference}," +
+                                "\nReference: {$Reference }, " +
+                                "\nColor: {$Color }, " +
+                                "\nPrefSuite Reference Base {$ReferenceBase}, " +
+                                "\nPrefSuite Reference {$Reference}," +
                                 "\nDescription {$Description}," +
-                                "\nException  ${Exception}",
+                                "\nException  {$Exception}",
                                   nameof(MapperSapaV2),
                                 nameof(MapGasketsAsync),
                                 a2pWorksheet.Order ?? string.Empty,
                                 a2pWorksheet.Name ?? string.Empty,
-                                line,
+                                materialDTO.SourceReference ?? string.Empty,
+                                materialDTO.SourceColor ?? string.Empty,
                                 materialDTO.ReferenceBase ?? string.Empty,
                                 materialDTO.Reference ?? string.Empty,
                                 materialDTO.Description ?? string.Empty,
                                  ex.Message ?? string.Empty);
-
                             a2pErrors.Add(new A2PError()
                             {
                                 Order = a2pWorksheet.Order ?? string.Empty,
@@ -860,18 +862,20 @@ namespace a2p.Shared.Application.Services
                         catch (Exception ex)
                         {
                             _logService.Error("Unhandled error {$Class}.{Method}." +
-                                "\nOrder {$Order}, " +
+                               "\nOrder {$Order}, " +
                                 "\nWorksheet: {$Worksheet}, " +
-                                "\nLine {$Line}, " +
-                                "\nReference base {$ReferenceBase}, " +
-                                "\nReference {$Reference}," +
+                                "\nReference: {$Reference }, " +
+                                "\nColor: {$Color }, " +
+                                "\nPrefSuite Reference Base {$ReferenceBase}, " +
+                                "\nPrefSuite Reference {$Reference}," +
                                 "\nDescription {$Description}," +
-                                "\nException  ${Exception}",
+                                "\nException  {$Exception}",
                                   nameof(MapperSapaV2),
                                 nameof(MapAccessoriesAsync),
                                 a2pWorksheet.Order ?? string.Empty,
                                 a2pWorksheet.Name ?? string.Empty,
-                                line,
+                                materialDTO.SourceReference ?? string.Empty,
+                                materialDTO.SourceColor ?? string.Empty,
                                 materialDTO.ReferenceBase ?? string.Empty,
                                 materialDTO.Reference ?? string.Empty,
                                 materialDTO.Description ?? string.Empty,
@@ -885,8 +889,8 @@ namespace a2p.Shared.Application.Services
                                 Message = $"Unhandled Error {nameof(MapperSapaV2)}.{nameof(MapAccessoriesAsync)}, " +
                                $"\nOrder: {a2pWorksheet.Order ?? string.Empty}," +
                                $"\nWorksheet: {a2pWorksheet.Name ?? string.Empty}," +
-                               $"\nLine {materialDTO.Line}," +
-                               $"\nItem: {materialDTO.Item ?? string.Empty}," +
+                            
+
                                $"\nDescription: {materialDTO.Description ?? string.Empty}," +
                                $"\nData: {a2pWorksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}," +
                                $"\nException: {ex.Message ?? string.Empty}."
@@ -1072,19 +1076,21 @@ namespace a2p.Shared.Application.Services
                         }
                         catch (Exception ex)
                         {
-                            _logService.Error("Unhandled error {$Class}.{Method}." +
+                            _logService.Error("Unhandled error {$Class}.{$Method}." +
                                 "\nOrder {$Order}, " +
                                 "\nWorksheet: {$Worksheet}, " +
-                                "\nLine {$Line}, " +
-                                "\nReference base {$ReferenceBase}, " +
-                                "\nReference {$Reference}," +
+                                "\nReference: {$Reference}, " +
+                                "\nColor: {$Color}, " +
+                                "\nPrefSuite Reference Base {$ReferenceBase}, " +
+                                "\nPrefSuite Reference {$Reference}," +
                                 "\nDescription {$Description}," +
-                                "\nException  ${Exception}",
-                                  nameof(MapperSapaV2),
+                                "\nException  {$Exception}",
+                                 nameof(MapperSapaV2),
                                 nameof(MapPanelsAsync),
                                 a2pWorksheet.Order ?? string.Empty,
                                 a2pWorksheet.Name ?? string.Empty,
-                                line,
+                                materialDTO.SourceReference ?? string.Empty,
+                                materialDTO.SourceColor ?? string.Empty,
                                 materialDTO.ReferenceBase ?? string.Empty,
                                 materialDTO.Reference ?? string.Empty,
                                 materialDTO.Description ?? string.Empty,
@@ -1096,13 +1102,13 @@ namespace a2p.Shared.Application.Services
                                 Level = ErrorLevel.Error,
                                 Code = ErrorCode.MappingService_MapMaterial,
                                 Message = $"Unhandled Error {nameof(MapperSapaV2)}.{nameof(MapPanelsAsync)}, " +
-                           $"\nOrder: {a2pWorksheet.Order ?? string.Empty}," +
-                           $"\nWorksheet: {a2pWorksheet.Name ?? string.Empty}," +
-                           $"\nLine {materialDTO.Line}," +
-                           $"\nItem: {materialDTO.Item ?? string.Empty}," +
-                           $"\nDescription: {materialDTO.Description ?? string.Empty}," +
-                           $"\nData: {a2pWorksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}," +
-                           $"\nException: {ex.Message ?? string.Empty}."
+                            $"\nOrder: {a2pWorksheet.Order ?? string.Empty}," +
+                            $"\nWorksheet: {a2pWorksheet.Name ?? string.Empty}," +
+                            $"\nReference: {materialDTO.SourceReference ?? string.Empty}," +
+                            $"\nColor: {materialDTO.SourceColor ?? string.Empty}," +
+                            $"\nDescription: {materialDTO.Description ?? string.Empty}," +
+                            $"\nData: {a2pWorksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}," +
+                            $"\nException: {ex.Message ?? string.Empty}."
                             });
                             continue;
                         }
@@ -1180,12 +1186,15 @@ namespace a2p.Shared.Application.Services
                                 _logService.Error("{$Class}.{$Method}. Glass description is missing." +
                                "\nOrder {$Order}, " +
                                "\nWorksheet: {$Worksheet}, " +
-                               "\nLine {$Line} " +
+                               "\nReference {$Reference}, " +
+                               "\nColor {$Color}," +
+                           
                                nameof(MapperSapaV2),
                                nameof(MapGlassesAsync),
                                a2pWorksheet.Order ?? string.Empty,
                                a2pWorksheet.Name ?? string.Empty,
-                               line
+                               materialDTO.SourceReference ?? string.Empty,
+                               materialDTO.Description ?? string.Empty
                                 );
 
                                 a2pErrors.Add(new A2PError()
@@ -1194,9 +1203,11 @@ namespace a2p.Shared.Application.Services
                                     Level = ErrorLevel.Error,
                                     Code = ErrorCode.MappingService_MapMaterial,
                                     Message = $"Glass description is missing." +
-                                  $"\nOrder: {a2pWorksheet.Order}, " +
-                                  $"\nWorksheet: {a2pWorksheet.Name}, " +
-                                  $"\nLine: {line}."
+                                    $"\nOrder: {a2pWorksheet.Order}, " +
+                                    $"\nWorksheet: {a2pWorksheet.Name}, " +
+                                    $"\nReference: {materialDTO.SourceReference ?? "not found"}," +
+                                    $"\nDescription: {materialDTO.Description ?? "not found"}"
+
                                 });
                                 continue;
                             }
@@ -1210,19 +1221,19 @@ namespace a2p.Shared.Application.Services
                             }
                             if (string.IsNullOrEmpty(resultGlassReference))
                             {
-                                _logService.Error("{$Class}.{$Method}. Glass not exists in PrefSuite DB. Line will be skipped." +
+                                _logService.Error("{$Class}.{$Method}. Glass not exists in PrefSuite DB." +
                               "\nOrder {$Order}, " +
                               "\nWorksheet: {$Worksheet}, " +
-                              "\nLine {$Line} " +
-                              "\nDescription {$Description} not found. " +
+                              "\nReference: {$Reference}, " +
+                              "\nDescription: {$Color} not found. " +
                               "\nExpected Reference {$ExpectedReference} of glass",
 
                                 nameof(MapperSapaV2),
                                   nameof(MapGlassesAsync),
                                   a2pWorksheet.Order ?? string.Empty,
                                   a2pWorksheet.Name ?? string.Empty,
-                                  line,
-                                  materialDTO.Description,
+                                  materialDTO.SourceReference  ?? string.Empty ,
+                                  materialDTO.SourceDescription ?? string.Empty,
                                   resultPredicted);
 
                                 a2pErrors.Add(new A2PError()
@@ -1231,9 +1242,11 @@ namespace a2p.Shared.Application.Services
                                     Level = ErrorLevel.Error,
                                     Code = ErrorCode.MappingService_MapMaterial,
                                     Message = $"Glass not exists in PrefSuite DB." +
-                                    $"\nError glass reference for {materialDTO.Description} not found. " +
-                                    $"\nExpected Reference for {resultPredicted ?? "not found"}  glass, " +
-                                    $"\nLine will be skipped. Order: {a2pWorksheet.Order}, Worksheet: {a2pWorksheet.Name}, LineNumber: {line}."
+                                    $"\nOrder: {a2pWorksheet.Order}," +
+                                    $"\nWorksheet: {a2pWorksheet.Name}." +
+                                    $"\nGlass description: {materialDTO.SourceDescription}" +
+                                    $"\nExpected PrefSuite Reference: {resultPredicted ?? "not found"}." 
+                                    
                                 });
                                 continue;
                             }
@@ -1305,20 +1318,21 @@ namespace a2p.Shared.Application.Services
                             _logService.Error("Unhandled error  {$Class}.{Method}" +
                                 "\nOrder {$Order}, " +
                                 "\nWorksheet: {$Worksheet}, " +
-                                "\nLine {$Line}, " +
-                                "\nReference base {$ReferenceBase}, " +
-                                "\nReference {$Reference}," +
-                                "\nDescription {$Description}," +
+                                "\nReference {$Reference}, " +
+                                "\nColor {$Color}, " +
+                                "\nPrefSuite Reference {$PrefSuiteReference}," +
+                                "\nPrefSuite Reference Base {$PrefSuiteReferenceBase}," +
                                 "\nException  ${Exception}",
                                   nameof(MapperSapaV2),
                                 nameof(MapGlassesAsync),
                                 a2pWorksheet.Order ?? string.Empty,
                                 a2pWorksheet.Name ?? string.Empty,
-                                line,
+                                materialDTO.SourceReference?? string.Empty,
+                                materialDTO.SourceDescription ?? string.Empty,
                                 materialDTO.ReferenceBase ?? string.Empty,
                                 materialDTO.Reference ?? string.Empty,
                                 materialDTO.Description ?? string.Empty,
-                                 ex.Message);
+                                 ex.Message ?? string.Empty);
 
                             a2pErrors.Add(new A2PError()
                             {
@@ -1328,10 +1342,10 @@ namespace a2p.Shared.Application.Services
                                 Message = $"Unhandled Error {nameof(MapperSapaV2)}.{nameof(MapGlassesAsync)}, " +
                          $"\nOrder: {a2pWorksheet.Order ?? string.Empty}," +
                          $"\nWorksheet: {a2pWorksheet.Name ?? string.Empty}," +
-                         $"\nLine {materialDTO.Line}," +
+                         $"\nReference: {materialDTO.SourceReference ?? string.Empty}," +
+                         $"\nColor: {materialDTO.SourceColor ?? string.Empty}," +
                          $"\nItem: {materialDTO.Item ?? string.Empty}," +
                          $"\nDescription: {materialDTO.Description ?? string.Empty}," +
-                         $"\nData: {a2pWorksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}," +
                          $"\nException: {ex.Message ?? string.Empty}."
                             });
                             continue;
@@ -1500,13 +1514,13 @@ namespace a2p.Shared.Application.Services
                                 Level = ErrorLevel.Error,
                                 Code = ErrorCode.MappingService_MapMaterial,
                                 Message = $"Unhandled Error {nameof(MapperSapaV2)}.{nameof(MapOthersAsync)}, " +
-                         $"\nOrder: {a2pWorksheet.Order ?? string.Empty}," +
-                         $"\nWorksheet: {a2pWorksheet.Name ?? string.Empty}," +
-                         $"\nLine {materialDTO.Line}," +
-                         $"\nItem: {materialDTO.Item ?? string.Empty}," +
-                         $"\nDescription: {materialDTO.Description ?? string.Empty}," +
-                         $"\nData: {a2pWorksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}," +
-                         $"\nException: {ex.Message ?? string.Empty}."
+                                 $"\nOrder: {a2pWorksheet.Order ?? string.Empty}," +
+                                 $"\nWorksheet: {a2pWorksheet.Name ?? string.Empty}," +
+                                 $"\nLine {materialDTO.Line}," +
+                                 $"\nItem: {materialDTO.Item ?? string.Empty}," +
+                                 $"\nDescription: {materialDTO.Description ?? string.Empty}," +
+                                 $"\nData: {a2pWorksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}," +
+                                 $"\nException: {ex.Message ?? string.Empty}."
                             });
                             continue;
                         }
@@ -1792,7 +1806,10 @@ namespace a2p.Shared.Application.Services
 
         private (string, A2PError?) TransformReference(string sapaReference, string sapaColor, A2PWorksheet a2pWorksheet, int line)
         {
+            
             string reference = string.Empty;
+            string initialReference = sapaReference?.Trim() ?? string.Empty;
+            string initialColor = sapaColor?.Trim() ?? string.Empty;
 
             try
             {
@@ -1803,16 +1820,14 @@ namespace a2p.Shared.Application.Services
                     "Error Sapa article and color are empty." +
                     "\nOrder: {$Order}, " +
                     "\nWorksheet: {$Worksheet}, " +
-                    "\nLine: {$Line}, " +
-                    "\nSapa Reference: {$SapaReference}, " +
-                    "\nSapa Color: {$SapaColor}.",
+                    "\nReference: {$Reference}, " +
+                    "\nColor: {$Color}.",
                     nameof(MapperSapaV2),
                     nameof(TransformReference),
                     a2pWorksheet.Order ?? string.Empty,
                     a2pWorksheet.Name ?? string.Empty,
-                    line,
-                    sapaReference ?? string.Empty,
-                    sapaColor ?? string.Empty);
+                    initialReference ?? string.Empty,
+                    initialColor ?? string.Empty);
 
                     A2PError a2pError = new()
                     {
@@ -1823,9 +1838,8 @@ namespace a2p.Shared.Application.Services
                        $"\nLine will be skipped." +
                        $"\nOrder: {a2pWorksheet.Order ?? string.Empty}, " +
                        $"\nWorksheet: {a2pWorksheet.Name ?? string.Empty}, " +
-                       $"\nLine: {line}, " +
-                       $"\nSapa Reference: {sapaReference ?? string.Empty}, " +
-                       $"\nSapa Color: {sapaReference ?? string.Empty}"
+                       $"\nReference: {initialReference ?? string.Empty}, " +
+                       $"\nColor: {initialColor ?? string.Empty}"
 
                     };
 
@@ -1868,21 +1882,17 @@ namespace a2p.Shared.Application.Services
 
                         _logService.Error("Mapper Sapa 2 Service: Warning." +
                            "Reference > 25 characters." +
-                           "\nOrder: {Order}, " +
-                           "\nWorksheet: {Worksheet}," +
-                           "\nLine: {Line}," +
-                           "\nSapa Article: {SapaArticle}({SapaArticleLength}):, " +
-                           "\nSapa Color: {SapaColor}({SapaColorLength})." +
-                           "\nGenerated PrefSuite Reference: {Reference}({ReferenceLength})." +
-                           "\nReference inserted into DB Reference {NewReference}({NewReferenceLength})." +
+                           "\nOrder: {$Order}, " +
+                           "\nWorksheet: {$Worksheet}," +
+                           "\nReference: {$Reference}," +
+                           "\nColor: {$Color}," +
+                           "\nGenerated PrefSuite Reference: {$PrefSuiteReference}, length:{$PrefSuiteReferenceLength}." +
+                           "\nReference inserted into DB Reference {$PrefSuiteTruncatedReference}, length:{$PrefsuiteTrunctaedLength}." +
                            "\n",
                            a2pWorksheet.Order ?? string.Empty,
                            a2pWorksheet.Name ?? string.Empty,
-                           line,
-                           sapaReference ?? string.Empty,
-                           (sapaReference ?? string.Empty).Length,
-                           sapaColor ?? string.Empty,
-                           (sapaColor ?? string.Empty).Length,
+                           initialReference ?? string.Empty,
+                           initialColor ?? string.Empty,
                            reference,
                            reference.Length,
                            newReference,
@@ -1897,11 +1907,10 @@ namespace a2p.Shared.Application.Services
                            $"\nLine will be skipped." +
                            $"\nOrder: {a2pWorksheet.Order ?? string.Empty}," +
                            $"\nWorksheet: {a2pWorksheet.Name ?? string.Empty}, " +
-                           $"\nLine: {line}," +
-                           $"\nSapa Article: {sapaReference ?? string.Empty}({(sapaReference ?? string.Empty).Length})." +
-                           $"\nSapa Color: {sapaColor ?? string.Empty}({(sapaColor ?? string.Empty).Length})." +
-                           $"\nGenerated PrefSuite Reference: {reference}({reference.Length})." +
-                           $"\nReference inserted into DB: {newReference}({newReference.Length})." +
+                           $"\nReference: {initialReference ?? string.Empty}, length:{(initialReference ?? string.Empty).Length})." +
+                           $"\nColor: {sapaColor ?? string.Empty}, length:{(initialColor ?? string.Empty).Length})." +
+                           $"\nGenerated PrefSuite Reference: {reference}, length:{reference.Length}." +
+                           $"\nReference inserted into DB: {newReference}, length{newReference.Length}." +
                            "\n"
                         };
 

@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Concurrent;
@@ -120,7 +120,8 @@ namespace a2p.Shared.Infrastructure.Services.Logger
                                 Exception = propertiesNode["Exception"]?.ToString() ?? string.Empty,
                                 Order = propertiesNode["Order"]?.ToString() ?? string.Empty,
                                 Worksheet = propertiesNode["Worksheet"]?.ToString() ?? string.Empty,
-                                Line = propertiesNode["Line"]?.ToString() ?? string.Empty,
+                                Reference = propertiesNode["Reference"]?.ToString() ?? string.Empty,
+                                Color = propertiesNode["Color"]?.ToString() ?? string.Empty,
                                 // Convert Properties node to a Dictionary
                                 Properties = propertiesNode.ToDictionary(kvp => kvp.Key, kvp => kvp.Value?.ToString() as object) // Convert JsonNode to string
                             };

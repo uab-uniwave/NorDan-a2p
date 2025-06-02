@@ -1,4 +1,4 @@
-﻿namespace a2p.Shared.Application.Domain.Entities
+namespace a2p.Shared.Application.Domain.Entities
 {
 
     public class A2PLogRecord
@@ -8,10 +8,9 @@
         public string Message { get; set; } = string.Empty;
         public string Exception { get; set; } = string.Empty;
         public string Order { get; set; } = string.Empty;
-
-
         public string Worksheet { get; set; } = string.Empty;
-        public string Line { get; set; } = string.Empty;
+        public string Reference { get; set; } = string.Empty;
+        public string Color { get; set; } = string.Empty;
         public Dictionary<string, object?> Properties { get; set; } = [];
     }
 }

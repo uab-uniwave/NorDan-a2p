@@ -333,6 +333,7 @@ namespace a2p.Shared.Application.Services
                         A2PFile a2pFile = new()
                         {
                             File = files[i],
+                            Order = a2pOrder.Order,
                             FileName = System.IO.Path.GetFileName(files[i]),
                             IsLocked = _fileService.IsLocked(files[i]),
                             FilePath = System.IO.Path.GetFullPath(files[i]),

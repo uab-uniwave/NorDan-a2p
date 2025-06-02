@@ -50,6 +50,7 @@ namespace a2p.Shared.Infrastructure.Services
 
                     A2PWorksheet worksheet = new()
                     {
+                        Order = file.Order,
                         WorksheetType = GetWorksheetType(file.FileName, ixlWorksheet.Name),
                         Name = ixlWorksheet.Name,
                         RowCount = ixlWorksheet.RowsUsed().Count(),

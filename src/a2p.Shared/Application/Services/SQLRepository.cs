@@ -32,7 +32,7 @@ namespace a2p.Shared.Application.Services
 
             if (number < 1 || version < 1)
             {
-                _logService.Error("{$Class}.{$Method}. Error getting sales document state. Number {@Number} or version {@Version} are wrong.",
+                _logService.Verbose("{$Class}.{$Method}. Error getting sales document state. Number {@Number} or version {@Version} are wrong.",
                        nameof(SQLRepository),
                 nameof(GetSalesDocumentStateAsync), number, version);
                 return state;
@@ -112,7 +112,7 @@ namespace a2p.Shared.Application.Services
             if (string.IsNullOrEmpty(description))
             {
 
-                _logService.Error("{$Class}.{$Method}. Error getting glass reference. Provided glass description is missing.",
+                _logService.Information("{$Class}.{$Method}. Error getting glass reference. Provided glass description is missing.",
                   nameof(SQLRepository),
                       nameof(GetGlassReferenceAsync));
                 return null;
@@ -126,7 +126,7 @@ namespace a2p.Shared.Application.Services
 
                 if (result == null)
                 {
-                    _logService.Error("{$Class}.{$Method}. Error getting glass reference. Glass with description {$Description} not found coresponding glass reference in PrefSuite DB.",
+                    _logService.Verbose("{$Class}.{$Method}. Error getting glass reference. Glass with description {$Description} not found coresponding glass reference in PrefSuite DB.",
                       nameof(SQLRepository),
                       nameof(GetGlassReferenceAsync),
                       description);
@@ -137,7 +137,7 @@ namespace a2p.Shared.Application.Services
 
                 if (string.IsNullOrEmpty(glassReference))
                 {
-                    _logService.Error("{$Class}.{$Method}. Error getting glass reference. Glass with description {$Description} not found coresponding glass reference in PrefSuite DB.",
+                    _logService.Verbose("{$Class}.{$Method}. Error getting glass reference. Glass with description {$Description} not found coresponding glass reference in PrefSuite DB.",
                       nameof(SQLRepository),
                       nameof(GetGlassReferenceAsync),
                       description);

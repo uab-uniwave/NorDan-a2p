@@ -1,15 +1,13 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Data;
-
 using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.Domain.Enums;
 using a2p.Shared.Application.DTO;
 using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Infrastructure.Interfaces;
-
 using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace a2p.Shared.Application.Services
 {
@@ -32,7 +30,7 @@ namespace a2p.Shared.Application.Services
 
             if (number < 1 || version < 1)
             {
-                _logService.Verbose("{$Class}.{$Method}. Error getting sales document state. Number {@Number} or version {@Version} are wrong.",
+                _logService.Verbose("{$Class}.{$Method}. Error getting sales document state. Number {$Number} or version {$Version} are wrong.",
                        nameof(SQLRepository),
                 nameof(GetSalesDocumentStateAsync), number, version);
                 return state;
@@ -168,6 +166,43 @@ namespace a2p.Shared.Application.Services
 
             }
         }
+
+
+        public async Task<string?> GetSapaColorAsync(string color)
+        {
+            if (string.IsNullOrEmpty(color))
+            {
+                _logService.Information("{$Class}.{$Method}. Error getting Sapa color. Provided color is missing.",
+                    nameof(SQLRepository),
+                    nameof(GetSapaColorAsync));
+                return null;
+            }
+
+            try
+            {
+                SqlCommand cmd = new()
+                {
+                    CommandText = "SELECT [dbo].[Uniwave_a2p_GetSapaColor](@TechDesignColor)",
+                };
+
+                _ = cmd.Parameters.AddWithValue("@TechDesignColor", color);
+
+                object? result = await _sqlRepository.ExecuteScalarAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
+
+                return result != null && result != DBNull.Value ? result.ToString() : string.Empty;
+            }
+            catch (Exception ex)
+            {
+                _logService.Verbose(
+                    "{$Class}.{$Method}. Unhandled error in {$Class}. {$Method}. Error getting order state for sales document. Exception: {Exception}.",
+                    nameof(SQLRepository),
+                    nameof(GetSapaColorAsync),
+                    ex.Message
+                );
+                return string.Empty;
+            }
+        }
+
         public async Task<int> GetPrefSuiteColorConfigurationAsync(string color)
         {
             int result = -1;
@@ -224,7 +259,7 @@ namespace a2p.Shared.Application.Services
 
             if (number < 1 || version < 1)
             {
-                _logService.Error("{$Class}.{$Method}. Error deleting sales document data. Number {@Number} or version {@Version} are wrong.",
+                _logService.Error("{$Class}.{$Method}. Error deleting sales document data. Number {$Number} or version {$Version} are wrong.",
                  nameof(SQLRepository),
                    nameof(DeleteSalesDocumentDataAsync),
                    number,
@@ -702,7 +737,7 @@ namespace a2p.Shared.Application.Services
 
                 if (result > 0)
                 {
-                    _logService.Verbose("{$Class}.{$Method}. Material Base {$ReferenceBase} {@Description} successfully inserted into PrefSuite DB",
+                    _logService.Verbose("{$Class}.{$Method}. Material Base {$ReferenceBase} {$Description} successfully inserted into PrefSuite DB",
                         nameof(SQLRepository),
                         nameof(InsertPrefSuiteMaterialBaseAsync),
                         materialDTO.ReferenceBase,
@@ -712,7 +747,7 @@ namespace a2p.Shared.Application.Services
                 if (result == 0)
                 {
 
-                    _logService.Verbose("{$Class}.{$Method}. Material {$Reference} {@Description} already exists in PrefSuite DB.",
+                    _logService.Verbose("{$Class}.{$Method}. Material {$Reference} {$Description} already exists in PrefSuite DB.",
                         nameof(SQLRepository),
                         nameof(InsertPrefSuiteMaterialBaseAsync),
                         materialDTO.ReferenceBase,
@@ -788,7 +823,7 @@ namespace a2p.Shared.Application.Services
 
                 if (result > 0)
                 {
-                    _logService.Verbose("{$Class}.{$Method}. Material {$Reference} color {$Color}, {@Description} successfully inserted into PrefSuite DB.",
+                    _logService.Verbose("{$Class}.{$Method}. Material {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
                 nameof(SQLRepository),
                 nameof(InsertPrefSuiteMaterialAsync),
                 materialDTO.Reference,
@@ -799,7 +834,7 @@ namespace a2p.Shared.Application.Services
                 if (result == 0)
                 {
 
-                    _logService.Verbose("{$Class}.{$Method}. Material {$Reference} color {$Color}, {@Description} already exists in PrefSuite DB.",
+                    _logService.Verbose("{$Class}.{$Method}. Material {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
                 nameof(SQLRepository),
                 nameof(InsertPrefSuiteMaterialAsync),
                 materialDTO.Reference, materialDTO.Color,
@@ -872,7 +907,7 @@ namespace a2p.Shared.Application.Services
 
                 if (result > 0)
                 {
-                    _logService.Verbose("{$Class}.{$Method}. Profile {$Reference} color {$Color}, {@Description} successfully inserted into PrefSuite DB.",
+                    _logService.Verbose("{$Class}.{$Method}. Profile {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
                 nameof(SQLRepository),
                 nameof(InsertPrefSuiteMaterialProfileAsync),
                 materialDTO.Reference,
@@ -883,7 +918,7 @@ namespace a2p.Shared.Application.Services
                 if (result == 0)
                 {
 
-                    _logService.Verbose("{$Class}.{$Method}. Profile {$Reference} color {$Color}, {@Description} already exists in PrefSuite DB.",
+                    _logService.Verbose("{$Class}.{$Method}. Profile {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
                 nameof(SQLRepository),
                 nameof(InsertPrefSuiteMaterialProfileAsync),
                 materialDTO.Reference,
@@ -957,7 +992,7 @@ namespace a2p.Shared.Application.Services
 
                 if (result > 0)
                 {
-                    _logService.Verbose("{$Class}.{$Method}. Meter material {$Reference} color {$Color}, {@Description} successfully inserted into PrefSuite DB.",
+                    _logService.Verbose("{$Class}.{$Method}. Meter material {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
                 nameof(SQLRepository),
                 nameof(InsertPrefSuiteMaterialMeterAsync),
                 materialDTO.Reference,
@@ -968,7 +1003,7 @@ namespace a2p.Shared.Application.Services
                 if (result == 0)
                 {
 
-                    _logService.Verbose("{$Class}.{$Method}. Meter material {$Reference} color {$Color}, {@Description} already exists in PrefSuite DB.",
+                    _logService.Verbose("{$Class}.{$Method}. Meter material {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
                 nameof(SQLRepository),
                 nameof(InsertPrefSuiteMaterialMeterAsync),
                 materialDTO.Reference,
@@ -1039,7 +1074,7 @@ namespace a2p.Shared.Application.Services
                 int result = await _sqlRepository.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
                 if (result > 0)
                 {
-                    _logService.Verbose("{$Class}.{$Method}. Piece material {$Reference} color {$Color}, {@Description} successfully inserted into PrefSuite DB.",
+                    _logService.Verbose("{$Class}.{$Method}. Piece material {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
                                      nameof(SQLRepository),
                 nameof(InsertPrefSuiteMaterialPieceAsync),
                 materialDTO.Reference,
@@ -1050,7 +1085,7 @@ namespace a2p.Shared.Application.Services
                 if (result == 0)
                 {
 
-                    _logService.Verbose("{$Class}.{$Method}. Piece material {$Reference} color {$Color}, {@Description} already exists in PrefSuite DB.",
+                    _logService.Verbose("{$Class}.{$Method}. Piece material {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
                         nameof(SQLRepository),
                 nameof(InsertPrefSuiteMaterialPieceAsync),
                 materialDTO.Reference,
@@ -1124,7 +1159,7 @@ namespace a2p.Shared.Application.Services
 
                 if (result > 0)
                 {
-                    _logService.Verbose("($Class}.{$Method}. Surface material {$Reference} color {$Color}, {@Description} successfully inserted into PrefSuite DB.",
+                    _logService.Verbose("($Class}.{$Method}. Surface material {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
                         nameof(SQLRepository),
                 nameof(InsertPrefSuiteMateriaSurfaceAsync),
                 materialDTO.Reference,
@@ -1135,7 +1170,7 @@ namespace a2p.Shared.Application.Services
                 if (result == 0)
                 {
 
-                    _logService.Verbose("($Class}.{$Method}. Surface material {$Reference} color {$Color}, {@Description} already exists in PrefSuite DB.",
+                    _logService.Verbose("($Class}.{$Method}. Surface material {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
                         nameof(SQLRepository),
                         nameof(InsertPrefSuiteMateriaSurfaceAsync),
                         materialDTO.Reference,

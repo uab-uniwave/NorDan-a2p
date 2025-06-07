@@ -33,36 +33,36 @@ namespace a2p.Shared.Infrastructure.Services.Logger
 
         public void Verbose(Exception ex, string? message, params object[]? args) => _logService.Verbose(ex, message ?? "Message missing", args);
 
-        public void Verbose(Exception ex) => _logService.Verbose("{@Exception}", ex);
+        public void Verbose(Exception ex) => _logService.Verbose("{$Exception}", ex);
         public void Debug(string message, params object[]? args) => _logService.Debug(message ?? "Message missing", args);
 
         public void Debug(Exception ex, string message, params object[]? args) => _logService.Debug(ex, message ?? "Message missing", args);
 
-        public void Debug(Exception ex) => _logService.Debug("{@Exception}", ex);
+        public void Debug(Exception ex) => _logService.Debug("{$Exception}", ex);
 
         public void Information(string message, params object[]? args) => _logService.Information(message ?? "Message missing", args);
 
         public void Information(Exception ex, string message, params object[]? args) => _logService.Information(ex, message, args);
 
-        public void Information(Exception ex) => _logService.Information("{@Exception}", ex);
+        public void Information(Exception ex) => _logService.Information("{$Exception}", ex);
 
         public void Warning(string message, params object[]? args) => _logService.Warning(message, args);
 
         public void Warning(Exception ex, string message, params object[]? args) => _logService.Warning(ex, message, args);
 
-        public void Warning(Exception ex) => _logService.Warning("{@Exception}", ex);
+        public void Warning(Exception ex) => _logService.Warning("{$Exception}", ex);
 
         public void Error(string message, params object[]? args) => _logService.Error(message, args);
 
         public void Error(Exception ex, string message, params object[]? args) => _logService.Error(ex, message, args);
 
-        public void Error(Exception ex) => _logService.Error("{@Exception}", ex);
+        public void Error(Exception ex) => _logService.Error("{$Exception}", ex);
 
         public void Fatal(string message, params object[]? args) => _logService.Fatal(message, args);
 
         public void Fatal(Exception ex, string message, params object[]? args) => _logService.Fatal(ex, message, args);
 
-        public void Fatal(Exception ex) => _logService.Verbose("{@Exception}", ex);
+        public void Fatal(Exception ex) => _logService.Verbose("{$Exception}", ex);
         public async Task<List<A2PLogRecord>> GetRepository(string fileName)
         {
 

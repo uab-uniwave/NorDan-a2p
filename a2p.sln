@@ -30,42 +30,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{58E421E3-1FD
 		src\a2p.DataAssets\SQL\Test.sql = src\a2p.DataAssets\SQL\Test.sql
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XML", "XML", "{62709BAA-6BE0-4843-BCB1-EEE9D5EA440E}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XMLSchemas", "XMLSchemas", "{FC75C943-5C01-458F-989F-F0BAB88EDC43}"
-	ProjectSection(SolutionItems) = preProject
-		src\a2p.DataAssets\XMLSchemas\ConfigurableProperties.xsd = src\a2p.DataAssets\XMLSchemas\ConfigurableProperties.xsd
-		src\a2p.DataAssets\XMLSchemas\Constructive.xsd = src\a2p.DataAssets\XMLSchemas\Constructive.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefCAD.Command.xsd = src\a2p.DataAssets\XMLSchemas\PrefCAD.Command.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefCAD.Model.xsd = src\a2p.DataAssets\XMLSchemas\PrefCAD.Model.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefCAD.Serialization.Common.xsd = src\a2p.DataAssets\XMLSchemas\PrefCAD.Serialization.Common.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefCAD.Serialization.Items.xsd = src\a2p.DataAssets\XMLSchemas\PrefCAD.Serialization.Items.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefCAD.Serialization.Material.xsd = src\a2p.DataAssets\XMLSchemas\PrefCAD.Serialization.Material.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefCAD.Serialization.Model.xsd = src\a2p.DataAssets\XMLSchemas\PrefCAD.Serialization.Model.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefCAD.Serialization.Script.xsd = src\a2p.DataAssets\XMLSchemas\PrefCAD.Serialization.Script.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefCAD.WindowListGrammar.xsd = src\a2p.DataAssets\XMLSchemas\PrefCAD.WindowListGrammar.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefCommand.xsd = src\a2p.DataAssets\XMLSchemas\PrefCommand.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefDatabase.xsd = src\a2p.DataAssets\XMLSchemas\PrefDatabase.xsd
-		src\a2p.DataAssets\XMLSchemas\Preference.Documents.xsd = src\a2p.DataAssets\XMLSchemas\Preference.Documents.xsd
-		src\a2p.DataAssets\XMLSchemas\Preference.Production.CentralCut.xsd = src\a2p.DataAssets\XMLSchemas\Preference.Production.CentralCut.xsd
-		src\a2p.DataAssets\XMLSchemas\Preference.Vfo.xsd = src\a2p.DataAssets\XMLSchemas\Preference.Vfo.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefExpenses.Document.xsd = src\a2p.DataAssets\XMLSchemas\PrefExpenses.Document.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefHardware.xsd = src\a2p.DataAssets\XMLSchemas\PrefHardware.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefMessages.xsd = src\a2p.DataAssets\XMLSchemas\PrefMessages.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefOpenHardwareSet.xsd = src\a2p.DataAssets\XMLSchemas\PrefOpenHardwareSet.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefProduction.ProductionLot.xsd = src\a2p.DataAssets\XMLSchemas\PrefProduction.ProductionLot.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefSales.MaterialNeeds.xsd = src\a2p.DataAssets\XMLSchemas\PrefSales.MaterialNeeds.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefSales.PurchaseOrdersFromMaterialNeeds.xsd = src\a2p.DataAssets\XMLSchemas\PrefSales.PurchaseOrdersFromMaterialNeeds.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefSales.SalesDoc.xsd = src\a2p.DataAssets\XMLSchemas\PrefSales.SalesDoc.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefSales.SalesDocuments.xsd = src\a2p.DataAssets\XMLSchemas\PrefSales.SalesDocuments.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefSales.UpdateSalesDoc.xsd = src\a2p.DataAssets\XMLSchemas\PrefSales.UpdateSalesDoc.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefSuite.Messages.xsd = src\a2p.DataAssets\XMLSchemas\PrefSuite.Messages.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefSuite.Serialization.xsd = src\a2p.DataAssets\XMLSchemas\PrefSuite.Serialization.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefWiseDDECommand.xsd = src\a2p.DataAssets\XMLSchemas\PrefWiseDDECommand.xsd
-		src\a2p.DataAssets\XMLSchemas\PrefWiseURI.xsd = src\a2p.DataAssets\XMLSchemas\PrefWiseURI.xsd
-		wix.xsd = wix.xsd
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Excel", "Excel", "{E1A78A32-DF5F-4F65-A987-6FEF96E2B856}"
 	ProjectSection(SolutionItems) = preProject
 		src\a2p.DataAssets\Excel\0000Z00001-1 Price_Details.xlsx = src\a2p.DataAssets\Excel\0000Z00001-1 Price_Details.xlsx
@@ -198,8 +162,6 @@ Global
 		{0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{58E421E3-1FDA-4904-8877-B0639EB6CF9D} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
-		{62709BAA-6BE0-4843-BCB1-EEE9D5EA440E} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
-		{FC75C943-5C01-458F-989F-F0BAB88EDC43} = {62709BAA-6BE0-4843-BCB1-EEE9D5EA440E}
 		{E1A78A32-DF5F-4F65-A987-6FEF96E2B856} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
 		{58A4D13F-3B73-48F5-959A-94ACCB93A37C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71B8}
 		{8A34791D-ECFC-4587-8470-71001591D2FA} = {0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF}
@@ -214,8 +176,8 @@ Global
 		{9368B7BC-31DF-47A0-8C2B-FFAED986B074} = {33FD462D-4B12-4501-92BD-81095ACABC95}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {02931AC6-E3AF-4E96-A144-EE9EE4BE10E7}
-		BuildVersion_BuildVersioningStyle = None.None.None.Increment
 		BuildVersion_StartDate = 2000/1/1
+		BuildVersion_BuildVersioningStyle = None.None.None.Increment
+		SolutionGuid = {02931AC6-E3AF-4E96-A144-EE9EE4BE10E7}
 	EndGlobalSection
 EndGlobal

@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 namespace a2p.Shared.Application.Models
@@ -35,7 +35,7 @@ namespace a2p.Shared.Application.Models
     {
 
         public string Sapa { get; set; } = "Sapa_ALU";
-        public string SapaV2 { get; set; } = "Sapa_ALU";
+        public string TechnoDesign { get; set; } = "Sapa_ALU";
         public string Schuco { get; set; } = "Schuco_ALU";
     }
 

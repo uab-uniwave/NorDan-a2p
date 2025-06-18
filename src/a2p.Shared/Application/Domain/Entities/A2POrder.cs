@@ -12,7 +12,7 @@ namespace a2p.Shared.Application.Domain.Entities
         //===============================================
         public string Order { get; set; } = string.Empty;
         //===================================================================================
-        public SourceAppType SourceAppType { get; set; } = SourceAppType.SapaV2;
+        public SourceAppType SourceAppType { get; set; } = SourceAppType.TechDesign;
         //===================================================================================
 
         public List<A2PFile> Files { get; set; } = [];

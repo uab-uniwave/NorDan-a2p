@@ -43,8 +43,8 @@ namespace a2p.WinForm
             Console.SetOut(new DebugTextWriter());
             _ = _services.GetRequiredService<IPrefSuiteService>();
 
-            _ = _services.GetRequiredService<IMapperSapaV1>();
-            _ = _services.GetRequiredService<IMapperSapaV2>();
+            _ = _services.GetRequiredService<IMapperSapa>();
+            _ = _services.GetRequiredService<IMapperTechDesign>();
             _ = _services.GetRequiredService<IMapperSchuco>();
             _ = _services.GetRequiredService<SettingsManager>();
 

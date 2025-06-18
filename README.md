@@ -90,15 +90,15 @@ Possible values are:
   
   
  - Unknown = 0
- - Items_Sapa_v1 = 1  
- - Materials_Sapa_v1 = 2
- - Glasses_Sapa_v1 = 3
- - Panels_Sapa_v1 = 4   
+ - Items_Sapa = 1  
+ - Materials_Sapa = 2
+ - Glasses_Sapa = 3
+ - Panels_Sapa = 4   
 ---  
- - Items_Sapa_v2 = 5  
- - Materials_Sapa_v2 = 6
- - Glasses_Sapa_v2 = 7 
- - Panels_Sapa_v2 = 8  
+ - Items_TechnoDesign = 5  
+ - Materials_TechnoDesign = 6
+ - Glasses_TechnoDesign = 7 
+ - Panels_TechnoDesign = 8  
  ---  
  - Items_Schuco = 9  
  - Materials_Schuco = 10
@@ -171,7 +171,7 @@ Example based on profile data of Sapa
 > [!IMPORTANT]
 > [OrderNumber]<span style="background-color: red; font-weight: bold;">&nbsp;</span>SummList.xslx
 > <br>[OrderNumber]<span style="background-color: red; font-weight: bold;">&nbsp;</span>Price_Details.xslx
-><p>Application recognize Sapa (V2) files order numbers by space highighted by red color. In case file format will change. Adaptation to recognition algorithm will be file format will be required.</p> 
+><p>Application recognize TechnoDesign files order numbers by space highighted by red color. In case file format will change. Adaptation to recognition algorithm will be file format will be required.</p> 
 ><p> Example:
 ><br>  - <span style="color: green; font-weight: bold;">0000Z00000-10</span><span style="background-color: red; font-weight: bold;">&nbsp;</span>Price_Details.xlx
 ><br>  - <span style="color: green; font-weight: bold;">0000Z00000-10</span><span style="background-color: red; font-weight: bold;">&nbsp;</span>SummList.xslx</p> 

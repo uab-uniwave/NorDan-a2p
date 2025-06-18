@@ -24,7 +24,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{58E421E3-1FDA-4904-8877-B0639EB6CF9D}"
 	ProjectSection(SolutionItems) = preProject
 		src\a2p.DataAssets\SQL\CleanDB.sql = src\a2p.DataAssets\SQL\CleanDB.sql
-		Functions.sql = Functions.sql
+		src\a2p.DataAssets\SQL\Functions.sql = src\a2p.DataAssets\SQL\Functions.sql
 		src\a2p.DataAssets\SQL\Procedures.sql = src\a2p.DataAssets\SQL\Procedures.sql
 		src\a2p.DataAssets\SQL\Tables.sql = src\a2p.DataAssets\SQL\Tables.sql
 		src\a2p.DataAssets\SQL\Test.sql = src\a2p.DataAssets\SQL\Test.sql
@@ -176,8 +176,8 @@ Global
 		{9368B7BC-31DF-47A0-8C2B-FFAED986B074} = {33FD462D-4B12-4501-92BD-81095ACABC95}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		BuildVersion_StartDate = 2000/1/1
-		BuildVersion_BuildVersioningStyle = None.None.None.Increment
 		SolutionGuid = {02931AC6-E3AF-4E96-A144-EE9EE4BE10E7}
+		BuildVersion_BuildVersioningStyle = None.None.None.Increment
+		BuildVersion_StartDate = 2000/1/1
 	EndGlobalSection
 EndGlobal

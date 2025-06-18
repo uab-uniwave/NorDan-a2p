@@ -549,7 +549,7 @@ BEGIN
 		0.0,  -- AngleTexture - float
 		0.0,  -- TextureScaleX - float
 		0.0,  -- TextureScaleY - float
-		N'_SAPA_V2',  -- Family - nchar(25)
+		N'_TechnoDesign',  -- Family - nchar(25)
 		0,    -- FamilyOrder - int
 		N'',  -- BasicRawMaterial - nchar(25)
 		0,    -- RawMaterial - int
@@ -1335,7 +1335,7 @@ GO
 CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertSapaProvider] 
 	-- Add the parameters for the stored procedure here
 	@Code int = 988,
-	@Name NVARCHAR(60) =  N'SAPA V2',
+	@Name NVARCHAR(60) =  N'TechnoDesign',
 	@Currency NVARCHAR(25) = N'NOK'
 AS
 BEGIN
@@ -1403,7 +1403,7 @@ BEGIN
 		)
 		VALUES
 		(   @Code,   -- Codigo - smallint
-			N'SAPA V2', -- Descripcion - nvarchar(60)
+			N'TechnoDesign', -- Descripcion - nvarchar(60)
 			0,   -- Externo - smallint
 			@ProviderCode,   -- ProviderCode - int
 			N'', -- Address - nvarchar(60)

@@ -34,7 +34,7 @@ CREATE OR ALTER FUNCTION [dbo].[Uniwave_a2p_GetExternalReference]
 (
 	-- Add the parameters for the function here
 	@PrefSuiteReference nvarchar (25)
-    
+	
 	
 	)
 RETURNS nvarchar (25)

@@ -173,7 +173,7 @@ namespace a2p.Shared.Infrastructure.Services
             //Items
             //=======================================================================================================
 
-            // SAPA V2 Positions
+            // SAPA TechnoDesign Positions
             return worksheetType;
         }
 

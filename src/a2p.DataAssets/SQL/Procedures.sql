@@ -1332,7 +1332,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertSapaProvider] 
+CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertProvider] 
 	-- Add the parameters for the stored procedure here
 	@Code int = 988,
 	@Name NVARCHAR(60) =  N'TechnoDesign',
@@ -1419,3 +1419,122 @@ END
 GO
 
 
+
+CREATE OR ALTER    PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialPurchaseData] 
+	-- Add the parameters for the stored procedure here
+	@Reference  NVARCHAR(25), 
+	@Package INT,
+	@Price FLOAT,
+	@Description NVARCHAR(255),
+	@Color NVARCHAR(50),
+	@SourceReference  NVARCHAR(50),
+	@SourceColor NVARCHAR(50)
+
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+    /*If purchase data not exists, then insert it*/
+	
+
+	IF NOT EXISTS (SELECT *  FROM COMPRAS WHERE Referencia =@Reference )
+	INSERT INTO dbo.Compras
+	(
+	    Referencia,
+	    Proveedor,
+	    APartir,
+	    UP1,
+	    UP2,
+	    FechaUltimaCompra,
+	    PrecioUltimaCompra,
+	    ReferenciaProveedor,
+	    SupplierDescription,
+	    Divisa,
+	    FechaEVPrecioSC,
+	    PrecioSC,
+	    DivisaPrecioSC,
+	    EntregaMedia,
+	    CodigoEAN13,
+	    DescripcionUP1,
+	    DescripcionUP2,
+	    ByDefault,
+	    SchedulerTime,
+	    ReorderingTime
+	)
+	VALUES
+	(   @Reference,       -- Referencia - nchar(25)
+	    988,         -- Proveedor - int
+	    1,         -- APartir - int
+	    1,         -- UP1 - int
+	    --1,       -- UP2 - float
+		@Package,       -- UP2 - float
+	    GETDATE(), -- FechaUltimaCompra - datetime
+	    @Price, --PrecioUltimaCompra - float
+	    @SourceReference,       -- ReferenciaProveedor - nchar(50)
+	    ISNULL(@Description,@SourceReference) +' '+ @SourceColor,       -- SupplierDescription - nvarchar(255)
+	    N'NOK',       -- Divisa - nchar(25)
+	   NULL, -- FechaEVPrecioSC - datetime
+	    NULL,       -- PrecioSC - float
+	    N'NOK',       -- DivisaPrecioSC - nchar(25)
+	    14,         -- EntregaMedia - int
+	    N'',       -- CodigoEAN13 - nchar(13)
+	    N'',       -- DescripcionUP1 - nvarchar(50)
+	    N'',       -- DescripcionUP2 - nvarchar(50)
+	    1,         -- ByDefault - smallint
+	    14,         -- SchedulerTime - int
+	    0          -- ReorderingTime - int
+	    )
+
+
+		DECLARE @ColorConfiguration INT, 
+				@Length FLOAT
+                
+
+			SELECT  TOP 1  @ColorConfiguration = C.ConfigurationCode FROM dbo.ColorConfigurations C
+			INNER JOIN Materiales M ON C.ColorName=M.Color WHERE M.Referencia =@Reference
+
+		    SELECT @Length = M.LongitudBarra  FROM dbo.Perfiles P
+			INNER JOIN dbo.MaterialesBase MB ON P.ReferenciaBase=MB.ReferenciaBase
+			INNER JOIN Materiales M ON MB.ReferenciaBase=M.ReferenciaBase WHERE M.Referencia =@Reference
+
+
+		IF NOT EXISTS (SELECT * FROM dbo.MaterialLevels WHERE Reference=@Reference AND ColorConfiguration=@ColorConfiguration AND Warehouse=980 AND Length=ISNULL(@Length,0) AND Height=0)
+		INSERT INTO dbo.MaterialLevels
+		(
+		    RowId,
+		    Reference,
+		    ColorConfiguration,
+		    Warehouse,
+		    Length,
+		    Height,
+		    Level1,
+		    Level2
+		)
+		VALUES
+		(   NEWID(), -- RowId - uniqueidentifier
+		    @Reference,  -- Reference - nchar(25)
+		    @ColorConfiguration ,    -- ColorConfiguration - int
+		    988,    -- Warehouse - smallint
+		    ISNULL(@Length,0) ,  -- Length - real
+		    0.0,  -- Height - real
+		    0.0,  -- Level1 - float
+		    0.0   -- Level2 - float
+		    )
+		
+		IF NOT EXISTS (SELECT *  FROM ReferenceSuppliers WHERE Reference =@Reference )
+		INSERT INTO dbo.ReferenceSuppliers
+		(
+		    Reference,
+		    SupplierCode,
+		    Percentage
+		)
+		VALUES
+		(   @Reference, -- Reference - nchar(25)
+		    988,   -- SupplierCode - int
+		    100  -- Percentage - float
+		)
+
+END
+
+GO

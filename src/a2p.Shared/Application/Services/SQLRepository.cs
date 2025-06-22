@@ -6,7 +6,9 @@ using a2p.Shared.Application.Domain.Enums;
 using a2p.Shared.Application.DTO;
 using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Infrastructure.Interfaces;
+
 using Microsoft.Data.SqlClient;
+
 using System.Data;
 
 namespace a2p.Shared.Application.Services
@@ -813,7 +815,7 @@ namespace a2p.Shared.Application.Services
                 //=====================================================================================================================
                 _ = cmd.Parameters.AddWithValue("@ReferenceBase", materialDTO.ReferenceBase); //required
                 _ = cmd.Parameters.AddWithValue("@Reference", materialDTO.Reference); //required
-                _ = cmd.Parameters.AddWithValue("@Color", materialDTO.Line); //required
+                _ = cmd.Parameters.AddWithValue("@Color", materialDTO.Color); //required
                 _ = cmd.Parameters.AddWithValue("@PackageQuantity", materialDTO.PackageQuantity); //required
                 _ = cmd.Parameters.AddWithValue("@Weight", materialDTO.Weight); //required
                 _ = cmd.Parameters.AddWithValue("@MaterialType", materialDTO.MaterialType); //required
@@ -1138,7 +1140,7 @@ namespace a2p.Shared.Application.Services
             }
 
         }
-        public async Task<A2PError?> InsertPrefSuiteMateriaSurfaceAsync(MaterialDTO materialDTO)
+        public async Task<A2PError?> InsertPrefSuiteMaterialSurfaceAsync(MaterialDTO materialDTO)
         {
 
             try
@@ -1161,7 +1163,7 @@ namespace a2p.Shared.Application.Services
                 {
                     _logService.Verbose("($Class}.{$Method}. Surface material {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
                         nameof(SQLRepository),
-                nameof(InsertPrefSuiteMateriaSurfaceAsync),
+                nameof(InsertPrefSuiteMaterialSurfaceAsync),
                 materialDTO.Reference,
                 materialDTO.Color,
                 materialDTO.Description ?? "");
@@ -1172,7 +1174,7 @@ namespace a2p.Shared.Application.Services
 
                     _logService.Verbose("($Class}.{$Method}. Surface material {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
                         nameof(SQLRepository),
-                        nameof(InsertPrefSuiteMateriaSurfaceAsync),
+                        nameof(InsertPrefSuiteMaterialSurfaceAsync),
                         materialDTO.Reference,
                         materialDTO.Color,
                         materialDTO.Description ?? "");
@@ -1194,7 +1196,7 @@ namespace a2p.Shared.Application.Services
                 "\nDescription {$Description}," +
                 "\nException: {$Exception}",
                 nameof(SQLRepository),
-                nameof(InsertPrefSuiteMateriaSurfaceAsync),
+                nameof(InsertPrefSuiteMaterialSurfaceAsync),
                 materialDTO.Order ?? string.Empty,
                 materialDTO.Worksheet ?? string.Empty,
                 materialDTO.Line,
@@ -1209,7 +1211,7 @@ namespace a2p.Shared.Application.Services
                     Order = materialDTO.Order ?? string.Empty,
                     Level = ErrorLevel.Error,
                     Code = ErrorCode.DatabaseWrite_Material,
-                    Message = $"{nameof(SQLRepository)}.{nameof(InsertPrefSuiteMateriaSurfaceAsync)}. Unhandled error." +
+                    Message = $"{nameof(SQLRepository)}.{nameof(InsertPrefSuiteMaterialSurfaceAsync)}. Unhandled error." +
                    $"\nOrder {materialDTO.Order ?? string.Empty}," +
                    $"\nWorksheet {materialDTO.Worksheet ?? string.Empty}," +
                    $"\nLine {materialDTO.Line}," +
@@ -1223,6 +1225,102 @@ namespace a2p.Shared.Application.Services
             }
 
         }
+
+        public async Task<A2PError?> InsertPrefSuiteMaterialPurchaseDataAsync(MaterialDTO materialDTO)
+        {
+
+            try
+
+            {
+                SqlCommand cmd = new()
+                {
+                    CommandText = "[dbo].[Uniwave_a2p_InsertPrefSuiteMaterialPurchaseData]",
+                    CommandType = CommandType.StoredProcedure
+                };
+                //=====================================================================================================================
+                _ = cmd.Parameters.AddWithValue("@Reference", materialDTO.ReferenceBase); //required   
+                _ = cmd.Parameters.AddWithValue("@Package", materialDTO.PackageQuantity); //required
+                _ = cmd.Parameters.AddWithValue("@Price", materialDTO.Price); //required
+                _ = cmd.Parameters.AddWithValue("@Description", materialDTO.Description); //required
+                _ = cmd.Parameters.AddWithValue("@Color", materialDTO.Color); //required
+                _ = cmd.Parameters.AddWithValue("@SourceReference", materialDTO.SourceReference); //required
+                _ = cmd.Parameters.AddWithValue("@SourceDescription", materialDTO.SourceDescription); //required
+
+                //=====================================================================================================================
+                int result = await _sqlRepository.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
+
+                if (result > 0)
+                {
+                    _logService.Verbose("($Class}.{$Method}. Purchase data material {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
+                        nameof(SQLRepository),
+                nameof(InsertPrefSuiteMaterialPurchaseDataAsync),
+                materialDTO.Reference,
+                materialDTO.Color,
+                materialDTO.Description ?? "");
+                }
+
+                if (result == 0)
+                {
+
+                    _logService.Verbose("($Class}.{$Method}. Purchase data material {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
+                        nameof(SQLRepository),
+                        nameof(InsertPrefSuiteMaterialPurchaseDataAsync),
+                        materialDTO.Reference,
+                        materialDTO.Color,
+                        materialDTO.Description ?? "");
+
+                }
+                return null;
+
+            }
+            catch (Exception ex)
+            {
+                _logService.Error(
+                "{$Class}.{$Method}. Unhandled error." +
+                "\nOrder {$Order}," +
+                "\nWorksheet {$Worksheet}," +
+                "\nLine {$Line}," +
+                "\nReferenceBase {$ReferenceBase}, " +
+                "\nReference {$Reference}," +
+                "\nColor {$Color}, " +
+                "\nDescription {$Description}," +
+                "\nException: {$Exception}",
+                nameof(SQLRepository),
+                nameof(InsertPrefSuiteMaterialPurchaseDataAsync),
+                materialDTO.Order ?? string.Empty,
+                materialDTO.Worksheet ?? string.Empty,
+                materialDTO.Line,
+                materialDTO.ReferenceBase ?? string.Empty,
+                materialDTO.Reference ?? string.Empty,
+                materialDTO.Color ?? string.Empty,
+                materialDTO.Description ?? string.Empty,
+                ex.Message ?? string.Empty
+               );
+                return new A2PError()
+                {
+                    Order = materialDTO.Order ?? string.Empty,
+                    Level = ErrorLevel.Error,
+                    Code = ErrorCode.DatabaseWrite_Material,
+                    Message = $"{nameof(SQLRepository)}.{nameof(InsertPrefSuiteMaterialPurchaseDataAsync)}. Unhandled error." +
+                   $"\nOrder {materialDTO.Order ?? string.Empty}," +
+                   $"\nWorksheet {materialDTO.Worksheet ?? string.Empty}," +
+                   $"\nLine {materialDTO.Line}," +
+                   $"\nReferenceBase {materialDTO.ReferenceBase ?? string.Empty}, " +
+                   $"\nReference {materialDTO.Reference ?? string.Empty}," +
+                   $"\nColor {materialDTO.Color ?? string.Empty}, " +
+                   $"\nDescription {materialDTO.Description ?? string.Empty}," +
+                   $"\nException: {ex.Message ?? string.Empty}"
+
+                };
+            }
+
+        }
+
+
+
+
+
+
         public async Task<A2PError?> InsertPrefSuiteMaterialNeedsMasterAsync(string order, int number, int version)
         {
 

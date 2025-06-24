@@ -4,6 +4,7 @@ using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Application.Models;
 using a2p.Shared.Core.DTO.a2p.Shared.Core.DTO;
 using a2p.Shared.Infrastructure.Interfaces;
+
 using System.Data;
 
 namespace a2p.WinForm.ChildForms
@@ -569,7 +570,7 @@ namespace a2p.WinForm.ChildForms
                     e.CellStyle.BackColor = Color.Red;
                     // Fix: Font.Bold is read-only, so create a new Font with Bold style
                     e.CellStyle.Font = new Font(e.CellStyle.Font, FontStyle.Bold);
-                    
+
                     string? fatalList = dataGridViewFiles.Rows[e.RowIndex].Cells["FatalList"].Value.ToString();
                     dataGridViewFiles.Rows[e.RowIndex].Cells["FatalCount"].ToolTipText = fatalList;
 
@@ -632,7 +633,7 @@ namespace a2p.WinForm.ChildForms
                                 dataGridViewFiles.Rows[rowIndex].Cells["Import"].ReadOnly = false;
                             }
 
-                            if ((bool) dataGridViewFiles.Rows[rowIndex].Cells["Import"].Value == false)
+                            if ((bool)dataGridViewFiles.Rows[rowIndex].Cells["Import"].Value == false)
                             {
                                 dataGridViewFiles.Rows[rowIndex].Cells["Import"].Style.ForeColor = Color.LightGray;
                             }
@@ -778,7 +779,7 @@ namespace a2p.WinForm.ChildForms
                 Dictionary<string, int> keyValuePairs = [];
                 for (int i = 0; i < dataGridViewFiles.Rows.Count; i++)
                 {
-                    if ((bool) dataGridViewFiles.Rows[i].Cells["Import"].Value)
+                    if ((bool)dataGridViewFiles.Rows[i].Cells["Import"].Value)
                     {
 
                         for (int j = 0; j < _a2pOrders.Count; j++)
@@ -874,7 +875,7 @@ namespace a2p.WinForm.ChildForms
 
             }
         }
-        public async Task<OrderDTO> MapToReadOrderDTOAsync(A2POrder a2pOrder)   // type 1 - read; 2 - write 
+        public async Task<OrderDTO> MapToReadOrderDTOAsync(A2POrder a2pOrder, int type)   // type 1 - read; 2 - write 
         {
             try
             {
@@ -906,61 +907,114 @@ namespace a2p.WinForm.ChildForms
                     orderDTO.WorksheetList = string.Join("\n", a2pOrder.Files.SelectMany(file => file.Worksheets).Select(ws => ws.Name));
                     orderDTO.Materials = a2pOrder.Materials.Count; // Added line to count Materials
 
-                    warningCount = a2pOrder.ErrorsRead
-                        .Where(error => error.Level is ErrorLevel.Warning)
-                        .Select(error => new { error.Level, error.Code, error.Message })
-                        .Distinct()
-                        .Count();
-                    orderDTO.WarningCount = warningCount;
-                    orderDTO.WarningList = string.Join("\n", a2pOrder.ErrorsRead
-                                .Where(error => error.Level is ErrorLevel.Warning)
-                                .Select(error => $"ErrorLevel: {error.Level}, ErrorCode: {error.Code}, Message: {error.Message}")
-                                .Distinct());
+                    if (type == 1)
+                    {
+                        warningCount = a2pOrder.ErrorsRead
+                            .Where(error => error.Level is ErrorLevel.Warning)
+                            .Where(error => error.Code.GetTypeCode() < 3000)
+                            .Select(error => new { error.Level, error.Code, error.Message })
+                            .Distinct()
+                            .Count();
 
-                    errorCount = a2pOrder.ErrorsRead
-                        .Where(error => error.Level is ErrorLevel.Error)
-                        .Select(error => new { error.Level, error.Code, error.Message })
-                        .Distinct()
-                        .Count()
-                    + a2pOrder.ErrorsWrite
-                        .Where(error => error.Level is ErrorLevel.Error)
-                        .Select(error => new { error.Level, error.Code, error.Message })
-                        .Distinct()
-                        .Count();
+                        orderDTO.WarningCount = warningCount;
+                        orderDTO.WarningList = string.Join("\n", a2pOrder.ErrorsRead
+                                    .Where(error => error.Level is ErrorLevel.Warning)
+                                    .Select(error => $"ErrorLevel: {error.Level}, ErrorCode: {error.Code}, Message: {error.Message}")
+                                    .Distinct());
 
-                    orderDTO.ErrorCount = errorCount;
+                        errorCount = a2pOrder.ErrorsRead
+                            .Where(error => error.Level is ErrorLevel.Error)
+                            .Select(error => new { error.Level, error.Code, error.Message })
+                            .Distinct()
+                            .Count();
 
-                    orderDTO.ErrorList = string.Join("\n", a2pOrder.ErrorsRead
-                        .Where(error => error.Level is ErrorLevel.Error or ErrorLevel.Fatal)
-                        .Select(error => $"Level: {error.Level}, Code: {(int) error.Code}, Message: {error.Message}")
-                        .Distinct()) +
 
-                    string.Join("\n", a2pOrder.ErrorsWrite
-                        .Where(error => error.Level is ErrorLevel.Error or ErrorLevel.Fatal)
-                        .Select(error => $"Level: {error.Level}, Code: {(int) error.Code}, Message: {error.Message}")
-                        .Distinct());
+                        orderDTO.ErrorCount = errorCount;
 
-                    fatalCount = a2pOrder.ErrorsRead
-                    .Where(error => error.Level is ErrorLevel.Fatal)
-                    .Select(error => new { error.Level, error.Code, error.Message })
-                    .Distinct()
-                    .Count() + a2pOrder.ErrorsWrite
-                    .Where(error => error.Level is ErrorLevel.Fatal)
-                    .Select(error => new { error.Level, error.Code, error.Message })
-                    .Distinct()
-                    .Count();
+                        orderDTO.ErrorList = string.Join("\n", a2pOrder.ErrorsRead
+                            .Where(error => error.Level is ErrorLevel.Error or ErrorLevel.Fatal)
+                            .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
+                            .Distinct());
 
-                    orderDTO.FatalCount = fatalCount;
-                    orderDTO.FatalList = string.Join("\n", a2pOrder.ErrorsRead
+                        fatalCount = a2pOrder.ErrorsRead
                         .Where(error => error.Level is ErrorLevel.Fatal)
-                        .Select(error => $"Level: {error.Level}, Code: {(int) error.Code}, Message: {error.Message}")
-                        .Distinct()) +
-                                        string.Join("\n", a2pOrder.ErrorsWrite
-                                               .Where(error => error.Level is ErrorLevel.Fatal)
-                                               .Select(error => $"Level: {error.Level}, Code: {(int) error.Code}, Message: {error.Message}")
-                                               .Distinct());
+                        .Select(error => new { error.Level, error.Code, error.Message })
+                        .Distinct()
+                        .Count();
 
-                    orderDTO.Import = fatalCount + errorCount + warningCount <= 0;
+                        orderDTO.FatalCount = fatalCount;
+                        orderDTO.FatalList = string.Join("\n", a2pOrder.ErrorsRead
+                            .Where(error => error.Level is ErrorLevel.Fatal)
+                            .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
+                            .Distinct());
+
+                    }
+
+
+                    if (type == 2)
+                    {
+
+
+                        warningCount = a2pOrder.ErrorsRead
+                             .Where(error => error.Level is ErrorLevel.Warning)
+                             .Select(error => new { error.Level, error.Code, error.Message })
+                             .Distinct()
+                             .Count();
+                        orderDTO.WarningCount = warningCount;
+                        orderDTO.WarningList = string.Join("\n", a2pOrder.ErrorsRead
+                                    .Where(error => error.Level is ErrorLevel.Warning and ErrorCode)
+                                    .Select(error => $"ErrorLevel: {error.Level}, ErrorCode: {error.Code}, Message: {error.Message}")
+                                    .Distinct());
+
+                        errorCount = a2pOrder.ErrorsRead
+                            .Where(error => error.Level is ErrorLevel.Error)
+                            .Select(error => new { error.Level, error.Code, error.Message })
+                            .Distinct()
+                            .Count()
+                        + a2pOrder.ErrorsWrite
+                            .Where(error => error.Level is ErrorLevel.Error)
+                            .Select(error => new { error.Level, error.Code, error.Message })
+                            .Distinct()
+                            .Count();
+
+                        orderDTO.ErrorCount = errorCount;
+
+                        orderDTO.ErrorList = string.Join("\n", a2pOrder.ErrorsRead
+                            .Where(error => error.Level is ErrorLevel.Error or ErrorLevel.Fatal)
+                            .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
+                            .Distinct()) +
+
+                        string.Join("\n", a2pOrder.ErrorsWrite
+                            .Where(error => error.Level is ErrorLevel.Error or ErrorLevel.Fatal)
+                            .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
+                            .Distinct());
+
+                        fatalCount = a2pOrder.ErrorsRead
+                        .Where(error => error.Level is ErrorLevel.Fatal)
+                        .Select(error => new { error.Level, error.Code, error.Message })
+                        .Distinct()
+                        .Count() + a2pOrder.ErrorsWrite
+                        .Where(error => error.Level is ErrorLevel.Fatal)
+                        .Select(error => new { error.Level, error.Code, error.Message })
+                        .Distinct()
+                        .Count();
+
+                        orderDTO.FatalCount = fatalCount;
+                        orderDTO.FatalList = string.Join("\n", a2pOrder.ErrorsRead
+                            .Where(error => error.Level is ErrorLevel.Fatal)
+                            .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
+                            .Distinct()) +
+                                            string.Join("\n", a2pOrder.ErrorsWrite
+                                                   .Where(error => error.Level is ErrorLevel.Fatal)
+                                                   .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
+
+                                                   .Distinct());
+
+
+
+                    }
+                    orderDTO.Import = CountReadTotalError(a2pOrder) <= 0;
+
                 });
 
 
@@ -1174,7 +1228,7 @@ namespace a2p.WinForm.ChildForms
                     lbInfoWarningCount.Text = warningCount.ToString();
                     lbInfoErrorCount.Text = errorCount.ToString();
 
-                    OrderDTO orderDTO = await MapToReadOrderDTOAsync(a2pOrder);   // 2 means import and should be used write errors
+                    OrderDTO orderDTO = await MapToReadOrderDTOAsync(a2pOrder, type);   // 2 means import and should be used write errors
 
                     Image image;
 

@@ -150,11 +150,16 @@ namespace a2p.Shared.Application.Services
                             a2pOrder.ErrorsWrite.Add(errorPrefSurface);
                             continue;
                         }
-                        A2PError? errorPurchaseData = await _sqlRepository.InsertPrefSuiteMaterialPurchaseDataAsync(a2pOrder.Materials[i]);
-                        if (errorPrefSurface != null)
+
+
+                        if (!string.IsNullOrEmpty(a2pOrder.Materials[i].SourceReference))
                         {
-                            a2pOrder.ErrorsWrite.Add(errorPrefSurface);
-                            continue;
+                            A2PError? errorPurchaseData = await _sqlRepository.InsertPrefSuiteMaterialPurchaseDataAsync(a2pOrder.Materials[i]);
+                            if (errorPurchaseData != null)
+                            {
+                                a2pOrder.ErrorsWrite.Add(errorPurchaseData);
+                                continue;
+                            }
                         }
                     }
                     catch (Exception ex)

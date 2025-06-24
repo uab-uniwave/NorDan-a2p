@@ -1,13 +1,13 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Text.RegularExpressions;
-
 using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.Domain.Enums;
 using a2p.Shared.Application.DTO;
 using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Infrastructure.Interfaces;
+
+using System.Text.RegularExpressions;
 
 namespace a2p.Shared.Application.Services
 {
@@ -416,7 +416,7 @@ namespace a2p.Shared.Application.Services
                         //===================================================================================================                                                        
                         materialDTO.Price = double.TryParse(a2pWorksheet.WorksheetData[i][12].ToString(), out double price) ? price : 0;
                         materialDTO.TotalPrice = double.TryParse(a2pWorksheet.WorksheetData[i][13].ToString(), out double totalPrice) ? totalPrice : 0;
-                        materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double) materialDTO.RequiredQuantity, 6);
+                        materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double)materialDTO.RequiredQuantity, 6);
                         materialDTO.LeftOverPrice = Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6) < 0 ? 0 : Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6);
 
                         //===================================================================================================
@@ -467,7 +467,7 @@ namespace a2p.Shared.Application.Services
                             materialDTO.Reference ?? string.Empty,
                             materialDTO.Description ?? string.Empty,
                             ex.Message ?? string.Empty);
-                        
+
 
                         a2pErrors.Add(new A2PError()
                         {
@@ -594,10 +594,18 @@ namespace a2p.Shared.Application.Services
                                 }
 
                             }
+
                             else
                             {
-                                materialDTO.Reference = materialDTO.ReferenceBase;
+                                (string, A2PError?) result = TransformReference(materialDTO.ReferenceBase, "", a2pWorksheet, line);
+                                if (string.IsNullOrEmpty(result.Item1))
+                                {
+                                    continue;
+
+                                }
+                                materialDTO.Reference = result.Item1;
                             }
+
                             materialDTO.Description = a2pWorksheet.WorksheetData[i][4].ToString() ?? string.Empty;
 
                             //===================================================================================================
@@ -645,7 +653,7 @@ namespace a2p.Shared.Application.Services
                             //=================================================================================================                                
                             materialDTO.Price = double.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out double price) ? price : 0;
                             materialDTO.TotalPrice = double.TryParse(a2pWorksheet.WorksheetData[i][11].ToString(), out double totalPrice) ? totalPrice : 0;
-                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double) materialDTO.RequiredQuantity, 6);
+                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double)materialDTO.RequiredQuantity, 6);
                             materialDTO.LeftOverPrice = Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6) < 0 ? 0 : Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6);
 
                             //===================================================================================================
@@ -797,7 +805,13 @@ namespace a2p.Shared.Application.Services
                             }
                             else
                             {
-                                materialDTO.Reference = materialDTO.ReferenceBase;
+                                (string, A2PError?) result = TransformReference(materialDTO.ReferenceBase, "", a2pWorksheet, line);
+                                if (string.IsNullOrEmpty(result.Item1))
+                                {
+                                    continue;
+
+                                }
+                                materialDTO.Reference = result.Item1;
                             }
                             materialDTO.Description = a2pWorksheet.WorksheetData[i][4].ToString() ?? string.Empty;
 
@@ -830,7 +844,7 @@ namespace a2p.Shared.Application.Services
                             //===================================================================================================
                             materialDTO.Price = double.TryParse(a2pWorksheet.WorksheetData[i][9].ToString(), out double price) ? price : 0;
                             materialDTO.TotalPrice = double.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out double totalPrice) ? totalPrice : 0;
-                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double) materialDTO.RequiredQuantity, 6);
+                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double)materialDTO.RequiredQuantity, 6);
                             materialDTO.LeftOverPrice = Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6) < 0 ? 0 : Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6);
 
                             //===================================================================================================
@@ -889,7 +903,7 @@ namespace a2p.Shared.Application.Services
                                 Message = $"Unhandled Error {nameof(MapperTechDesign)}.{nameof(MapAccessoriesAsync)}, " +
                                $"\nOrder: {a2pWorksheet.Order ?? string.Empty}," +
                                $"\nWorksheet: {a2pWorksheet.Name ?? string.Empty}," +
-                            
+
 
                                $"\nDescription: {materialDTO.Description ?? string.Empty}," +
                                $"\nData: {a2pWorksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}," +
@@ -1188,7 +1202,7 @@ namespace a2p.Shared.Application.Services
                                "\nWorksheet: {$Worksheet}, " +
                                "\nReference {$Reference}, " +
                                "\nColor {$Color}," +
-                           
+
                                nameof(MapperTechDesign),
                                nameof(MapGlassesAsync),
                                a2pWorksheet.Order ?? string.Empty,
@@ -1232,7 +1246,7 @@ namespace a2p.Shared.Application.Services
                                   nameof(MapGlassesAsync),
                                   a2pWorksheet.Order ?? string.Empty,
                                   a2pWorksheet.Name ?? string.Empty,
-                                  materialDTO.SourceReference  ?? string.Empty ,
+                                  materialDTO.SourceReference ?? string.Empty,
                                   materialDTO.SourceDescription ?? string.Empty,
                                   resultPredicted);
 
@@ -1245,8 +1259,8 @@ namespace a2p.Shared.Application.Services
                                     $"\nOrder: {a2pWorksheet.Order}," +
                                     $"\nWorksheet: {a2pWorksheet.Name}." +
                                     $"\nGlass description: {materialDTO.SourceDescription}" +
-                                    $"\nExpected PrefSuite Reference: {resultPredicted ?? "not found"}." 
-                                    
+                                    $"\nExpected PrefSuite Reference: {resultPredicted ?? "not found"}."
+
                                 });
                                 continue;
                             }
@@ -1327,7 +1341,7 @@ namespace a2p.Shared.Application.Services
                                 nameof(MapGlassesAsync),
                                 a2pWorksheet.Order ?? string.Empty,
                                 a2pWorksheet.Name ?? string.Empty,
-                                materialDTO.SourceReference?? string.Empty,
+                                materialDTO.SourceReference ?? string.Empty,
                                 materialDTO.SourceDescription ?? string.Empty,
                                 materialDTO.ReferenceBase ?? string.Empty,
                                 materialDTO.Reference ?? string.Empty,
@@ -1464,7 +1478,7 @@ namespace a2p.Shared.Application.Services
                                                    //=================================================================================================                                
                             materialDTO.Price = double.TryParse(a2pWorksheet.WorksheetData[i][9].ToString(), out double price) ? price : 0;
                             materialDTO.TotalPrice = double.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out double totalPrice) ? totalPrice : 0;
-                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double) materialDTO.RequiredQuantity, 6);
+                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double)materialDTO.RequiredQuantity, 6);
                             materialDTO.LeftOverPrice = Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6) < 0 ? 0 : Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6);
                             //===================================================================================================
                             materialDTO.SquareMeterPrice = 0; // not used in others
@@ -1806,7 +1820,7 @@ namespace a2p.Shared.Application.Services
 
         private (string, A2PError?) TransformReference(string sapaReference, string sapaColor, A2PWorksheet a2pWorksheet, int line)
         {
-            
+
             string reference = string.Empty;
             string initialReference = sapaReference?.Trim() ?? string.Empty;
             string initialColor = sapaColor?.Trim() ?? string.Empty;
@@ -1848,6 +1862,21 @@ namespace a2p.Shared.Application.Services
 
                 if (a2pWorksheet.Name is "ND_Gaskets" or "ND_Accessories")
                 {
+                    if (string.IsNullOrEmpty(sapaReference))
+                    {
+
+                        return (sapaReference, null);
+                    }
+
+
+
+                    if (sapaReference.StartsWith("S"))
+                    {
+                        sapaReference = sapaReference[1..];
+                    }
+
+
+
                     if (string.IsNullOrEmpty(sapaColor) && !string.IsNullOrEmpty(sapaReference))
                     {
                         if (sapaReference.StartsWith("S"))
@@ -1861,6 +1890,12 @@ namespace a2p.Shared.Application.Services
                 // Processing for ND_Profiles and ND_Accessories
                 if (a2pWorksheet.Name is "ND_Profiles" or "ND_Accessories" or "ND_Gaskets")
                 {
+                    if (string.IsNullOrEmpty(sapaReference))
+                    {
+
+                        return (sapaReference, null);
+                    }
+
                     if (sapaReference.StartsWith("S"))
                     {
                         sapaReference = sapaReference[1..];
@@ -1868,11 +1903,19 @@ namespace a2p.Shared.Application.Services
 
                     sapaColor = TransformColor(sapaColor);
 
-                    // Merge the fields with a '-'
-                    string merged = $"{sapaReference}-{sapaColor}";
+                    if (string.IsNullOrEmpty(sapaColor))
+                    {
+                        reference = sapaReference;
 
-                    // Keep only allowed characters (letters, numbers, dots, and '-')
-                    reference = Regex.Replace(merged, @"[^a-zA-Z0-9.\-|]", "");
+                    }
+                    else
+                    {
+                        // Merge the fields with a '-'
+                        string merged = $"{sapaReference}-{sapaColor}";
+
+                        // Keep only allowed characters (letters, numbers, dots, and '-')
+                        reference = Regex.Replace(merged, @"[^a-zA-Z0-9.\-|]", "");
+                    }
 
                     // Ensure the final string is not more than 25 characters
                     if (reference.Length > 25)
@@ -1973,7 +2016,7 @@ namespace a2p.Shared.Application.Services
         private static string TransformColorPart(string colorPart)
         {
             // Match LDDDD.DD0L → e.g., N8010.840F → N8010.84
-            if (Regex.IsMatch(colorPart, @"^[A-Z]\d{4}\.\d{2}0[A-Z]$"))
+            if (Regex.IsMatch(colorPart, @"^[A-Z]\d{4}\.\d{2}0[A-Z0-9]$"))
             {
                 return colorPart[..^2]; // Remove 0 and last char
             }

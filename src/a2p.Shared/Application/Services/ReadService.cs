@@ -1,13 +1,12 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Data;
-
 using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.Domain.Enums;
-
 using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Infrastructure.Interfaces;
+
+using System.Data;
 
 namespace a2p.Shared.Application.Services
 {
@@ -317,7 +316,7 @@ namespace a2p.Shared.Application.Services
 
             try
             {
-                await Task.Run(() =>
+                await Task.Run((Action)(() =>
                 {
 
                     List<string> files = _fileService.GetFiles()!
@@ -347,7 +346,7 @@ namespace a2p.Shared.Application.Services
                             {
                                 Order = a2pOrder.Order,
                                 Level = ErrorLevel.Fatal,
-                                Code = ErrorCode.FileSystemRead,
+                                Code = ErrorCode.FileSystemReadWrite,
                                 Message = $"Order {a2pOrder.Order}. File ${a2pFile.FileName} is Locked."
 
                             });
@@ -355,7 +354,7 @@ namespace a2p.Shared.Application.Services
                         a2pOrder.Files.Add(a2pFile);
                     }
 
-                });
+                }));
                 return a2pOrder;
             }
             catch (Exception ex)
@@ -409,7 +408,7 @@ namespace a2p.Shared.Application.Services
                     {
                         Order = a2pOrder.Order,
                         Level = ErrorLevel.Fatal,
-                        Code = ErrorCode.DatabaseRead_Order,
+                        Code = ErrorCode.DatabaseRead_OrderReferenceNotFound,
                         Message = $"Order# {a2pOrder.Order} not exists in PrefSuite DB !"
                     }
                     );
@@ -463,7 +462,7 @@ namespace a2p.Shared.Application.Services
             try
             {
 
-                OrderState orderState = (OrderState) a2pOrder.SalesDocumentState;
+                OrderState orderState = (OrderState)a2pOrder.SalesDocumentState;
 
                 if (orderState.HasFlag(OrderState.PurchaseOrdersExist))
                 {

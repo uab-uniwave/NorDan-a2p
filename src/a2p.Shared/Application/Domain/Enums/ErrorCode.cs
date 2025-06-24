@@ -1,4 +1,4 @@
-﻿namespace a2p.Shared.Application.Domain.Enums
+namespace a2p.Shared.Application.Domain.Enums
 {
     public enum ErrorCode
     {
@@ -11,57 +11,56 @@
         // 🔵 Read Process Errors
         // ======================================
 
-        // Filesystem Read Errors (11xx)
-        FileSystemRead = 1101,
+        // Filesystem Read Errors
 
-        // Excel Read Errors (31xx)
-        ExcelRead_WorkbookIsEmpty = 3101,
-        ExcelRead_WorksheetRow = 3102,
-        ExcelRead_WorksheetCell = 3103,
 
-        // Database Read Errors (41xx)
-        DatabaseRead_Order = 4101,
-        DatabaseRead_Item = 4102,
-        DatabaseRead_Material = 4103,
-        DatabaseRead_OrderAlreadyImported = 4201,
-        DatabaseRead_OrderReferenceNotFound = 4202,
+        // Excel Read Errors 
+        ExcelRead_WorkbookIsEmpty = 1201,
+        ExcelRead_WorksheetRow = 1202,
+        ExcelRead_WorksheetCell = 1203,
 
-        // ERP Read Errors (51xx)
-        ERPRead_Order = 5101,
-        ERPRead_Item = 5102,
-        ERPRead_Material = 5103,
+        // Database Read Errors 
+        DatabaseRead_Order = 1301,
+        DatabaseRead_Item = 1302,
+        DatabaseRead_Material = 1303,
+        DatabaseRead_OrderAlreadyImported = 1304,
+        DatabaseRead_OrderReferenceNotFound = 1305,
+
 
 
         // ======================================
         // 🔴 Write Process Errors
         // ======================================
 
-        // Filesystem Write Errors (12xx)
-        FileSystemWrite = 1201,
 
-        // Database Write Errors (42xx)
-        DatabaseWrite_Order = 4201,
-        DatabaseWrite_Item = 4202,
-        DatabaseWrite_Material = 4203,
 
-        // Database Delete Errors (43xx)
-        DatabaseDelete_Data = 4301,
-        
-        // ERP Write Errors (52xx)
-        ERPWrite_Order = 5201,
-        ERPWrite_Item = 5202,
-        ERPWrite_Material = 5203,
+        // Database Write Errors 
+        DatabaseWrite_Order = 3201,
+        DatabaseWrite_Item = 3202,
+        DatabaseWrite_Material = 3203,
 
-        // ERP Delete Errors (53xx)
-        ERPDelete_Order = 5301,
-        ERPDelete_Item = 5302,
-        ERPDelete_Material = 5303,
+        // Database Delete Errors
+        DatabaseDelete_Data = 3301,
+
+        // ERP Write Errors 
+        ERPWrite_Order = 2401,
+        ERPWrite_Item = 2402,
+        ERPWrite_Material = 2403,
+
+        // ERP Delete Errors 
+        ERPDelete_Order = 2501,
+        ERPDelete_Item = 5502,
+        ERPDelete_Material = 5503,
 
         // ======================================
         // 🟡 Mapping Errors
         // ======================================
         MappingService_MapOrder = 6101,
         MappingService_MapItem = 6102,
-        MappingService_MapMaterial = 6103
+        MappingService_MapMaterial = 6103,
+
+
+        // Filesystem Write Errors 
+        FileSystemReadWrite = 7101,
     }
 }

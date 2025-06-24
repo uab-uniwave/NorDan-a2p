@@ -1,13 +1,13 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Text.Json;
-
 using a2p.Shared.Application.Models;
 using a2p.Shared.Infrastructure.Interfaces;
 
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+
+using System.Text.Json;
 
 namespace a2p.WinForm.ChildForms
 {
@@ -265,8 +265,8 @@ namespace a2p.WinForm.ChildForms
                 if (chxTrusted.Checked == false)
                 {
                     // Retrieve username and password from UserSecrets
-                    string username = _configuration["DbUsername"];
-                    string password = _configuration["DbPassword"];
+                    string username = _configuration["DbUsername"] ?? string.Empty;
+                    string password = _configuration["DbPassword"] ?? string.Empty;
 
                     builder.UserID = username;
                     builder.Password = password;

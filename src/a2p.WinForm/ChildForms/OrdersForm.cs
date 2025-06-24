@@ -633,7 +633,7 @@ namespace a2p.WinForm.ChildForms
                                 dataGridViewFiles.Rows[rowIndex].Cells["Import"].ReadOnly = false;
                             }
 
-                            if ((bool)dataGridViewFiles.Rows[rowIndex].Cells["Import"].Value == false)
+                            if ((bool) dataGridViewFiles.Rows[rowIndex].Cells["Import"].Value == false)
                             {
                                 dataGridViewFiles.Rows[rowIndex].Cells["Import"].Style.ForeColor = Color.LightGray;
                             }
@@ -779,7 +779,7 @@ namespace a2p.WinForm.ChildForms
                 Dictionary<string, int> keyValuePairs = [];
                 for (int i = 0; i < dataGridViewFiles.Rows.Count; i++)
                 {
-                    if ((bool)dataGridViewFiles.Rows[i].Cells["Import"].Value)
+                    if ((bool) dataGridViewFiles.Rows[i].Cells["Import"].Value)
                     {
 
                         for (int j = 0; j < _a2pOrders.Count; j++)
@@ -853,6 +853,7 @@ namespace a2p.WinForm.ChildForms
 
                         await UpdateDatable(importOrders, 2);
 
+
                         progressBarForm.Close(); // TODO: on cancel overwrite should stay grid data
                     }
 
@@ -911,7 +912,7 @@ namespace a2p.WinForm.ChildForms
                     {
                         warningCount = a2pOrder.ErrorsRead
                             .Where(error => error.Level is ErrorLevel.Warning)
-                            .Where(error => error.Code.GetTypeCode() < 3000)
+                            .Where(error => (int) error.Code < 3000)
                             .Select(error => new { error.Level, error.Code, error.Message })
                             .Distinct()
                             .Count();
@@ -933,7 +934,7 @@ namespace a2p.WinForm.ChildForms
 
                         orderDTO.ErrorList = string.Join("\n", a2pOrder.ErrorsRead
                             .Where(error => error.Level is ErrorLevel.Error or ErrorLevel.Fatal)
-                            .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
+                            .Select(error => $"Level: {error.Level}, Code: {(int) error.Code}, Message: {error.Message}")
                             .Distinct());
 
                         fatalCount = a2pOrder.ErrorsRead
@@ -945,7 +946,7 @@ namespace a2p.WinForm.ChildForms
                         orderDTO.FatalCount = fatalCount;
                         orderDTO.FatalList = string.Join("\n", a2pOrder.ErrorsRead
                             .Where(error => error.Level is ErrorLevel.Fatal)
-                            .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
+                            .Select(error => $"Level: {error.Level}, Code: {(int) error.Code}, Message: {error.Message}")
                             .Distinct());
 
                     }
@@ -957,12 +958,14 @@ namespace a2p.WinForm.ChildForms
 
                         warningCount = a2pOrder.ErrorsRead
                              .Where(error => error.Level is ErrorLevel.Warning)
+                             .Where(error => (int) error.Code > 3000)
                              .Select(error => new { error.Level, error.Code, error.Message })
+
                              .Distinct()
                              .Count();
                         orderDTO.WarningCount = warningCount;
                         orderDTO.WarningList = string.Join("\n", a2pOrder.ErrorsRead
-                                    .Where(error => error.Level is ErrorLevel.Warning and ErrorCode)
+                                    .Where(error => error.Level is ErrorLevel.Warning)
                                     .Select(error => $"ErrorLevel: {error.Level}, ErrorCode: {error.Code}, Message: {error.Message}")
                                     .Distinct());
 
@@ -981,12 +984,12 @@ namespace a2p.WinForm.ChildForms
 
                         orderDTO.ErrorList = string.Join("\n", a2pOrder.ErrorsRead
                             .Where(error => error.Level is ErrorLevel.Error or ErrorLevel.Fatal)
-                            .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
+                            .Select(error => $"Level: {error.Level}, Code: {(int) error.Code}, Message: {error.Message}")
                             .Distinct()) +
 
                         string.Join("\n", a2pOrder.ErrorsWrite
                             .Where(error => error.Level is ErrorLevel.Error or ErrorLevel.Fatal)
-                            .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
+                            .Select(error => $"Level: {error.Level}, Code: {(int) error.Code}, Message: {error.Message}")
                             .Distinct());
 
                         fatalCount = a2pOrder.ErrorsRead
@@ -1002,11 +1005,11 @@ namespace a2p.WinForm.ChildForms
                         orderDTO.FatalCount = fatalCount;
                         orderDTO.FatalList = string.Join("\n", a2pOrder.ErrorsRead
                             .Where(error => error.Level is ErrorLevel.Fatal)
-                            .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
+                            .Select(error => $"Level: {error.Level}, Code: {(int) error.Code}, Message: {error.Message}")
                             .Distinct()) +
                                             string.Join("\n", a2pOrder.ErrorsWrite
                                                    .Where(error => error.Level is ErrorLevel.Fatal)
-                                                   .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
+                                                   .Select(error => $"Level: {error.Level}, Code: {(int) error.Code}, Message: {error.Message}")
 
                                                    .Distinct());
 
@@ -1108,69 +1111,6 @@ namespace a2p.WinForm.ChildForms
             }
         }
 
-        //public void UpdateOrderErrors(A2POrder a2pOrder)
-        //{
-        //    try
-        //    {
-        //        foreach (DataRow row in _dataTable.Rows)
-        //        {
-
-        //            try
-        //            {
-
-        //                int warningCount = a2pOrder.WriteErrors
-        //                    .Where(error => error.Level is ErrorLevel.Warning)
-        //                    .Select(error => new { error.Level, error.Code, error.Message })
-        //                    .Distinct()
-        //                    .Count();
-
-        //                string warningList = string.Join("\n", a2pOrder.WriteErrors
-        //                    .Where(error => error.Level is ErrorLevel.Warning)
-        //                    .Select(error => $"ErrorLevel: {error.Level}, ErrorCode: {error.Code}, Message: {error.Message}")
-        //                    .Distinct()).ToString();
-
-        //                int errorCount = a2pOrder.WriteErrors
-        //                       .Where(error => error.Level is ErrorLevel.Error)
-        //                       .Select(error => new { error.Level, error.Code, error.Message })
-        //                       .Distinct()
-        //                       .Count();
-
-        //                string errorList = string.Join("\n", a2pOrder.WriteErrors
-        //                       .Where(error => error.Level is ErrorLevel.Error or ErrorLevel.Fatal)
-        //                       .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
-        //                       .Distinct());
-
-        //                int fatalCount = a2pOrder.WriteErrors
-        //                        .Where(error => error.Level is ErrorLevel.Fatal)
-        //                        .Select(error => new { error.Level, error.Code, error.Message })
-        //                        .Distinct()
-        //                        .Count();
-
-        //                string fatalList = string.Join("\n", a2pOrder.WriteErrors
-        //                    .Where(error => error.Level is ErrorLevel.Fatal)
-        //                    .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
-        //                    .Distinct());
-
-        //                row["ErrorCount"] = warningCount;
-        //                row["WarningList"] = warningList;
-        //                row["ErrorCount"] = errorCount;
-        //                row["ErrorList"] = errorList;
-        //                row["FatalCount"] = fatalCount;
-        //                row["FatalList"] = fatalList;
-
-        //            }
-        //            catch (Exception ex)
-        //            {
-
-        //                _logService.Error("Order Form: Unhandled error updating write errors count in DataTable loop. Order {$Order}  Exception {$Exception}", a2pOrder.Order, ex.Message);
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logService.Error("Order Form: Unhandled error updating write errors count in DataTable. Order {$Order}  Exception {$Exception}", a2pOrder.Order, ex.Message);
-        //    }
-        //}
 
         private async Task UpdateDatable(List<A2POrder> a2pOrders, int type)
         {
@@ -1285,6 +1225,7 @@ namespace a2p.WinForm.ChildForms
                         orderDTO.ErrorList,                          //"FatalCount", typeof(string));
                         orderDTO.FatalCount,                         //"FatalList", typeof(string));
                     orderDTO.FatalList            //
+
                     );
 
                     orderCount++;
@@ -1300,7 +1241,7 @@ namespace a2p.WinForm.ChildForms
                     materialCount += orderDTO.Materials;
                     warningCount += orderDTO.WarningCount;
                     errorCount += orderDTO.ErrorCount;
-                    fatalCount += orderDTO.ErrorCount;
+                    fatalCount += orderDTO.FatalCount;
                     lbInfoOrdersCount.Text = orderCount.ToString();
                     lbInfoFilesCount.Text = fileCount.ToString();
                     lbInfoWorksheetsCount.Text = worksheetCount.ToString();
@@ -1310,6 +1251,26 @@ namespace a2p.WinForm.ChildForms
                     lbInfoErrorCount.Text = errorCount.ToString();
                     plGridPanel.ResumeLayout(false);
                     plGridPanel.PerformLayout();
+
+
+
+
+
+                    if (type == 2)
+                    {
+                        // Fix: Select file names as strings, not as chars
+                        var fileNames = a2pOrder.Files.Select(f => f.File).ToList();
+                        if (orderDTO.ErrorCount + orderDTO.FatalCount > 0)
+                        {
+                            _fileService.MoveOrderFiles(fileNames, false);
+                        }
+                        else
+                        {
+                            _fileService.MoveOrderFiles(fileNames, true);
+                        }
+                    }
+
+
 
                 }
                 catch (Exception ex)
@@ -1334,5 +1295,7 @@ namespace a2p.WinForm.ChildForms
 
             }
         }
+
+
     }
 }

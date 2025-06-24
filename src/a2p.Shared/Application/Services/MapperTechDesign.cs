@@ -24,8 +24,7 @@ namespace a2p.Shared.Application.Services
         {
             _logService = logService;
             _sqlRepository = sqlRepository;
-            _logService = logService;
-
+            _progressValue = new ProgressValue();
         }
 
         public async Task<(List<ItemDTO>, List<A2PError>)> MapItemsAsync(A2PWorksheet a2pWorksheet, ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
@@ -416,7 +415,7 @@ namespace a2p.Shared.Application.Services
                         //===================================================================================================                                                        
                         materialDTO.Price = double.TryParse(a2pWorksheet.WorksheetData[i][12].ToString(), out double price) ? price : 0;
                         materialDTO.TotalPrice = double.TryParse(a2pWorksheet.WorksheetData[i][13].ToString(), out double totalPrice) ? totalPrice : 0;
-                        materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double)materialDTO.RequiredQuantity, 6);
+                        materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double) materialDTO.RequiredQuantity, 6);
                         materialDTO.LeftOverPrice = Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6) < 0 ? 0 : Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6);
 
                         //===================================================================================================
@@ -653,7 +652,7 @@ namespace a2p.Shared.Application.Services
                             //=================================================================================================                                
                             materialDTO.Price = double.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out double price) ? price : 0;
                             materialDTO.TotalPrice = double.TryParse(a2pWorksheet.WorksheetData[i][11].ToString(), out double totalPrice) ? totalPrice : 0;
-                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double)materialDTO.RequiredQuantity, 6);
+                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double) materialDTO.RequiredQuantity, 6);
                             materialDTO.LeftOverPrice = Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6) < 0 ? 0 : Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6);
 
                             //===================================================================================================
@@ -844,7 +843,7 @@ namespace a2p.Shared.Application.Services
                             //===================================================================================================
                             materialDTO.Price = double.TryParse(a2pWorksheet.WorksheetData[i][9].ToString(), out double price) ? price : 0;
                             materialDTO.TotalPrice = double.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out double totalPrice) ? totalPrice : 0;
-                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double)materialDTO.RequiredQuantity, 6);
+                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double) materialDTO.RequiredQuantity, 6);
                             materialDTO.LeftOverPrice = Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6) < 0 ? 0 : Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6);
 
                             //===================================================================================================
@@ -1478,7 +1477,7 @@ namespace a2p.Shared.Application.Services
                                                    //=================================================================================================                                
                             materialDTO.Price = double.TryParse(a2pWorksheet.WorksheetData[i][9].ToString(), out double price) ? price : 0;
                             materialDTO.TotalPrice = double.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out double totalPrice) ? totalPrice : 0;
-                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double)materialDTO.RequiredQuantity, 6);
+                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double) materialDTO.RequiredQuantity, 6);
                             materialDTO.LeftOverPrice = Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6) < 0 ? 0 : Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6);
                             //===================================================================================================
                             materialDTO.SquareMeterPrice = 0; // not used in others
@@ -1865,7 +1864,7 @@ namespace a2p.Shared.Application.Services
                     if (string.IsNullOrEmpty(sapaReference))
                     {
 
-                        return (sapaReference, null);
+                        return (sapaReference ?? string.Empty, null);
                     }
 
 
@@ -1893,7 +1892,7 @@ namespace a2p.Shared.Application.Services
                     if (string.IsNullOrEmpty(sapaReference))
                     {
 
-                        return (sapaReference, null);
+                        return (sapaReference ?? string.Empty, null);
                     }
 
                     if (sapaReference.StartsWith("S"))
@@ -1901,7 +1900,7 @@ namespace a2p.Shared.Application.Services
                         sapaReference = sapaReference[1..];
                     }
 
-                    sapaColor = TransformColor(sapaColor);
+                    sapaColor = TransformColor(sapaColor ?? string.Empty);
 
                     if (string.IsNullOrEmpty(sapaColor))
                     {

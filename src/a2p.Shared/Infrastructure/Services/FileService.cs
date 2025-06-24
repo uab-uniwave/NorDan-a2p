@@ -5,6 +5,8 @@ using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.Models;
 using a2p.Shared.Infrastructure.Interfaces;
 
+using System.Data;
+
 namespace a2p.Shared.Infrastructure.Services
 {
     public class FileService : IFileService
@@ -130,26 +132,27 @@ namespace a2p.Shared.Infrastructure.Services
             try
 
             {
-                using FileStream stream = new(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                using FileStream stream = new(filePath, FileMode.Open, FileAccess.Read);
                 return false;
             }
             catch (Exception ex)
             {
+
+
                 _logService.Error("{$Class}.{$Method}. File \"{$File}\" is locked Exception: {$Exception}",
                    nameof(FileService),
                    nameof(IsLocked),
                    ex.Message);
-                return false;
+                return true;
             }
-            return true;
         }
 
         //======================================================================
         // Write
         //======================================================================
-        public List<string>? MoveOrderFiles(List<string> files, bool success)
+        public void MoveOrderFiles(List<string> files, bool success)
         {
-            List<string> failedFiles = [];
+
 
             try
             {
@@ -157,19 +160,19 @@ namespace a2p.Shared.Infrastructure.Services
                 foreach (string file in files)
                 {
 
-                    if (File.Exists(file) && success)
+                    if (File.Exists(file) && success == true)
                     {
                         File.Move(file, file.Replace(GetRootFolder(), GetSuccessFolder()));
                     }
-                    else if (File.Exists(file) && success)
+                    else if (File.Exists(file) && success == false)
                     {
+
                         File.Move(file, file.Replace(GetRootFolder(), GetFailedFolder()));
-                        failedFiles.Add(file.Replace(GetRootFolder(), GetFailedFolder()));
 
                     }
                 }
 
-                return failedFiles.Count > 0 ? failedFiles : null;
+
             }
             catch (Exception ex)
             {
@@ -177,7 +180,7 @@ namespace a2p.Shared.Infrastructure.Services
                      nameof(FileService),
                      nameof(GetFiles),
                      ex.Message);
-                return null;
+
             }
         }
 
@@ -202,7 +205,7 @@ namespace a2p.Shared.Infrastructure.Services
         public string GetFailedFolder()
         {
 
-            string folder = Path.Combine(GetRootFolder(), _appSettings.Folders.ImportSuccess ?? "Failed");
+            string folder = Path.Combine(GetRootFolder(), _appSettings.Folders.ImportFailed ?? "Failed");
 
             if (!Directory.Exists(folder))
             {
@@ -252,5 +255,8 @@ namespace a2p.Shared.Infrastructure.Services
 
         }
 
+
+
     }
 }
+

@@ -162,12 +162,24 @@ namespace a2p.Shared.Infrastructure.Services
 
                     if (File.Exists(file) && success == true)
                     {
-                        File.Move(file, file.Replace(GetRootFolder(), GetSuccessFolder()));
+                        string destinationFile = file.Replace(GetRootFolder(), GetSuccessFolder());
+                        if (File.Exists(destinationFile))
+                        {
+                            File.Delete(destinationFile);
+                        }
+
+
+                        File.Move(file, destinationFile);
                     }
                     else if (File.Exists(file) && success == false)
                     {
 
-                        File.Move(file, file.Replace(GetRootFolder(), GetFailedFolder()));
+                        string destinationFile = file.Replace(GetRootFolder(), GetFailedFolder());
+                        if (File.Exists(destinationFile))
+                        {
+                            File.Delete(destinationFile);
+                        }
+                        File.Move(file, destinationFile);
 
                     }
                 }

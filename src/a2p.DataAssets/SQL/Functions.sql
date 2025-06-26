@@ -23,12 +23,7 @@ CREATE OR ALTER FUNCTION [dbo].[Uniwave_a2p_GetColorConfiguration]
 
 GO
 
-/****** Object:  UserDefinedFunction [dbo].[Uniwave_a2p_GetExternalReference]    Script Date: 6/7/2025 1:59:35 PM ******/
-SET ANSI_NULLS ON
-GO
 
-SET QUOTED_IDENTIFIER ON
-GO
 
 CREATE OR ALTER FUNCTION [dbo].[Uniwave_a2p_GetExternalReference] 
 (
@@ -53,11 +48,6 @@ END
 GO
 
 /****** Object:  UserDefinedFunction [dbo].[Uniwave_a2p_GetSalesDocumentState]    Script Date: 6/7/2025 1:59:35 PM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 
 CREATE OR ALTER FUNCTION [dbo].[Uniwave_a2p_GetSalesDocumentState] 
 	(
@@ -100,13 +90,6 @@ CREATE OR ALTER FUNCTION [dbo].[Uniwave_a2p_GetSalesDocumentState]
 	END
 
 
-GO
-
-/****** Object:  UserDefinedFunction [dbo].[uniwave_a2p_GetSapaColor]    Script Date: 6/7/2025 1:59:35 PM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
 GO
 
 
@@ -152,3 +135,56 @@ END
 GO
 
 
+
+
+CREATE OR ALTER FUNCTION [dbo].[Uniwave_a2p_GetTechDesignCommodityCode]
+(
+ @SourceReference Nvarchar(50)
+)
+RETURNS int
+AS
+BEGIN
+    DECLARE @CommodityCode Nvarchar(25), 
+             @Code INT 
+     
+    SELECT TOP 1 @CommodityCode =  [Default commodity code]
+    FROM Nordan_a2p_IntrastatData WHERE 
+    CASE 
+        WHEN CHARINDEX('.', Material) > 0 
+        THEN LEFT(Material, CHARINDEX('.', Material) - 1)
+        ELSE Material
+    END  = @SourceReference
+    
+    SELECT TOP 1 @Code= Id FROM Intrastat.CommodityCodes Where Code = @CommodityCode
+
+
+RETURN @Code
+
+END
+GO
+
+
+CREATE OR  ALTER FUNCTION [dbo].[Uniwave_a2p_GetTechDesignWeight]
+(
+ @SourceReference Nvarchar(50)
+)
+RETURNS Float
+AS
+BEGIN
+    DECLARE @Weight Float 
+    SELECT TOP 1 @Weight = Weight
+    FROM Nordan_a2p_IntrastatData NINT
+    WHERE 
+
+    CASE 
+        WHEN CHARINDEX('.', NINT.Material) > 0 
+        THEN LEFT(NINT.Material, CHARINDEX('.', NINT.Material) - 1)
+        ELSE NINT.Material
+    END =  @SourceReference
+
+RETURN @Weight
+
+END
+
+
+GO

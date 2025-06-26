@@ -1,9 +1,9 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.ComponentModel.DataAnnotations;
-
 using a2p.Shared.Application.Domain.Enums;
+
+using System.ComponentModel.DataAnnotations;
 
 namespace a2p.Shared.Application.DTO
 {
@@ -46,12 +46,12 @@ namespace a2p.Shared.Application.DTO
         //============================================================================================================================  
         public double Waste { get; set; } = 0;
         //============================================================================================================================  
-        public double  Price { get; set; } = 0;
-        public double  TotalPrice { get; set; } = 0;
-        public double  RequiredPrice { get; set; } = 0;
-        public double  LeftOverPrice { get; set; } = 0;
+        public double Price { get; set; } = 0;
+        public double TotalPrice { get; set; } = 0;
+        public double RequiredPrice { get; set; } = 0;
+        public double LeftOverPrice { get; set; } = 0;
         //============================================================================================================================  
-        public double  SquareMeterPrice { get; set; } = 0;
+        public double SquareMeterPrice { get; set; } = 0;
         //============================================================================================================================
         [MaxLength(255)] public string? Pallet { get; set; }
         //============================================================================================================================
@@ -62,13 +62,15 @@ namespace a2p.Shared.Application.DTO
         [MaxLength(255)] public string? CustomField4 { get; set; }
         [MaxLength(255)] public string? CustomField5 { get; set; }
         //============================================================================================================================
-        [Required]  public MaterialType MaterialType { get; set; } = 0;
-        [Required]  public WorksheetType WorksheetType { get; set; } = 0;
+        [Required] public MaterialType MaterialType { get; set; } = 0;
+        [Required] public WorksheetType WorksheetType { get; set; } = 0;
         //============================================================================================================================
         [MaxLength(255)] public string? SourceReference { get; set; }
         [MaxLength(255)] public string? SourceDescription { get; set; }
         [MaxLength(255)] public string? SourceColor { get; set; }
         [MaxLength(255)] public string? SourceColorDescription { get; set; }
+        //============================================================================================================================
+        public int? CommodityCode { get; set; }
 
     }
 }

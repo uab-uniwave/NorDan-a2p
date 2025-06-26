@@ -710,7 +710,8 @@ GO
 CREATE OR ALTER PROCEDURE[dbo].[Uniwave_a2p_InsertPrefSuiteMaterialBase] 
 	@ReferenceBase NVARCHAR(25),
 	@Description NVARCHAR(255),
-	@MaterialType INT
+	@MaterialType INT,
+	@CommodityCode INT
 	
 
 AS
@@ -763,7 +764,9 @@ BEGIN
 		PackedUnitsType,
 		PriceBookLevel,
 		PrefShopStatus,
-		DontIncludeInMaterialReport
+		DontIncludeInMaterialReport,
+		CommodityCode
+
 	  
 	)
 	VALUES
@@ -822,7 +825,8 @@ BEGIN
 		0,    -- PackedUnitsType - smallint
 		0,    -- PriceBookLevel - smallint
 		0,    -- PrefShopStatus - smallint
-		0    -- DontIncludeInMaterialReport - smallint
+		0,    -- DontIncludeInMaterialReport - smallint
+		@CommodityCode
 		)
 END
 GO

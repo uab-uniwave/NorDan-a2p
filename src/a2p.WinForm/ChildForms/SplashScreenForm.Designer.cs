@@ -221,7 +221,7 @@ namespace a2p.WinForm
             label1.Name = "label1";
             label1.Size = new Size(160, 40);
             label1.TabIndex = 10;
-            label1.Text = "v.1.0.0.13";
+            label1.Text = "v.1.0.0.15";
             label1.TextAlign = ContentAlignment.MiddleCenter;
             label1.UseWaitCursor = true;
             // 

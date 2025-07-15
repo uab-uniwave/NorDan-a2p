@@ -629,7 +629,7 @@ BEGIN
 		@ReferenceBase,       -- ReferenciaBase - nchar(25)
 		@Reference,       -- Referencia - nchar(25)
 		@Color,       -- Color - nchar(50)
-		988,         -- Almacen - smallint
+		979,         -- Almacen - smallint
 		1,         -- UE1 - int
 		@PackageQuantity,         -- UE2 - int
 		1,         -- ControlDeStock - smallint
@@ -726,13 +726,13 @@ BEGIN
 			 WHEN @MaterialType = 4 THEN 'Superficies'
 			 WHEN @MaterialType =  5 THEN 'Superficies'
 		ELSE 'Piezas' END,  -- TipoCalculo - nchar(15)
-		N'988 SAPA',  -- Nivel1 - nvarchar(150)
-		CASE WHEN @MaterialType = 1 THEN 'Barras'
-			 WHEN @MaterialType = 2 THEN 'Metros'
-			 WHEN @MaterialType = 3 THEN 'Piezas'
-			 WHEN @MaterialType = 4 THEN 'Superficies'
-			 WHEN @MaterialType =  5 THEN 'Superficies'
-		ELSE 'Piezas' END,  -- TipoCalculo - nchar(15)
+		N'988 TechDesign',  -- Nivel1 - nvarchar(150)
+		CASE WHEN @MaterialType = 1 THEN 'Bars'
+			 WHEN @MaterialType = 2 THEN 'Gaskets'
+			 WHEN @MaterialType = 3 THEN 'Piece Materials'
+			 WHEN @MaterialType = 4 THEN 'Panels'
+			 WHEN @MaterialType =  5 THEN 'Glasses'
+		ELSE 'Piece Materials' END,  -- Nivel2 - nchar(150)
 		979,    -- CodigoProveedor - int
 		0,    -- NoIncluirEnHojaDeTrabajo - smallint
 		0,    -- NoOptimizar - smallint
@@ -897,7 +897,7 @@ SELECT
 		Height,  -- Height - real
 		0.0,  -- Volume - real
 		ISNULL((SELECT TOP 1 MaterialSupplierCode FROM dbo.Materiales WHERE Referencia = Reference),979),  -- ProviderCode - int
-		ISNULL((SELECT TOP 1 Almacen FROM dbo.Materiales WHERE Referencia = Reference),988),  -- WarehouseCode - smallint
+		ISNULL((SELECT TOP 1 Almacen FROM dbo.Materiales WHERE Referencia = Reference),979),  -- WarehouseCode - smallint
 		 N'',  -- XMLDoc - ntext
 		RequiredQuantity,    -- AllowToOrder - smallint
 		TotalQuantity,  -- QuantityToOrder - float
@@ -1193,7 +1193,7 @@ BEGIN
 			INNER JOIN Materiales M ON MB.ReferenciaBase=M.ReferenciaBase WHERE M.Referencia =@Reference
 
 
-		IF NOT EXISTS (SELECT * FROM dbo.MaterialLevels WHERE Reference=@Reference AND ColorConfiguration=@ColorConfiguration AND Warehouse=988 AND Length=ISNULL(@Length,0) AND Height=0)
+		IF NOT EXISTS (SELECT * FROM dbo.MaterialLevels WHERE Reference=@Reference AND ColorConfiguration=@ColorConfiguration AND Warehouse=979 AND Length=ISNULL(@Length,0) AND Height=0)
 		INSERT INTO dbo.MaterialLevels
 		(
 			RowId,
@@ -1347,8 +1347,8 @@ GO
 
 CREATE OR ALTER   PROCEDURE [dbo].[Uniwave_a2p_InsertProvider] 
 	-- Add the parameters for the stored procedure here
-	@Code int = 980,
-	@Name NVARCHAR(60) =  N'TechDesign',
+	@Code int = 979,
+	@Name NVARCHAR(60) =  N'SAPA SWEDEN',
 	@Currency NVARCHAR(25) = N'NOK'
 AS
 BEGIN
@@ -1380,7 +1380,7 @@ GO
 
 CREATE OR ALTER PROCEDURE[dbo].[Uniwave_a2p_InsertStock] 
 	-- Add the parameters for the stored procedure here
-	@Code INT =988, 
+	@Code INT =979, 
 	@ProviderCode  INT = 979
 
 

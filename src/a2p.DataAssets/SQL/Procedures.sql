@@ -868,52 +868,56 @@ BEGIN
 		Weight
 	)
 SELECT
-		NEWID(), -- GUID - uniqueidentifier
-		SalesDocumentNumber,    -- Number - int
-		SalesDocumentVersion,    -- Version - int
-		-1,    -- ProductionSet - int
-		-1,    -- ReproductionNeedsCode - int
-		 1,    -- MNSet - smallint
-		-1,    -- Position - int
-		-1,    -- SquareId - int
-		-1,    -- HoleId - int
-		CASE WHEN MaterialType = '5' THEN 'G'+RTRIM(CAST(SortOrder AS NVARCHAR(9)))
-			 ELSE ''
-			 END,  
-		CASE WHEN MaterialType = 1 THEN 1
-			 WHEN MaterialType = 2 THEN 3
-			 WHEN MaterialType = 3 THEN 2
-			 WHEN MaterialType = 5 THEN 4
-			 WHEN MaterialType = 4 THEN 4
-			 WHEN MaterialType = 4 THEN 4
-			 END,  -- TipoCalculo - nchar(15),    -- MaterialType - smallint
-		0,    -- Complex - smallint
-		Reference,  -- Reference - nchar(25)
-		(dbo.Uniwave_a2p_GetColorConfiguration(Uniwave_a2p_Materials.Color)),
-		0,    -- RawMaterialColorConfiguration - int
-		N'',  -- RawReference - nchar(25)
-		Quantity,  -- Quantity - float
-		Width,  -- Length - real
-		Height,  -- Height - real
-		0.0,  -- Volume - real
-		ISNULL((SELECT TOP 1 MaterialSupplierCode FROM dbo.Materiales WHERE Referencia = Reference),979),  -- ProviderCode - int
-		ISNULL((SELECT TOP 1 Almacen FROM dbo.Materiales WHERE Referencia = Reference),979),  -- WarehouseCode - smallint
-		 N'',  -- XMLDoc - ntext
-		RequiredQuantity,    -- AllowToOrder - smallint
-		TotalQuantity,  -- QuantityToOrder - float
-		RequiredQuantity,  -- QuantityToDiscount - float
-		0.0,  -- DiscountedQuantity - float
-		0.0,  -- ReservedQuantity - float
-		0,    -- IsCopy - smallint
-		0,    -- FromNumber - int
-		0,    -- FromVersion - int
-		0,    -- TargetLevel - int
-		0,    -- Unmounted - smallint
-		0,    -- ProductTypeCode - int
-		0,    -- CustomLengthType - smallint
-		0.0,  -- DeltaQuantity - float
-		0,    -- OrderComponents - smallint
-		TotalWeight   -- Weight - float
+		NEWID(), -- GUID - uniqueidentifier  -- 
+		SalesDocumentNumber,    -- Number - int  -- 
+		SalesDocumentVersion,    -- Version - int  -- 
+		-1,    -- ProductionSet - int  -- 
+		-1,    -- ReproductionNeedsCode - int  -- 
+		 1,    -- MNSet - smallint  -- 
+		-1,    -- Position - int  -- 
+		-1,    -- SquareId - int  -- 
+		-1,    -- HoleId - int  -- 
+		CASE WHEN MaterialType = '5' THEN 'G'+RTRIM(CAST(SortOrder AS NVARCHAR(9)))  -- 
+			 ELSE ''  -- 
+			 END,    -- 
+		CASE WHEN MaterialType = 1 THEN 1  -- 
+			 WHEN MaterialType = 2 THEN 3  -- 
+			 WHEN MaterialType = 3 THEN 2  -- 
+			 WHEN MaterialType = 5 THEN 4  -- 
+			 WHEN MaterialType = 4 THEN 4  -- 
+			 WHEN MaterialType = 4 THEN 4  -- 
+			 END,  -- TipoCalculo - nchar(15),    -- MaterialType - smallint  -- 
+		0,    -- Complex - smallint  -- 
+		Reference,  -- Reference - nchar(25)  -- 
+		(dbo.Uniwave_a2p_GetColorConfiguration(Uniwave_a2p_Materials.Color)),  -- colorConfiguration int
+		0,    -- RawMaterialColorConfiguration - int  -- 
+		N'',  -- RawReference - nchar(25)  -- 
+		Quantity,  -- Quantity - float  -- 
+		Width,  -- Length - real  -- 
+		Height,  -- Height - real  -- 
+		0.0,  -- Volume - real  -- 
+		ISNULL((SELECT TOP 1 MaterialSupplierCode FROM dbo.Materiales WHERE Referencia = Reference),979),  -- ProviderCode - int  -- 
+		ISNULL((SELECT TOP 1 Almacen FROM dbo.Materiales WHERE Referencia = Reference),979),  -- WarehouseCode - smallint  -- 
+		 N'',  -- XMLDoc - ntext  -- 
+		
+		CASE WHEN MaterialType = 3 THEN   
+		CASE WHEN RequiredQuantity <= (SELECT UP2/2 FROM Compras  Where Proveedor=979 and APartir=1 and UP1=1 and ByDefault =1 and Referencia = Reference)  THEN  0  -- AllowToOrder
+		ELSE RequiredQuantity END   --
+		ELSE RequiredQuantity END, 		
+		TotalQuantity,  -- QuantityToOrder - float  -- 
+		RequiredQuantity,  -- QuantityToDiscount - float  -- 
+		0.0,  -- DiscountedQuantity - float  -- 
+		0.0,  -- ReservedQuantity - float  -- 
+		0,    -- IsCopy - smallint  -- 
+		0,    -- FromNumber - int  -- 
+		0,    -- FromVersion - int  -- 
+		0,    -- TargetLevel - int  -- 
+		0,    -- Unmounted - smallint  -- 
+		0,    -- ProductTypeCode - int  -- 
+		0,    -- CustomLengthType - smallint  -- 
+		0.0,  -- DeltaQuantity - float  -- 
+		0,    -- OrderComponents - smallint  -- 
+		TotalWeight   -- Weight - float  -- 
 	 
 FROM Uniwave_a2p_Materials Where SalesDocumentNumber = @Number and SalesDocumentVersion =@Version and DeletedUTCDateTime is null
 

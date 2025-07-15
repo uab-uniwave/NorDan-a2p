@@ -1,9 +1,10 @@
-/****** Object:  UserDefinedFunction [dbo].[Uniwave_a2p_GetColorConfiguration]    Script Date: 6/7/2025 1:59:35 PM ******/
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 CREATE OR ALTER FUNCTION [dbo].[Uniwave_a2p_GetColorConfiguration] 
 	(
@@ -22,8 +23,6 @@ CREATE OR ALTER FUNCTION [dbo].[Uniwave_a2p_GetColorConfiguration]
 
 
 GO
-
-
 
 CREATE OR ALTER FUNCTION [dbo].[Uniwave_a2p_GetExternalReference] 
 (
@@ -46,8 +45,6 @@ BEGIN
 
 END
 GO
-
-/****** Object:  UserDefinedFunction [dbo].[Uniwave_a2p_GetSalesDocumentState]    Script Date: 6/7/2025 1:59:35 PM ******/
 
 CREATE OR ALTER FUNCTION [dbo].[Uniwave_a2p_GetSalesDocumentState] 
 	(
@@ -106,14 +103,8 @@ BEGIN
 END
 GO
 
-/****** Object:  UserDefinedFunction [dbo].[Uniwave_a2p_GetSapaReference]    Script Date: 6/7/2025 1:59:35 PM ******/
-SET ANSI_NULLS ON
-GO
 
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE FUNCTION [dbo].[Uniwave_a2p_GetSapaReference] 
+CREATE OR ALTER FUNCTION [dbo].[Uniwave_a2p_GetSapaPrefsuiteReference] 
 (
 	-- Add the parameters for the function here
 	@TechDesignReference nvarchar (25),
@@ -123,18 +114,16 @@ CREATE FUNCTION [dbo].[Uniwave_a2p_GetSapaReference]
 RETURNS nvarchar (60)
 AS
 BEGIN
-	DECLARE @SapaReference nvarchar (25)
+	DECLARE @Reference nvarchar (25)
 
 	-- Add the T-SQL statements to compute the return value here
-	SELECT @SapaReference = Referencia from Materiales Where ReferenciaBase =  Replace(@TechDesignReference, 'S','SAPA_') and Color =@SapaColor
+	SELECT @Reference = Referencia from Materiales Where ReferenciaBase =  Replace(@TechDesignReference, 'S','SAPA_') and Color =@SapaColor
 
 	-- Return the result of the function
-	RETURN @SapaReference
+	RETURN @Reference
 
 END
 GO
-
-
 
 
 CREATE OR ALTER FUNCTION [dbo].[Uniwave_a2p_GetTechDesignCommodityCode]
@@ -164,7 +153,7 @@ END
 GO
 
 
-CREATE OR  ALTER FUNCTION [dbo].[Uniwave_a2p_GetTechDesignWeight]
+CREATE OR ALTER FUNCTION [dbo].[Uniwave_a2p_GetTechDesignWeight]
 (
  @SourceReference Nvarchar(50)
 )
@@ -188,3 +177,5 @@ END
 
 
 GO
+
+

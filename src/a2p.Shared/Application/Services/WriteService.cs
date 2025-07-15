@@ -151,7 +151,15 @@ namespace a2p.Shared.Application.Services
                             continue;
                         }
 
-
+                        if (a2pOrder.Materials[i].MaterialType != MaterialType.Glasses)
+                        {
+                            A2PError? errorUpdateBC = await _sqlRepository.UpdateBCMapping(a2pOrder.Materials[i]);
+                            if (errorUpdateBC != null)
+                            {
+                                a2pOrder.ErrorsWrite.Add(errorUpdateBC);
+                                continue;
+                            }
+                        }
                         if (!string.IsNullOrEmpty(a2pOrder.Materials[i].SourceReference))
                         {
                             A2PError? errorPurchaseData = await _sqlRepository.InsertPrefSuiteMaterialPurchaseDataAsync(a2pOrder.Materials[i]);

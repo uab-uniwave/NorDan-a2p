@@ -425,8 +425,30 @@ namespace a2p.Shared.Application.Services
                         materialDTO.Pallet = null;
 
                         //===================================================================================================
-                        materialDTO.CustomField1 = null; // not used
-                        materialDTO.CustomField2 = null; // not used
+
+
+                        if (!string.IsNullOrWhiteSpace(materialDTO.SourceColor))
+                        {
+                            (string, string)? customColors = SplitColors(materialDTO.SourceColor);
+
+
+                            if (customColors != null)
+                            {
+                                materialDTO.CustomField1 = customColors.Value.Item1; // used for custom color
+                                materialDTO.CustomField2 = customColors.Value.Item2;
+                            }
+
+                            else
+                            {
+                                materialDTO.CustomField1 = null; // not used
+                                materialDTO.CustomField2 = null; // not used
+                            }
+                        }
+                        else
+                        {
+                            materialDTO.CustomField1 = null; // not used
+                            materialDTO.CustomField2 = null; // not used
+                        }
                         materialDTO.CustomField3 = null; // not used
                         materialDTO.CustomField4 = null; // not used
                         materialDTO.CustomField5 = null; // not used
@@ -662,8 +684,29 @@ namespace a2p.Shared.Application.Services
                             materialDTO.Pallet = null;
 
                             //===================================================================================================\
-                            materialDTO.CustomField1 = null; // not used 
-                            materialDTO.CustomField2 = null; // not used 
+
+                            if (!string.IsNullOrWhiteSpace(materialDTO.SourceColor))
+                            {
+                                (string, string)? customColors = SplitColors(materialDTO.SourceColor);
+
+
+                                if (customColors != null)
+                                {
+                                    materialDTO.CustomField1 = customColors.Value.Item1; // used for custom color
+                                    materialDTO.CustomField2 = customColors.Value.Item2;
+                                }
+
+                                else
+                                {
+                                    materialDTO.CustomField1 = null; // not used
+                                    materialDTO.CustomField2 = null; // not used
+                                }
+                            }
+                            else
+                            {
+                                materialDTO.CustomField1 = null; // not used
+                                materialDTO.CustomField2 = null; // not used
+                            }
                             materialDTO.CustomField3 = null; // not used 
                             materialDTO.CustomField4 = null; // not used 
                             materialDTO.CustomField5 = null; // not used 
@@ -853,8 +896,29 @@ namespace a2p.Shared.Application.Services
                             materialDTO.Pallet = null;
 
                             //===================================================================================================
-                            materialDTO.CustomField1 = null; // not used 
-                            materialDTO.CustomField2 = null; // not used 
+
+                            if (!string.IsNullOrWhiteSpace(materialDTO.SourceColor))
+                            {
+                                (string, string)? customColors = SplitColors(materialDTO.SourceColor);
+
+
+                                if (customColors != null)
+                                {
+                                    materialDTO.CustomField1 = customColors.Value.Item1; // used for custom color
+                                    materialDTO.CustomField2 = customColors.Value.Item2;
+                                }
+
+                                else
+                                {
+                                    materialDTO.CustomField1 = null; // not used
+                                    materialDTO.CustomField2 = null; // not used
+                                }
+                            }
+                            else
+                            {
+                                materialDTO.CustomField1 = null; // not used
+                                materialDTO.CustomField2 = null; // not used
+                            }
                             materialDTO.CustomField3 = null; // not used 
                             materialDTO.CustomField4 = null; // not used 
                             materialDTO.CustomField5 = null; // not used 
@@ -1067,8 +1131,29 @@ namespace a2p.Shared.Application.Services
                             materialDTO.Pallet = null;
 
                             //===================================================================================================
-                            materialDTO.CustomField1 = null; // not used 
-                            materialDTO.CustomField2 = null; // not used 
+
+                            if (!string.IsNullOrWhiteSpace(materialDTO.SourceColor))
+                            {
+                                (string, string)? customColors = SplitColors(materialDTO.SourceColor);
+
+
+                                if (customColors != null)
+                                {
+                                    materialDTO.CustomField1 = customColors.Value.Item1; // used for custom color
+                                    materialDTO.CustomField2 = customColors.Value.Item2;
+                                }
+
+                                else
+                                {
+                                    materialDTO.CustomField1 = null; // not used
+                                    materialDTO.CustomField2 = null; // not used
+                                }
+                            }
+                            else
+                            {
+                                materialDTO.CustomField1 = null; // not used
+                                materialDTO.CustomField2 = null; // not used
+                            }
                             materialDTO.CustomField3 = null; // not used
                             materialDTO.CustomField4 = null; // not used
                             materialDTO.CustomField5 = null; // not used
@@ -1432,7 +1517,7 @@ namespace a2p.Shared.Application.Services
                                 materialDTO.Color = "Without";
                             }
                             //===================================================================================================
-                            materialDTO.ReferenceBase = $"ASA_{a2pWorksheet.WorksheetData[i][1].ToString() ?? string.Empty}";
+                            materialDTO.ReferenceBase = $"ASSA_{a2pWorksheet.WorksheetData[i][1].ToString() ?? string.Empty}";
                             if (materialDTO.Color != "Without")
                             {
 
@@ -1481,11 +1566,32 @@ namespace a2p.Shared.Application.Services
                             materialDTO.LeftOverPrice = Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6) < 0 ? 0 : Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6);
                             //===================================================================================================
                             materialDTO.SquareMeterPrice = 0; // not used in others
-                                                              //================================================================================================================
+                            //================================================================================================================
                             materialDTO.Pallet = null; // not used in others
                                                        //================================================================================================================\
-                            materialDTO.CustomField1 = null; // not used in others
-                            materialDTO.CustomField2 = null; // not used in others
+
+                            if (!string.IsNullOrWhiteSpace(materialDTO.SourceColor))
+                            {
+                                (string, string)? customColors = SplitColors(materialDTO.SourceColor);
+
+
+                                if (customColors != null)
+                                {
+                                    materialDTO.CustomField1 = customColors.Value.Item1; // used for custom color
+                                    materialDTO.CustomField2 = customColors.Value.Item2;
+                                }
+
+                                else
+                                {
+                                    materialDTO.CustomField1 = null; // not used
+                                    materialDTO.CustomField2 = null; // not used
+                                }
+                            }
+                            else
+                            {
+                                materialDTO.CustomField1 = null; // not used
+                                materialDTO.CustomField2 = null; // not used
+                            }
                             materialDTO.CustomField3 = null; // not used in others
                                                              //================================================================================================================
                             materialDTO.CustomField4 = null; // not used in others
@@ -2029,5 +2135,29 @@ namespace a2p.Shared.Application.Services
             return colorPart; // Leave unchanged
         }
 
+
+        private static (string, string)? SplitColors(string sourceColor)
+        {
+            if (string.IsNullOrWhiteSpace(sourceColor))
+            {
+                return null;
+            }
+
+            if (sourceColor.Contains("|"))
+            {
+
+                string[] complexColor = sourceColor.Split('|');
+                (string, string)? colorParts = (complexColor.Length == 2) ?
+                    (complexColor[0].Trim(), complexColor[1].Trim()) :
+                    (complexColor[0].Trim(), string.Empty);
+
+                return colorParts;
+            }
+            else
+            {
+                return null;
+            }
+
+        }
     }
 }

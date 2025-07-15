@@ -1055,6 +1055,8 @@ namespace a2p.Shared.Application.Services
             }
 
         }
+
+
         public async Task<A2PError?> InsertPrefSuiteMaterialMeterAsync(MaterialDTO materialDTO)
         {
 
@@ -1423,6 +1425,96 @@ namespace a2p.Shared.Application.Services
 
 
 
+        public async Task<A2PError?> UpdateBCMapping(MaterialDTO materialDTO)
+        {
+
+            try
+
+            {
+
+
+                SqlCommand cmd = new()
+                {
+                    CommandText = "[dbo].[Uniwave_a2p_UpdateBCMapping]",
+                    CommandType = CommandType.StoredProcedure
+                };
+                //=====================================================================================================================
+                _ = cmd.Parameters.AddWithValue("@ReferenceBase", materialDTO.ReferenceBase ?? (object) DBNull.Value); //required   
+                _ = cmd.Parameters.AddWithValue("@Reference", materialDTO.Reference ?? (object) DBNull.Value); //required   
+                _ = cmd.Parameters.AddWithValue("@SourceReference", materialDTO.SourceReference ?? (object) DBNull.Value); //required   
+                _ = cmd.Parameters.AddWithValue("@SourceColor", materialDTO.SourceColor ?? (object) DBNull.Value); //required  
+                _ = cmd.Parameters.AddWithValue("@SourceColor1", materialDTO.CustomField1 ?? (object) DBNull.Value); //required  
+                _ = cmd.Parameters.AddWithValue("@SourceColor2", materialDTO.CustomField2 ?? (object) DBNull.Value); //required  
+
+                //=====================================================================================================================
+                int result = await _sqlRepository.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
+
+                if (result > 0)
+                {
+                    _logService.Verbose("($Class}.{$Method}. BC Mapping  {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
+                        nameof(SQLRepository),
+                nameof(UpdateBCMapping),
+                materialDTO.Reference,
+                materialDTO.Color,
+                materialDTO.Description ?? "");
+                }
+
+                if (result == 0)
+                {
+
+                    _logService.Verbose("($Class}.{$Method}. BC Mapping {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
+                        nameof(SQLRepository),
+                        nameof(UpdateBCMapping),
+                        materialDTO.Reference,
+                        materialDTO.Color,
+                        materialDTO.Description ?? "");
+
+                }
+                return null;
+
+            }
+            catch (Exception ex)
+            {
+                _logService.Error(
+                "{$Class}.{$Method}. Unhandled error." +
+                "\nOrder {$Order}," +
+                "\nWorksheet {$Worksheet}," +
+                "\nLine {$Line}," +
+                "\nReferenceBase {$ReferenceBase}, " +
+                "\nReference {$Reference}," +
+                "\nColor {$Color}, " +
+                "\nDescription {$Description}," +
+                "\nException: {$Exception}",
+                nameof(SQLRepository),
+                nameof(UpdateBCMapping),
+                materialDTO.Order ?? string.Empty,
+                materialDTO.Worksheet ?? string.Empty,
+                materialDTO.Line,
+                materialDTO.ReferenceBase ?? string.Empty,
+                materialDTO.Reference ?? string.Empty,
+                materialDTO.Color ?? string.Empty,
+                materialDTO.Description ?? string.Empty,
+                ex.Message ?? string.Empty
+               );
+                return new A2PError()
+                {
+                    Order = materialDTO.Order ?? string.Empty,
+                    Level = ErrorLevel.Error,
+                    Code = ErrorCode.DatabaseWrite_Material,
+                    Message = $"{nameof(SQLRepository)}.{nameof(InsertPrefSuiteMaterialSurfaceAsync)}. Unhandled error." +
+                   $"\nOrder {materialDTO.Order ?? string.Empty}," +
+                   $"\nWorksheet {materialDTO.Worksheet ?? string.Empty}," +
+                   $"\nLine {materialDTO.Line}," +
+                   $"\nReferenceBase {materialDTO.ReferenceBase ?? string.Empty}, " +
+                   $"\nReference {materialDTO.Reference ?? string.Empty}," +
+                   $"\nColor {materialDTO.Color ?? string.Empty}, " +
+                   $"\nDescription {materialDTO.Description ?? string.Empty}," +
+                   $"\nException: {ex.Message ?? string.Empty}"
+
+                };
+            }
+
+        }
 
 
 
@@ -1524,6 +1616,8 @@ namespace a2p.Shared.Application.Services
             }
 
         }
+
+
 
     }
 }

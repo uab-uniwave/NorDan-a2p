@@ -43,6 +43,7 @@ namespace a2p.Shared.Application.Services
                         ConnectionString = _prefSuiteOLEDBConnection.ConnectionString
                     };
 
+                    salesDoc.Load(a2pOrder.SalesDocumentNumber, a2pOrder.SalesDocumentVersion);
 
                     for (int i = 0; i < a2pOrder.Items.Count; i++)
                     {
@@ -53,7 +54,7 @@ namespace a2p.Shared.Application.Services
                             {
                                 continue;
                             }
-                            salesDoc.Load(a2pOrder.SalesDocumentNumber, a2pOrder.SalesDocumentVersion);
+
 
                             string idPos = Guid.NewGuid().ToString();
 
@@ -93,7 +94,7 @@ namespace a2p.Shared.Application.Services
                             sdi.Fields["Nomenclature"].Value = a2pOrder.Items[i].Item.ToString();
 
                             a2pOrder.Items[i].SalesDocumentIdPos = idPos;
-                            salesDoc.Save();
+
 
 
 
@@ -135,7 +136,7 @@ namespace a2p.Shared.Application.Services
                         }
 
                     }
-
+                    salesDoc.Save();
 
                 });
                 return a2pOrder;

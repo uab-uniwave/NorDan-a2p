@@ -24,6 +24,7 @@ namespace a2p.Shared.Application.Interfaces
         Task<A2PError?> InsertPrefSuiteMaterialMeterAsync(MaterialDTO materialDTO);
         Task<A2PError?> InsertPrefSuiteMaterialPieceAsync(MaterialDTO materialDTO);
         Task<A2PError?> InsertPrefSuiteMaterialSurfaceAsync(MaterialDTO materialDTO);
+        Task<A2PError?> UpdateBCMapping(MaterialDTO materialDTO);
         Task<A2PError?> InsertPrefSuiteMaterialPurchaseDataAsync(MaterialDTO materialDTO);
         Task<A2PError?> InsertOrderMaterialDTOAsync(MaterialDTO materialDTO, int number, int version);
         //============================================================================================================================

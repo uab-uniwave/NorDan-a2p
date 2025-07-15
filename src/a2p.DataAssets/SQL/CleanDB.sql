@@ -19,3 +19,4 @@ Delete from Metros Where ReferenciaBase not In (SELECT ReferenciaBase FROM  Mate
 Delete from Superficies Where ReferenciaBase not In (SELECT ReferenciaBase FROM  MaterialesBase)
 DELETE FROM Compras WHERE Referencia NOT IN (SELECT Referencia FROM Materiales)
 DELETE FROM MaterialLevels WHERE Reference NOT IN (SELECT Referencia FROM Materiales)
+DELETE FROM Uniwave_a2p_ReferenceMappingLog

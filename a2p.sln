@@ -28,10 +28,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{58E421E3-1FD
 		src\a2p.DataAssets\SQL\Procedures.sql = src\a2p.DataAssets\SQL\Procedures.sql
 		src\a2p.DataAssets\SQL\Tables.sql = src\a2p.DataAssets\SQL\Tables.sql
 		src\a2p.DataAssets\SQL\Test.sql = src\a2p.DataAssets\SQL\Test.sql
+		src\a2p.DataAssets\SQL\Triggers.sql = src\a2p.DataAssets\SQL\Triggers.sql
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Excel", "Excel", "{E1A78A32-DF5F-4F65-A987-6FEF96E2B856}"
 	ProjectSection(SolutionItems) = preProject
+		src\a2p.DataAssets\Excel\0000Z000001-14 Price_Details.xlsx = src\a2p.DataAssets\Excel\0000Z000001-14 Price_Details.xlsx
+		src\a2p.DataAssets\Excel\0000Z000001-14 SumList.xlsx = src\a2p.DataAssets\Excel\0000Z000001-14 SumList.xlsx
 		src\a2p.DataAssets\Excel\0000Z00001-1 Price_Details.xlsx = src\a2p.DataAssets\Excel\0000Z00001-1 Price_Details.xlsx
 		src\a2p.DataAssets\Excel\0000Z00001-1 SumList.xlsx = src\a2p.DataAssets\Excel\0000Z00001-1 SumList.xlsx
 		src\a2p.DataAssets\Excel\0000Z00001-2 Price_Details.xlsx = src\a2p.DataAssets\Excel\0000Z00001-2 Price_Details.xlsx
@@ -56,6 +59,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Excel", "Excel", "{E1A78A32
 		src\a2p.DataAssets\Excel\0000Z00021-2 SumList_decimal_US_.xlsx = src\a2p.DataAssets\Excel\0000Z00021-2 SumList_decimal_US_.xlsx
 		src\a2p.DataAssets\Excel\0000Z00021-3 Price_Details_decimal_Mix.xlsx = src\a2p.DataAssets\Excel\0000Z00021-3 Price_Details_decimal_Mix.xlsx
 		src\a2p.DataAssets\Excel\0000Z00021-3 SumList__decimal_Mix.xlsx = src\a2p.DataAssets\Excel\0000Z00021-3 SumList__decimal_Mix.xlsx
+		src\a2p.DataAssets\Excel\NorDan_a2p_ColorMapping.csv = src\a2p.DataAssets\Excel\NorDan_a2p_ColorMapping.csv
+		src\a2p.DataAssets\Excel\NorDan_a2p_IntrastatData.csv = src\a2p.DataAssets\Excel\NorDan_a2p_IntrastatData.csv
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "a2p.PowerShellScripts", "a2p.PowerShellScripts", "{58A4D13F-3B73-48F5-959A-94ACCB93A37C}"
@@ -176,8 +181,8 @@ Global
 		{9368B7BC-31DF-47A0-8C2B-FFAED986B074} = {33FD462D-4B12-4501-92BD-81095ACABC95}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {02931AC6-E3AF-4E96-A144-EE9EE4BE10E7}
-		BuildVersion_BuildVersioningStyle = None.None.None.Increment
 		BuildVersion_StartDate = 2000/1/1
+		BuildVersion_BuildVersioningStyle = None.None.None.Increment
+		SolutionGuid = {02931AC6-E3AF-4E96-A144-EE9EE4BE10E7}
 	EndGlobalSection
 EndGlobal

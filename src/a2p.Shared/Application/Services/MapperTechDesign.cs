@@ -415,7 +415,7 @@ namespace a2p.Shared.Application.Services
                         //===================================================================================================                                                        
                         materialDTO.Price = double.TryParse(a2pWorksheet.WorksheetData[i][12].ToString(), out double price) ? price : 0;
                         materialDTO.TotalPrice = double.TryParse(a2pWorksheet.WorksheetData[i][13].ToString(), out double totalPrice) ? totalPrice : 0;
-                        materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double) materialDTO.RequiredQuantity, 6);
+                        materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double)materialDTO.RequiredQuantity, 6);
                         materialDTO.LeftOverPrice = Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6) < 0 ? 0 : Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6);
 
                         //===================================================================================================
@@ -674,7 +674,7 @@ namespace a2p.Shared.Application.Services
                             //=================================================================================================                                
                             materialDTO.Price = double.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out double price) ? price : 0;
                             materialDTO.TotalPrice = double.TryParse(a2pWorksheet.WorksheetData[i][11].ToString(), out double totalPrice) ? totalPrice : 0;
-                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double) materialDTO.RequiredQuantity, 6);
+                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double)materialDTO.RequiredQuantity, 6);
                             materialDTO.LeftOverPrice = Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6) < 0 ? 0 : Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6);
 
                             //===================================================================================================
@@ -886,7 +886,7 @@ namespace a2p.Shared.Application.Services
                             //===================================================================================================
                             materialDTO.Price = double.TryParse(a2pWorksheet.WorksheetData[i][9].ToString(), out double price) ? price : 0;
                             materialDTO.TotalPrice = double.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out double totalPrice) ? totalPrice : 0;
-                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double) materialDTO.RequiredQuantity, 6);
+                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double)materialDTO.RequiredQuantity, 6);
                             materialDTO.LeftOverPrice = Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6) < 0 ? 0 : Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6);
 
                             //===================================================================================================
@@ -1511,8 +1511,7 @@ namespace a2p.Shared.Application.Services
                             materialDTO.Color = a2pWorksheet.WorksheetData[i][2].ToString() ?? string.Empty;
                             materialDTO.ColorDescription = a2pWorksheet.WorksheetData[i][3].ToString() ?? string.Empty;
 
-                            if (string.IsNullOrEmpty(materialDTO.Color) && string.IsNullOrEmpty(materialDTO.ColorDescription)
-                            | materialDTO.ColorDescription.Contains("Without finish"))
+                            if ((string.IsNullOrEmpty(materialDTO.Color) && string.IsNullOrEmpty(materialDTO.ColorDescription)) || materialDTO.ColorDescription.Contains("Mill finished") || materialDTO.Color == "MF")
                             {
                                 materialDTO.Color = "Without";
                             }
@@ -1562,7 +1561,7 @@ namespace a2p.Shared.Application.Services
                                                    //=================================================================================================                                
                             materialDTO.Price = double.TryParse(a2pWorksheet.WorksheetData[i][9].ToString(), out double price) ? price : 0;
                             materialDTO.TotalPrice = double.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out double totalPrice) ? totalPrice : 0;
-                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double) materialDTO.RequiredQuantity, 6);
+                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double)materialDTO.RequiredQuantity, 6);
                             materialDTO.LeftOverPrice = Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6) < 0 ? 0 : Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6);
                             //===================================================================================================
                             materialDTO.SquareMeterPrice = 0; // not used in others
@@ -1599,7 +1598,7 @@ namespace a2p.Shared.Application.Services
                                                              //================================================================================================================
                             materialDTO.MaterialType = MaterialType.Piece;
                             //===================================================================================================
-                            _progressValue.ProgressTask3 = $"Other materials {sortOrder} of {a2pWorksheet.RowCount - 5} - {materialDTO.Description}";
+                            _progressValue.ProgressTask3 = $"Other materials {sortOrder} of {a2pWorksheet.RowCount - 5} -  {materialDTO.ReferenceBase}_{materialDTO.Color}";
                             _progress?.Report(_progressValue);
 
                             materialsDTO.Add(materialDTO);

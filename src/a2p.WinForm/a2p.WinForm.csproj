@@ -30,7 +30,6 @@
   <ItemGroup>
  <Compile Remove="ChildForms\MainForm.cs" />
  <Compile Remove="ChildForms\MainForm.Designer.cs" />
- <Compile Remove="Mappers\A2PLogRecord.cs" />
  <Compile Remove="ThemeColor.cs" />
  </ItemGroup>
 

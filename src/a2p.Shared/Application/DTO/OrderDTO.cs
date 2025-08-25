@@ -1,4 +1,3 @@
-﻿
 namespace a2p.Shared.Core.DTO
 {
     namespace a2p.Shared.Core.DTO
@@ -10,11 +9,11 @@ namespace a2p.Shared.Core.DTO
             public string Order = string.Empty;
             public string SalesDocument { get; set; } = string.Empty;
             public int Quantity { get; set; } = 0;
-            public double Area { get; set; } = 0;
-            public double Weight { get; set; } = 0;
-            public double Hours { get; set; } = 0;
-            public double  Cost { get; set; } = 0;
-            public double  Amount { get; set; } = 0;
+            public decimal Area { get; set; } = 0m;
+            public decimal Weight { get; set; } = 0m;
+            public decimal Hours { get; set; } = 0m;
+            public decimal Cost { get; set; } = 0m;
+            public decimal Amount { get; set; } = 0m;
             public string Currency { get; set; } = string.Empty;
             public int FileCount { get; set; } = 0;
             public string FileList { get; set; } = string.Empty;

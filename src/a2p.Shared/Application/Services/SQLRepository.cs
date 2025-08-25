@@ -6,7 +6,9 @@ using a2p.Shared.Application.Domain.Enums;
 using a2p.Shared.Application.DTO;
 using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Infrastructure.Interfaces;
+
 using Microsoft.Data.SqlClient;
+
 using System.Data;
 
 namespace a2p.Shared.Application.Services
@@ -48,7 +50,7 @@ namespace a2p.Shared.Application.Services
 
                 result = await _sqlRepository.ExecuteScalarAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
 
-                state = result != DBNull.Value ? (int) result! : 0;
+                state = result != DBNull.Value ? (int)result! : 0;
 
                 return state;
 
@@ -166,8 +168,75 @@ namespace a2p.Shared.Application.Services
 
             }
         }
+        public async Task<int?> GetCommodityCode(string sourceReference)
+        {
+            if (string.IsNullOrEmpty(sourceReference))
+            {
+                _logService.Information("{$Class}.{$Method}. Error getting TechDesign commodity code. Provided sourceReference is missing.",
+                    nameof(SQLRepository),
+                    nameof(GetCommodityCode));
+                return null;
+            }
 
+            try
+            {
+                SqlCommand cmd = new()
+                {
+                    CommandText = "SELECT [dbo].[Uniwave_a2p_GetTechDesignCommodityCode](@SourceReference)",
+                };
 
+                _ = cmd.Parameters.AddWithValue("@SourceReference", sourceReference);
+
+                object? result = await _sqlRepository.ExecuteScalarAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
+                return result != null && result != DBNull.Value ? (int)result : null;
+                ;
+            }
+            catch (Exception ex)
+            {
+                _logService.Verbose(
+                    "{$Class}.{$Method}. Unhandled error in {$Class}. {$Method}. Error getting TechDesign commodity code. Exception: {Exception}.",
+                    nameof(SQLRepository),
+                    nameof(GetCommodityCode),
+                    ex.Message
+                );
+                return null;
+            }
+        }
+
+        public async Task<decimal> GetTechDesignWeight(string sourceReference)
+        {
+            if (string.IsNullOrEmpty(sourceReference))
+            {
+                _logService.Information("{$Class}.{$Method}. Error getting TechDesign Weight. Provided sourceReference is missing.",
+                    nameof(SQLRepository),
+                    nameof(GetTechDesignWeight));
+                return 0;
+            }
+
+            try
+            {
+                SqlCommand cmd = new()
+                {
+                    CommandText = "SELECT [dbo].[Uniwave_a2p_GetTechDesignWeight](@SourceReference)",
+                };
+
+                _ = cmd.Parameters.AddWithValue("@SourceReference", sourceReference);
+
+                object? result = await _sqlRepository.ExecuteScalarAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
+
+                return result != null && result != DBNull.Value ? (decimal)result : 0;
+            }
+            catch (Exception ex)
+            {
+                _logService.Verbose(
+                    "{$Class}.{$Method}. Unhandled error in {$Class}. {$Method}.Error getting TechDesign Weight. Exception: {Exception}.",
+                    nameof(SQLRepository),
+                    nameof(GetTechDesignWeight),
+                    ex.Message
+                );
+                return 0;
+            }
+        }
         public async Task<string?> GetSapaColorAsync(string color)
         {
             if (string.IsNullOrEmpty(color))
@@ -317,6 +386,8 @@ namespace a2p.Shared.Application.Services
 
             DateTime dateTime = DateTime.UtcNow;
 
+
+
             try
             {
                 SqlCommand cmd = new()
@@ -333,14 +404,14 @@ namespace a2p.Shared.Application.Services
                 _ = cmd.Parameters.AddWithValue("@Line", materialDTO.Line); //required
                 _ = cmd.Parameters.AddWithValue("@Column", materialDTO.Column); //required 
                 //=====================================================================================================================
-                _ = cmd.Parameters.AddWithValue("@Item", materialDTO.Item ?? (object) DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@Item", materialDTO.Item ?? (object)DBNull.Value);
                 _ = cmd.Parameters.AddWithValue("@SortOrder", materialDTO.SortOrder);
                 //========================================================================================================
                 _ = cmd.Parameters.AddWithValue("@ReferenceBase", materialDTO.ReferenceBase);
                 _ = cmd.Parameters.AddWithValue("@Reference", materialDTO.Reference);
-                _ = cmd.Parameters.AddWithValue("@Description", materialDTO.Description ?? (object) DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@Description", materialDTO.Description ?? (object)DBNull.Value);
                 _ = cmd.Parameters.AddWithValue("@Color", materialDTO.Color);
-                _ = cmd.Parameters.AddWithValue("@ColorDescription", materialDTO.ColorDescription ?? (object) DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@ColorDescription", materialDTO.ColorDescription ?? (object)DBNull.Value);
                 //========================================================================================================
                 _ = cmd.Parameters.AddWithValue("@Width", Math.Round(materialDTO.Width, 4));
                 _ = cmd.Parameters.AddWithValue("@Height", Math.Round(materialDTO.Height, 4));
@@ -370,23 +441,23 @@ namespace a2p.Shared.Application.Services
                 //========================================================================================================
                 _ = cmd.Parameters.AddWithValue("@SquareMeterPrice", Math.Round(materialDTO.SquareMeterPrice, 4));
                 //========================================================================================================
-                _ = cmd.Parameters.AddWithValue("@Pallet", materialDTO.Pallet ?? (object) DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@Pallet", materialDTO.Pallet ?? (object)DBNull.Value);
                 //========================================================================================================
                 _ = cmd.Parameters.AddWithValue("@MaterialType", materialDTO.MaterialType);
                 //========================================================================================================
                 _ = cmd.Parameters.AddWithValue("@WorksheetType", materialDTO.WorksheetType);
                 //========================================================================================================
-                _ = cmd.Parameters.AddWithValue("@CustomField1", materialDTO.CustomField1 ?? (object) DBNull.Value);
-                _ = cmd.Parameters.AddWithValue("@CustomField2", materialDTO.CustomField2 ?? (object) DBNull.Value);
-                _ = cmd.Parameters.AddWithValue("@CustomField3", materialDTO.CustomField3 ?? (object) DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@CustomField1", materialDTO.CustomField1 ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@CustomField2", materialDTO.CustomField2 ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@CustomField3", materialDTO.CustomField3 ?? (object)DBNull.Value);
                 //========================================================================================================;
-                _ = cmd.Parameters.AddWithValue("@CustomField4", materialDTO.CustomField4 ?? (object) DBNull.Value);
-                _ = cmd.Parameters.AddWithValue("@CustomField5", materialDTO.CustomField5 ?? (object) DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@CustomField4", materialDTO.CustomField4 ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@CustomField5", materialDTO.CustomField5 ?? (object)DBNull.Value);
                 //========================================================================================================    
-                _ = cmd.Parameters.AddWithValue("@SourceReference", materialDTO.SourceReference ?? (object) DBNull.Value);
-                _ = cmd.Parameters.AddWithValue("@SourceDescription", materialDTO.SourceDescription ?? (object) DBNull.Value);
-                _ = cmd.Parameters.AddWithValue("@SourceColor", materialDTO.SourceColor ?? (object) DBNull.Value);
-                _ = cmd.Parameters.AddWithValue("@SourceColorDescription", materialDTO.SourceColorDescription ?? (object) DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@SourceReference", materialDTO.SourceReference ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@SourceDescription", materialDTO.SourceDescription ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@SourceColor", materialDTO.SourceColor ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@SourceColorDescription", materialDTO.SourceColorDescription ?? (object)DBNull.Value);
                 //========================================================================================================    
                 _ = cmd.Parameters.AddWithValue("@CreatedUTCDateTime", dateTime);
                 _ = cmd.Parameters.AddWithValue("@ModifiedUTCDateTime", dateTime);
@@ -471,10 +542,10 @@ namespace a2p.Shared.Application.Services
                 _ = cmd.Parameters.AddWithValue("@Line", itemDTO.Line); //required
                 _ = cmd.Parameters.AddWithValue("@Column", itemDTO.Column); //required
                                                                             //=====================================================================================================================
-                _ = cmd.Parameters.AddWithValue("@Project", itemDTO.Project ?? (object) DBNull.Value);
-                _ = cmd.Parameters.AddWithValue("@Item", itemDTO.Item ?? (object) DBNull.Value);//required
+                _ = cmd.Parameters.AddWithValue("@Project", itemDTO.Project ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@Item", itemDTO.Item ?? (object)DBNull.Value);//required
                 _ = cmd.Parameters.AddWithValue("@SortOrder", itemDTO.SortOrder); //required
-                _ = cmd.Parameters.AddWithValue("@Description", itemDTO.Description ?? (object) DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@Description", itemDTO.Description ?? (object)DBNull.Value);
                 //========================================================================================================
                 _ = cmd.Parameters.AddWithValue("@Quantity", itemDTO.Quantity);
                 //=====================================================================================================================
@@ -722,6 +793,10 @@ namespace a2p.Shared.Application.Services
             try
 
             {
+
+                materialDTO.CommodityCode = await GetCommodityCode(materialDTO.SourceReference ?? string.Empty);
+
+
                 SqlCommand cmd = new()
                 {
                     CommandText = "[dbo].[Uniwave_a2p_InsertPrefSuiteMaterialBase]",
@@ -731,6 +806,7 @@ namespace a2p.Shared.Application.Services
                 _ = cmd.Parameters.AddWithValue("@ReferenceBase", materialDTO.ReferenceBase); //required
                 _ = cmd.Parameters.AddWithValue("@Description", materialDTO.Description ?? ""); //required
                 _ = cmd.Parameters.AddWithValue("@MaterialType", materialDTO.MaterialType); //required
+                _ = cmd.Parameters.AddWithValue("@CommodityCode", materialDTO.CommodityCode ?? (object)DBNull.Value);
 
                 //=====================================================================================================================
                 int result = await _sqlRepository.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
@@ -813,7 +889,7 @@ namespace a2p.Shared.Application.Services
                 //=====================================================================================================================
                 _ = cmd.Parameters.AddWithValue("@ReferenceBase", materialDTO.ReferenceBase); //required
                 _ = cmd.Parameters.AddWithValue("@Reference", materialDTO.Reference); //required
-                _ = cmd.Parameters.AddWithValue("@Color", materialDTO.Line); //required
+                _ = cmd.Parameters.AddWithValue("@Color", materialDTO.Color); //required
                 _ = cmd.Parameters.AddWithValue("@PackageQuantity", materialDTO.PackageQuantity); //required
                 _ = cmd.Parameters.AddWithValue("@Weight", materialDTO.Weight); //required
                 _ = cmd.Parameters.AddWithValue("@MaterialType", materialDTO.MaterialType); //required
@@ -892,6 +968,13 @@ namespace a2p.Shared.Application.Services
             try
 
             {
+                if (materialDTO.Weight == 0)
+                {
+                    var weight = await GetTechDesignWeight(materialDTO.SourceReference ?? string.Empty);
+                    materialDTO.Weight = weight;
+                }
+
+
                 SqlCommand cmd = new()
                 {
                     CommandText = "[dbo].[Uniwave_a2p_InsertPrefSuiteMaterialProfile]",
@@ -972,12 +1055,23 @@ namespace a2p.Shared.Application.Services
             }
 
         }
+
+
         public async Task<A2PError?> InsertPrefSuiteMaterialMeterAsync(MaterialDTO materialDTO)
         {
 
             try
 
             {
+
+
+
+                if (materialDTO.Weight == 0)
+                {
+                    var weight = await GetTechDesignWeight(materialDTO.SourceReference ?? string.Empty);
+                    materialDTO.Weight = weight;
+                }
+
                 SqlCommand cmd = new()
                 {
                     CommandText = "[dbo].[Uniwave_a2p_InsertPrefSuiteMaterialMeter]",
@@ -1061,6 +1155,13 @@ namespace a2p.Shared.Application.Services
 
             try
             {
+
+                if (materialDTO.Weight == 0)
+                {
+                    var weight = await GetTechDesignWeight(materialDTO.SourceReference ?? string.Empty);
+                    materialDTO.Weight = weight;
+                }
+
                 SqlCommand cmd = new()
                 {
                     CommandText = "[dbo].[Uniwave_a2p_InsertPrefSuiteMaterialPiece]",
@@ -1138,12 +1239,18 @@ namespace a2p.Shared.Application.Services
             }
 
         }
-        public async Task<A2PError?> InsertPrefSuiteMateriaSurfaceAsync(MaterialDTO materialDTO)
+        public async Task<A2PError?> InsertPrefSuiteMaterialSurfaceAsync(MaterialDTO materialDTO)
         {
 
             try
 
             {
+                if (materialDTO.Weight == 0)
+                {
+                    var weight = await GetTechDesignWeight(materialDTO.SourceReference ?? string.Empty);
+                    materialDTO.Weight = weight;
+                }
+
                 SqlCommand cmd = new()
                 {
                     CommandText = "[dbo].[Uniwave_a2p_InsertPreSuiteMaterialSurface]",
@@ -1161,7 +1268,7 @@ namespace a2p.Shared.Application.Services
                 {
                     _logService.Verbose("($Class}.{$Method}. Surface material {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
                         nameof(SQLRepository),
-                nameof(InsertPrefSuiteMateriaSurfaceAsync),
+                nameof(InsertPrefSuiteMaterialSurfaceAsync),
                 materialDTO.Reference,
                 materialDTO.Color,
                 materialDTO.Description ?? "");
@@ -1172,7 +1279,7 @@ namespace a2p.Shared.Application.Services
 
                     _logService.Verbose("($Class}.{$Method}. Surface material {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
                         nameof(SQLRepository),
-                        nameof(InsertPrefSuiteMateriaSurfaceAsync),
+                        nameof(InsertPrefSuiteMaterialSurfaceAsync),
                         materialDTO.Reference,
                         materialDTO.Color,
                         materialDTO.Description ?? "");
@@ -1194,7 +1301,7 @@ namespace a2p.Shared.Application.Services
                 "\nDescription {$Description}," +
                 "\nException: {$Exception}",
                 nameof(SQLRepository),
-                nameof(InsertPrefSuiteMateriaSurfaceAsync),
+                nameof(InsertPrefSuiteMaterialSurfaceAsync),
                 materialDTO.Order ?? string.Empty,
                 materialDTO.Worksheet ?? string.Empty,
                 materialDTO.Line,
@@ -1209,7 +1316,7 @@ namespace a2p.Shared.Application.Services
                     Order = materialDTO.Order ?? string.Empty,
                     Level = ErrorLevel.Error,
                     Code = ErrorCode.DatabaseWrite_Material,
-                    Message = $"{nameof(SQLRepository)}.{nameof(InsertPrefSuiteMateriaSurfaceAsync)}. Unhandled error." +
+                    Message = $"{nameof(SQLRepository)}.{nameof(InsertPrefSuiteMaterialSurfaceAsync)}. Unhandled error." +
                    $"\nOrder {materialDTO.Order ?? string.Empty}," +
                    $"\nWorksheet {materialDTO.Worksheet ?? string.Empty}," +
                    $"\nLine {materialDTO.Line}," +
@@ -1223,6 +1330,194 @@ namespace a2p.Shared.Application.Services
             }
 
         }
+
+        public async Task<A2PError?> InsertPrefSuiteMaterialPurchaseDataAsync(MaterialDTO materialDTO)
+        {
+
+
+
+            try
+
+            {
+                SqlCommand cmd = new()
+                {
+                    CommandText = "[dbo].[Uniwave_a2p_InsertPrefSuiteMaterialPurchaseData]",
+                    CommandType = CommandType.StoredProcedure
+                };
+                //=====================================================================================================================
+                _ = cmd.Parameters.AddWithValue("@Reference", materialDTO.Reference); //required   
+                _ = cmd.Parameters.AddWithValue("@Package", materialDTO.PackageQuantity); //required
+                _ = cmd.Parameters.AddWithValue("@Price", materialDTO.Price); //required
+                _ = cmd.Parameters.AddWithValue("@Description", materialDTO.Description); //required
+                _ = cmd.Parameters.AddWithValue("@Color", materialDTO.Color); //required
+                _ = cmd.Parameters.AddWithValue("@SourceReference", materialDTO.SourceReference); //required
+                _ = cmd.Parameters.AddWithValue("@SourceColor", materialDTO.SourceColor); //required
+
+                //=====================================================================================================================
+                int result = await _sqlRepository.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
+
+                if (result > 0)
+                {
+                    _logService.Verbose("($Class}.{$Method}. Purchase data material {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
+                        nameof(SQLRepository),
+                nameof(InsertPrefSuiteMaterialPurchaseDataAsync),
+                materialDTO.Reference,
+                materialDTO.Color,
+                materialDTO.Description ?? "");
+                }
+
+                if (result == 0)
+                {
+
+                    _logService.Verbose("($Class}.{$Method}. Purchase data material {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
+                        nameof(SQLRepository),
+                        nameof(InsertPrefSuiteMaterialPurchaseDataAsync),
+                        materialDTO.Reference,
+                        materialDTO.Color,
+                        materialDTO.Description ?? "");
+
+                }
+                return null;
+
+            }
+            catch (Exception ex)
+            {
+                _logService.Error(
+                "{$Class}.{$Method}. Unhandled error." +
+                "\nOrder {$Order}," +
+                "\nWorksheet {$Worksheet}," +
+                "\nLine {$Line}," +
+                "\nReferenceBase {$ReferenceBase}, " +
+                "\nReference {$Reference}," +
+                "\nColor {$Color}, " +
+                "\nDescription {$Description}," +
+                "\nException: {$Exception}",
+                nameof(SQLRepository),
+                nameof(InsertPrefSuiteMaterialPurchaseDataAsync),
+                materialDTO.Order ?? string.Empty,
+                materialDTO.Worksheet ?? string.Empty,
+                materialDTO.Line,
+                materialDTO.ReferenceBase ?? string.Empty,
+                materialDTO.Reference ?? string.Empty,
+                materialDTO.Color ?? string.Empty,
+                materialDTO.Description ?? string.Empty,
+                ex.Message ?? string.Empty
+               );
+                return new A2PError()
+                {
+                    Order = materialDTO.Order ?? string.Empty,
+                    Level = ErrorLevel.Error,
+                    Code = ErrorCode.DatabaseWrite_Material,
+                    Message = $"{nameof(SQLRepository)}.{nameof(InsertPrefSuiteMaterialPurchaseDataAsync)}. Unhandled error." +
+                   $"\nOrder {materialDTO.Order ?? string.Empty}," +
+                   $"\nWorksheet {materialDTO.Worksheet ?? string.Empty}," +
+                   $"\nLine {materialDTO.Line}," +
+                   $"\nReferenceBase {materialDTO.ReferenceBase ?? string.Empty}, " +
+                   $"\nReference {materialDTO.Reference ?? string.Empty}," +
+                   $"\nColor {materialDTO.Color ?? string.Empty}, " +
+                   $"\nDescription {materialDTO.Description ?? string.Empty}," +
+                   $"\nException: {ex.Message ?? string.Empty}"
+
+                };
+            }
+
+        }
+
+
+
+        public async Task<A2PError?> UpdateBCMapping(MaterialDTO materialDTO)
+        {
+
+            try
+
+            {
+
+
+                SqlCommand cmd = new()
+                {
+                    CommandText = "[dbo].[Uniwave_a2p_UpdateBCMapping]",
+                    CommandType = CommandType.StoredProcedure
+                };
+                //=====================================================================================================================
+                _ = cmd.Parameters.AddWithValue("@ReferenceBase", materialDTO.ReferenceBase ?? (object)DBNull.Value); //required   
+                _ = cmd.Parameters.AddWithValue("@Reference", materialDTO.Reference ?? (object)DBNull.Value); //required   
+                _ = cmd.Parameters.AddWithValue("@SourceReference", materialDTO.SourceReference ?? (object)DBNull.Value); //required   
+                _ = cmd.Parameters.AddWithValue("@SourceColor", materialDTO.SourceColor ?? (object)DBNull.Value); //required  
+                _ = cmd.Parameters.AddWithValue("@SourceColor1", materialDTO.CustomField1 ?? (object)DBNull.Value); //required  
+                _ = cmd.Parameters.AddWithValue("@SourceColor2", materialDTO.CustomField2 ?? (object)DBNull.Value); //required  
+
+                //=====================================================================================================================
+                int result = await _sqlRepository.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
+
+                if (result > 0)
+                {
+                    _logService.Verbose("($Class}.{$Method}. BC Mapping  {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
+                        nameof(SQLRepository),
+                nameof(UpdateBCMapping),
+                materialDTO.Reference,
+                materialDTO.Color,
+                materialDTO.Description ?? "");
+                }
+
+                if (result == 0)
+                {
+
+                    _logService.Verbose("($Class}.{$Method}. BC Mapping {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
+                        nameof(SQLRepository),
+                        nameof(UpdateBCMapping),
+                        materialDTO.Reference,
+                        materialDTO.Color,
+                        materialDTO.Description ?? "");
+
+                }
+                return null;
+
+            }
+            catch (Exception ex)
+            {
+                _logService.Error(
+                "{$Class}.{$Method}. Unhandled error." +
+                "\nOrder {$Order}," +
+                "\nWorksheet {$Worksheet}," +
+                "\nLine {$Line}," +
+                "\nReferenceBase {$ReferenceBase}, " +
+                "\nReference {$Reference}," +
+                "\nColor {$Color}, " +
+                "\nDescription {$Description}," +
+                "\nException: {$Exception}",
+                nameof(SQLRepository),
+                nameof(UpdateBCMapping),
+                materialDTO.Order ?? string.Empty,
+                materialDTO.Worksheet ?? string.Empty,
+                materialDTO.Line,
+                materialDTO.ReferenceBase ?? string.Empty,
+                materialDTO.Reference ?? string.Empty,
+                materialDTO.Color ?? string.Empty,
+                materialDTO.Description ?? string.Empty,
+                ex.Message ?? string.Empty
+               );
+                return new A2PError()
+                {
+                    Order = materialDTO.Order ?? string.Empty,
+                    Level = ErrorLevel.Error,
+                    Code = ErrorCode.DatabaseWrite_Material,
+                    Message = $"{nameof(SQLRepository)}.{nameof(InsertPrefSuiteMaterialSurfaceAsync)}. Unhandled error." +
+                   $"\nOrder {materialDTO.Order ?? string.Empty}," +
+                   $"\nWorksheet {materialDTO.Worksheet ?? string.Empty}," +
+                   $"\nLine {materialDTO.Line}," +
+                   $"\nReferenceBase {materialDTO.ReferenceBase ?? string.Empty}, " +
+                   $"\nReference {materialDTO.Reference ?? string.Empty}," +
+                   $"\nColor {materialDTO.Color ?? string.Empty}, " +
+                   $"\nDescription {materialDTO.Description ?? string.Empty}," +
+                   $"\nException: {ex.Message ?? string.Empty}"
+
+                };
+            }
+
+        }
+
+
+
         public async Task<A2PError?> InsertPrefSuiteMaterialNeedsMasterAsync(string order, int number, int version)
         {
 
@@ -1321,6 +1616,7 @@ namespace a2p.Shared.Application.Services
             }
 
         }
+
 
     }
 }

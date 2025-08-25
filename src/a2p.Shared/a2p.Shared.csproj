@@ -15,20 +15,6 @@
 		<UserSecretsId>B0F91B7C-4059-4F17-85CB-B6E7924EDBB1</UserSecretsId>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<Compile Remove="Application\Utils\**" />
-		<Compile Remove="Infrastructure\Services\PrefSuite\**" />
-		<EmbeddedResource Remove="Application\Utils\**" />
-		<EmbeddedResource Remove="Infrastructure\Services\PrefSuite\**" />
-		<None Remove="Application\Utils\**" />
-		<None Remove="Infrastructure\Services\PrefSuite\**" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Include="Application\Interfaces\IMapperSapaV1.cs" />
-		<None Include="Application\Models\Models\ItemSchuco.cs" />
-		<None Include="Application\Domain\Entities\A2PLogRecord.cs" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="ClosedXML" Version="0.104.2" />
@@ -91,16 +77,18 @@
 
 	<ItemGroup>
 		<None Update="appsettings.json">
-		
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 
 	<ItemGroup>
 		<None Update="appsettings.Development.json">
-
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Application\Models\Models\" />
 	</ItemGroup>
 
 

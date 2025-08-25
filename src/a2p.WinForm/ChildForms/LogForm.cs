@@ -4,7 +4,9 @@
 using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.Models;
 using a2p.Shared.Infrastructure.Interfaces;
+
 using ClosedXML.Excel;
+
 using System.Data;
 using System.Text.Json.Nodes;
 
@@ -77,8 +79,8 @@ namespace a2p.WinForm.ChildForms
                     AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
 
                 });
-              
-            
+
+
                 _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
                 {
                     HeaderText = "Reference",
@@ -137,9 +139,9 @@ namespace a2p.WinForm.ChildForms
                     Padding = new Padding(5),
                     Alignment = DataGridViewContentAlignment.MiddleCenter,
                 };
-       
+
                 dataGridViewLog.ColumnHeadersDefaultCellStyle = ColumnHeadersDefaultCellStyle;
-            
+
                 //DataGrid Cell and Alternative Rows default Cells Style 
                 //===================================================================================================================
                 DataGridViewCellStyle DefaultCellStyle = new()
@@ -154,7 +156,7 @@ namespace a2p.WinForm.ChildForms
                     WrapMode = DataGridViewTriState.True
                 };
                 dataGridViewLog.DefaultCellStyle = DefaultCellStyle;
-           
+
                 DataGridViewCellStyle AlternatingRowsDefaultCellStyle = new()
                 {
                     BackColor = Color.FromArgb(96, 97, 100),
@@ -182,7 +184,7 @@ namespace a2p.WinForm.ChildForms
                     Alignment = DataGridViewContentAlignment.MiddleLeft
                 };
                 dataGridViewLog.RowsDefaultCellStyle = RowsDefaultCellStyle;
-            
+
                 dataGridViewLog.Visible = true;
                 dataGridViewLog.Enabled = true;
 
@@ -213,7 +215,7 @@ namespace a2p.WinForm.ChildForms
                 _bindingSourceLog.DataSource = _dataTableLog;
                 dataGridViewLog.DataSource = _bindingSourceLog;
 
-              
+
             }
 
             catch (Exception ex2)
@@ -271,7 +273,7 @@ namespace a2p.WinForm.ChildForms
 
         }
 
-  
+
         private void LogGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             try
@@ -339,7 +341,7 @@ namespace a2p.WinForm.ChildForms
                         }
                     }
 
-          
+
                 }
             }
             catch (Exception ex)
@@ -435,7 +437,7 @@ namespace a2p.WinForm.ChildForms
             }
             catch (Exception ex)
             {
-                _logService.Error("LF: Error parsing log entry: {ex.Message}");
+                _logService.Error("LF: Error parsing log entry: {Exception}", ex.Message);
                 return new A2PLogRecord();
             }
         }
@@ -450,18 +452,18 @@ namespace a2p.WinForm.ChildForms
                 }
 
                 _ = _dataTableLog.Rows.Add(
-   
+
                  logEntry.Order,
                  logEntry.Worksheet,
                  logEntry.Reference,
-                 logEntry.Color, 
+                 logEntry.Color,
                  logEntry.Level,
                  logEntry.Message
                 );
             }
             catch (Exception ex)
             {
-                _logService.Error("LF: Error adding log entry to DataTable: {ex.Message}");
+                _logService.Error("LF: Error adding log entry to DataTable: {Exception}", ex.Message);
             }
         }
         public async Task LogRefreshAsync()
@@ -493,7 +495,7 @@ namespace a2p.WinForm.ChildForms
                     foreach (A2PLogRecord? logEntry in distinctLogEntries)
                     {
 
-                        _ = _dataTableLog.Rows.Add( logEntry.Order, logEntry.Worksheet, logEntry.Reference,logEntry.Color, logEntry.Level, logEntry.Message);
+                        _ = _dataTableLog.Rows.Add(logEntry.Order, logEntry.Worksheet, logEntry.Reference, logEntry.Color, logEntry.Level, logEntry.Message);
                     }
 
                 }
@@ -502,7 +504,7 @@ namespace a2p.WinForm.ChildForms
             catch (Exception ex)
             {
                 // Log any errors that occur during processing
-                _logService.Error( $"LF: Error refreshing log entries: {ex.Message}");
+                _logService.Error($"LF: Error refreshing log entries: {ex.Message}");
             }
 
         }
@@ -580,7 +582,7 @@ namespace a2p.WinForm.ChildForms
                         cell.Style.Border.RightBorder = XLBorderStyleValues.Thin;
                         cell.Style.Border.RightBorderColor = borderColor;
                     }
-                
+
                     var colMessage = worksheet.Column(6);
                     colMessage.Style.Alignment.WrapText = true;
 
@@ -595,7 +597,7 @@ namespace a2p.WinForm.ChildForms
                 _logService.Information("Log saved successfully to {FileName}", fileName);
             }
         }
-        
+
 
         #endregion -== Contextual Menu ==-
     }

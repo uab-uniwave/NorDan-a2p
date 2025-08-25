@@ -1,13 +1,12 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Data;
-
 using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.Domain.Enums;
-
 using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Infrastructure.Interfaces;
+
+using System.Data;
 
 namespace a2p.Shared.Application.Services
 {
@@ -17,9 +16,9 @@ namespace a2p.Shared.Application.Services
         private readonly IFileService _fileService;
         private readonly IExcelService _excelReadService;
         private readonly ISQLRepository _sqlRepository;
-        private readonly IMapperSapaV2 _mapperSapaV2;
-        private readonly IMapperSapaV2 _mapperSapaV1;
-        private readonly IMapperSapaV2 _mapperSchuco;
+        private readonly IMapperTechDesign _mapperSapaTechDesign;
+        private readonly IMapperSapa _mapperSapa;
+        private readonly IMapperSchuco _mapperSchuco;
         private List<A2POrder> _a2pOrders;
 
         private ProgressValue _progressValue;
@@ -28,9 +27,9 @@ namespace a2p.Shared.Application.Services
                            IFileService fileService,
                            IExcelService excelReadService,
                            ISQLRepository sqlRepository,
-                            IMapperSapaV2 mapperSapaV2,
-                            IMapperSapaV2 mapperSapaV1,
-                            IMapperSapaV2 mapperSchuco
+                            IMapperTechDesign mapperTechDesign,
+                            IMapperSapa mapperSapa,
+                            IMapperSchuco mapperSchuco
                    )
 
         {
@@ -39,8 +38,8 @@ namespace a2p.Shared.Application.Services
             _fileService = fileService;
             _excelReadService = excelReadService;
             _sqlRepository = sqlRepository;
-            _mapperSapaV2 = mapperSapaV2;
-            _mapperSapaV1 = mapperSapaV1;
+            _mapperSapaTechDesign = mapperTechDesign;
+            _mapperSapa = mapperSapa;
             _mapperSchuco = mapperSchuco;
             _a2pOrders = [];
             _progressValue = new ProgressValue();
@@ -135,18 +134,18 @@ namespace a2p.Shared.Application.Services
                                     if (_a2pOrders[i].SourceAppType == SourceAppType.Unknown)
                                     {
                                         _logService.Error("{$Class}.{$Method}." +
-                                            "\nUnknown source of file (SapaV1?, SapaV2, Schuco).Order {$Order}.",
+                                            "\nUnknown source of file (Sapa, TechnoDesign, Schuco).Order {$Order}.",
                                             nameof(ReadService),
                                             nameof(GetOrderSalesDocumentState),
                                             _a2pOrders[i].Order ?? string.Empty);
                                         continue;
                                     }
 
-                                    //🔵 Sapa V2 Items
+                                    //🔵 TechnoDesign Items
                                     //=====================================================================================================
-                                    else if (_a2pOrders[i].SourceAppType == SourceAppType.SapaV2)
+                                    else if (_a2pOrders[i].SourceAppType == SourceAppType.TechDesign)
                                     {
-                                        (List<DTO.ItemDTO>, List<A2PError>) result = await _mapperSapaV2.MapItemsAsync(_a2pOrders[i].Files[j].Worksheets[k], _progressValue, _progress);
+                                        (List<DTO.ItemDTO>, List<A2PError>) result = await _mapperSapaTechDesign.MapItemsAsync(_a2pOrders[i].Files[j].Worksheets[k], _progressValue, _progress);
 
                                         if (result.Item1 != null && result.Item1.Count > 0)
                                         {
@@ -160,18 +159,18 @@ namespace a2p.Shared.Application.Services
 
                                     }
 
-                                    //🔵 Sapa V1 Items
+                                    //🔵 Sapa Items
                                     //=====================================================================================================
-                                    else if (_a2pOrders[i].SourceAppType == SourceAppType.SapaV1)
+                                    else if (_a2pOrders[i].SourceAppType == SourceAppType.Sapa)
                                     {
-                                        throw new NotImplementedException("Sapa V1 Items not implemented yet.");
+                                        throw new NotImplementedException("Sapa Items not implemented yet.");
                                     }
 
                                     //🔵 Schuco Items
                                     //=====================================================================================================
                                     else
                                     {
-                                        throw new NotImplementedException("Sapa V1 Items not implemented yet.");
+                                        throw new NotImplementedException("Schuco Items not implemented yet.");
                                     }
                                 }
 
@@ -187,12 +186,12 @@ namespace a2p.Shared.Application.Services
                                         continue;
                                     }
 
-                                    //🔵 Sapa V2 Materials
+                                    //🔵TechnoDesign Materials
                                     //=======================================================================================
-                                    else if (_a2pOrders[i].SourceAppType == SourceAppType.SapaV2)
+                                    else if (_a2pOrders[i].SourceAppType == SourceAppType.TechDesign)
                                     {
 
-                                        (List<DTO.MaterialDTO>, List<A2PError>) result = await _mapperSapaV2.MapMaterialsAsync(_a2pOrders[i].Files[j].Worksheets[k], _progressValue, _progress);
+                                        (List<DTO.MaterialDTO>, List<A2PError>) result = await _mapperSapaTechDesign.MapMaterialsAsync(_a2pOrders[i].Files[j].Worksheets[k], _progressValue, _progress);
 
                                         if (result.Item1 != null && result.Item1.Count > 0)
                                         {
@@ -205,11 +204,11 @@ namespace a2p.Shared.Application.Services
 
                                     }
 
-                                    //🔵 Sapa V1 Materials
+                                    //🔵 Sapa Materials
                                     //=======================================================================================
-                                    else if (_a2pOrders[i].SourceAppType == SourceAppType.SapaV1)
+                                    else if (_a2pOrders[i].SourceAppType == SourceAppType.Sapa)
                                     {
-                                        throw new NotImplementedException("Sapa V1 Items not implemented yet.");
+                                        throw new NotImplementedException("Sapa Items not implemented yet.");
 
                                     }
 
@@ -218,7 +217,7 @@ namespace a2p.Shared.Application.Services
                                     else
                                     {
 
-                                        throw new NotImplementedException("Sapa V1 Items not implemented yet.");
+                                        throw new NotImplementedException("Schuco Items not implemented yet.");
                                     }
 
                                 }
@@ -317,7 +316,7 @@ namespace a2p.Shared.Application.Services
 
             try
             {
-                await Task.Run(() =>
+                await Task.Run((Action)(() =>
                 {
 
                     List<string> files = _fileService.GetFiles()!
@@ -347,7 +346,7 @@ namespace a2p.Shared.Application.Services
                             {
                                 Order = a2pOrder.Order,
                                 Level = ErrorLevel.Fatal,
-                                Code = ErrorCode.FileSystemRead,
+                                Code = ErrorCode.FileSystemReadWrite,
                                 Message = $"Order {a2pOrder.Order}. File ${a2pFile.FileName} is Locked."
 
                             });
@@ -355,7 +354,7 @@ namespace a2p.Shared.Application.Services
                         a2pOrder.Files.Add(a2pFile);
                     }
 
-                });
+                }));
                 return a2pOrder;
             }
             catch (Exception ex)
@@ -409,7 +408,7 @@ namespace a2p.Shared.Application.Services
                     {
                         Order = a2pOrder.Order,
                         Level = ErrorLevel.Fatal,
-                        Code = ErrorCode.DatabaseRead_Order,
+                        Code = ErrorCode.DatabaseRead_OrderReferenceNotFound,
                         Message = $"Order# {a2pOrder.Order} not exists in PrefSuite DB !"
                     }
                     );
@@ -463,7 +462,7 @@ namespace a2p.Shared.Application.Services
             try
             {
 
-                OrderState orderState = (OrderState) a2pOrder.SalesDocumentState;
+                OrderState orderState = (OrderState)a2pOrder.SalesDocumentState;
 
                 if (orderState.HasFlag(OrderState.PurchaseOrdersExist))
                 {

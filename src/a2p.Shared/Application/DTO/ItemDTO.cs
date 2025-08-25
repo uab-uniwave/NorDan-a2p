@@ -22,47 +22,47 @@ namespace a2p.Shared.Application.DTO
         //============================================================================================================================
         public int Quantity { get; set; } = 0;
         //============================================================================================================================
-        public double Width { get; set; } = 0;
-        public double Height { get; set; } = 0;
+        public decimal Width { get; set; } = 0m;
+        public decimal Height { get; set; } = 0m;
         //============================================================================================================================                                
-        public double Weight { get; set; } = 0;
-        public double WeightWithoutGlass { get; set; } = 0;
-        public double WeightGlass { get; set; } = 0;
+        public decimal Weight { get; set; } = 0m;
+        public decimal WeightWithoutGlass { get; set; } = 0m;
+        public decimal WeightGlass { get; set; } = 0m;
         //============================================================================================================================
-        public double TotalWeight { get; set; } = 0;
-        public double TotalWeightWithoutGlass { get; set; } = 0;
-        public double TotalWeightGlass { get; set; } = 0;
+        public decimal TotalWeight { get; set; } = 0m;
+        public decimal TotalWeightWithoutGlass { get; set; } = 0m;
+        public decimal TotalWeightGlass { get; set; } = 0m;
         //============================================================================================================================
-        public double Area { get; set; } = 0;
-        public double TotalArea { get; set; } = 0;
+        public decimal Area { get; set; } = 0m;
+        public decimal TotalArea { get; set; } = 0m;
         //============================================================================================================================
-        public double Hours { get; set; } = 0;
-        public double TotalHours { get; set; } = 0;
+        public decimal Hours { get; set; } = 0m;
+        public decimal TotalHours { get; set; } = 0m;
         //============================================================================================================================
-        public double MaterialCost { get; set; } = 0;
-        public double LaborCost { get; set; } = 0;
-        public double Cost { get; set; } = 0;
+        public decimal MaterialCost { get; set; } = 0m;
+        public decimal LaborCost { get; set; } = 0m;
+        public decimal Cost { get; set; } = 0m;
         //============================================================================================================================
-        public double TotalMaterialCost { get; set; } = 0;
-        public double TotalLaborCost { get; set; } = 0;
-        public double TotalCost { get; set; } = 0;
+        public decimal TotalMaterialCost { get; set; } = 0m;
+        public decimal TotalLaborCost { get; set; } = 0m;
+        public decimal TotalCost { get; set; } = 0m;
         //============================================================================================================================
-        public double Price { get; set; } = 0;
-        public double TotalPrice { get; set; } = 0;
+        public decimal Price { get; set; } = 0m;
+        public decimal TotalPrice { get; set; } = 0m;
         //============================================================================================================================
         public string CurrencyCode { get; set; } = "Unknown";
-        public double ExchangeRateEUR { get; set; } = 1;
+        public decimal ExchangeRateEUR { get; set; } = 1m;
 
         //============================================================================================================================
-        public double MaterialCostEUR { get; set; } = 0;
-        public double LaborCostEUR { get; set; } = 0;
-        public double CostEUR { get; set; } = 0;
+        public decimal MaterialCostEUR { get; set; } = 0m;
+        public decimal LaborCostEUR { get; set; } = 0m;
+        public decimal CostEUR { get; set; } = 0m;
         //============================================================================================================================
-        public double TotalMaterialCostEUR { get; set; } = 0;
-        public double TotalLaborCostEUR { get; set; } = 0;
-        public double TotalCostEUR { get; set; } = 0;
-        public double PriceEUR { get; set; } = 0;
-        public double TotalPriceEUR { get; set; } = 0;
+        public decimal TotalMaterialCostEUR { get; set; } = 0m;
+        public decimal TotalLaborCostEUR { get; set; } = 0m;
+        public decimal TotalCostEUR { get; set; } = 0m;
+        public decimal PriceEUR { get; set; } = 0m;
+        public decimal TotalPriceEUR { get; set; } = 0m;
         public WorksheetType WorksheetType { get; set; } = 0;
 
     }

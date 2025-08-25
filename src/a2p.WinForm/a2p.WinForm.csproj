@@ -7,7 +7,7 @@
  <UseWindowsForms>true</UseWindowsForms>
  <ImplicitUsings>enable</ImplicitUsings>
 
-     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+	 <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
 
  
 
@@ -20,57 +20,56 @@
 
 
   <PropertyGroup>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <BaseOutputPath>..\..\build\</BaseOutputPath>
-    <OutputPath>$(BaseOutputPath)\$(Configuration)\$(ProjectName)\</OutputPath>
-    <PackageIcon>128_128.png</PackageIcon>
+	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	<BaseOutputPath>..\..\build\</BaseOutputPath>
+	<OutputPath>$(BaseOutputPath)\$(Configuration)\$(ProjectName)\</OutputPath>
+	<PackageIcon>128_128.png</PackageIcon>
   </PropertyGroup>
 
 
   <ItemGroup>
  <Compile Remove="ChildForms\MainForm.cs" />
  <Compile Remove="ChildForms\MainForm.Designer.cs" />
- <Compile Remove="Mappers\A2PLogRecord.cs" />
  <Compile Remove="ThemeColor.cs" />
  </ItemGroup>
 
  <ItemGroup>
    <COMReference Include="PrefSales">
-     <WrapperTool>tlbimp</WrapperTool>
-     <VersionMinor>0</VersionMinor>
-     <VersionMajor>1</VersionMajor>
-     <Guid>c1694be9-8281-4ae9-805c-f536fbc09377</Guid>
-     <Lcid>0</Lcid>
-     <Isolated>false</Isolated>
-     <EmbedInteropTypes>true</EmbedInteropTypes>
+	 <WrapperTool>tlbimp</WrapperTool>
+	 <VersionMinor>0</VersionMinor>
+	 <VersionMajor>1</VersionMajor>
+	 <Guid>c1694be9-8281-4ae9-805c-f536fbc09377</Guid>
+	 <Lcid>0</Lcid>
+	 <Isolated>false</Isolated>
+	 <EmbedInteropTypes>true</EmbedInteropTypes>
    </COMReference>
  </ItemGroup>
 
 
-    <ItemGroup>
+	<ItemGroup>
 
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.0-preview3.24332.3" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.0-preview3.24332.3" />
 
-        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.0-preview.2.25163.2" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="9.0.0" />
-        <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
-        <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
-        <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
-        <PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
-        <PackageReference Include="Serilog.Expressions" Version="5.1.0-dev-00186" />
-        <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.1-dev-02308" />
-        <PackageReference Include="Serilog.Extensions.Logging.File" Version="9.0.0-dev-02302" />
-        <PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
-        <PackageReference Include="Serilog.Formatting.Compact.Reader" Version="4.1.0-dev-00085" />
-        <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
-        <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-        <PackageReference Include="Serilog.Sinks.EventLog" Version="4.0.1-dev-00087" />
-        <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
-        <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
-    </ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.0-preview.2.25163.2" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="9.0.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+		<PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+		<PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+		<PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
+		<PackageReference Include="Serilog.Expressions" Version="5.1.0-dev-00186" />
+		<PackageReference Include="Serilog.Extensions.Logging" Version="9.0.1-dev-02308" />
+		<PackageReference Include="Serilog.Extensions.Logging.File" Version="9.0.0-dev-02302" />
+		<PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
+		<PackageReference Include="Serilog.Formatting.Compact.Reader" Version="4.1.0-dev-00085" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+		<PackageReference Include="Serilog.Sinks.EventLog" Version="4.0.1-dev-00087" />
+		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+		<PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
+	</ItemGroup>
 
  <ItemGroup>
  <ProjectReference Include="..\a2p.Shared\a2p.Shared.csproj" />
@@ -91,27 +90,28 @@
  </EmbeddedResource>
  </ItemGroup>
 
-    <ItemGroup>
-        <None Update="..\a2p.Shared\appsettings.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
+	<ItemGroup>
+		<None Update="..\a2p.Shared\appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Resources\" />
-    </ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Resources\" />
+	</ItemGroup>
 
-    <ItemGroup>
-      <None Include="..\a2p.GraphicAssets\Icons\AppIcons\128_128.png">
-        <Pack>True</Pack>
-        <PackagePath>\</PackagePath>
-      </None>
-    </ItemGroup>
+	<ItemGroup>
+	  <None Include="..\a2p.GraphicAssets\Icons\AppIcons\128_128.png">
+		<Pack>True</Pack>
+		<PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="xcopy /Y /I ..\..\src\a2p.DataAssets\SQL $(OutputPath)\SQL" /> 
-	     <Exec Command="xcopy /Y /I ..\..\src\a2p.DataAssets\Excel $(OutputPath)\Excel" /> 
-   <Exec Command="xcopy /Y /I ..\..\src\a2p.DataAssets\PrefSuiteBackup $(OutputPath)\PrefSuiteBackup" /> 
+	<Exec Command="xcopy /Y /I ..\..\src\a2p.DataAssets\SQL $(OutputPath)\SQL" /> 
+	<Exec Command="xcopy /Y /I ..\..\src\a2p.DataAssets\Excel $(OutputPath)\Excel" /> 
+   <Exec Command="xcopy /Y /I ..\..\src\a2p.DataAssets\PrefSuiteBackup $(OutputPath)\PrefSuiteBackup" />
+   <Exec Command="xcopy /Y /I ..\..\README.md $(OutputPath)\" />
 
 
   </Target>

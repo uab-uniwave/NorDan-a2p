@@ -47,8 +47,8 @@ namespace a2p.Shared
             _ = services.AddSingleton<IPrefSuiteService, PrefSuiteService>();
             _ = services.AddSingleton<ISQLRepository, SQLRepository>();
             _ = services.AddSingleton<IFileService, FileService>();
-            _ = services.AddSingleton<IMapperSapaV1, MapperSapaV1>();
-            _ = services.AddSingleton<IMapperSapaV2, MapperSapaV2>();
+            _ = services.AddSingleton<IMapperSapa, MapperSapa>();
+            _ = services.AddSingleton<IMapperTechDesign, MapperTechDesign>();
             _ = services.AddSingleton<IMapperSchuco, MapperSchuco>();
             _ = services.AddSingleton<ISQLService, SQLService>();
 

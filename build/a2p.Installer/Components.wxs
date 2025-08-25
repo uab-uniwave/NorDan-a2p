@@ -305,7 +305,13 @@
           <Component>
               <File Source="..\Release\SQL\CleanDB.sql" />
           </Component>
+		  <Component>
+			  <File Source="..\Release\SQL\Functions.sql" />
+		  </Component>
           <Component>
+                <File Source="..\Release\SQL\Triggers.sql" />
+		  </Component>
+		  <Component>
               <File Source="..\Release\SQL\Procedures.sql" />
           </Component>
           <Component>
@@ -389,6 +395,22 @@
           <Component>
               <File Source="..\Release\Excel\0000Z00021-3 SumList__decimal_Mix.xlsx" />
           </Component>
+		  <Component>
+			  <File Source="..\Release\Excel\0000Z000001-14 Price_Details.xlsx" />
+		  </Component>
+		  <Component>
+			  <File Source="..\Release\Excel\0000Z000001-14 SumList.xlsx" />
+		  </Component>
+		  <Component>
+			  <File Source="..\Release\Excel\NorDan_a2p_ColorMapping.csv" />
+		  </Component>
+		  <Component>
+			  <File Source="..\Release\Excel\NorDan_a2p_IntrastatData.csv" />
+		  </Component>
+
+		  <Component>
+			  <File Source="..\Release\README.md" />
+		  </Component>
       </ComponentGroup>
 
      <ComponentGroup Id="ApplicationComponents" Directory="DesktopFolder">

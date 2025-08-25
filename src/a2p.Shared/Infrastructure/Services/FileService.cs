@@ -5,6 +5,8 @@ using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.Models;
 using a2p.Shared.Infrastructure.Interfaces;
 
+using System.Data;
+
 namespace a2p.Shared.Infrastructure.Services
 {
     public class FileService : IFileService
@@ -24,149 +26,6 @@ namespace a2p.Shared.Infrastructure.Services
             _appSettings = _userSettingsService.LoadSettings();
             _settingsContainer = _userSettingsService.LoadAllSettings();
         }
-
-        //======================================================================
-        //🔵 Read
-        //======================================================================
-        //public async Task<ProgressValue> GetOrdersAsync()
-        //{
-
-        //    try
-        //    {
-
-        //       var result = await GetOrderNumbersAsync();
-
-        //        // ======================================
-        //        // 🔵 Iterate through orders
-        //        // ======================================
-        //        for (int i = 0; i < a2pOrders.Count; i++)
-        //        {
-
-        //            _progressValue.ProgressTask1 = $"Reading Order # {ordersCounter} of {a2pOrders.Count} - {a2pOrders[i].Order} ";
-        //            _progressValue.Value++; // Increment the progress value - Read per Order 1
-        //            _progress?.Report(_progressValue);
-
-        //            a2pOrders[i].Files = await GetOrderFilesAsync(a2pOrders[i].Order, _progressValue, _progress);
-        //            _progressValue.Value++; // Increment the progress value - Read per Order 2
-        //            _progress?.Report(_progressValue);
-        //            // Check if the order exists in the PrefSuite
-        //            //===================================================================================================================================================
-
-        //            int fileCounter = 0;
-
-        //            // ======================================
-        //            // 🔵 Iterate through files
-        //            // ======================================
-
-        //            for (int j = 0; j < a2pOrders[i].Files.Count; j++)
-        //            {
-
-        //                fileCounter++;
-
-        //                _progressValue.ProgressTask2 = $"Reading File {fileCounter} of {a2pOrders[i].Files.Count()} - {a2pOrders[i].Files[j].FileName}";
-
-        //                _progress?.Report(_progressValue);
-        //                if (a2pOrders[i].Files[j].FileName.Contains(" "))
-        //                {
-        //                    a2pOrders[i].SourceAppType = SourceAppType.SapaV2;
-
-        //                    if (a2pOrders[i].Files[j].FileName.Contains("Price_Details"))
-        //                    {
-        //                        a2pOrders[i].Files[j].IsOrderItemsFile = true;
-        //                    }
-
-        //                }
-        //                if (a2pOrders[i].Files[j].IsLocked)
-        //                {
-        //                    _logService.Warning("File Service: File is locked {$FilePath}", a2pOrders[i].Files[j].FilePath);
-        //                    a2pOrders[i].ReadErrors.Add(new A2PError
-        //                    {
-        //                        Order = a2pOrders[i].Order,
-        //                        Level = ErrorLevel.Fatal,
-        //                        Code = ErrorCode.FileSystemRead,
-        //                        Message = $"Order {a2pOrders[i]} file {a2pOrders[i].Files[j].FileName} is locked by other application! "
-
-        //                    });
-
-        //                    a2pOrders[i].Files[j].Order = a2pOrders[i].Order;
-        //                }
-
-        //                List<A2PWorksheet> a2pWorksheets = await _excelReadService.GetWorksheetsAsync(a2pOrders[i].Files[j], _progressValue, _progress);
-
-        //                a2pOrders[i].Files[j].Worksheets = a2pWorksheets;
-
-        //                int worksheetCounter = 0;
-        //                List<ItemDTO> resultItems;
-        //                List<MaterialDTO> resultMateriales;
-        //                for (int k = 0; k < a2pOrders[i].Files[j].Worksheets.Count; k++)
-        //                {
-        //                    worksheetCounter++;
-
-        //                    a2pOrders[i].Files[j].Worksheets[k].Order = a2pOrders[i].Order;
-
-        //                }
-
-        //            }
-
-        //            _progressValue.Value++; // Increment the progress value - Read per Order 3
-        //            _progress?.Report(_progressValue);
-        //        }
-        //        return _progressValue;
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //        _logService.Error("File Service: Unhandled Error.Exception{$Exception}", ex.Message);
-        //        return _progressValue;
-        //    }
-
-        //}
-
-        //private async Task<List<string>> GetOrderNumbersAsync()
-        //{
-        //    List<string> ordersList= new List<string>();
-
-        //    try
-        //    {
-        //        List<A2POrder> orders = [];
-
-        //        //GetrList of files in the root destinationFolder
-        //        //==============================================================================================
-        //        string rootFolder = _appSettings.Folders.RootFolder;
-        //        List<string> files = (await Task.Run(() => Directory.GetFiles(rootFolder))).ToList(); // Get all files in the root destinationFolder
-        //        if (files == null || !files.Any())
-        //        {
-        //            _logService.Information("File Service: No files found in {$RootFolder}", rootFolder);
-        //            return ordersList;
-        //        }
-
-        //        //Extract order numbers from the file names and remove duplicates
-        //        //==============================================================================================
-
-        //        // if no orders found return empty list
-        //        //============================================================================================== 
-        //        if (orderNumbers == null || !orderNumbers.Any())
-        //        {
-        //            _logService.Information("File Service: No a2pOrders found in {$RootFolder}", rootFolder);
-
-        //            return ordersList;
-        //        }
-        //        foreach (string orderNumber in orderNumbers)
-        //        {
-
-        //            A2POrder order = new() { Order = orderNumber };
-        //            _dataCache.AddOrder(order);
-        //            ordersList.Add(order.Order);
-        //        }
-        //        return ordersList;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logService.Error("File Service: Unhandled Error getting order numbers. Exception{$Exception}", ex.Message);
-        //        return ordersList;
-        //    }
-
-        //}
 
         public List<string>? GetFiles()
         {
@@ -273,26 +132,27 @@ namespace a2p.Shared.Infrastructure.Services
             try
 
             {
-                using FileStream stream = new(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                using FileStream stream = new(filePath, FileMode.Open, FileAccess.Read);
                 return false;
             }
             catch (Exception ex)
             {
+
+
                 _logService.Error("{$Class}.{$Method}. File \"{$File}\" is locked Exception: {$Exception}",
                    nameof(FileService),
                    nameof(IsLocked),
                    ex.Message);
-                return false;
+                return true;
             }
-            return true;
         }
 
         //======================================================================
         // Write
         //======================================================================
-        public List<string>? MoveOrderFiles(List<string> files, bool success)
+        public void MoveOrderFiles(List<string> files, bool success)
         {
-            List<string> failedFiles = [];
+
 
             try
             {
@@ -300,19 +160,31 @@ namespace a2p.Shared.Infrastructure.Services
                 foreach (string file in files)
                 {
 
-                    if (File.Exists(file) && success)
+                    if (File.Exists(file) && success == true)
                     {
-                        File.Move(file, file.Replace(GetRootFolder(), GetSuccessFolder()));
+                        string destinationFile = file.Replace(GetRootFolder(), GetSuccessFolder());
+                        if (File.Exists(destinationFile))
+                        {
+                            File.Delete(destinationFile);
+                        }
+
+
+                        File.Move(file, destinationFile);
                     }
-                    else if (File.Exists(file) && success)
+                    else if (File.Exists(file) && success == false)
                     {
-                        File.Move(file, file.Replace(GetRootFolder(), GetFailedFolder()));
-                        failedFiles.Add(file.Replace(GetRootFolder(), GetFailedFolder()));
+
+                        string destinationFile = file.Replace(GetRootFolder(), GetFailedFolder());
+                        if (File.Exists(destinationFile))
+                        {
+                            File.Delete(destinationFile);
+                        }
+                        File.Move(file, destinationFile);
 
                     }
                 }
 
-                return failedFiles.Count > 0 ? failedFiles : null;
+
             }
             catch (Exception ex)
             {
@@ -320,7 +192,7 @@ namespace a2p.Shared.Infrastructure.Services
                      nameof(FileService),
                      nameof(GetFiles),
                      ex.Message);
-                return null;
+
             }
         }
 
@@ -345,7 +217,7 @@ namespace a2p.Shared.Infrastructure.Services
         public string GetFailedFolder()
         {
 
-            string folder = Path.Combine(GetRootFolder(), _appSettings.Folders.ImportSuccess ?? "Failed");
+            string folder = Path.Combine(GetRootFolder(), _appSettings.Folders.ImportFailed ?? "Failed");
 
             if (!Directory.Exists(folder))
             {
@@ -395,5 +267,8 @@ namespace a2p.Shared.Infrastructure.Services
 
         }
 
+
+
     }
 }
+

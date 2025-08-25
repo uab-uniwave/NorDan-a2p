@@ -1,18 +1,13 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Globalization;
-
 using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.Domain.Enums;
-using a2p.Shared.Application.Models;
 using a2p.Shared.Infrastructure.Interfaces;
 
 using ClosedXML.Excel;
 
-using DocumentFormat.OpenXml.Drawing;
-
-using Microsoft.AspNetCore.Routing.Constraints;
+using System.Globalization;
 
 namespace a2p.Shared.Infrastructure.Services
 {
@@ -29,7 +24,7 @@ namespace a2p.Shared.Infrastructure.Services
         {
 
             _logService = logService;
-            _fileService = fileService; 
+            _fileService = fileService;
             _progressValue = new ProgressValue();
             _progress = new Progress<ProgressValue>();
 
@@ -173,7 +168,7 @@ namespace a2p.Shared.Infrastructure.Services
             //Items
             //=======================================================================================================
 
-            // SAPA V2 Positions
+            // SAPA TechnoDesign Positions
             return worksheetType;
         }
 
@@ -263,7 +258,7 @@ namespace a2p.Shared.Infrastructure.Services
 
 
 
-        public void  WriteExcelErrorLog(string file, List<A2PError> A2PError)
+        public void WriteExcelErrorLog(string file, List<A2PError> A2PError)
         {
 
 
@@ -275,17 +270,17 @@ namespace a2p.Shared.Infrastructure.Services
 
             file = file.Replace(".xslx", " Errors.xslx");
 
-                if (criticalErrors.Count > 0)
+            if (criticalErrors.Count > 0)
+            {
+                System.Data.DataTable dataTable = new();
+
+                _ = dataTable.Columns.Add("Order", typeof(string));
+                _ = dataTable.Columns.Add("Level", typeof(string));
+                _ = dataTable.Columns.Add("Code", typeof(string));
+                _ = dataTable.Columns.Add("Message", typeof(string));
+
+                using (XLWorkbook workbook = new())
                 {
-                    System.Data.DataTable dataTable = new();
-
-                    _ = dataTable.Columns.Add("Order", typeof(string));
-                    _ = dataTable.Columns.Add("Level", typeof(string));
-                    _ = dataTable.Columns.Add("Code", typeof(string));
-                    _ = dataTable.Columns.Add("Message", typeof(string));
-
-                    using (XLWorkbook workbook = new())
-                    {
 
                     foreach (A2PError error in criticalErrors)
                     {
@@ -298,14 +293,14 @@ namespace a2p.Shared.Infrastructure.Services
 
                     }
 
-                        _ = workbook.Worksheets.Add(dataTable, "LogRecords");
+                    _ = workbook.Worksheets.Add(dataTable, "LogRecords");
 
-                        workbook.SaveAs(file);
-                    }
-
+                    workbook.SaveAs(file);
                 }
+
             }
         }
-
     }
+
+}
 

@@ -90,15 +90,15 @@ Possible values are:
   
   
  - Unknown = 0
- - Items_Sapa_v1 = 1  
- - Materials_Sapa_v1 = 2
- - Glasses_Sapa_v1 = 3
- - Panels_Sapa_v1 = 4   
+ - Items_Sapa = 1  
+ - Materials_Sapa = 2
+ - Glasses_Sapa = 3
+ - Panels_Sapa = 4   
 ---  
- - Items_Sapa_v2 = 5  
- - Materials_Sapa_v2 = 6
- - Glasses_Sapa_v2 = 7 
- - Panels_Sapa_v2 = 8  
+ - Items_TechnoDesign = 5  
+ - Materials_TechnoDesign = 6
+ - Glasses_TechnoDesign = 7 
+ - Panels_TechnoDesign = 8  
  ---  
  - Items_Schuco = 9  
  - Materials_Schuco = 10
@@ -171,7 +171,7 @@ Example based on profile data of Sapa
 > [!IMPORTANT]
 > [OrderNumber]<span style="background-color: red; font-weight: bold;">&nbsp;</span>SummList.xslx
 > <br>[OrderNumber]<span style="background-color: red; font-weight: bold;">&nbsp;</span>Price_Details.xslx
-><p>Application recognize Sapa (V2) files order numbers by space highighted by red color. In case file format will change. Adaptation to recognition algorithm will be file format will be required.</p> 
+><p>Application recognize TechnoDesign files order numbers by space highighted by red color. In case file format will change. Adaptation to recognition algorithm will be file format will be required.</p> 
 ><p> Example:
 ><br>  - <span style="color: green; font-weight: bold;">0000Z00000-10</span><span style="background-color: red; font-weight: bold;">&nbsp;</span>Price_Details.xlx
 ><br>  - <span style="color: green; font-weight: bold;">0000Z00000-10</span><span style="background-color: red; font-weight: bold;">&nbsp;</span>SummList.xslx</p> 
@@ -495,94 +495,4 @@ document.addEventListener("DOMContentLoaded", function() {
 ## msbuild 
 >[!NOTE]
 >msbuild a2p.sln -target:clean;rebuild -p:configuration=release;platform=x64;TargetFramework=net8.0-Windows
-
-
-# Header 1
-
-## Header 2
-
-### Header 3
-
-#### Header 4
-
-##### Header 5
-
-###### Header 6
-
----
-
-# *Header Italic 1*
-
-## *Header Italic 2*
-
-### *Header Italic 3*
-
-#### *Header Italic 4*
-
-##### *Header Italic 5*
-
-###### *Header Italic 6*
-
----
-
-Text
-
-**Bold Text**
-
-*Italic Text*
-
-***Bold Italic Text***
-
----
-
-* List - Level 1
-
-  * List - Level 2
-  * List - Level 2
-    * List - Level 3
-    * List - Level 3
-  * List - Level 2
-  * List - Level 2
-
-* List - Level 1
-
-  ---
-
-1. Numbered list - Level 1
-   1. Numbered list - Level 2
-   2. Numbered list - Level 2
-      1. Numbered list - Level 3
-      2. Numbered list - Level 3
-2. Text Level - 1
-   1. Text Level - 2
-   2. Text Level -  2
-3. Text - Level 1
-
-
-
-* 
-
----
-
-> [!NOTE]
->
-> 
-
-> [!TIP]
->
-> 
-
-> [!IMPORTANT]
->
-> 
-
-> [!WARNING]
->
-> 
-
-> [!CAUTION]
->
-> 
-
----
 

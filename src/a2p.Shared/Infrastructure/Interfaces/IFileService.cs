@@ -14,9 +14,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using a2p.Shared.Application.Domain.Entities;
-using a2p.Shared.Application.Models;
-using a2p.Shared.Infrastructure.Services;
-using a2p.Shared.Infrastructure.Services.Logger;
 
 namespace a2p.Shared.Infrastructure.Interfaces
 {
@@ -39,7 +36,7 @@ namespace a2p.Shared.Infrastructure.Interfaces
 
         bool IsLocked(string filePath);
 
-        List<string>? MoveOrderFiles(List<string> files, bool success);
+        void MoveOrderFiles(List<string> files, bool success);
 
 
 

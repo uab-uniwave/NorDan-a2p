@@ -23,25 +23,40 @@ namespace a2p.Shared.Application.Services
             _sqlRepository = sqlRepository;
             _progressValue = new ProgressValue();
             _progress = new Progress<ProgressValue>();
-
             _prefSuiteOLEDBConnection = new Interop.PrefDataManager.PrefDataSource();
         }
 
-        public async Task<A2POrder> InsertItemsAsync(A2POrder a2pOrder)
+        public async Task<(A2POrder, ProgressValue)> InsertItemsAsync(A2POrder a2pOrder, ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
         {
+
+
+
             try
             {
-                Interop.PrefSales.SalesDoc salesDoc = new()
-                {
-                    ConnectionString = _prefSuiteOLEDBConnection.ConnectionString
-                };
+
+                _progressValue = progressValue;
+                _progress = progress;
+
+
 
                 //==============================================================================
                 // Insert Items 
                 //==============================================================================
                 await Task.Run(() =>
                 {
+                    Interop.PrefSales.SalesDoc salesDoc = new()
+                    {
+                        ConnectionString = _prefSuiteOLEDBConnection.ConnectionString
+                    };
+
+                    _progressValue.CurrentValue = _progressValue.CurrentValue + 100; //100  x1 
+                    _progressValue.ProgressTask2 = $"Loading PrefSuite sales document ...";
+                    _progressValue.ProgressTask3 = string.Empty;
+                    _progress?.Report(_progressValue);
+
+
                     salesDoc.Load(a2pOrder.SalesDocumentNumber, a2pOrder.SalesDocumentVersion);
+
                     for (int i = 0; i < a2pOrder.Items.Count; i++)
                     {
                         try
@@ -51,38 +66,53 @@ namespace a2p.Shared.Application.Services
                             {
                                 continue;
                             }
+                            _progressValue.CurrentValue = _progressValue.CurrentValue + 10; //10  x2 
+
+                            _progressValue.ProgressTask2 = $"Inserting items {i + 1} of {a2pOrder.Items.Count} models into PrefSuite...";
+                            _progressValue.ProgressTask3 = $"Item # {a2pOrder.Items[i].Item}";
+                            _progress?.Report(_progressValue);
 
                             string idPos = Guid.NewGuid().ToString();
 
-                            string Command =
-                                $"<cmd:Commands name=\"CommandName\" xmlns:cmd=\"http://www.preference.com/XMLSchemas/2006/PrefCAD.Command\">" +
-                                    $"<cmd:Command name=\"Model.SetDimensions\">" +
-                                       $"<cmd:Parameter name=\"dimensions\" type=\"string\" value=\"W= {a2pOrder.Items[i].Width};H= {a2pOrder.Items[i].Height}\"/>" +
-                                    $"</cmd:Command>" +
-                                    $"<cmd:Command name=\"Model.SetModelVariables\">" +
-                                        $"<cmd:Parameter name=\"variables\" type=\"list\">" +
-                                            $"<cmd:Item type=\"set\">" +
-                                                $"<cmd:ItemValue name=\"name\" type=\"string\" value=\"Weight\"/>" +
-                                                $"<cmd:ItemValue name=\"namespace\" type=\"string\" value=\"\"/>" +
-                                                $"<cmd:ItemValue name=\"value\" type=\"real\" value=\"{Math.Round(a2pOrder.Items[i].Weight, 2)}\"/>" +
-                                            $"</cmd:Item> " +
-                                        $"</cmd:Parameter></cmd:Command>" +
-                                    $"<cmd:Command name=\"Model.Regenerate\"/>" +
-                                $"</cmd:Commands>";
 
-                            Interop.PrefSales.SalesDocItem sdi = salesDoc.Items.Add(idPos);
 
-                            sdi.SetCode("ALU_SAPA", false);
-                            _ = sdi.ExecuteCommandStr(Command, out string? resultStr, true);
-                            sdi.SetUnitPrice(Math.Round((double) a2pOrder.Items[i].Price, 2));
-                            sdi.SetUnitCost(Math.Round((double) a2pOrder.Items[i].Cost, 2));
+
+                            string Command = "<cmd:Commands name=\"CommandName\" xmlns:cmd=\"http://www.preference.com/XMLSchemas/2006/PrefCAD.Command\">" +
+                                                                  "<cmd:Command name=\"Model.SetDimensions\">" +
+                                                                      $"<cmd:Parameter name=\"dimensions\" type=\"string\" value=\"W={a2pOrder.Items[i].Width};H={a2pOrder.Items[i].Height};\"/>" +
+                                                                  "</cmd:Command>" +
+                                                                  "<cmd:Command name=\"Model.SetModelVariables\">" +
+                                                                      "<cmd:Parameter name=\"variables\" type=\"list\">" +
+                                                                      "<cmd:Item type=\"set\">" +
+                                                                      "<cmd:ItemValue name=\"name\" type=\"string\" value=\"Weight\"/>" +
+                                                                      "<cmd:ItemValue name=\"namespace\" type=\"string\" value=\"\"/>" +
+                                                                     $"<cmd:ItemValue name=\"value\" type=\"real\" value=\"{Math.Round(a2pOrder.Items[i].Weight, 4)}\"/>" +
+                                                                      "</cmd:Item>" +
+                                                                       "</cmd:Parameter>" +
+                                                                  "</cmd:Command>" +
+                                                                  "<cmd:Command name=\"Model.Regenerate\"/>" +
+                                                                  "</cmd:Commands>";
+
+
+
+                            var sdi = salesDoc.Items.Add(idPos);
+                            sdi.SetCode("Sapa_ALU", false);
+                            sdi.ExecuteCommandStr(Command, out string? resultStr, true);
+
+
+                            sdi.SetUnitPrice(Math.Round((double)a2pOrder.Items[i].Price, 2));
+                            sdi.SetUnitCost(Math.Round((double)a2pOrder.Items[i].Cost, 2));
                             sdi.PriceClosed = true;
-                            sdi.SetQuantity((int) a2pOrder.Items[i].Quantity);
+                            sdi.SetQuantity((int)a2pOrder.Items[i].Quantity);
                             sdi.Fields["Position"].Value = a2pOrder.Items[i].SortOrder.ToString();
                             sdi.Fields["SortOrder"].Value = a2pOrder.Items[i].SortOrder.ToString();
                             sdi.Fields["Description"].Value = a2pOrder.Items[i].Description;
                             sdi.Fields["Nomenclature"].Value = a2pOrder.Items[i].Item.ToString();
+
                             a2pOrder.Items[i].SalesDocumentIdPos = idPos;
+
+
+
 
                             _logService.Information($"PrefSuite Service: Item {a2pOrder.Items[i].Item} inserted for order {a2pOrder.Order}.");
                         }
@@ -123,9 +153,14 @@ namespace a2p.Shared.Application.Services
 
                     }
 
+                    _progressValue.CurrentValue = _progressValue.CurrentValue + 100; //100  x2 
+                    _progressValue.ProgressTask2 = $"Saving PrefSuite sales document ...";
+                    _progressValue.ProgressTask3 = string.Empty;
+                    _progress?.Report(_progressValue);
                     salesDoc.Save();
+
                 });
-                return a2pOrder;
+                return (a2pOrder, _progressValue);
 
             }
             catch (Exception ex)
@@ -149,7 +184,7 @@ namespace a2p.Shared.Application.Services
                    $"\nOrder {a2pOrder.Order ?? string.Empty}," +
                    $"\nException: {ex.Message ?? string.Empty}"
                 });
-                return a2pOrder;
+                return (a2pOrder, _progressValue);
             }
 
         }

@@ -1,4 +1,4 @@
-﻿using a2p.Shared.Application.Domain.Entities;
+using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.DTO;
 using a2p.Shared.Application.Interfaces;
 

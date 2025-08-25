@@ -31,7 +31,7 @@ namespace a2p.Shared.Application.Services
 
         }
 
-        public async Task<A2POrder> WriteAsync(A2POrder a2pOrder, ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
+        public async Task<(A2POrder, ProgressValue)> WriteAsync(A2POrder a2pOrder, ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
         {
 
             _progressValue = progressValue != null ? progressValue : _progressValue;
@@ -39,13 +39,25 @@ namespace a2p.Shared.Application.Services
 
             try
             {
+
+
+                _progressValue.CurrentValue = _progressValue.CurrentValue + 30;   //30pts. x 1 per Orde               
+                _progressValue.ProgressTask2 = "Deleting any existsing data import pending oredrs.....";
+                _progressValue.ProgressTask3 = string.Empty;
+                _progress?.Report(_progressValue);
+
                 A2PError? deleteError = await _sqlRepository.DeleteSalesDocumentDataAsync(a2pOrder.SalesDocumentNumber, a2pOrder.SalesDocumentVersion);
                 if (deleteError != null)
                 {
                     a2pOrder.ErrorsWrite.Add(deleteError);
                 }
 
-                A2POrder a2pOrdersPref = await _prefSuiteService.InsertItemsAsync(a2pOrder);
+
+
+                var Result = await _prefSuiteService.InsertItemsAsync(a2pOrder, _progressValue, _progress);
+                var a2pOrdersPref = Result.Item1;
+                _progressValue = Result.Item2;
+
 
                 if (a2pOrdersPref != null)
                 {
@@ -56,11 +68,17 @@ namespace a2p.Shared.Application.Services
                 {
                     try
                     {
+                        _progressValue.CurrentValue = _progressValue.CurrentValue + 10;  //10pts. x 1 per Item
+                        _progressValue.ProgressTask2 = $"Inserting items {i + 1} of {a2pOrder.Items.Count} into db...";
+                        _progressValue.ProgressTask3 = $"Item # {a2pOrder.Items[i].Item}";
+
+                        _progress?.Report(_progressValue);
                         A2PError? itemError = await _sqlRepository.InsertOrderItemDTOAsync(a2pOrder.Items[i], a2pOrder.SalesDocumentNumber, a2pOrder.SalesDocumentVersion, a2pOrder.Items[i].SalesDocumentIdPos);
                         if (itemError != null)
                         {
                             a2pOrder.ErrorsWrite.Add(itemError);
                         }
+
 
                     }
                     catch (Exception ex)
@@ -91,15 +109,23 @@ namespace a2p.Shared.Application.Services
 
                 for (int i = 0; i < a2pOrder.Materials.Count; i++)
                 {
+
                     try
                     {
-
+                        _progressValue.CurrentValue = _progressValue.CurrentValue + 1;//1pts. x 1 per material
+                        _progressValue.ProgressTask2 = $"Inserting materials {i + 1} of {a2pOrder.Materials.Count} into PrefSuite DB...";
+                        _progressValue.ProgressTask3 = $"Material # {a2pOrder.Materials[i].ReferenceBase} {a2pOrder.Materials[i].Color}.";
+                        _progress?.Report(_progressValue);
                         A2PError? ErrorMaterialDTO = await _sqlRepository.InsertOrderMaterialDTOAsync(a2pOrder.Materials[i], a2pOrder.SalesDocumentNumber, a2pOrder.SalesDocumentVersion);
+
                         if (ErrorMaterialDTO != null)
                         {
                             a2pOrder.ErrorsWrite.Add(ErrorMaterialDTO);
                             continue;
                         }
+
+
+
                         A2PError? errorPrefColor = await _sqlRepository.InsertPrefSuiteColorAsync(a2pOrder.Materials[i]);
                         if (errorPrefColor != null)
                         {
@@ -114,6 +140,9 @@ namespace a2p.Shared.Application.Services
                             a2pOrder.ErrorsWrite.Add(errorColorConfiguration);
                             continue;
                         }
+
+
+
                         A2PError? errorPrefMaterialBase = await _sqlRepository.InsertPrefSuiteMaterialBaseAsync(a2pOrder.Materials[i]);
                         if (errorPrefMaterialBase != null)
                         {
@@ -151,6 +180,7 @@ namespace a2p.Shared.Application.Services
                             continue;
                         }
 
+
                         if (a2pOrder.Materials[i].MaterialType != MaterialType.Glasses)
                         {
                             A2PError? errorUpdateBC = await _sqlRepository.UpdateBCMapping(a2pOrder.Materials[i]);
@@ -159,14 +189,15 @@ namespace a2p.Shared.Application.Services
                                 a2pOrder.ErrorsWrite.Add(errorUpdateBC);
                                 continue;
                             }
-                        }
-                        if (!string.IsNullOrEmpty(a2pOrder.Materials[i].SourceReference))
-                        {
-                            A2PError? errorPurchaseData = await _sqlRepository.InsertPrefSuiteMaterialPurchaseDataAsync(a2pOrder.Materials[i]);
-                            if (errorPurchaseData != null)
+
+                            if (!string.IsNullOrEmpty(a2pOrder.Materials[i].SourceReference))
                             {
-                                a2pOrder.ErrorsWrite.Add(errorPurchaseData);
-                                continue;
+                                A2PError? errorPurchaseData = await _sqlRepository.InsertPrefSuiteMaterialPurchaseDataAsync(a2pOrder.Materials[i]);
+                                if (errorPurchaseData != null)
+                                {
+                                    a2pOrder.ErrorsWrite.Add(errorPurchaseData);
+                                    continue;
+                                }
                             }
                         }
                     }
@@ -218,6 +249,11 @@ namespace a2p.Shared.Application.Services
 
                 }
 
+                _progressValue.CurrentValue = _progressValue.CurrentValue + 30; //30 pts x 2  per Order
+                _progressValue.ProgressTask2 = $"Inserting material needs in to PrefSuite... ";
+                _progressValue.ProgressTask2 = string.Empty;
+                _progress?.Report(_progressValue);
+
                 A2PError? errorMaterialNeedsMaster = await _sqlRepository.InsertPrefSuiteMaterialNeedsMasterAsync(a2pOrder.Order, a2pOrder.SalesDocumentNumber, a2pOrder.SalesDocumentVersion);
                 if (errorMaterialNeedsMaster != null)
                 {
@@ -230,7 +266,7 @@ namespace a2p.Shared.Application.Services
                     a2pOrder.ErrorsWrite.Add(errorMaterialNeeds);
                 }
 
-                return a2pOrder;
+                return (a2pOrder, _progressValue);
             }
             catch (Exception ex)
             {
@@ -251,7 +287,9 @@ namespace a2p.Shared.Application.Services
                     $"\nException {ex.Message}",
 
                 });
-                return a2pOrder;
+
+
+                return (a2pOrder, _progressValue);
             }
 
         }

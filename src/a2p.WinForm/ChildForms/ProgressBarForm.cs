@@ -1,9 +1,9 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Drawing.Drawing2D;
-
 using a2p.Shared.Application.Domain.Entities;
+
+using System.Drawing.Drawing2D;
 
 namespace a2p.WinForm.ChildForms
 {
@@ -61,14 +61,18 @@ namespace a2p.WinForm.ChildForms
 
         private void UpdateProgressInternal(ProgressValue progressValue)
         {
-            progressBar.Minimum = progressValue.MinValue;
-            progressBar.Maximum = progressValue.MaxValue;
-
-            if (progressValue.Value > progressBar.Maximum)
+            progressBar.Minimum = 0;
+            progressBar.Maximum = 100;
+            if (progressValue.CurrentValue > 0 && progressValue.TotalValue > 0)
             {
-                progressBar.Value += 0;
+                progressValue.Value = (progressValue.CurrentValue) * 100 / progressValue.TotalValue;
             }
-            else { progressBar.Value = progressValue.Value; }
+
+            if (progressValue.Value > 100)
+            {
+                progressBar.Value = 100;
+            }
+            else { progressBar.Value = (int)progressValue.Value; }
 
             lbProgressBarTitle.Text = progressValue.ProgressTitle ?? string.Empty;
             lbProgressBarTask1.Text = progressValue.ProgressTask1 ?? string.Empty;

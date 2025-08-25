@@ -633,7 +633,7 @@ namespace a2p.WinForm.ChildForms
                                 dataGridViewFiles.Rows[rowIndex].Cells["Import"].ReadOnly = false;
                             }
 
-                            if ((bool) dataGridViewFiles.Rows[rowIndex].Cells["Import"].Value == false)
+                            if ((bool)dataGridViewFiles.Rows[rowIndex].Cells["Import"].Value == false)
                             {
                                 dataGridViewFiles.Rows[rowIndex].Cells["Import"].Style.ForeColor = Color.LightGray;
                             }
@@ -715,7 +715,7 @@ namespace a2p.WinForm.ChildForms
 
                 _progress?.Report(_progressValue);
                 progressBarForm.Show();
-                await Task.Delay(1000);
+
 
                 //Read Orders Data
                 //=====================================================================================================
@@ -735,10 +735,17 @@ namespace a2p.WinForm.ChildForms
                 _progressValue.ProgressTask1 = string.Empty;
                 _progressValue.ProgressTask2 = "Loading Finished.";
                 _progressValue.ProgressTask3 = string.Empty;
-                await Task.Delay(1000);
+                _progress?.Report(_progressValue); progressBarForm.Show();
+
                 progressBarForm.Close();
 
+
                 DataGridViewLogReadOnlyRows();
+                _progressValue.ProgressTitle = string.Empty;
+                _progressValue.ProgressTask1 = string.Empty;
+                _progressValue.ProgressTask2 = string.Empty;
+                _progressValue.ProgressTask3 = string.Empty;
+                _progress?.Report(_progressValue);
 
             }
             catch (Exception ex)
@@ -779,7 +786,7 @@ namespace a2p.WinForm.ChildForms
                 Dictionary<string, int> keyValuePairs = [];
                 for (int i = 0; i < dataGridViewFiles.Rows.Count; i++)
                 {
-                    if ((bool) dataGridViewFiles.Rows[i].Cells["Import"].Value)
+                    if ((bool)dataGridViewFiles.Rows[i].Cells["Import"].Value)
                     {
 
                         for (int j = 0; j < _a2pOrders.Count; j++)
@@ -835,23 +842,95 @@ namespace a2p.WinForm.ChildForms
                             progressBarForm.progressBar.Style = ProgressBarStyle.Continuous;
                             progressBarForm.progressBar.ForeColor = Color.FromArgb(239, 112, 32);
                         };
+
+                        ProgressValue progressvalue = new ProgressValue();
                         Progress<ProgressValue> progress = new(progressBarForm.UpdateProgress);
+
+                        int totalItems = importOrders.Sum(order => order.Items.Count);
+                        int totalMaterials = importOrders.Sum(order => order.Materials.Count);
+                        int totalOrders = importOrders.Count;
+
                         _progress = progress;
+                        _progressValue = progressvalue;
+                        _progressValue.ProgressTitle = "Importing Orders...";
+                        _progressValue.ProgressTask1 = string.Empty;
+                        _progressValue.ProgressTask2 = string.Empty;
+                        _progressValue.ProgressTask3 = string.Empty;
+
+                        _progressValue.TotalValue = totalItems * 20 + totalMaterials * 1 + totalOrders * 230 + 40;
+                        _progressValue.CurrentValue = 0;
+                        _progressValue.Value = 0;
+                        _progressValue.MaxValue = 100;
+                        _progressValue.MinValue = 0;
+
+
+
+
+                        //20pts x1   single per import- order Form Preparing Import 
+
+
+                        //30 pts x 1  per Order - Write Service  Deletig existinfg data
+
+                        //100  x1 per Order - PrefsuiteService  Save Doc
+                        //30 pts x 1  per Order - Write Service  inserting material needa
+                        //100  x1 per Order - PrefsuiteService  Load Doc
+                        //100  x1 per Item  - PrefsuiteService  Insert Item
+
+                        //10pts. x 1 per  Item -  Write service -   Inserting data into DB
+                        //1 pts x per material   Write service 
+
+
+
+
+
+
+
+                        //20pts x1   single per import- order Form finishing
+
+                        _progressValue.CurrentValue = _progressValue.CurrentValue + 30; //x20 / x1  
+                        _progressValue.ProgressTitle = "Importing orders ... ";
+                        _progressValue.ProgressTask1 = $"Orders Count {totalOrders} pending import";
+                        _progressValue.ProgressTask2 = $"Items Count {totalItems} pending import";
+                        _progressValue.ProgressTask3 = $"Orders Count {totalMaterials} pending import";
                         _progress?.Report(_progressValue);
                         progressBarForm.Show();
+
+
+                        _progress?.Report(_progressValue);
+                        _progressValue.ProgressTask1 = string.Empty;
+                        _progressValue.ProgressTask2 = string.Empty;
+                        _progressValue.ProgressTask3 = string.Empty;
 
                         for (int i = 0; i < importOrders.Count; i++)
                         {
 
-                            _progressValue.ProgressTask1 = $"Importing order {i + 1} of {importOrders.Count} = Order # {importOrders[i].Order}";
-                            _progress?.Report(_progressValue);
-                            A2POrder a2POrder = await _writeService.WriteAsync(importOrders[i], _progressValue, _progress);
+                            _progressValue.ProgressTask1 = $"Inserting Order {i + 1} of {importOrders.Count} - Order # {importOrders[i].Order} ({importOrders[i].SalesDocumentNumber}/{importOrders[i].SalesDocumentVersion}...";
+                            _progressValue.ProgressTask3 = string.Empty;
+                            progressBarForm.Show();
+                            var Result = await _writeService.WriteAsync(importOrders[i], _progressValue, _progress);
+
+
+                            var a2POrder = Result.Item1;
+                            _progressValue = Result.Item2;
+
 
                             importOrders[i] = a2POrder;
 
                         }
 
                         await UpdateDatable(importOrders, 2);
+
+
+
+
+
+                        _progressValue.CurrentValue = _progressValue.CurrentValue + 20; //x20 /x2  
+                        _progressValue.ProgressTitle = "Importing orders ... ";
+                        _progressValue.ProgressTask1 = "Import Finished";
+                        _progressValue.ProgressTask2 = string.Empty;
+                        _progressValue.ProgressTask3 = string.Empty;
+                        _progress?.Report(_progressValue);
+
 
 
                         progressBarForm.Close(); // TODO: on cancel overwrite should stay grid data
@@ -912,7 +991,7 @@ namespace a2p.WinForm.ChildForms
                     {
                         warningCount = a2pOrder.ErrorsRead
                             .Where(error => error.Level is ErrorLevel.Warning)
-                            .Where(error => (int) error.Code < 3000)
+                            .Where(error => (int)error.Code < 3000)
                             .Select(error => new { error.Level, error.Code, error.Message })
                             .Distinct()
                             .Count();
@@ -934,7 +1013,7 @@ namespace a2p.WinForm.ChildForms
 
                         orderDTO.ErrorList = string.Join("\n", a2pOrder.ErrorsRead
                             .Where(error => error.Level is ErrorLevel.Error or ErrorLevel.Fatal)
-                            .Select(error => $"Level: {error.Level}, Code: {(int) error.Code}, Message: {error.Message}")
+                            .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
                             .Distinct());
 
                         fatalCount = a2pOrder.ErrorsRead
@@ -946,7 +1025,7 @@ namespace a2p.WinForm.ChildForms
                         orderDTO.FatalCount = fatalCount;
                         orderDTO.FatalList = string.Join("\n", a2pOrder.ErrorsRead
                             .Where(error => error.Level is ErrorLevel.Fatal)
-                            .Select(error => $"Level: {error.Level}, Code: {(int) error.Code}, Message: {error.Message}")
+                            .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
                             .Distinct());
 
                     }
@@ -958,7 +1037,7 @@ namespace a2p.WinForm.ChildForms
 
                         warningCount = a2pOrder.ErrorsRead
                              .Where(error => error.Level is ErrorLevel.Warning)
-                             .Where(error => (int) error.Code > 3000)
+                             .Where(error => (int)error.Code > 3000)
                              .Select(error => new { error.Level, error.Code, error.Message })
 
                              .Distinct()
@@ -984,12 +1063,12 @@ namespace a2p.WinForm.ChildForms
 
                         orderDTO.ErrorList = string.Join("\n", a2pOrder.ErrorsRead
                             .Where(error => error.Level is ErrorLevel.Error or ErrorLevel.Fatal)
-                            .Select(error => $"Level: {error.Level}, Code: {(int) error.Code}, Message: {error.Message}")
+                            .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
                             .Distinct()) +
 
                         string.Join("\n", a2pOrder.ErrorsWrite
                             .Where(error => error.Level is ErrorLevel.Error or ErrorLevel.Fatal)
-                            .Select(error => $"Level: {error.Level}, Code: {(int) error.Code}, Message: {error.Message}")
+                            .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
                             .Distinct());
 
                         fatalCount = a2pOrder.ErrorsRead
@@ -1005,11 +1084,11 @@ namespace a2p.WinForm.ChildForms
                         orderDTO.FatalCount = fatalCount;
                         orderDTO.FatalList = string.Join("\n", a2pOrder.ErrorsRead
                             .Where(error => error.Level is ErrorLevel.Fatal)
-                            .Select(error => $"Level: {error.Level}, Code: {(int) error.Code}, Message: {error.Message}")
+                            .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
                             .Distinct()) +
                                             string.Join("\n", a2pOrder.ErrorsWrite
                                                    .Where(error => error.Level is ErrorLevel.Fatal)
-                                                   .Select(error => $"Level: {error.Level}, Code: {(int) error.Code}, Message: {error.Message}")
+                                                   .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
 
                                                    .Distinct());
 
@@ -1122,11 +1201,11 @@ namespace a2p.WinForm.ChildForms
             int worksheetCount = 0;
             int itemCount = 0;
             int quantity = 0;
-            double area = 0;
-            double weight = 0;
-            double hours = 0;
-            double cost = 0;
-            double amount = 0;
+            decimal area = 0m;
+            decimal weight = 0m;
+            decimal hours = 0m;
+            decimal cost = 0m;
+            decimal amount = 0m;
             int materialCount = 0;
             int warningCount = 0;
             int errorCount = 0;

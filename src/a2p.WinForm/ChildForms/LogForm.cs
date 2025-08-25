@@ -552,7 +552,7 @@ namespace a2p.WinForm.ChildForms
                 string fileName = saveLog.FileName;
                 using (XLWorkbook workbook = new())
                 {
-                    DataTable dataTable = ((DataTable) _bindingSourceLog.DataSource).Copy();
+                    DataTable dataTable = ((DataTable)_bindingSourceLog.DataSource).Copy();
                     // After creating the worksheet, set column formatting as requested
                     IXLWorksheet worksheet = workbook.Worksheets.Add(dataTable, "Log Records");
 

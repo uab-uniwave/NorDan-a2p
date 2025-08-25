@@ -17,6 +17,16 @@ Delete from Piezas Where ReferenciaBase not In (SELECT ReferenciaBase FROM  Mate
 Delete from Perfiles Where ReferenciaBase not In (SELECT ReferenciaBase FROM  MaterialesBase)
 Delete from Metros Where ReferenciaBase not In (SELECT ReferenciaBase FROM  MaterialesBase)
 Delete from Superficies Where ReferenciaBase not In (SELECT ReferenciaBase FROM  MaterialesBase)
-DELETE FROM Compras WHERE Referencia NOT IN (SELECT Referencia FROM Materiales)
+DELETE FROM Compras WHERE Referencia NOT IN (SELECT Referencia FROM Materiales)	
+delete from Compras Where Proveedor = 988 
+DELETE FROM ReferenceSuppliers WHERE Reference NOT IN (SELECT Referencia FROM Materiales)
+DELETE FROM ReferenceSuppliers WHERE SupplierCode = 988
+
+
+--Attention NavisionCodes and UniwaveApi_Mapping
+
+--DELETE FROM NavisionCodes WHERE  PrefsuiteReference NOT IN (SELECT Referencia FROM Materiales)	
+--DELETE FROM UniwaveApi_Mapping WHERE PrefsuiteReference NOT IN (SELECT Referencia FROM Materiales)	 and EntityType = 1
+
 DELETE FROM MaterialLevels WHERE Reference NOT IN (SELECT Referencia FROM Materiales)
 DELETE FROM Uniwave_a2p_ReferenceMappingLog

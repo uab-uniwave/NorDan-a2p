@@ -50,7 +50,7 @@ namespace a2p.Shared.Application.Services
 
                 result = await _sqlRepository.ExecuteScalarAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
 
-                state = result != DBNull.Value ? (int) result! : 0;
+                state = result != DBNull.Value ? (int)result! : 0;
 
                 return state;
 
@@ -188,7 +188,7 @@ namespace a2p.Shared.Application.Services
                 _ = cmd.Parameters.AddWithValue("@SourceReference", sourceReference);
 
                 object? result = await _sqlRepository.ExecuteScalarAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
-                return result != null && result != DBNull.Value ? (int) result : null;
+                return result != null && result != DBNull.Value ? (int)result : null;
                 ;
             }
             catch (Exception ex)
@@ -203,7 +203,7 @@ namespace a2p.Shared.Application.Services
             }
         }
 
-        public async Task<double> GetTechDesignWeight(string sourceReference)
+        public async Task<decimal> GetTechDesignWeight(string sourceReference)
         {
             if (string.IsNullOrEmpty(sourceReference))
             {
@@ -224,7 +224,7 @@ namespace a2p.Shared.Application.Services
 
                 object? result = await _sqlRepository.ExecuteScalarAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
 
-                return result != null && result != DBNull.Value ? (double) result : 0;
+                return result != null && result != DBNull.Value ? (decimal)result : 0;
             }
             catch (Exception ex)
             {
@@ -404,14 +404,14 @@ namespace a2p.Shared.Application.Services
                 _ = cmd.Parameters.AddWithValue("@Line", materialDTO.Line); //required
                 _ = cmd.Parameters.AddWithValue("@Column", materialDTO.Column); //required 
                 //=====================================================================================================================
-                _ = cmd.Parameters.AddWithValue("@Item", materialDTO.Item ?? (object) DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@Item", materialDTO.Item ?? (object)DBNull.Value);
                 _ = cmd.Parameters.AddWithValue("@SortOrder", materialDTO.SortOrder);
                 //========================================================================================================
                 _ = cmd.Parameters.AddWithValue("@ReferenceBase", materialDTO.ReferenceBase);
                 _ = cmd.Parameters.AddWithValue("@Reference", materialDTO.Reference);
-                _ = cmd.Parameters.AddWithValue("@Description", materialDTO.Description ?? (object) DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@Description", materialDTO.Description ?? (object)DBNull.Value);
                 _ = cmd.Parameters.AddWithValue("@Color", materialDTO.Color);
-                _ = cmd.Parameters.AddWithValue("@ColorDescription", materialDTO.ColorDescription ?? (object) DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@ColorDescription", materialDTO.ColorDescription ?? (object)DBNull.Value);
                 //========================================================================================================
                 _ = cmd.Parameters.AddWithValue("@Width", Math.Round(materialDTO.Width, 4));
                 _ = cmd.Parameters.AddWithValue("@Height", Math.Round(materialDTO.Height, 4));
@@ -441,23 +441,23 @@ namespace a2p.Shared.Application.Services
                 //========================================================================================================
                 _ = cmd.Parameters.AddWithValue("@SquareMeterPrice", Math.Round(materialDTO.SquareMeterPrice, 4));
                 //========================================================================================================
-                _ = cmd.Parameters.AddWithValue("@Pallet", materialDTO.Pallet ?? (object) DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@Pallet", materialDTO.Pallet ?? (object)DBNull.Value);
                 //========================================================================================================
                 _ = cmd.Parameters.AddWithValue("@MaterialType", materialDTO.MaterialType);
                 //========================================================================================================
                 _ = cmd.Parameters.AddWithValue("@WorksheetType", materialDTO.WorksheetType);
                 //========================================================================================================
-                _ = cmd.Parameters.AddWithValue("@CustomField1", materialDTO.CustomField1 ?? (object) DBNull.Value);
-                _ = cmd.Parameters.AddWithValue("@CustomField2", materialDTO.CustomField2 ?? (object) DBNull.Value);
-                _ = cmd.Parameters.AddWithValue("@CustomField3", materialDTO.CustomField3 ?? (object) DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@CustomField1", materialDTO.CustomField1 ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@CustomField2", materialDTO.CustomField2 ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@CustomField3", materialDTO.CustomField3 ?? (object)DBNull.Value);
                 //========================================================================================================;
-                _ = cmd.Parameters.AddWithValue("@CustomField4", materialDTO.CustomField4 ?? (object) DBNull.Value);
-                _ = cmd.Parameters.AddWithValue("@CustomField5", materialDTO.CustomField5 ?? (object) DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@CustomField4", materialDTO.CustomField4 ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@CustomField5", materialDTO.CustomField5 ?? (object)DBNull.Value);
                 //========================================================================================================    
-                _ = cmd.Parameters.AddWithValue("@SourceReference", materialDTO.SourceReference ?? (object) DBNull.Value);
-                _ = cmd.Parameters.AddWithValue("@SourceDescription", materialDTO.SourceDescription ?? (object) DBNull.Value);
-                _ = cmd.Parameters.AddWithValue("@SourceColor", materialDTO.SourceColor ?? (object) DBNull.Value);
-                _ = cmd.Parameters.AddWithValue("@SourceColorDescription", materialDTO.SourceColorDescription ?? (object) DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@SourceReference", materialDTO.SourceReference ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@SourceDescription", materialDTO.SourceDescription ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@SourceColor", materialDTO.SourceColor ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@SourceColorDescription", materialDTO.SourceColorDescription ?? (object)DBNull.Value);
                 //========================================================================================================    
                 _ = cmd.Parameters.AddWithValue("@CreatedUTCDateTime", dateTime);
                 _ = cmd.Parameters.AddWithValue("@ModifiedUTCDateTime", dateTime);
@@ -542,10 +542,10 @@ namespace a2p.Shared.Application.Services
                 _ = cmd.Parameters.AddWithValue("@Line", itemDTO.Line); //required
                 _ = cmd.Parameters.AddWithValue("@Column", itemDTO.Column); //required
                                                                             //=====================================================================================================================
-                _ = cmd.Parameters.AddWithValue("@Project", itemDTO.Project ?? (object) DBNull.Value);
-                _ = cmd.Parameters.AddWithValue("@Item", itemDTO.Item ?? (object) DBNull.Value);//required
+                _ = cmd.Parameters.AddWithValue("@Project", itemDTO.Project ?? (object)DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@Item", itemDTO.Item ?? (object)DBNull.Value);//required
                 _ = cmd.Parameters.AddWithValue("@SortOrder", itemDTO.SortOrder); //required
-                _ = cmd.Parameters.AddWithValue("@Description", itemDTO.Description ?? (object) DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@Description", itemDTO.Description ?? (object)DBNull.Value);
                 //========================================================================================================
                 _ = cmd.Parameters.AddWithValue("@Quantity", itemDTO.Quantity);
                 //=====================================================================================================================
@@ -806,7 +806,7 @@ namespace a2p.Shared.Application.Services
                 _ = cmd.Parameters.AddWithValue("@ReferenceBase", materialDTO.ReferenceBase); //required
                 _ = cmd.Parameters.AddWithValue("@Description", materialDTO.Description ?? ""); //required
                 _ = cmd.Parameters.AddWithValue("@MaterialType", materialDTO.MaterialType); //required
-                _ = cmd.Parameters.AddWithValue("@CommodityCode", materialDTO.CommodityCode ?? (object) DBNull.Value);
+                _ = cmd.Parameters.AddWithValue("@CommodityCode", materialDTO.CommodityCode ?? (object)DBNull.Value);
 
                 //=====================================================================================================================
                 int result = await _sqlRepository.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
@@ -970,7 +970,7 @@ namespace a2p.Shared.Application.Services
             {
                 if (materialDTO.Weight == 0)
                 {
-                    double weight = await GetTechDesignWeight(materialDTO.SourceReference ?? string.Empty);
+                    var weight = await GetTechDesignWeight(materialDTO.SourceReference ?? string.Empty);
                     materialDTO.Weight = weight;
                 }
 
@@ -1068,7 +1068,7 @@ namespace a2p.Shared.Application.Services
 
                 if (materialDTO.Weight == 0)
                 {
-                    double weight = await GetTechDesignWeight(materialDTO.SourceReference ?? string.Empty);
+                    var weight = await GetTechDesignWeight(materialDTO.SourceReference ?? string.Empty);
                     materialDTO.Weight = weight;
                 }
 
@@ -1158,7 +1158,7 @@ namespace a2p.Shared.Application.Services
 
                 if (materialDTO.Weight == 0)
                 {
-                    double weight = await GetTechDesignWeight(materialDTO.SourceReference ?? string.Empty);
+                    var weight = await GetTechDesignWeight(materialDTO.SourceReference ?? string.Empty);
                     materialDTO.Weight = weight;
                 }
 
@@ -1247,7 +1247,7 @@ namespace a2p.Shared.Application.Services
             {
                 if (materialDTO.Weight == 0)
                 {
-                    double weight = await GetTechDesignWeight(materialDTO.SourceReference ?? string.Empty);
+                    var weight = await GetTechDesignWeight(materialDTO.SourceReference ?? string.Empty);
                     materialDTO.Weight = weight;
                 }
 
@@ -1439,12 +1439,12 @@ namespace a2p.Shared.Application.Services
                     CommandType = CommandType.StoredProcedure
                 };
                 //=====================================================================================================================
-                _ = cmd.Parameters.AddWithValue("@ReferenceBase", materialDTO.ReferenceBase ?? (object) DBNull.Value); //required   
-                _ = cmd.Parameters.AddWithValue("@Reference", materialDTO.Reference ?? (object) DBNull.Value); //required   
-                _ = cmd.Parameters.AddWithValue("@SourceReference", materialDTO.SourceReference ?? (object) DBNull.Value); //required   
-                _ = cmd.Parameters.AddWithValue("@SourceColor", materialDTO.SourceColor ?? (object) DBNull.Value); //required  
-                _ = cmd.Parameters.AddWithValue("@SourceColor1", materialDTO.CustomField1 ?? (object) DBNull.Value); //required  
-                _ = cmd.Parameters.AddWithValue("@SourceColor2", materialDTO.CustomField2 ?? (object) DBNull.Value); //required  
+                _ = cmd.Parameters.AddWithValue("@ReferenceBase", materialDTO.ReferenceBase ?? (object)DBNull.Value); //required   
+                _ = cmd.Parameters.AddWithValue("@Reference", materialDTO.Reference ?? (object)DBNull.Value); //required   
+                _ = cmd.Parameters.AddWithValue("@SourceReference", materialDTO.SourceReference ?? (object)DBNull.Value); //required   
+                _ = cmd.Parameters.AddWithValue("@SourceColor", materialDTO.SourceColor ?? (object)DBNull.Value); //required  
+                _ = cmd.Parameters.AddWithValue("@SourceColor1", materialDTO.CustomField1 ?? (object)DBNull.Value); //required  
+                _ = cmd.Parameters.AddWithValue("@SourceColor2", materialDTO.CustomField2 ?? (object)DBNull.Value); //required  
 
                 //=====================================================================================================================
                 int result = await _sqlRepository.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
@@ -1616,7 +1616,6 @@ namespace a2p.Shared.Application.Services
             }
 
         }
-
 
 
     }

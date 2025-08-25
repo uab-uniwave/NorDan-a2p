@@ -23,14 +23,20 @@ namespace a2p.Shared.Application.Services
             _sqlRepository = sqlRepository;
             _progressValue = new ProgressValue();
             _progress = new Progress<ProgressValue>();
-
             _prefSuiteOLEDBConnection = new Interop.PrefDataManager.PrefDataSource();
         }
 
-        public async Task<A2POrder> InsertItemsAsync(A2POrder a2pOrder)
+        public async Task<(A2POrder, ProgressValue)> InsertItemsAsync(A2POrder a2pOrder, ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
         {
+
+
+
             try
             {
+
+                _progressValue = progressValue;
+                _progress = progress;
+
 
 
                 //==============================================================================
@@ -43,6 +49,12 @@ namespace a2p.Shared.Application.Services
                         ConnectionString = _prefSuiteOLEDBConnection.ConnectionString
                     };
 
+                    _progressValue.CurrentValue = _progressValue.CurrentValue + 100; //100  x1 
+                    _progressValue.ProgressTask2 = $"Loading PrefSuite sales document ...";
+                    _progressValue.ProgressTask3 = string.Empty;
+                    _progress?.Report(_progressValue);
+
+
                     salesDoc.Load(a2pOrder.SalesDocumentNumber, a2pOrder.SalesDocumentVersion);
 
                     for (int i = 0; i < a2pOrder.Items.Count; i++)
@@ -54,7 +66,11 @@ namespace a2p.Shared.Application.Services
                             {
                                 continue;
                             }
+                            _progressValue.CurrentValue = _progressValue.CurrentValue + 10; //10  x2 
 
+                            _progressValue.ProgressTask2 = $"Inserting items {i + 1} of {a2pOrder.Items.Count} models into PrefSuite...";
+                            _progressValue.ProgressTask3 = $"Item # {a2pOrder.Items[i].Item}";
+                            _progress?.Report(_progressValue);
 
                             string idPos = Guid.NewGuid().ToString();
 
@@ -84,10 +100,10 @@ namespace a2p.Shared.Application.Services
                             sdi.ExecuteCommandStr(Command, out string? resultStr, true);
 
 
-                            sdi.SetUnitPrice(Math.Round((double) a2pOrder.Items[i].Price, 2));
-                            sdi.SetUnitCost(Math.Round((double) a2pOrder.Items[i].Cost, 2));
+                            sdi.SetUnitPrice(Math.Round((double)a2pOrder.Items[i].Price, 2));
+                            sdi.SetUnitCost(Math.Round((double)a2pOrder.Items[i].Cost, 2));
                             sdi.PriceClosed = true;
-                            sdi.SetQuantity((int) a2pOrder.Items[i].Quantity);
+                            sdi.SetQuantity((int)a2pOrder.Items[i].Quantity);
                             sdi.Fields["Position"].Value = a2pOrder.Items[i].SortOrder.ToString();
                             sdi.Fields["SortOrder"].Value = a2pOrder.Items[i].SortOrder.ToString();
                             sdi.Fields["Description"].Value = a2pOrder.Items[i].Description;
@@ -136,10 +152,15 @@ namespace a2p.Shared.Application.Services
                         }
 
                     }
+
+                    _progressValue.CurrentValue = _progressValue.CurrentValue + 100; //100  x2 
+                    _progressValue.ProgressTask2 = $"Saving PrefSuite sales document ...";
+                    _progressValue.ProgressTask3 = string.Empty;
+                    _progress?.Report(_progressValue);
                     salesDoc.Save();
 
                 });
-                return a2pOrder;
+                return (a2pOrder, _progressValue);
 
             }
             catch (Exception ex)
@@ -163,7 +184,7 @@ namespace a2p.Shared.Application.Services
                    $"\nOrder {a2pOrder.Order ?? string.Empty}," +
                    $"\nException: {ex.Message ?? string.Empty}"
                 });
-                return a2pOrder;
+                return (a2pOrder, _progressValue);
             }
 
         }

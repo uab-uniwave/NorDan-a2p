@@ -17,6 +17,7 @@ BEGIN
 	DELETE FROM ContenidoPAF Where Numero = @SalesDocumentNumber and [Version] = @SalesDocumentVersion
 	DELETE FROM MaterialNeeds Where Number = @SalesDocumentNumber and [Version] = @SalesDocumentVersion
 	DELETE FROM MaterialNeedsMaster Where Number = @SalesDocumentNumber and [Version] = @SalesDocumentVersion
+	Update vwSales Set BreakdownDate =NULL Where Number=@SalesDocumentNumber and Version=@SalesDocumentVersion
 END
 GO
 
@@ -38,22 +39,22 @@ CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertItem]
 	--================== 
 	@Quantity [int],
 	--================== 
-	@Width [float] null,
-	@Height [float] null,
+	@Width  decimal (38,6) null , 
+	@Height  decimal (38,6)  null,
 	--================== 
-	@Weight [float] null,
-	@WeightWithoutGlass [float] null,
-	@WeightGlass [float] null,
+	@Weight  decimal (38,6)  null,
+	@WeightWithoutGlass  decimal (38,6)  null,
+	@WeightGlass  decimal (38,6)  null,
 	--================== 
-	@TotalWeight [float] null,
-	@TotalWeightWithoutGlass [float] null,
-	@TotalWeightGlass [float] null,
+	@TotalWeight  decimal (38,6)  null,
+	@TotalWeightWithoutGlass  decimal (38,6)  null,
+	@TotalWeightGlass  decimal (38,6)  null,
 	--================== 
-	@Area [float] null,
-	@TotalArea [float] null,
+	@Area  decimal (38,6)  null,
+	@TotalArea  decimal (38,6)  null,
 	--================== 
-	@Hours [float] null,
-	@TotalHours [float] null, 
+	@Hours  decimal (38,6)  null,
+	@TotalHours  decimal (38,6)  null, 
 	--================== 
 	@MaterialCost [decimal](38, 6) null,
 	@LaborCost [decimal](38, 6) null,
@@ -240,26 +241,26 @@ CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertMaterial]
 	, @Color [nvarchar] (50) null
 	, @ColorDescription [nvarchar] (120) null
 	--==============================
-	, @Width [float] null
-	, @Height [float] null
+	, @Width  decimal (38,6)  null
+	, @Height  decimal (38,6)  null
 	--==============================
 	, @Quantity [int]
-	, @PackageQuantity [float] null
-	, @TotalQuantity [float] null
-	, @RequiredQuantity [float]
-	, @LeftOverQuantity [float] null
+	, @PackageQuantity  decimal (38,6)  null
+	, @TotalQuantity  decimal (38,6)  null
+	, @RequiredQuantity decimal(38,6)
+	, @LeftOverQuantity  decimal (38,6)  null
 	--==============================
-	, @Weight [float] null
-	, @TotalWeight [float] null
-	, @RequiredWeight [float] null
-	, @LeftOverWeight [float] null
+	, @Weight  decimal (38,6)  null
+	, @TotalWeight  decimal (38,6)  null
+	, @RequiredWeight  decimal (38,6)  null
+	, @LeftOverWeight  decimal (38,6)  null
 	--============================== 
-	, @Area [float] null
-	, @TotalArea [float] null
-	, @RequiredArea [float] null
-	, @LeftOverArea [float] null
+	, @Area  decimal (38,6)  null
+	, @TotalArea  decimal (38,6)  null
+	, @RequiredArea  decimal (38,6)  null
+	, @LeftOverArea  decimal (38,6)  null
 	--============================== 
-	, @Waste [float] null
+	, @Waste  decimal (38,6)  null
 	--============================== 
 	, @Price [decimal] (38 , 6) null
 	, @TotalPrice [decimal] (38 , 6) null
@@ -613,6 +614,7 @@ BEGIN
 		MaterialSupplierCode,
 		ProductionPreparationTime,
 		AverageDeliveryTime
+	
 	)
 	VALUES
 	( 'AE8D70E6-C414-412A-B272-AE141FCFA63F', -- MakerId - uniqueidentifier
@@ -858,6 +860,8 @@ BEGIN
 		OrderComponents,
 		Weight
 	)
+
+
 SELECT
 		NEWID(), -- GUID - uniqueidentifier -- 
 		SalesDocumentNumber, -- Number - int -- 
@@ -882,7 +886,9 @@ SELECT
 		(dbo.Uniwave_a2p_GetColorConfiguration(Uniwave_a2p_Materials.Color)), -- colorConfiguration int
 		0, -- RawMaterialColorConfiguration - int -- 
 		N'', -- RawReference - nchar(25) -- 
-		Quantity, -- Quantity - float -- 
+		
+		CASE WHEN MaterialType = 2  OR MaterialType=3 THEN CEILING(RequiredQuantity)  
+		ELSE TotalQuantity END, --float -- 
 		Round(Width,0), -- Length - real -- 
 		Round(Height,0), -- Height - real -- 
 		0.0, -- Volume - real -- 
@@ -890,19 +896,23 @@ SELECT
 		ISNULL((SELECT TOP 1 Almacen FROM dbo.Materiales WHERE Referencia = Reference),979), -- WarehouseCode - smallint -- 
 		 N'', -- XMLDoc - ntext -- 
 		
-		CASE WHEN MaterialType = 3 THEN 
-			CASE WHEN RequiredQuantity <= (SELECT UP2/2 FROM Compras Where Proveedor=979 and APartir=1 and UP1=1 and ByDefault =1 and Referencia = Reference) THEN 0 -- AllowToOrder
-			ELSE RequiredQuantity END --
-		ELSE RequiredQuantity END, 		
-		CASE WHEN MaterialType = 2  OR MaterialType=3 THEN CEILING(RequiredQuantity)
-		ELSE TotalQuantity END, -- QuantityToOrder - float --
-		RequiredQuantity, -- QuantityToDiscount - float -- 
+		CASE WHEN (MaterialType = 2  OR MaterialType=3) AND RequiredQuantity <= (SELECT UP2/2 FROM Compras Where Proveedor=979 and APartir=1 and UP1=1 and ByDefault =1 and Referencia = Reference)   THEN 0
+		ELSE 1 END, -- AllowToOrder,
+		
+		
+
+		CASE WHEN MaterialType = 2  OR MaterialType=3 THEN CEILING(RequiredQuantity)  
+		ELSE TotalQuantity END, 	-- QuantityToOrder
+		
+		RequiredQuantity, -- QuantityToDiscount,
+
+		
 		0.0, -- DiscountedQuantity - float -- 
 		0.0, -- ReservedQuantity - float -- 
 		0, -- IsCopy - smallint -- 
 		0, -- FromNumber - int -- 
 		0, -- FromVersion - int -- 
-		0, -- TargetLevel - int -- 
+		1, -- TargetLevel - int -- 
 		0, -- Unmounted - smallint -- 
 		0, -- ProductTypeCode - int -- 
 		0, -- CustomLengthType - smallint -- 
@@ -911,6 +921,7 @@ SELECT
 		TotalWeight -- Weight - float -- 
 	 
 FROM Uniwave_a2p_Materials Where SalesDocumentNumber = @Number and SalesDocumentVersion =@Version and DeletedUTCDateTime is null
+Update vwSales Set BreakdownDate =GETDATE() Where Number=@Number and Version=@Version	
 
 END
 GO
@@ -979,8 +990,8 @@ GO
 CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialProfile] 
 	-- Add the parameters for the stored procedure here
 	@ReferenceBase NVARCHAR(25),
-	@PackageQuantity FLOAT,
-	@Weight FLOAT
+	@PackageQuantity decimal (38,6),
+	@Weight decimal (38,6)
 	
 
 AS
@@ -1108,7 +1119,7 @@ CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialPurchaseData
 	-- Add the parameters for the stored procedure here
 	@Reference NVARCHAR(25), 
 	@Package INT,
-	@Price FLOAT,
+	@Price decimal (38,6),
 	@Description NVARCHAR(255),
 	@Color NVARCHAR(50),
 	@SourceReference NVARCHAR(50),
@@ -1151,15 +1162,14 @@ BEGIN
 		979,  -- Proveedor - int
 		1,  -- APartir - int
 		1,  -- UP1 - int
-		--1, -- UP2 - float
 		@Package, -- UP2 - float
 		GETDATE(), -- FechaUltimaCompra - datetime
-		@Price, --PrecioUltimaCompra - float
+		ISNULL(@Price,0), --PrecioUltimaCompra - float
 		@SourceReference, -- ReferenciaProveedor - nchar(50)
 		ISNULL(@Description,@SourceReference) +' '+ @SourceColor, -- SupplierDescription - nvarchar(255)
 		N'NOK', -- Divisa - nchar(25)
-	 NULL, -- FechaEVPrecioSC - datetime
-		NULL, -- PrecioSC - float
+		NULL, -- FechaEVPrecioSC - datetime
+		0, -- PrecioSC - float
 		N'NOK', -- DivisaPrecioSC - nchar(25)
 		14,  -- EntregaMedia - int
 		N'', -- CodigoEAN13 - nchar(13)

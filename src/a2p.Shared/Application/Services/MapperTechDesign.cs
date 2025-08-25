@@ -45,9 +45,9 @@ namespace a2p.Shared.Application.Services
                 int rowCounter = 0;
                 int sortOrder = -1;
 
-                double totalSellingPrice = double.TryParse(a2pWorksheet.WorksheetData[a2pWorksheet.RowCount - 1][20].ToString(), out double orderPrice) ? orderPrice : 0;
-                double totalQuotePrice = double.TryParse(a2pWorksheet.WorksheetData[a2pWorksheet.RowCount - 1][22].ToString(), out double orderDiscount) ? orderDiscount : 0;
-                double discountCoeficient = 1;
+                decimal totalSellingPrice = decimal.TryParse(a2pWorksheet.WorksheetData[a2pWorksheet.RowCount - 1][20].ToString(), out decimal orderPrice) ? orderPrice : 0;
+                decimal totalQuotePrice = decimal.TryParse(a2pWorksheet.WorksheetData[a2pWorksheet.RowCount - 1][22].ToString(), out decimal orderDiscount) ? orderDiscount : 0;
+                decimal discountCoeficient = 1;
                 if (totalSellingPrice != 0)
                 {
                     discountCoeficient = totalQuotePrice / totalSellingPrice;
@@ -75,13 +75,13 @@ namespace a2p.Shared.Application.Services
                         itemDTO.SortOrder = sortOrder;
                         itemDTO.Description = a2pWorksheet.WorksheetData[i][0].ToString();
                         itemDTO.Quantity = int.TryParse(a2pWorksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 0;
-                        itemDTO.Width = double.TryParse(a2pWorksheet.WorksheetData[i][3].ToString(), out double width) ? width : 0;
-                        itemDTO.Height = double.TryParse(a2pWorksheet.WorksheetData[i][4].ToString(), out double height) ? height : 0;
-                        itemDTO.Weight = double.TryParse(a2pWorksheet.WorksheetData[i][6].ToString(), out double weight) ? weight : 0;
-                        itemDTO.WeightGlass = double.TryParse(a2pWorksheet.WorksheetData[i][7].ToString(), out double weightGlass) ? weightGlass : 0;
-                        itemDTO.LaborCost = double.TryParse(a2pWorksheet.WorksheetData[i][17].ToString(), out double laborCost) ? laborCost : 0;
-                        itemDTO.Hours = double.TryParse(a2pWorksheet.WorksheetData[i][18].ToString(), out double hours) ? hours : 0;
-                        itemDTO.TotalPrice = double.TryParse(a2pWorksheet.WorksheetData[i][22].ToString(), out double price) ? price : 0;
+                        itemDTO.Width = decimal.TryParse(a2pWorksheet.WorksheetData[i][3].ToString(), out decimal width) ? width : 0;
+                        itemDTO.Height = decimal.TryParse(a2pWorksheet.WorksheetData[i][4].ToString(), out decimal height) ? height : 0;
+                        itemDTO.Weight = decimal.TryParse(a2pWorksheet.WorksheetData[i][6].ToString(), out decimal weight) ? weight : 0;
+                        itemDTO.WeightGlass = decimal.TryParse(a2pWorksheet.WorksheetData[i][7].ToString(), out decimal weightGlass) ? weightGlass : 0;
+                        itemDTO.LaborCost = decimal.TryParse(a2pWorksheet.WorksheetData[i][17].ToString(), out decimal laborCost) ? laborCost : 0;
+                        itemDTO.Hours = decimal.TryParse(a2pWorksheet.WorksheetData[i][18].ToString(), out decimal hours) ? hours : 0;
+                        itemDTO.TotalPrice = decimal.TryParse(a2pWorksheet.WorksheetData[i][22].ToString(), out decimal price) ? price : 0;
                         itemDTO.WorksheetType = a2pWorksheet.WorksheetType;
                         itemDTO.CurrencyCode = a2pWorksheet.Currency ?? "Unknown";
 
@@ -104,16 +104,16 @@ namespace a2p.Shared.Application.Services
                         _progressValue.ProgressTask3 = $"Item {sortOrder} of {a2pWorksheet.RowCount - 2} - Item # \"{itemDTO.Item}\"";
                         _progress?.Report(_progressValue);
 
-                        double profileCost = double.TryParse(a2pWorksheet.WorksheetData[i][8].ToString(), out double profile) ? profile : 0;
-                        double fittingCost = double.TryParse(a2pWorksheet.WorksheetData[i][9].ToString(), out double fitting) ? fitting : 0;
-                        double gasketAccessoriesCost = double.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out double gasketAccessories) ? gasketAccessories : 0;
-                        double aluminumSheetCost = double.TryParse(a2pWorksheet.WorksheetData[i][11].ToString(), out double aluminumSheet) ? aluminumSheet : 0;
-                        double surchargeALuProfilesCost = double.TryParse(a2pWorksheet.WorksheetData[i][12].ToString(), out double surchargeALuProfiles) ? surchargeALuProfiles : 0;
-                        double surfaceTreatmentCost = double.TryParse(a2pWorksheet.WorksheetData[i][13].ToString(), out double surfaceTreatment) ? surfaceTreatment : 0;
-                        double clientMaterialsCost = double.TryParse(a2pWorksheet.WorksheetData[i][14].ToString(), out double clientMaterials) ? clientMaterials : 0;
-                        double glassCost = double.TryParse(a2pWorksheet.WorksheetData[i][15].ToString(), out double glass) ? glass : 0;
-                        double panelCost = double.TryParse(a2pWorksheet.WorksheetData[i][16].ToString(), out double panel) ? panel : 0;
-                        double specialCost = double.TryParse(a2pWorksheet.WorksheetData[i][19].ToString(), out double special) ? special : 0;
+                        decimal profileCost = decimal.TryParse(a2pWorksheet.WorksheetData[i][8].ToString(), out decimal profile) ? profile : 0;
+                        decimal fittingCost = decimal.TryParse(a2pWorksheet.WorksheetData[i][9].ToString(), out decimal fitting) ? fitting : 0;
+                        decimal gasketAccessoriesCost = decimal.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out decimal gasketAccessories) ? gasketAccessories : 0;
+                        decimal aluminumSheetCost = decimal.TryParse(a2pWorksheet.WorksheetData[i][11].ToString(), out decimal aluminumSheet) ? aluminumSheet : 0;
+                        decimal surchargeALuProfilesCost = decimal.TryParse(a2pWorksheet.WorksheetData[i][12].ToString(), out decimal surchargeALuProfiles) ? surchargeALuProfiles : 0;
+                        decimal surfaceTreatmentCost = decimal.TryParse(a2pWorksheet.WorksheetData[i][13].ToString(), out decimal surfaceTreatment) ? surfaceTreatment : 0;
+                        decimal clientMaterialsCost = decimal.TryParse(a2pWorksheet.WorksheetData[i][14].ToString(), out decimal clientMaterials) ? clientMaterials : 0;
+                        decimal glassCost = decimal.TryParse(a2pWorksheet.WorksheetData[i][15].ToString(), out decimal glass) ? glass : 0;
+                        decimal panelCost = decimal.TryParse(a2pWorksheet.WorksheetData[i][16].ToString(), out decimal panel) ? panel : 0;
+                        decimal specialCost = decimal.TryParse(a2pWorksheet.WorksheetData[i][19].ToString(), out decimal special) ? special : 0;
 
                         itemDTO.WeightWithoutGlass = Math.Round(itemDTO.Weight - itemDTO.WeightGlass, 4);
                         itemDTO.TotalWeight = Math.Round(itemDTO.Weight * itemDTO.Quantity, 4);
@@ -387,9 +387,9 @@ namespace a2p.Shared.Application.Services
 
                         //===================================================================================================
                         materialDTO.Quantity = a2pWorksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(a2pWorksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 1;
-                        materialDTO.PackageQuantity = a2pWorksheet.WorksheetData[i][6] == null ? 1 : double.TryParse(a2pWorksheet.WorksheetData[i][6].ToString(), out double packageQuantity) ? packageQuantity : 1;
-                        materialDTO.TotalQuantity = a2pWorksheet.WorksheetData[i][7] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][7].ToString(), out double totalQuantity) ? totalQuantity : 0;
-                        materialDTO.RequiredQuantity = a2pWorksheet.WorksheetData[i][8] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][8].ToString(), out double requiredQuantity) ? requiredQuantity : 0;
+                        materialDTO.PackageQuantity = a2pWorksheet.WorksheetData[i][6] == null ? 1 : decimal.TryParse(a2pWorksheet.WorksheetData[i][6].ToString(), out decimal packageQuantity) ? packageQuantity : 1;
+                        materialDTO.TotalQuantity = a2pWorksheet.WorksheetData[i][7] == null ? 0 : decimal.TryParse(a2pWorksheet.WorksheetData[i][7].ToString(), out decimal totalQuantity) ? totalQuantity : 0;
+                        materialDTO.RequiredQuantity = a2pWorksheet.WorksheetData[i][8] == null ? 0 : decimal.TryParse(a2pWorksheet.WorksheetData[i][8].ToString(), out decimal requiredQuantity) ? requiredQuantity : 0;
                         materialDTO.LeftOverQuantity = Math.Round(materialDTO.TotalQuantity - materialDTO.RequiredQuantity, 6) < 0 ? 0 : Math.Round(materialDTO.TotalQuantity - materialDTO.RequiredQuantity, 6);
 
                         //===================================================================================================
@@ -397,25 +397,25 @@ namespace a2p.Shared.Application.Services
                         materialDTO.Height = 0;
 
                         //===================================================================================================
-                        materialDTO.TotalWeight = a2pWorksheet.WorksheetData[i][11] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][11].ToString(), out double totalWeight) ? totalWeight : 0;
+                        materialDTO.TotalWeight = a2pWorksheet.WorksheetData[i][11] == null ? 0 : decimal.TryParse(a2pWorksheet.WorksheetData[i][11].ToString(), out decimal totalWeight) ? totalWeight : 0;
                         materialDTO.Weight = materialDTO.TotalQuantity == 0 ? 0 : Math.Round(materialDTO.TotalWeight / materialDTO.TotalQuantity, 6);
                         materialDTO.RequiredWeight = Math.Round(materialDTO.Weight * materialDTO.RequiredQuantity, 6);
                         materialDTO.LeftOverWeight = Math.Round(materialDTO.TotalWeight - materialDTO.RequiredWeight, 6) < 0 ? 0 : Math.Round(materialDTO.TotalWeight - materialDTO.RequiredWeight, 6);
 
                         //===================================================================================================
-                        materialDTO.TotalArea = a2pWorksheet.WorksheetData[i][10] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out double totalArea) ? totalArea : 0;
+                        materialDTO.TotalArea = a2pWorksheet.WorksheetData[i][10] == null ? 0 : decimal.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out decimal totalArea) ? totalArea : 0;
                         materialDTO.Area = materialDTO.TotalQuantity == 0 ? 0 : Math.Round(materialDTO.TotalArea / materialDTO.TotalQuantity, 6);
                         materialDTO.RequiredArea = Math.Round(materialDTO.Area * materialDTO.RequiredQuantity, 6);
                         materialDTO.LeftOverArea = Math.Round(materialDTO.TotalArea - materialDTO.RequiredArea, 6) < 0 ? 0 : Math.Round(materialDTO.TotalArea - materialDTO.RequiredArea, 6);
 
                         //===================================================================================================
                         materialDTO.Waste = materialDTO.RequiredWeight != 0
-                            ? a2pWorksheet.WorksheetData[i][9] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][9].ToString(), out double lostWeight) ? lostWeight : 0 / materialDTO.RequiredWeight * 100
+                            ? a2pWorksheet.WorksheetData[i][9] == null ? 0 : decimal.TryParse(a2pWorksheet.WorksheetData[i][9].ToString(), out decimal lostWeight) ? lostWeight : 0 / materialDTO.RequiredWeight * 100
                             : 0;
                         //===================================================================================================                                                        
-                        materialDTO.Price = double.TryParse(a2pWorksheet.WorksheetData[i][12].ToString(), out double price) ? price : 0;
-                        materialDTO.TotalPrice = double.TryParse(a2pWorksheet.WorksheetData[i][13].ToString(), out double totalPrice) ? totalPrice : 0;
-                        materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double)materialDTO.RequiredQuantity, 6);
+                        materialDTO.Price = decimal.TryParse(a2pWorksheet.WorksheetData[i][12].ToString(), out decimal price) ? price : 0;
+                        materialDTO.TotalPrice = decimal.TryParse(a2pWorksheet.WorksheetData[i][13].ToString(), out decimal totalPrice) ? totalPrice : 0;
+                        materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (decimal)materialDTO.RequiredQuantity, 6);
                         materialDTO.LeftOverPrice = Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6) < 0 ? 0 : Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6);
 
                         //===================================================================================================
@@ -631,9 +631,9 @@ namespace a2p.Shared.Application.Services
 
                             //===================================================================================================
                             materialDTO.Quantity = a2pWorksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(a2pWorksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 1;
-                            materialDTO.PackageQuantity = a2pWorksheet.WorksheetData[i][6] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][6].ToString(), out double packageQuantity) ? packageQuantity : 0;
-                            materialDTO.TotalQuantity = a2pWorksheet.WorksheetData[i][7] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][7].ToString(), out double totalQuantity) ? totalQuantity : 0;
-                            materialDTO.RequiredQuantity = a2pWorksheet.WorksheetData[i][8] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][8].ToString(), out double requiredQuantity) ? requiredQuantity : 0;
+                            materialDTO.PackageQuantity = a2pWorksheet.WorksheetData[i][6] == null ? 0 : decimal.TryParse(a2pWorksheet.WorksheetData[i][6].ToString(), out decimal packageQuantity) ? packageQuantity : 0;
+                            materialDTO.TotalQuantity = a2pWorksheet.WorksheetData[i][7] == null ? 0 : decimal.TryParse(a2pWorksheet.WorksheetData[i][7].ToString(), out decimal totalQuantity) ? totalQuantity : 0;
+                            materialDTO.RequiredQuantity = a2pWorksheet.WorksheetData[i][8] == null ? 0 : decimal.TryParse(a2pWorksheet.WorksheetData[i][8].ToString(), out decimal requiredQuantity) ? requiredQuantity : 0;
                             materialDTO.LeftOverQuantity = Math.Round(materialDTO.TotalQuantity - materialDTO.RequiredQuantity, 6) < 0 ? 0 : Math.Round(materialDTO.TotalQuantity - materialDTO.RequiredQuantity, 6);
 
                             //===================================================================================================
@@ -645,8 +645,8 @@ namespace a2p.Shared.Application.Services
                                     string[] split = a2pWorksheet.WorksheetData[i][9]?.ToString()?.Split('/') ?? Array.Empty<string>();
                                     if (split.Length == 2)
                                     {
-                                        materialDTO.Width = double.TryParse(split[0], out double width) ? width : 0;
-                                        materialDTO.Height = double.TryParse(split[1], out double height) ? height : 0;
+                                        materialDTO.Width = decimal.TryParse(split[0], out decimal width) ? width : 0;
+                                        materialDTO.Height = decimal.TryParse(split[1], out decimal height) ? height : 0;
                                     }
                                 }
                             }
@@ -672,9 +672,9 @@ namespace a2p.Shared.Application.Services
                             materialDTO.Waste = 0; // not used 
 
                             //=================================================================================================                                
-                            materialDTO.Price = double.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out double price) ? price : 0;
-                            materialDTO.TotalPrice = double.TryParse(a2pWorksheet.WorksheetData[i][11].ToString(), out double totalPrice) ? totalPrice : 0;
-                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double)materialDTO.RequiredQuantity, 6);
+                            materialDTO.Price = decimal.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out decimal price) ? price : 0;
+                            materialDTO.TotalPrice = decimal.TryParse(a2pWorksheet.WorksheetData[i][11].ToString(), out decimal totalPrice) ? totalPrice : 0;
+                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (decimal)materialDTO.RequiredQuantity, 6);
                             materialDTO.LeftOverPrice = Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6) < 0 ? 0 : Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6);
 
                             //===================================================================================================
@@ -859,9 +859,9 @@ namespace a2p.Shared.Application.Services
 
                             //===================================================================================================
                             materialDTO.Quantity = a2pWorksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(a2pWorksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 1;
-                            materialDTO.PackageQuantity = a2pWorksheet.WorksheetData[i][6] == null ? 1 : double.TryParse(a2pWorksheet.WorksheetData[i][6].ToString(), out double packageQuantity) ? packageQuantity : 1;
-                            materialDTO.TotalQuantity = a2pWorksheet.WorksheetData[i][7] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][7].ToString(), out double totalQuantity) ? totalQuantity : 0;
-                            materialDTO.RequiredQuantity = a2pWorksheet.WorksheetData[i][8] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][8].ToString(), out double requiredQuantity) ? requiredQuantity : 0;
+                            materialDTO.PackageQuantity = a2pWorksheet.WorksheetData[i][6] == null ? 1 : decimal.TryParse(a2pWorksheet.WorksheetData[i][6].ToString(), out decimal packageQuantity) ? packageQuantity : 1;
+                            materialDTO.TotalQuantity = a2pWorksheet.WorksheetData[i][7] == null ? 0 : decimal.TryParse(a2pWorksheet.WorksheetData[i][7].ToString(), out decimal totalQuantity) ? totalQuantity : 0;
+                            materialDTO.RequiredQuantity = a2pWorksheet.WorksheetData[i][8] == null ? 0 : decimal.TryParse(a2pWorksheet.WorksheetData[i][8].ToString(), out decimal requiredQuantity) ? requiredQuantity : 0;
                             materialDTO.LeftOverQuantity = Math.Round(materialDTO.TotalQuantity - materialDTO.RequiredQuantity, 6) < 0 ? 0 : Math.Round(materialDTO.TotalQuantity - materialDTO.RequiredQuantity, 6);
 
                             //===================================================================================================
@@ -884,9 +884,9 @@ namespace a2p.Shared.Application.Services
                             materialDTO.Waste = 0; // not used 
 
                             //===================================================================================================
-                            materialDTO.Price = double.TryParse(a2pWorksheet.WorksheetData[i][9].ToString(), out double price) ? price : 0;
-                            materialDTO.TotalPrice = double.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out double totalPrice) ? totalPrice : 0;
-                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double)materialDTO.RequiredQuantity, 6);
+                            materialDTO.Price = decimal.TryParse(a2pWorksheet.WorksheetData[i][9].ToString(), out decimal price) ? price : 0;
+                            materialDTO.TotalPrice = decimal.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out decimal totalPrice) ? totalPrice : 0;
+                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (decimal)materialDTO.RequiredQuantity, 6);
                             materialDTO.LeftOverPrice = Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6) < 0 ? 0 : Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6);
 
                             //===================================================================================================
@@ -1093,8 +1093,8 @@ namespace a2p.Shared.Application.Services
                             materialDTO.ColorDescription = a2pWorksheet.WorksheetData[i][3].ToString() ?? string.Empty;  // not used
 
                             //===================================================================================================
-                            materialDTO.Width = double.TryParse(a2pWorksheet.WorksheetData[i][6].ToString(), out double width) ? width : 0;
-                            materialDTO.Height = double.TryParse(a2pWorksheet.WorksheetData[i][7].ToString(), out double height) ? height : 0;
+                            materialDTO.Width = decimal.TryParse(a2pWorksheet.WorksheetData[i][6].ToString(), out decimal width) ? width : 0;
+                            materialDTO.Height = decimal.TryParse(a2pWorksheet.WorksheetData[i][7].ToString(), out decimal height) ? height : 0;
 
                             //===================================================================================================
                             materialDTO.Quantity = a2pWorksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(a2pWorksheet.WorksheetData[i][3].ToString(), out int quantity) ? quantity : 1;
@@ -1110,7 +1110,7 @@ namespace a2p.Shared.Application.Services
                             materialDTO.LeftOverWeight = 0;// not used
 
                             //===================================================================================================
-                            materialDTO.Area = double.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out double area) ? area : 0;
+                            materialDTO.Area = decimal.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out decimal area) ? area : 0;
                             materialDTO.TotalArea = Math.Round(materialDTO.Area * materialDTO.Quantity, 6);
                             materialDTO.RequiredArea = materialDTO.TotalArea; // not used. Threated as unique piece material.
                             materialDTO.LeftOverArea = 0;// not used. Threated as unique piece material, that has no leftovers 
@@ -1119,13 +1119,13 @@ namespace a2p.Shared.Application.Services
                             materialDTO.Waste = 0; // not used, panels are not cut in production. Threated as piece material. 
 
                             //===================================================================================================
-                            materialDTO.Price = double.TryParse(a2pWorksheet.WorksheetData[i][9].ToString(), out double price) ? price : 0;
-                            materialDTO.TotalPrice = double.TryParse(a2pWorksheet.WorksheetData[i][11].ToString(), out double totalPrice) ? totalPrice : 0;
+                            materialDTO.Price = decimal.TryParse(a2pWorksheet.WorksheetData[i][9].ToString(), out decimal price) ? price : 0;
+                            materialDTO.TotalPrice = decimal.TryParse(a2pWorksheet.WorksheetData[i][11].ToString(), out decimal totalPrice) ? totalPrice : 0;
                             materialDTO.RequiredPrice = materialDTO.TotalPrice; // not used. Threated as unique piece material 
                             materialDTO.LeftOverPrice = 0; /// not used. Threated as unique piece material, that has no leftovers 
 
                             //===================================================================================================
-                            materialDTO.SquareMeterPrice = double.TryParse(a2pWorksheet.WorksheetData[i][8].ToString(), out double squareMeterPrice) ? squareMeterPrice : 0;
+                            materialDTO.SquareMeterPrice = decimal.TryParse(a2pWorksheet.WorksheetData[i][8].ToString(), out decimal squareMeterPrice) ? squareMeterPrice : 0;
 
                             //===================================================================================================
                             materialDTO.Pallet = null;
@@ -1356,8 +1356,8 @@ namespace a2p.Shared.Application.Services
                             materialDTO.ColorDescription = "Transparent"; // not used
 
                             //================================================================================================================
-                            materialDTO.Width = double.TryParse(a2pWorksheet.WorksheetData[i][4].ToString(), out double width) ? width : 0;
-                            materialDTO.Height = double.TryParse(a2pWorksheet.WorksheetData[i][5].ToString(), out double height) ? height : 0;
+                            materialDTO.Width = decimal.TryParse(a2pWorksheet.WorksheetData[i][4].ToString(), out decimal width) ? width : 0;
+                            materialDTO.Height = decimal.TryParse(a2pWorksheet.WorksheetData[i][5].ToString(), out decimal height) ? height : 0;
                             //===================================================================================================
                             materialDTO.Quantity = a2pWorksheet.WorksheetData[i][3] == null ? 1 : int.TryParse(a2pWorksheet.WorksheetData[i][3].ToString(), out int quantity) ? quantity : 1;
                             materialDTO.PackageQuantity = 0;
@@ -1366,13 +1366,13 @@ namespace a2p.Shared.Application.Services
                             materialDTO.LeftOverQuantity = 0;// not used. Threated as unique piece material, that has no leftovers 
 
                             //================================================================================================================
-                            materialDTO.Weight = double.TryParse(a2pWorksheet.WorksheetData[i][8].ToString(), out double weight) ? weight : 0;
-                            materialDTO.TotalWeight = double.TryParse(a2pWorksheet.WorksheetData[i][9].ToString(), out double totalWeight) ? totalWeight : 0;
+                            materialDTO.Weight = decimal.TryParse(a2pWorksheet.WorksheetData[i][8].ToString(), out decimal weight) ? weight : 0;
+                            materialDTO.TotalWeight = decimal.TryParse(a2pWorksheet.WorksheetData[i][9].ToString(), out decimal totalWeight) ? totalWeight : 0;
                             materialDTO.RequiredWeight = materialDTO.TotalWeight;
                             materialDTO.LeftOverWeight = 0;// not used. Threated as unique piece material, that has no leftovers 
 
                             //================================================================================================================
-                            materialDTO.Area = double.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out double area) ? area : 0;
+                            materialDTO.Area = decimal.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out decimal area) ? area : 0;
                             materialDTO.TotalArea = Math.Round(materialDTO.Area * materialDTO.Quantity, 6);
                             materialDTO.RequiredArea = materialDTO.TotalArea; // not used. Threated as unique piece material.
                             materialDTO.LeftOverArea = 0;// not used. Threated as unique piece material, that has no leftovers 
@@ -1381,13 +1381,13 @@ namespace a2p.Shared.Application.Services
                             materialDTO.Waste = 0; // not used, glasses are not cut in production. Threated as piece material. 
 
                             //===================================================================================================
-                            materialDTO.Price = double.TryParse(a2pWorksheet.WorksheetData[i][7].ToString(), out double price) ? price : 0;
-                            materialDTO.TotalPrice = double.TryParse(a2pWorksheet.WorksheetData[i][11].ToString(), out double totalPrice) ? totalPrice : 0;
+                            materialDTO.Price = decimal.TryParse(a2pWorksheet.WorksheetData[i][7].ToString(), out decimal price) ? price : 0;
+                            materialDTO.TotalPrice = decimal.TryParse(a2pWorksheet.WorksheetData[i][11].ToString(), out decimal totalPrice) ? totalPrice : 0;
                             materialDTO.RequiredPrice = materialDTO.TotalPrice; // not used. Threated as unique piece material 
                             materialDTO.LeftOverPrice = 0; /// not used. Threated as unique piece material, that has no leftovers 
 
                             //===================================================================================================
-                            materialDTO.SquareMeterPrice = double.TryParse(a2pWorksheet.WorksheetData[i][6].ToString(), out double squareMeterPrice) ? squareMeterPrice : 0;
+                            materialDTO.SquareMeterPrice = decimal.TryParse(a2pWorksheet.WorksheetData[i][6].ToString(), out decimal squareMeterPrice) ? squareMeterPrice : 0;
 
                             //===================================================================================================
                             materialDTO.Pallet = a2pWorksheet.WorksheetData[i][12].ToString();
@@ -1539,9 +1539,9 @@ namespace a2p.Shared.Application.Services
                             materialDTO.Description = a2pWorksheet.WorksheetData[i][4].ToString() ?? string.Empty;
                             //===================================================================================================
                             materialDTO.Quantity = a2pWorksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(a2pWorksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 1;
-                            materialDTO.PackageQuantity = a2pWorksheet.WorksheetData[i][6] == null ? 1 : double.TryParse(a2pWorksheet.WorksheetData[i][6].ToString(), out double packageQuantity) ? packageQuantity : 1;
-                            materialDTO.TotalQuantity = a2pWorksheet.WorksheetData[i][7] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][7].ToString(), out double totalQuantity) ? totalQuantity : 0;
-                            materialDTO.RequiredQuantity = a2pWorksheet.WorksheetData[i][8] == null ? 0 : double.TryParse(a2pWorksheet.WorksheetData[i][8].ToString(), out double requiredQuantity) ? requiredQuantity : 0;
+                            materialDTO.PackageQuantity = a2pWorksheet.WorksheetData[i][6] == null ? 1 : decimal.TryParse(a2pWorksheet.WorksheetData[i][6].ToString(), out decimal packageQuantity) ? packageQuantity : 1;
+                            materialDTO.TotalQuantity = a2pWorksheet.WorksheetData[i][7] == null ? 0 : decimal.TryParse(a2pWorksheet.WorksheetData[i][7].ToString(), out decimal totalQuantity) ? totalQuantity : 0;
+                            materialDTO.RequiredQuantity = a2pWorksheet.WorksheetData[i][8] == null ? 0 : decimal.TryParse(a2pWorksheet.WorksheetData[i][8].ToString(), out decimal requiredQuantity) ? requiredQuantity : 0;
                             materialDTO.LeftOverQuantity = Math.Round(materialDTO.TotalQuantity - materialDTO.RequiredQuantity, 6) < 0 ? 0 : Math.Round(materialDTO.TotalQuantity - materialDTO.RequiredQuantity, 6);
                             //===================================================================================================
                             materialDTO.Width = 0; // not used in others
@@ -1559,9 +1559,9 @@ namespace a2p.Shared.Application.Services
                                                           //================================================================================================================
                             materialDTO.Waste = 0; // not used in others
                                                    //=================================================================================================                                
-                            materialDTO.Price = double.TryParse(a2pWorksheet.WorksheetData[i][9].ToString(), out double price) ? price : 0;
-                            materialDTO.TotalPrice = double.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out double totalPrice) ? totalPrice : 0;
-                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (double)materialDTO.RequiredQuantity, 6);
+                            materialDTO.Price = decimal.TryParse(a2pWorksheet.WorksheetData[i][9].ToString(), out decimal price) ? price : 0;
+                            materialDTO.TotalPrice = decimal.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out decimal totalPrice) ? totalPrice : 0;
+                            materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (decimal)materialDTO.RequiredQuantity, 6);
                             materialDTO.LeftOverPrice = Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6) < 0 ? 0 : Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6);
                             //===================================================================================================
                             materialDTO.SquareMeterPrice = 0; // not used in others

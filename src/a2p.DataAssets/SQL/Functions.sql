@@ -133,18 +133,18 @@ CREATE OR ALTER FUNCTION [dbo].[Uniwave_a2p_GetTechDesignCommodityCode]
 RETURNS int
 AS
 BEGIN
-    DECLARE @CommodityCode Nvarchar(25), 
-             @Code INT 
-     
-    SELECT TOP 1 @CommodityCode =  [Default commodity code]
-    FROM Nordan_a2p_IntrastatData WHERE 
-    CASE 
-        WHEN CHARINDEX('.', Material) > 0 
-        THEN LEFT(Material, CHARINDEX('.', Material) - 1)
-        ELSE Material
-    END  = @SourceReference
-    
-    SELECT TOP 1 @Code= Id FROM Intrastat.CommodityCodes Where Code = @CommodityCode
+	DECLARE @CommodityCode Nvarchar(25), 
+			 @Code INT 
+	 
+	SELECT TOP 1 @CommodityCode =  [Default commodity code]
+	FROM Nordan_a2p_IntrastatData WHERE 
+	CASE 
+		WHEN CHARINDEX('.', Material) > 0 
+		THEN LEFT(Material, CHARINDEX('.', Material) - 1)
+		ELSE Material
+	END  = @SourceReference
+	
+	SELECT TOP 1 @Code= Id FROM Intrastat.CommodityCodes Where Code = @CommodityCode
 
 
 RETURN @Code
@@ -157,19 +157,19 @@ CREATE OR ALTER FUNCTION [dbo].[Uniwave_a2p_GetTechDesignWeight]
 (
  @SourceReference Nvarchar(50)
 )
-RETURNS Float
+RETURNS decimal
 AS
 BEGIN
-    DECLARE @Weight Float 
-    SELECT TOP 1 @Weight = Weight
-    FROM Nordan_a2p_IntrastatData NINT
-    WHERE 
+	DECLARE @Weight decimal (38,6) 
+	SELECT TOP 1 @Weight = Weight
+	FROM Nordan_a2p_IntrastatData NINT
+	WHERE 
 
-    CASE 
-        WHEN CHARINDEX('.', NINT.Material) > 0 
-        THEN LEFT(NINT.Material, CHARINDEX('.', NINT.Material) - 1)
-        ELSE NINT.Material
-    END =  @SourceReference
+	CASE 
+		WHEN CHARINDEX('.', NINT.Material) > 0 
+		THEN LEFT(NINT.Material, CHARINDEX('.', NINT.Material) - 1)
+		ELSE NINT.Material
+	END =  @SourceReference
 
 RETURN @Weight
 

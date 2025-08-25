@@ -7,7 +7,7 @@ namespace a2p.Shared.Application.Interfaces
 {
     public interface IWriteService
     {
-        Task<A2POrder> WriteAsync(A2POrder a2pOrders, ProgressValue progressValue, IProgress<ProgressValue>?  progress = null);
+        Task<(A2POrder, ProgressValue)> WriteAsync(A2POrder a2pOrders, ProgressValue progressValue, IProgress<ProgressValue>? progress = null);
 
     }
 }

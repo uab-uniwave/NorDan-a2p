@@ -1,9 +1,6 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Drawing.Drawing2D;
-using System.Runtime.InteropServices;
-
 using a2p.Shared.Application.Domain.Entities;
 using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Application.Models;
@@ -11,6 +8,8 @@ using a2p.Shared.Infrastructure.Interfaces;
 using a2p.WinForm.ChildForms;
 
 using Newtonsoft.Json;
+
+using System.Runtime.InteropServices;
 
 namespace a2p.WinForm
 {
@@ -143,7 +142,7 @@ namespace a2p.WinForm
             {
                 _logService.Information("User settings file loaded successfully.");
             }
-              try
+            try
             {
 
                 slbPathValue.Text = _appSettings.Folders.RootFolder;
@@ -242,12 +241,12 @@ namespace a2p.WinForm
             }
         }
 
-     
+
 
         protected override void OnSizeChanged(EventArgs e)
         {
             base.OnSizeChanged(e);
-          if (plFormContainer != null)
+            if (plFormContainer != null)
             {
                 plFormContainer.Size = new Size(this.ClientSize.Width - plFormContainer.Left,
                     this.ClientSize.Height - plFormContainer.Top);
@@ -395,7 +394,7 @@ namespace a2p.WinForm
             try
             {
 
-                Image? image = (Image?) Properties.Resources.ResourceManager.GetObject(imageName);
+                Image? image = (Image?)Properties.Resources.ResourceManager.GetObject(imageName);
                 return image ?? null;
             }
             catch
@@ -588,8 +587,9 @@ namespace a2p.WinForm
             {
 
                 btnLoad.Enabled = true;
-                if (_orderForm.dataGridViewFiles.Rows.Count > 0)
+                if (_orderForm.dataGridViewFiles.Rows.Count > 0 && _orderForm.lbTitle.Text != "IMPORTED")
                 {
+
                     btnImport.Enabled = true;
                 }
                 else

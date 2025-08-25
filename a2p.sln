@@ -162,7 +162,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8} = {E1A78A32-DF5F-4F65-A987-6FEF96E2B856}
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
@@ -181,8 +181,8 @@ Global
 		{9368B7BC-31DF-47A0-8C2B-FFAED986B074} = {33FD462D-4B12-4501-92BD-81095ACABC95}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		BuildVersion_StartDate = 2000/1/1
-		BuildVersion_BuildVersioningStyle = None.None.None.Increment
 		SolutionGuid = {02931AC6-E3AF-4E96-A144-EE9EE4BE10E7}
+		BuildVersion_BuildVersioningStyle = None.None.None.Increment
+		BuildVersion_StartDate = 2000/1/1
 	EndGlobalSection
 EndGlobal

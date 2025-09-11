@@ -69,11 +69,11 @@ namespace a2p.WinForm
             tplHeader.BackColor = Color.FromArgb(239, 112, 32);
             tplHeader.ColumnCount = 6;
             tplHeader.ColumnStyles.Add(new ColumnStyle());
-            tplHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 30F));
+            tplHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 45F));
             tplHeader.ColumnStyles.Add(new ColumnStyle());
             tplHeader.ColumnStyles.Add(new ColumnStyle());
             tplHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tplHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 250F));
+            tplHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 375F));
             tplHeader.Controls.Add(plNordanHeaderLogo, 5, 0);
             tplHeader.Controls.Add(lbHeader1, 0, 0);
             tplHeader.Controls.Add(lbHeader2, 1, 0);
@@ -81,14 +81,13 @@ namespace a2p.WinForm
             tplHeader.Controls.Add(lbHeader4, 4, 0);
             tplHeader.Dock = DockStyle.Top;
             tplHeader.Location = new Point(0, 0);
-            tplHeader.Margin = new Padding(2);
             tplHeader.Name = "tplHeader";
-            tplHeader.Padding = new Padding(2);
+            tplHeader.Padding = new Padding(3, 3, 3, 3);
             tplHeader.RowCount = 1;
-            tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 28F));
-            tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 21F));
-            tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 11F));
-            tplHeader.Size = new Size(970, 64);
+            tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
+            tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 32F));
+            tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 16F));
+            tplHeader.Size = new Size(1455, 96);
             tplHeader.TabIndex = 1;
             // 
             // plNordanHeaderLogo
@@ -96,11 +95,11 @@ namespace a2p.WinForm
             plNordanHeaderLogo.BackgroundImage = Resources.NordanLogoInversed;
             plNordanHeaderLogo.BackgroundImageLayout = ImageLayout.Zoom;
             plNordanHeaderLogo.Dock = DockStyle.Fill;
-            plNordanHeaderLogo.Location = new Point(718, 2);
+            plNordanHeaderLogo.Location = new Point(1077, 3);
             plNordanHeaderLogo.Margin = new Padding(0);
             plNordanHeaderLogo.Name = "plNordanHeaderLogo";
             tplHeader.SetRowSpan(plNordanHeaderLogo, 3);
-            plNordanHeaderLogo.Size = new Size(250, 60);
+            plNordanHeaderLogo.Size = new Size(375, 90);
             plNordanHeaderLogo.TabIndex = 11;
             // 
             // lbHeader1
@@ -111,11 +110,11 @@ namespace a2p.WinForm
             lbHeader1.Font = new Font("Segoe UI", 20F);
             lbHeader1.ForeColor = Color.FromArgb(248, 248, 249);
             lbHeader1.ImageAlign = ContentAlignment.TopRight;
-            lbHeader1.Location = new Point(5, 5);
-            lbHeader1.Margin = new Padding(3);
+            lbHeader1.Location = new Point(7, 7);
+            lbHeader1.Margin = new Padding(4, 4, 4, 4);
             lbHeader1.Name = "lbHeader1";
             tplHeader.SetRowSpan(lbHeader1, 2);
-            lbHeader1.Size = new Size(134, 43);
+            lbHeader1.Size = new Size(201, 66);
             lbHeader1.TabIndex = 6;
             lbHeader1.Text = "Aluminum";
             lbHeader1.TextAlign = ContentAlignment.MiddleRight;
@@ -128,11 +127,11 @@ namespace a2p.WinForm
             lbHeader2.FlatStyle = FlatStyle.Flat;
             lbHeader2.Font = new Font("Segoe UI Black", 30F, FontStyle.Bold);
             lbHeader2.ForeColor = Color.FromArgb(248, 248, 249);
-            lbHeader2.Location = new Point(145, 5);
-            lbHeader2.Margin = new Padding(3);
+            lbHeader2.Location = new Point(216, 7);
+            lbHeader2.Margin = new Padding(4, 4, 4, 4);
             lbHeader2.Name = "lbHeader2";
             tplHeader.SetRowSpan(lbHeader2, 2);
-            lbHeader2.Size = new Size(24, 43);
+            lbHeader2.Size = new Size(37, 66);
             lbHeader2.TabIndex = 7;
             lbHeader2.Text = "2";
             lbHeader2.TextAlign = ContentAlignment.MiddleCenter;
@@ -146,11 +145,11 @@ namespace a2p.WinForm
             lbHeader3.Font = new Font("Segoe UI", 16.125F, FontStyle.Bold);
             lbHeader3.ForeColor = Color.FromArgb(248, 248, 249);
             lbHeader3.ImageAlign = ContentAlignment.TopLeft;
-            lbHeader3.Location = new Point(175, 24);
-            lbHeader3.Margin = new Padding(3);
+            lbHeader3.Location = new Point(261, 39);
+            lbHeader3.Margin = new Padding(4, 4, 4, 4);
             lbHeader3.Name = "lbHeader3";
             tplHeader.SetRowSpan(lbHeader3, 3);
-            lbHeader3.Size = new Size(103, 35);
+            lbHeader3.Size = new Size(155, 50);
             lbHeader3.TabIndex = 4;
             lbHeader3.Text = "PrefSuite";
             lbHeader3.UseCompatibleTextRendering = true;
@@ -163,10 +162,10 @@ namespace a2p.WinForm
             lbHeader4.Font = new Font("Segoe UI", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 10, true);
             lbHeader4.ForeColor = Color.Transparent;
             lbHeader4.ImageAlign = ContentAlignment.TopLeft;
-            lbHeader4.Location = new Point(284, 5);
-            lbHeader4.Margin = new Padding(3);
+            lbHeader4.Location = new Point(424, 8);
+            lbHeader4.Margin = new Padding(4, 4, 4, 4);
             lbHeader4.Name = "lbHeader4";
-            lbHeader4.Size = new Size(32, 22);
+            lbHeader4.Size = new Size(48, 33);
             lbHeader4.TabIndex = 5;
             lbHeader4.Text = "v2.0";
             lbHeader4.TextAlign = ContentAlignment.BottomLeft;
@@ -180,8 +179,9 @@ namespace a2p.WinForm
             plTBPanel.Dock = DockStyle.Top;
             plTBPanel.ForeColor = Color.FromArgb(56, 57, 60);
             plTBPanel.Location = new Point(0, 0);
+            plTBPanel.Margin = new Padding(4, 4, 4, 4);
             plTBPanel.Name = "plTBPanel";
-            plTBPanel.Size = new Size(970, 0);
+            plTBPanel.Size = new Size(1455, 0);
             plTBPanel.TabIndex = 8;
             // 
             // miniToolStrip
@@ -205,10 +205,10 @@ namespace a2p.WinForm
             statusStrip.GripStyle = ToolStripGripStyle.Visible;
             statusStrip.ImageScalingSize = new Size(32, 32);
             statusStrip.Items.AddRange(new ToolStripItem[] { slbPathTitle, slbPathValue, slbDataSourceTitle, slbDataSourceValue });
-            statusStrip.Location = new Point(0, 523);
+            statusStrip.Location = new Point(0, 785);
             statusStrip.Name = "statusStrip";
-            statusStrip.Padding = new Padding(1, 0, 8, 0);
-            statusStrip.Size = new Size(970, 27);
+            statusStrip.Padding = new Padding(2, 0, 12, 0);
+            statusStrip.Size = new Size(1455, 40);
             statusStrip.TabIndex = 62;
             statusStrip.Text = "statusStrip";
             // 
@@ -219,7 +219,7 @@ namespace a2p.WinForm
             slbPathTitle.Margin = new Padding(6, 6, 0, 6);
             slbPathTitle.MergeIndex = 1;
             slbPathTitle.Name = "slbPathTitle";
-            slbPathTitle.Size = new Size(57, 15);
+            slbPathTitle.Size = new Size(90, 28);
             slbPathTitle.Text = "FilePath: ";
             slbPathTitle.TextAlign = ContentAlignment.MiddleLeft;
             // 
@@ -230,7 +230,7 @@ namespace a2p.WinForm
             slbPathValue.Margin = new Padding(0, 6, 6, 6);
             slbPathValue.MergeIndex = 1;
             slbPathValue.Name = "slbPathValue";
-            slbPathValue.Size = new Size(52, 15);
+            slbPathValue.Size = new Size(80, 28);
             slbPathValue.Text = "c:\\Temp";
             slbPathValue.TextAlign = ContentAlignment.MiddleLeft;
             // 
@@ -241,7 +241,7 @@ namespace a2p.WinForm
             slbDataSourceTitle.Margin = new Padding(6, 6, 0, 6);
             slbDataSourceTitle.MergeIndex = 2;
             slbDataSourceTitle.Name = "slbDataSourceTitle";
-            slbDataSourceTitle.Size = new Size(76, 15);
+            slbDataSourceTitle.Size = new Size(118, 28);
             slbDataSourceTitle.Text = "Data source:";
             slbDataSourceTitle.TextAlign = ContentAlignment.MiddleLeft;
             // 
@@ -252,7 +252,7 @@ namespace a2p.WinForm
             slbDataSourceValue.Margin = new Padding(0, 6, 6, 6);
             slbDataSourceValue.MergeIndex = 2;
             slbDataSourceValue.Name = "slbDataSourceValue";
-            slbDataSourceValue.Size = new Size(44, 15);
+            slbDataSourceValue.Size = new Size(68, 28);
             slbDataSourceValue.Text = "source";
             slbDataSourceValue.TextAlign = ContentAlignment.MiddleLeft;
             // 
@@ -266,9 +266,10 @@ namespace a2p.WinForm
             plSideBarMain.Controls.Add(btnLoad);
             plSideBarMain.Dock = DockStyle.Left;
             plSideBarMain.ForeColor = Color.Transparent;
-            plSideBarMain.Location = new Point(0, 64);
+            plSideBarMain.Location = new Point(0, 96);
+            plSideBarMain.Margin = new Padding(4, 4, 4, 4);
             plSideBarMain.Name = "plSideBarMain";
-            plSideBarMain.Size = new Size(127, 459);
+            plSideBarMain.Size = new Size(190, 689);
             plSideBarMain.TabIndex = 63;
             // 
             // btnProperties
@@ -281,9 +282,10 @@ namespace a2p.WinForm
             btnProperties.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
             btnProperties.ForeColor = Color.LightGray;
             btnProperties.ImageAlign = ContentAlignment.MiddleLeft;
-            btnProperties.Location = new Point(0, 120);
+            btnProperties.Location = new Point(0, 180);
+            btnProperties.Margin = new Padding(4, 4, 4, 4);
             btnProperties.Name = "btnProperties";
-            btnProperties.Size = new Size(127, 34);
+            btnProperties.Size = new Size(190, 51);
             btnProperties.TabIndex = 59;
             btnProperties.Text = "Properties";
             btnProperties.TextAlign = ContentAlignment.MiddleLeft;
@@ -300,9 +302,10 @@ namespace a2p.WinForm
             btnExit.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
             btnExit.ForeColor = Color.LightGray;
             btnExit.ImageAlign = ContentAlignment.MiddleLeft;
-            btnExit.Location = new Point(0, 419);
+            btnExit.Location = new Point(0, 629);
+            btnExit.Margin = new Padding(4, 4, 4, 4);
             btnExit.Name = "btnExit";
-            btnExit.Size = new Size(127, 40);
+            btnExit.Size = new Size(190, 60);
             btnExit.TabIndex = 57;
             btnExit.Text = "Exit Application";
             btnExit.TextAlign = ContentAlignment.MiddleLeft;
@@ -320,9 +323,10 @@ namespace a2p.WinForm
             btnLog.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
             btnLog.ForeColor = Color.LightGray;
             btnLog.ImageAlign = ContentAlignment.MiddleLeft;
-            btnLog.Location = new Point(0, 80);
+            btnLog.Location = new Point(0, 120);
+            btnLog.Margin = new Padding(4, 4, 4, 4);
             btnLog.Name = "btnLog";
-            btnLog.Size = new Size(127, 40);
+            btnLog.Size = new Size(190, 60);
             btnLog.TabIndex = 56;
             btnLog.Text = "Log Recods";
             btnLog.TextAlign = ContentAlignment.MiddleLeft;
@@ -340,9 +344,10 @@ namespace a2p.WinForm
             btnImport.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
             btnImport.ForeColor = Color.LightGray;
             btnImport.ImageAlign = ContentAlignment.MiddleLeft;
-            btnImport.Location = new Point(0, 40);
+            btnImport.Location = new Point(0, 60);
+            btnImport.Margin = new Padding(4, 4, 4, 4);
             btnImport.Name = "btnImport";
-            btnImport.Size = new Size(127, 40);
+            btnImport.Size = new Size(190, 60);
             btnImport.TabIndex = 55;
             btnImport.Text = "Import Files";
             btnImport.TextAlign = ContentAlignment.MiddleLeft;
@@ -360,8 +365,9 @@ namespace a2p.WinForm
             btnLoad.ForeColor = Color.LightGray;
             btnLoad.ImageAlign = ContentAlignment.MiddleLeft;
             btnLoad.Location = new Point(0, 0);
+            btnLoad.Margin = new Padding(4, 4, 4, 4);
             btnLoad.Name = "btnLoad";
-            btnLoad.Size = new Size(127, 40);
+            btnLoad.Size = new Size(190, 60);
             btnLoad.TabIndex = 54;
             btnLoad.Text = "Load Files";
             btnLoad.TextAlign = ContentAlignment.MiddleLeft;
@@ -375,19 +381,20 @@ namespace a2p.WinForm
             plFormContainer.BackColor = Color.Transparent;
             plFormContainer.Dock = DockStyle.Fill;
             plFormContainer.ForeColor = Color.Transparent;
-            plFormContainer.Location = new Point(127, 64);
-            plFormContainer.MinimumSize = new Size(5, 5);
+            plFormContainer.Location = new Point(190, 96);
+            plFormContainer.Margin = new Padding(4, 4, 4, 4);
+            plFormContainer.MinimumSize = new Size(8, 8);
             plFormContainer.Name = "plFormContainer";
-            plFormContainer.Size = new Size(843, 459);
+            plFormContainer.Size = new Size(1265, 689);
             plFormContainer.TabIndex = 64;
             // 
             // MainForm
             // 
-            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleDimensions = new SizeF(144F, 144F);
             AutoScaleMode = AutoScaleMode.Dpi;
             AutoValidate = AutoValidate.Disable;
             BackColor = Color.FromArgb(56, 57, 60);
-            ClientSize = new Size(970, 550);
+            ClientSize = new Size(1455, 825);
             Controls.Add(plFormContainer);
             Controls.Add(plSideBarMain);
             Controls.Add(statusStrip);
@@ -396,12 +403,12 @@ namespace a2p.WinForm
             DoubleBuffered = true;
             ForeColor = Color.FromArgb(56, 57, 60);
             Icon = (Icon)resources.GetObject("$this.Icon");
-            Margin = new Padding(2, 1, 2, 1);
+            Margin = new Padding(3, 2, 3, 2);
             MdiChildrenMinimizedAnchorBottom = false;
-            MinimumSize = new Size(320, 400);
+            MinimumSize = new Size(469, 572);
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "A2P v1.0.0.16";
+            Text = "A2P v1.0.0.17";
             WindowState = FormWindowState.Maximized;
             FormClosed += MainForm_FormClosed;
             Load += MainForm_Load;

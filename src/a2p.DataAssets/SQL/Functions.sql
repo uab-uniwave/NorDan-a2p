@@ -98,7 +98,7 @@ RETURNS nvarchar(50)
 AS
 BEGIN
 	DECLARE @SapaColor nvarchar(50)
-	SELECT TOP 1 @SapaColor ='SAPA_'+SapaLogicColor FROM Uniwave_a2p_ColorMapping Where TechDesignColor = @TechDesignColor 
+	SELECT TOP 1 @SapaColor ='SAPA_'+SapaLogicColor FROM Nordan_a2p_ColorMapping Where TechDesignColor = @TechDesignColor 
 	RETURN @SapaColor
 END
 GO

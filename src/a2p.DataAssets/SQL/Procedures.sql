@@ -1417,7 +1417,7 @@ BEGIN
 END
 GO
 
-CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_UpdateBCMapping]
+CREATE OR ALTER   PROCEDURE [dbo].[Uniwave_a2p_UpdateBCMapping]
 	-- Add the parameters for the stored procedure here
 	@ReferenceBase nvarchar(25), 
 	@Reference nvarchar(25), 
@@ -1449,7 +1449,7 @@ BEGIN
 	SELECT @PrefSuiteRowId = RowId From Materiales Where Referencia =@Reference
 	--Get old SAPA Color in case color is complex
  --============================================================================================
-	IF (@SourceColor1 IS NOT NULL and @SourceColor!='')
+	IF (ISNULL(@SourceColor1,'')!='' and ISNULL(@SourceColor,'')!='')
 	BEGIN 
 			SELECT TOP 1 @SapaColor1 = SapaLogicColor FROM NorDan_a2p_ColorMapping Where TechDesignColor = @SourceColor1
 			SELECT TOP 1 @SapaColor2 = SapaLogicColor FROM NorDan_a2p_ColorMapping Where TechDesignColor = @SourceColor2
@@ -1457,12 +1457,12 @@ BEGIN
 	END
 	--Get Old SAPA Color in case color is simple
  --============================================================================================
-	ELSE IF (@SourceColor1 IS NULL)
+	ELSE IF (ISNULL(@SourceColor1,'')='' )
 	
 	BEGIN
 	--Source color not empty
 	--=======================
-		IF(@SourceColor != '')
+		IF(ISNULL(@SourceColor,'') != '')
 		BEGIN 
 			SELECT TOP 1 @SapaColor = 'SAPA_'+SapaLogicColor FROM NorDan_a2p_ColorMapping Where TechDesignColor = @SourceColor
 		END
@@ -1546,6 +1546,7 @@ VALUES(@ReferenceBase
 	 ,ISNULL(@SapaExternalReference,@ExternalReference))
 
 END
+
 GO
 
 

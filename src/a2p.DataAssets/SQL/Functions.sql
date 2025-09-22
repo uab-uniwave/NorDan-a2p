@@ -1,10 +1,8 @@
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 CREATE OR ALTER FUNCTION [dbo].[Uniwave_a2p_GetColorConfiguration] 
 	(
@@ -45,6 +43,49 @@ BEGIN
 
 END
 GO
+
+	CREATE OR ALTER FUNCTION [dbo].[Uniwave_a2p_GetOrderState] 
+	(
+		-- Add the parameters for the function here
+		@Order NVARCHAR(50)
+	)
+	RETURNS INT
+	AS
+	BEGIN
+		-- Declare the return variable here
+		DECLARE @Status INT = 0
+		DECLARE @Number INT , @Version INT , @RowId UNIQUEIDENTIFIER 
+		
+		SELECT @Number=Numero , @Version = Version, @RowId=RowId FROM PAF WHERE Referencia =@Order
+
+		IF EXISTS(SELECT * FROM PAF WHERE Referencia = @Order )
+		SET @Status = @Status | 1;
+		
+		IF EXISTS(SELECT * FROM Uniwave_a2p_Items WHERE [Order] =  @Order and DeletedUTCDateTime IS NULL)
+		SET @Status = @Status | 2;
+		
+		IF EXISTS(SELECT * FROM Uniwave_a2p_Materials WHERE [Order] =  @Order and DeletedUTCDateTime IS NULL)
+		SET @Status = @Status | 4;
+		
+		IF EXISTS(SELECT * FROM ContenidoPAF WHERE [Numero]= @Number and [Version]= @Version)
+		SET @Status = @Status | 8;
+		
+		IF EXISTS(SELECT * FROM MaterialNeeds WHERE [Number]= @Number and [Version]= @Version)
+		SET @Status = @Status | 16;
+			
+		IF EXISTS (	SELECT Number, Numeration FROM Purchases WHERE DocumentId IN (
+		SELECT  DestDocumentId FROM dbo.DocumentRelationships WHERE SrcDocumentId=@RowId AND DestDocumentType =4))
+
+		SET @Status = @Status | 32;
+
+		RETURN @Status
+
+	END
+
+
+GO
+
+
 
 CREATE OR ALTER FUNCTION [dbo].[Uniwave_a2p_GetSalesDocumentState] 
 	(
@@ -103,7 +144,6 @@ BEGIN
 END
 GO
 
-
 CREATE OR ALTER FUNCTION [dbo].[Uniwave_a2p_GetSapaPrefsuiteReference] 
 (
 	-- Add the parameters for the function here
@@ -124,7 +164,6 @@ BEGIN
 
 END
 GO
-
 
 CREATE OR ALTER FUNCTION [dbo].[Uniwave_a2p_GetTechDesignCommodityCode]
 (
@@ -151,7 +190,6 @@ RETURN @Code
 
 END
 GO
-
 
 CREATE OR ALTER FUNCTION [dbo].[Uniwave_a2p_GetTechDesignWeight]
 (

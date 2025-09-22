@@ -323,7 +323,7 @@ namespace a2p.Shared.Application.Services
             }
 
         }
-        public async Task<A2PError?> DeleteSalesDocumentDataAsync(int number, int version)
+        public async Task<A2PError?> DeleteSalesDocumentDataAsync(int number, int version, bool deleteExisting)
         {
 
             if (number < 1 || version < 1)
@@ -344,6 +344,8 @@ namespace a2p.Shared.Application.Services
 
             try
             {
+                var delete = deleteExisting ? 1 : 0;
+
                 SqlCommand cmd = new()
                 {
                     CommandText = "[dbo].[Uniwave_a2p_DeleteExistingData]",
@@ -352,6 +354,7 @@ namespace a2p.Shared.Application.Services
 
                 _ = cmd.Parameters.AddWithValue("@SalesDocumentNumber", number);
                 _ = cmd.Parameters.AddWithValue("@SalesDocumentVersion", version);
+                _ = cmd.Parameters.AddWithValue("@DeleteExisting", delete);
 
                 int result = await _sqlRepository.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
 

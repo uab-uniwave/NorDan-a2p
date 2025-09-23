@@ -14,9 +14,11 @@ namespace a2p.Shared.Application.Domain.Entities
         //===================================================================================
         public SourceAppType SourceAppType { get; set; } = SourceAppType.TechDesign;
         //===================================================================================
+        public bool DeleteExistsing { get; set; } = true;
+        //===================================================================================
 
         public List<A2PFile> Files { get; set; } = [];
-        //===================================================================================
+        //===================================================================
         public List<ItemDTO> Items { get; set; } = [];
 
         public List<MaterialDTO> Materials { get; set; } = [];

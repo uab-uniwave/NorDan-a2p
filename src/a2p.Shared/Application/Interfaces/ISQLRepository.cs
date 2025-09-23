@@ -13,7 +13,7 @@ namespace a2p.Shared.Application.Interfaces
         Task<int> GetPrefSuiteColorConfigurationAsync(string color);
         Task<string?> GetSapaColorAsync(string color);
         //============================================================================================================================
-        Task<A2PError?> DeleteSalesDocumentDataAsync(int number, int version);
+        Task<A2PError?> DeleteSalesDocumentDataAsync(int number, int version, bool DeleteExisting);
         //============================================================================================================================
         Task<A2PError?> InsertPrefSuiteColorAsync(MaterialDTO materialDTO);
         Task<A2PError?> InsertPrefSuiteColorConfigurationAsync(MaterialDTO materialDTO);

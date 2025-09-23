@@ -133,8 +133,8 @@ namespace a2p.WinForm
                 _appSettings.Folders.ImportFailed = "Import_Failed";
                 _appSettings.Folders.ImportSuccess = "Import_Success";
                 _appSettings.Folders.Log = "Log";
-
                 _userSettingsService.SaveSettings(_appSettings);
+
 
             }
 
@@ -147,7 +147,9 @@ namespace a2p.WinForm
 
                 slbPathValue.Text = _appSettings.Folders.RootFolder;
                 statusStrip.SizingGrip = true;
-                this.PerformAutoScale(); // Ensure everything is scaled correctly (optional)
+
+
+
             }
 
             catch (Exception)
@@ -178,7 +180,7 @@ namespace a2p.WinForm
             }
             finally
             {
-
+                this.PerformAutoScale(); // Ensure everything is scaled correctly (optional)
                 PerformLayout(); // Resume layout updates
             }
         }

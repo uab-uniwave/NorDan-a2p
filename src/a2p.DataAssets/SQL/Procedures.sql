@@ -7,16 +7,21 @@ GO
 
 CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_DeleteExistingData]
 	@SalesDocumentNumber int, 
-	@SalesDocumentVersion int
+	@SalesDocumentVersion int,
+	@DeleteExisting int 
 AS
 BEGIN
 	
 	SET NOCOUNT ON;
 	UPDATE Uniwave_a2p_Items Set DeletedUTCDateTime = GETDATE() Where SalesDocumentNumber = @SalesDocumentNumber and SalesDocumentVersion = @SalesDocumentVersion
 	UPDATE Uniwave_a2p_Materials Set DeletedUTCDateTime = GETDATE() Where SalesDocumentNumber = @SalesDocumentNumber and SalesDocumentVersion = @SalesDocumentVersion
-	DELETE FROM ContenidoPAF Where Numero = @SalesDocumentNumber and [Version] = @SalesDocumentVersion
-	DELETE FROM MaterialNeeds Where Number = @SalesDocumentNumber and [Version] = @SalesDocumentVersion
-	DELETE FROM MaterialNeedsMaster Where Number = @SalesDocumentNumber and [Version] = @SalesDocumentVersion
+	
+	IF (@DeleteExisting = 1)
+	BEGIN
+		DELETE FROM ContenidoPAF Where Numero = @SalesDocumentNumber and [Version] = @SalesDocumentVersion
+		DELETE FROM MaterialNeeds Where Number = @SalesDocumentNumber and [Version] = @SalesDocumentVersion
+		DELETE FROM MaterialNeedsMaster Where Number = @SalesDocumentNumber and [Version] = @SalesDocumentVersion
+	END 
 	Update vwSales Set BreakdownDate =NULL Where Number=@SalesDocumentNumber and Version=@SalesDocumentVersion
 END
 GO
@@ -622,7 +627,7 @@ BEGIN
 		@ReferenceBase, -- ReferenciaBase - nchar(25)
 		@Reference, -- Referencia - nchar(25)
 		@Color, -- Color - nchar(50)
-		979,  -- Almacen - smallint
+		980,  -- Almacen - smallint
 		1,  -- UE1 - int
 		@PackageQuantity,  -- UE2 - int
 		1,  -- ControlDeStock - smallint
@@ -818,7 +823,7 @@ BEGIN
 
 
 	
-	IF NOT EXISTS (SELECT * FROM MaterialNeeds Where Number=@Number AND Version=@Version)
+	--IF NOT EXISTS (SELECT * FROM MaterialNeeds Where Number=@Number AND Version=@Version)
 	INSERT INTO dbo.MaterialNeeds
 	(
 		GUID,
@@ -893,7 +898,7 @@ SELECT
 		Round(Height,0), -- Height - real -- 
 		0.0, -- Volume - real -- 
 		ISNULL((SELECT TOP 1 MaterialSupplierCode FROM dbo.Materiales WHERE Referencia = Reference),979), -- ProviderCode - int -- 
-		ISNULL((SELECT TOP 1 Almacen FROM dbo.Materiales WHERE Referencia = Reference),979), -- WarehouseCode - smallint -- 
+		ISNULL((SELECT TOP 1 Almacen FROM dbo.Materiales WHERE Referencia = Reference),980), -- WarehouseCode - smallint -- 
 		 N'', -- XMLDoc - ntext -- 
 		
 		CASE WHEN (MaterialType = 2  OR MaterialType=3) AND RequiredQuantity <= (SELECT UP2/2 FROM Compras Where Proveedor=979 and APartir=1 and UP1=1 and ByDefault =1 and Referencia = Reference)   THEN 0
@@ -1115,123 +1120,6 @@ BEGIN
 END
 GO
 
-CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialPurchaseData] 
-	-- Add the parameters for the stored procedure here
-	@Reference NVARCHAR(25), 
-	@Package INT,
-	@Price decimal (38,6),
-	@Description NVARCHAR(255),
-	@Color NVARCHAR(50),
-	@SourceReference NVARCHAR(50),
-	@SourceColor NVARCHAR(50)
-
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-	/*If purchase data not exists, then insert it*/
-	
-
-	IF NOT EXISTS (SELECT * FROM COMPRAS WHERE Referencia =@Reference )
-	INSERT INTO dbo.Compras
-	(
-		Referencia,
-		Proveedor,
-		APartir,
-		UP1,
-		UP2,
-		FechaUltimaCompra,
-		PrecioUltimaCompra,
-		ReferenciaProveedor,
-		SupplierDescription,
-		Divisa,
-		FechaEVPrecioSC,
-		PrecioSC,
-		DivisaPrecioSC,
-		EntregaMedia,
-		CodigoEAN13,
-		DescripcionUP1,
-		DescripcionUP2,
-		ByDefault,
-		SchedulerTime,
-		ReorderingTime
-	)
-	VALUES
-	( @Reference, -- Referencia - nchar(25)
-		979,  -- Proveedor - int
-		1,  -- APartir - int
-		1,  -- UP1 - int
-		@Package, -- UP2 - float
-		GETDATE(), -- FechaUltimaCompra - datetime
-		ISNULL(@Price,0), --PrecioUltimaCompra - float
-		@SourceReference, -- ReferenciaProveedor - nchar(50)
-		ISNULL(@Description,@SourceReference) +' '+ @SourceColor, -- SupplierDescription - nvarchar(255)
-		N'NOK', -- Divisa - nchar(25)
-		NULL, -- FechaEVPrecioSC - datetime
-		0, -- PrecioSC - float
-		N'NOK', -- DivisaPrecioSC - nchar(25)
-		14,  -- EntregaMedia - int
-		N'', -- CodigoEAN13 - nchar(13)
-		N'', -- DescripcionUP1 - nvarchar(50)
-		N'', -- DescripcionUP2 - nvarchar(50)
-		1,  -- ByDefault - smallint
-		14,  -- SchedulerTime - int
-		0  -- ReorderingTime - int
-		)
-
-
-		DECLARE @ColorConfiguration INT, 
-				@Length FLOAT
-				
-
-			SELECT TOP 1 @ColorConfiguration = C.ConfigurationCode FROM dbo.ColorConfigurations C
-			INNER JOIN Materiales M ON C.ColorName=M.Color WHERE M.Referencia =@Reference
-
-			SELECT @Length = M.LongitudBarra FROM dbo.Perfiles P
-			INNER JOIN dbo.MaterialesBase MB ON P.ReferenciaBase=MB.ReferenciaBase
-			INNER JOIN Materiales M ON MB.ReferenciaBase=M.ReferenciaBase WHERE M.Referencia =@Reference
-
-
-		IF NOT EXISTS (SELECT * FROM dbo.MaterialLevels WHERE Reference=@Reference AND ColorConfiguration=@ColorConfiguration AND Warehouse=979 AND Length=ISNULL(@Length,0) AND Height=0)
-		INSERT INTO dbo.MaterialLevels
-		(
-			RowId,
-			Reference,
-			ColorConfiguration,
-			Warehouse,
-			Length,
-			Height,
-			Level1,
-			Level2
-		)
-		VALUES
-		( NEWID(), -- RowId - uniqueidentifier
-			@Reference, -- Reference - nchar(25)
-			@ColorConfiguration , -- ColorConfiguration - int
-			979, -- Warehouse - smallint
-			ISNULL(@Length,0) , -- Length - real
-			0.0, -- Height - real
-			0.0, -- Level1 - float
-			0.0 -- Level2 - float
-			)
-		
-		IF NOT EXISTS (SELECT * FROM ReferenceSuppliers WHERE Reference =@Reference )
-		INSERT INTO dbo.ReferenceSuppliers
-		(
-			Reference,
-			SupplierCode,
-			Percentage
-		)
-		VALUES
-		( @Reference, -- Reference - nchar(25)
-			979, -- SupplierCode - int
-			100 -- Percentage - float
-		)
-
-END
-GO
-
 CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPreSuiteMaterialSurface] 
 	-- Add the parameters for the stored procedure here
 	@ReferenceBase NVARCHAR(25),
@@ -1340,6 +1228,123 @@ BEGIN
 END
 GO
 
+CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialPurchaseData] 
+	-- Add the parameters for the stored procedure here
+	@Reference NVARCHAR(25), 
+	@Package INT,
+	@Price decimal (38,6),
+	@Description NVARCHAR(255),
+	@Color NVARCHAR(50),
+	@SourceReference NVARCHAR(50),
+	@SourceColor NVARCHAR(50)
+
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	/*If purchase data not exists, then insert it*/
+	
+
+	IF NOT EXISTS (SELECT * FROM COMPRAS WHERE Referencia =@Reference )
+	INSERT INTO dbo.Compras
+	(
+		Referencia,
+		Proveedor,
+		APartir,
+		UP1,
+		UP2,
+		FechaUltimaCompra,
+		PrecioUltimaCompra,
+		ReferenciaProveedor,
+		SupplierDescription,
+		Divisa,
+		FechaEVPrecioSC,
+		PrecioSC,
+		DivisaPrecioSC,
+		EntregaMedia,
+		CodigoEAN13,
+		DescripcionUP1,
+		DescripcionUP2,
+		ByDefault,
+		SchedulerTime,
+		ReorderingTime
+	)
+	VALUES
+	( @Reference, -- Referencia - nchar(25)
+		979,  -- Proveedor - int
+		1,  -- APartir - int
+		1,  -- UP1 - int
+		@Package, -- UP2 - float
+		GETDATE(), -- FechaUltimaCompra - datetime
+		ISNULL(@Price,0), --PrecioUltimaCompra - float
+		@SourceReference, -- ReferenciaProveedor - nchar(50)
+		ISNULL(@Description,@SourceReference) +' '+ @SourceColor, -- SupplierDescription - nvarchar(255)
+		N'NOK', -- Divisa - nchar(25)
+		NULL, -- FechaEVPrecioSC - datetime
+		0, -- PrecioSC - float
+		N'NOK', -- DivisaPrecioSC - nchar(25)
+		14,  -- EntregaMedia - int
+		N'', -- CodigoEAN13 - nchar(13)
+		N'', -- DescripcionUP1 - nvarchar(50)
+		N'', -- DescripcionUP2 - nvarchar(50)
+		1,  -- ByDefault - smallint
+		14,  -- SchedulerTime - int
+		0  -- ReorderingTime - int
+		)
+
+
+		DECLARE @ColorConfiguration INT, 
+				@Length FLOAT
+				
+
+			SELECT TOP 1 @ColorConfiguration = C.ConfigurationCode FROM dbo.ColorConfigurations C
+			INNER JOIN Materiales M ON C.ColorName=M.Color WHERE M.Referencia =@Reference
+
+			SELECT @Length = M.LongitudBarra FROM dbo.Perfiles P
+			INNER JOIN dbo.MaterialesBase MB ON P.ReferenciaBase=MB.ReferenciaBase
+			INNER JOIN Materiales M ON MB.ReferenciaBase=M.ReferenciaBase WHERE M.Referencia =@Reference
+
+
+		IF NOT EXISTS (SELECT * FROM dbo.MaterialLevels WHERE Reference=@Reference AND ColorConfiguration=@ColorConfiguration AND Warehouse=980 AND Length=ISNULL(@Length,0) AND Height=0)
+		INSERT INTO dbo.MaterialLevels
+		(
+			RowId,
+			Reference,
+			ColorConfiguration,
+			Warehouse,
+			Length,
+			Height,
+			Level1,
+			Level2
+		)
+		VALUES
+		( NEWID(), -- RowId - uniqueidentifier
+			@Reference, -- Reference - nchar(25)
+			@ColorConfiguration , -- ColorConfiguration - int
+			980, -- Warehouse - smallint
+			ISNULL(@Length,0) , -- Length - real
+			0.0, -- Height - real
+			0.0, -- Level1 - float
+			0.0 -- Level2 - float
+			)
+		
+		IF NOT EXISTS (SELECT * FROM ReferenceSuppliers WHERE Reference =@Reference )
+		INSERT INTO dbo.ReferenceSuppliers
+		(
+			Reference,
+			SupplierCode,
+			Percentage
+		)
+		VALUES
+		( @Reference, -- Reference - nchar(25)
+			979, -- SupplierCode - int
+			100 -- Percentage - float
+		)
+
+END
+GO
+
 CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertProvider] 
 	-- Add the parameters for the stored procedure here
 	@Code int = 979,
@@ -1372,9 +1377,41 @@ BEGIN
 END
 GO
 
+CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertSapaProvider] 
+	-- Add the parameters for the stored procedure here
+	@Code int = 988,
+	@Name NVARCHAR(60) =  N'SAPA V2',
+	@Currency NVARCHAR(25) = N'NOK'
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	-- Insert statements for procedure here
+	IF NOT EXISTS(SELECT * FROM dbo.Proveedores WHERE CodigoProveedor = @Code)
+	INSERT INTO dbo.Proveedores
+	(
+		RowId,
+		CodigoProveedor,
+		Nombre,
+		Divisa,
+		Divisa2
+		
+	)
+	VALUES
+	(   NEWID(),      -- RowId - uniqueidentifier
+		@Code,         -- CodigoProveedor - int
+		@Name,       -- Nombre - nvarchar(60)
+		@Currency,       -- Divisa - nchar(25)
+		@Currency       -- Divisa2 - nchar(25)
+		)
+END
+GO
+
 CREATE OR ALTER PROCEDURE[dbo].[Uniwave_a2p_InsertStock] 
 	-- Add the parameters for the stored procedure here
-	@Code INT =979, 
+	@Code INT =980, 
 	@ProviderCode INT = 979
 
 
@@ -1417,7 +1454,7 @@ BEGIN
 END
 GO
 
-CREATE OR ALTER   PROCEDURE [dbo].[Uniwave_a2p_UpdateBCMapping]
+CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_UpdateBCMapping]
 	-- Add the parameters for the stored procedure here
 	@ReferenceBase nvarchar(25), 
 	@Reference nvarchar(25), 
@@ -1546,10 +1583,6 @@ VALUES(@ReferenceBase
 	 ,ISNULL(@SapaExternalReference,@ExternalReference))
 
 END
-
 GO
-
-
-
 
 

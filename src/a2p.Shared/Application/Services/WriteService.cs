@@ -46,7 +46,7 @@ namespace a2p.Shared.Application.Services
                 _progressValue.ProgressTask3 = string.Empty;
                 _progress?.Report(_progressValue);
 
-                A2PError? deleteError = await _sqlRepository.DeleteSalesDocumentDataAsync(a2pOrder.SalesDocumentNumber, a2pOrder.SalesDocumentVersion);
+                A2PError? deleteError = await _sqlRepository.DeleteSalesDocumentDataAsync(a2pOrder.SalesDocumentNumber, a2pOrder.SalesDocumentVersion, a2pOrder.DeleteExistsing);
                 if (deleteError != null)
                 {
                     a2pOrder.ErrorsWrite.Add(deleteError);
@@ -155,31 +155,50 @@ namespace a2p.Shared.Application.Services
                             a2pOrder.ErrorsWrite.Add(errorPrefMaterial);
                             continue;
                         }
-                        A2PError? errorPrefProfile = await _sqlRepository.InsertPrefSuiteMaterialProfileAsync(a2pOrder.Materials[i]);
-                        if (errorPrefProfile != null)
+
+                        if (a2pOrder.Materials[i].MaterialType == MaterialType.Profiles)
                         {
-                            a2pOrder.ErrorsWrite.Add(errorPrefProfile);
-                            continue;
-                        }
-                        A2PError? errorPrefMeter = await _sqlRepository.InsertPrefSuiteMaterialMeterAsync(a2pOrder.Materials[i]);
-                        if (errorPrefMeter != null)
-                        {
-                            a2pOrder.ErrorsWrite.Add(errorPrefMeter);
-                            continue;
-                        }
-                        A2PError? errorPrefPiece = await _sqlRepository.InsertPrefSuiteMaterialPieceAsync(a2pOrder.Materials[i]);
-                        if (errorPrefPiece != null)
-                        {
-                            a2pOrder.ErrorsWrite.Add(errorPrefPiece);
-                            continue;
-                        }
-                        A2PError? errorPrefSurface = await _sqlRepository.InsertPrefSuiteMaterialSurfaceAsync(a2pOrder.Materials[i]);
-                        if (errorPrefSurface != null)
-                        {
-                            a2pOrder.ErrorsWrite.Add(errorPrefSurface);
-                            continue;
+                            A2PError? errorPrefProfile = await _sqlRepository.InsertPrefSuiteMaterialProfileAsync(a2pOrder.Materials[i]);
+                            if (errorPrefProfile != null)
+                            {
+                                a2pOrder.ErrorsWrite.Add(errorPrefProfile);
+                                continue;
+                            }
                         }
 
+                        if (a2pOrder.Materials[i].MaterialType == MaterialType.Gaskets)
+                        {
+                            A2PError? errorPrefMeter = await _sqlRepository.InsertPrefSuiteMaterialMeterAsync(a2pOrder.Materials[i]);
+                            if (errorPrefMeter != null)
+                            {
+                                a2pOrder.ErrorsWrite.Add(errorPrefMeter);
+                                continue;
+                            }
+
+                        }
+
+                        if (a2pOrder.Materials[i].MaterialType == MaterialType.Piece)
+                        {
+                            A2PError? errorPrefPiece = await _sqlRepository.InsertPrefSuiteMaterialPieceAsync(a2pOrder.Materials[i]);
+                            if (errorPrefPiece != null)
+                            {
+                                a2pOrder.ErrorsWrite.Add(errorPrefPiece);
+                                continue;
+                            }
+                        }
+
+
+                        if (a2pOrder.Materials[i].MaterialType == MaterialType.Glasses || a2pOrder.Materials[i].MaterialType == MaterialType.Panels)
+                        {
+
+                            A2PError? errorPrefSurface = await _sqlRepository.InsertPrefSuiteMaterialSurfaceAsync(a2pOrder.Materials[i]);
+                            if (errorPrefSurface != null)
+                            {
+                                a2pOrder.ErrorsWrite.Add(errorPrefSurface);
+                                continue;
+                            }
+
+                        }
 
                         if (a2pOrder.Materials[i].MaterialType != MaterialType.Glasses)
                         {
@@ -200,6 +219,7 @@ namespace a2p.Shared.Application.Services
                                 }
                             }
                         }
+
                     }
                     catch (Exception ex)
                     {

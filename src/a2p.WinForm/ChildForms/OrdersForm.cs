@@ -783,7 +783,7 @@ namespace a2p.WinForm.ChildForms
             try
             {
 
-                Dictionary<string, int> keyValuePairs = [];
+
                 for (int i = 0; i < dataGridViewFiles.Rows.Count; i++)
                 {
                     if ((bool)dataGridViewFiles.Rows[i].Cells["Import"].Value)
@@ -800,7 +800,39 @@ namespace a2p.WinForm.ChildForms
 
                                 if (CountReadExistsError(_a2pOrders[j]) > 0)
                                 {
-                                    keyValuePairs.Add(_a2pOrders[j].Order, i);
+
+                                    DialogResult result
+                                        = MessageBox.Show($"Order {_a2pOrders[j].Order} contains data!\n" +
+                               "\nYes - Positions and Material Needs will be deleted." +
+                               "\nNo - Positions and Material Needs will kept." +
+                               "\n         Attention!!! Positions and Material Needs could be duplicated!" +
+                               "\nCancel - Order will not be imported.", "Warning",
+                                                                 MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error);
+                                    if (result == DialogResult.Yes)
+                                    {
+                                        _a2pOrders[j].DeleteExistsing = true;
+
+
+
+                                    }
+                                    if (result == DialogResult.No)
+                                    {
+
+                                        _a2pOrders[j].DeleteExistsing = false;
+
+
+                                    }
+
+                                    if (result == DialogResult.Cancel)
+                                    {
+
+                                        dataGridViewFiles.Rows[i].Cells["Import"].Value = false;
+                                        importOrders.Remove(_a2pOrders[j]);
+
+                                    }
+
+
+
                                 }
 
                                 break;
@@ -813,148 +845,129 @@ namespace a2p.WinForm.ChildForms
 
                 }
 
-                bool cancel = OrdersToOverwrite(keyValuePairs);
-                if (cancel)
+
+
+                //ProgressBar. Create a new instance of the ProgressBarForm   
+                //=======================================================================================================
+                using ProgressBarForm progressBarForm = new()
+                {
+                    StartPosition = FormStartPosition.CenterParent // Set to center relative to parent
+                };
+                progressBarForm.Load += (sender, args) =>
+                {
+                    progressBarForm.Location = new Point(
+                        Location.X + ((Width - progressBarForm.Width) / 2),
+                        Location.Y + ((Height - progressBarForm.Height) / 2)
+                        );
+                    progressBarForm.progressBar.Style = ProgressBarStyle.Continuous;
+                    progressBarForm.progressBar.ForeColor = Color.FromArgb(239, 112, 32);
+                };
+
+                ProgressValue progressvalue = new ProgressValue();
+                Progress<ProgressValue> progress = new(progressBarForm.UpdateProgress);
+
+                int totalItems = importOrders.Sum(order => order.Items.Count);
+                int totalMaterials = importOrders.Sum(order => order.Materials.Count);
+                int totalOrders = importOrders.Count;
+
+                _progress = progress;
+                _progressValue = progressvalue;
+                _progressValue.ProgressTitle = "Importing Orders...";
+                _progressValue.ProgressTask1 = string.Empty;
+                _progressValue.ProgressTask2 = string.Empty;
+                _progressValue.ProgressTask3 = string.Empty;
+
+                _progressValue.TotalValue = totalItems * 20 + totalMaterials * 1 + totalOrders * 230 + 40;
+                _progressValue.CurrentValue = 0;
+                _progressValue.Value = 0;
+                _progressValue.MaxValue = 100;
+                _progressValue.MinValue = 0;
+
+
+
+
+                //20pts x1   single per import- order Form Preparing Import 
+
+
+                //30 pts x 1  per Order - Write Service  Deletig existinfg data
+
+                //100  x1 per Order - PrefsuiteService  Save Doc
+                //30 pts x 1  per Order - Write Service  inserting material needa
+                //100  x1 per Order - PrefsuiteService  Load Doc
+                //100  x1 per Item  - PrefsuiteService  Insert Item
+
+                //10pts. x 1 per  Item -  Write service -   Inserting data into DB
+                //1 pts x per material   Write service 
+
+
+
+
+
+
+
+                //20pts x1   single per import- order Form finishing
+
+                _progressValue.CurrentValue = _progressValue.CurrentValue + 30; //x20 / x1  
+                _progressValue.ProgressTitle = "Importing orders ... ";
+                _progressValue.ProgressTask1 = $"Orders Count {totalOrders} pending import";
+                _progressValue.ProgressTask2 = $"Items Count {totalItems} pending import";
+                _progressValue.ProgressTask3 = $"Orders Count {totalMaterials} pending import";
+                _progress?.Report(_progressValue);
+                progressBarForm.Show();
+
+
+                _progress?.Report(_progressValue);
+                _progressValue.ProgressTask1 = string.Empty;
+                _progressValue.ProgressTask2 = string.Empty;
+                _progressValue.ProgressTask3 = string.Empty;
+
+                for (int i = 0; i < importOrders.Count; i++)
                 {
 
-                    foreach (KeyValuePair<string, int> keyValuePair in keyValuePairs)
-                    {
-                        dataGridViewFiles.Rows[keyValuePair.Value].Cells["Import"].Value = false;
-                    }
+                    _progressValue.ProgressTask1 = $"Inserting Order {i + 1} of {importOrders.Count} - Order # {importOrders[i].Order} ({importOrders[i].SalesDocumentNumber}/{importOrders[i].SalesDocumentVersion})...";
+                    _progressValue.ProgressTask3 = string.Empty;
+                    progressBarForm.Show();
+                    var Result = await _writeService.WriteAsync(importOrders[i], _progressValue, _progress);
+
+
+                    var a2POrder = Result.Item1;
+                    _progressValue = Result.Item2;
+
+
+                    importOrders[i] = a2POrder;
 
                 }
-                else
-                {
-                    try
-                    {
-                        //ProgressBar. Create a new instance of the ProgressBarForm   
-                        //=======================================================================================================
-                        using ProgressBarForm progressBarForm = new()
-                        {
-                            StartPosition = FormStartPosition.CenterParent // Set to center relative to parent
-                        };
-                        progressBarForm.Load += (sender, args) =>
-                        {
-                            progressBarForm.Location = new Point(
-                                Location.X + ((Width - progressBarForm.Width) / 2),
-                                Location.Y + ((Height - progressBarForm.Height) / 2)
-                                );
-                            progressBarForm.progressBar.Style = ProgressBarStyle.Continuous;
-                            progressBarForm.progressBar.ForeColor = Color.FromArgb(239, 112, 32);
-                        };
 
-                        ProgressValue progressvalue = new ProgressValue();
-                        Progress<ProgressValue> progress = new(progressBarForm.UpdateProgress);
-
-                        int totalItems = importOrders.Sum(order => order.Items.Count);
-                        int totalMaterials = importOrders.Sum(order => order.Materials.Count);
-                        int totalOrders = importOrders.Count;
-
-                        _progress = progress;
-                        _progressValue = progressvalue;
-                        _progressValue.ProgressTitle = "Importing Orders...";
-                        _progressValue.ProgressTask1 = string.Empty;
-                        _progressValue.ProgressTask2 = string.Empty;
-                        _progressValue.ProgressTask3 = string.Empty;
-
-                        _progressValue.TotalValue = totalItems * 20 + totalMaterials * 1 + totalOrders * 230 + 40;
-                        _progressValue.CurrentValue = 0;
-                        _progressValue.Value = 0;
-                        _progressValue.MaxValue = 100;
-                        _progressValue.MinValue = 0;
-
-
-
-
-                        //20pts x1   single per import- order Form Preparing Import 
-
-
-                        //30 pts x 1  per Order - Write Service  Deletig existinfg data
-
-                        //100  x1 per Order - PrefsuiteService  Save Doc
-                        //30 pts x 1  per Order - Write Service  inserting material needa
-                        //100  x1 per Order - PrefsuiteService  Load Doc
-                        //100  x1 per Item  - PrefsuiteService  Insert Item
-
-                        //10pts. x 1 per  Item -  Write service -   Inserting data into DB
-                        //1 pts x per material   Write service 
+                await UpdateDatable(importOrders, 2);
 
 
 
 
 
-
-
-                        //20pts x1   single per import- order Form finishing
-
-                        _progressValue.CurrentValue = _progressValue.CurrentValue + 30; //x20 / x1  
-                        _progressValue.ProgressTitle = "Importing orders ... ";
-                        _progressValue.ProgressTask1 = $"Orders Count {totalOrders} pending import";
-                        _progressValue.ProgressTask2 = $"Items Count {totalItems} pending import";
-                        _progressValue.ProgressTask3 = $"Orders Count {totalMaterials} pending import";
-                        _progress?.Report(_progressValue);
-                        progressBarForm.Show();
-
-
-                        _progress?.Report(_progressValue);
-                        _progressValue.ProgressTask1 = string.Empty;
-                        _progressValue.ProgressTask2 = string.Empty;
-                        _progressValue.ProgressTask3 = string.Empty;
-
-                        for (int i = 0; i < importOrders.Count; i++)
-                        {
-
-                            _progressValue.ProgressTask1 = $"Inserting Order {i + 1} of {importOrders.Count} - Order # {importOrders[i].Order} ({importOrders[i].SalesDocumentNumber}/{importOrders[i].SalesDocumentVersion}...";
-                            _progressValue.ProgressTask3 = string.Empty;
-                            progressBarForm.Show();
-                            var Result = await _writeService.WriteAsync(importOrders[i], _progressValue, _progress);
-
-
-                            var a2POrder = Result.Item1;
-                            _progressValue = Result.Item2;
-
-
-                            importOrders[i] = a2POrder;
-
-                        }
-
-                        await UpdateDatable(importOrders, 2);
+                _progressValue.CurrentValue = _progressValue.CurrentValue + 20; //x20 /x2  
+                _progressValue.ProgressTitle = "Importing orders ... ";
+                _progressValue.ProgressTask1 = "Import Finished";
+                _progressValue.ProgressTask2 = string.Empty;
+                _progressValue.ProgressTask3 = string.Empty;
+                _progress?.Report(_progressValue);
 
 
 
-
-
-                        _progressValue.CurrentValue = _progressValue.CurrentValue + 20; //x20 /x2  
-                        _progressValue.ProgressTitle = "Importing orders ... ";
-                        _progressValue.ProgressTask1 = "Import Finished";
-                        _progressValue.ProgressTask2 = string.Empty;
-                        _progressValue.ProgressTask3 = string.Empty;
-                        _progress?.Report(_progressValue);
-
-
-
-                        progressBarForm.Close(); // TODO: on cancel overwrite should stay grid data
-                    }
-
-                    catch (Exception ex)
-                    {
-                        _logService.Error("Order Form: Unhandled error loading importing orders. Exception: {$Exception}.", ex.Message);
-                        _ = MessageBox.Show($"An Error occurred while loading the files." +
-                            $"{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    finally
-                    {
-                        dataGridViewFiles.ResumeLayout(false);
-                    }
-                }
+                progressBarForm.Close(); // TODO: on cancel overwrite should stay grid data
             }
+
             catch (Exception ex)
             {
-
-                _logService.Error("Order Form: Unhandled error setting Importing data. Exception: {$Exception}.", ex.Message);
-
+                _logService.Error("Order Form: Unhandled error loading importing orders. Exception: {$Exception}.", ex.Message);
+                _ = MessageBox.Show($"An Error occurred while loading the files." +
+                    $"{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                dataGridViewFiles.ResumeLayout(false);
             }
         }
+
         public async Task<OrderDTO> MapToReadOrderDTOAsync(A2POrder a2pOrder, int type)   // type 1 - read; 2 - write 
         {
             try
@@ -1161,34 +1174,6 @@ namespace a2p.WinForm.ChildForms
             return a2pOrder.ErrorsWrite.Count(error => error.Level is ErrorLevel.Warning or ErrorLevel.Error or ErrorLevel.Fatal);
         }
 
-        private bool OrdersToOverwrite(Dictionary<string, int> keyValuePairs)
-        {
-
-            if (keyValuePairs.Count == 0)
-            {
-                return false;
-            }
-
-            string orderlist = string.Join("\n", keyValuePairs.Keys);
-
-            string WarningMessage = $"The following Orders have already been imported and will be overwritten:\n\n{orderlist}\n\nDo you want to continue?";
-
-            DialogResult result = MessageBox.Show(WarningMessage, "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-            if (result == DialogResult.Yes)
-            {
-
-                return false;
-            }
-            else
-            {
-
-                for (int i = 0; i < keyValuePairs.Count; i++)
-                {
-                    dataGridViewFiles.Rows[keyValuePairs.ElementAt(i).Value].Cells["Import"].Value = false;
-                }
-                return true;
-            }
-        }
 
 
         private async Task UpdateDatable(List<A2POrder> a2pOrders, int type)

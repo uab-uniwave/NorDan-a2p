@@ -627,7 +627,7 @@ BEGIN
 		@ReferenceBase, -- ReferenciaBase - nchar(25)
 		@Reference, -- Referencia - nchar(25)
 		@Color, -- Color - nchar(50)
-		979,  -- Almacen - smallint
+		980,  -- Almacen - smallint
 		1,  -- UE1 - int
 		@PackageQuantity,  -- UE2 - int
 		1,  -- ControlDeStock - smallint
@@ -898,7 +898,7 @@ SELECT
 		Round(Height,0), -- Height - real -- 
 		0.0, -- Volume - real -- 
 		ISNULL((SELECT TOP 1 MaterialSupplierCode FROM dbo.Materiales WHERE Referencia = Reference),979), -- ProviderCode - int -- 
-		ISNULL((SELECT TOP 1 Almacen FROM dbo.Materiales WHERE Referencia = Reference),979), -- WarehouseCode - smallint -- 
+		ISNULL((SELECT TOP 1 Almacen FROM dbo.Materiales WHERE Referencia = Reference),980), -- WarehouseCode - smallint -- 
 		 N'', -- XMLDoc - ntext -- 
 		
 		CASE WHEN (MaterialType = 2  OR MaterialType=3) AND RequiredQuantity <= (SELECT UP2/2 FROM Compras Where Proveedor=979 and APartir=1 and UP1=1 and ByDefault =1 and Referencia = Reference)   THEN 0
@@ -1306,7 +1306,7 @@ BEGIN
 			INNER JOIN Materiales M ON MB.ReferenciaBase=M.ReferenciaBase WHERE M.Referencia =@Reference
 
 
-		IF NOT EXISTS (SELECT * FROM dbo.MaterialLevels WHERE Reference=@Reference AND ColorConfiguration=@ColorConfiguration AND Warehouse=979 AND Length=ISNULL(@Length,0) AND Height=0)
+		IF NOT EXISTS (SELECT * FROM dbo.MaterialLevels WHERE Reference=@Reference AND ColorConfiguration=@ColorConfiguration AND Warehouse=980 AND Length=ISNULL(@Length,0) AND Height=0)
 		INSERT INTO dbo.MaterialLevels
 		(
 			RowId,
@@ -1322,7 +1322,7 @@ BEGIN
 		( NEWID(), -- RowId - uniqueidentifier
 			@Reference, -- Reference - nchar(25)
 			@ColorConfiguration , -- ColorConfiguration - int
-			979, -- Warehouse - smallint
+			980, -- Warehouse - smallint
 			ISNULL(@Length,0) , -- Length - real
 			0.0, -- Height - real
 			0.0, -- Level1 - float
@@ -1411,7 +1411,7 @@ GO
 
 CREATE OR ALTER PROCEDURE[dbo].[Uniwave_a2p_InsertStock] 
 	-- Add the parameters for the stored procedure here
-	@Code INT =979, 
+	@Code INT =980, 
 	@ProviderCode INT = 979
 
 

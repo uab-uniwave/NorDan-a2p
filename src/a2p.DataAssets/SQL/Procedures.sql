@@ -522,6 +522,43 @@ GO
 
 -- Insert Order Material Needs 
 --==============================================================================
+CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialNeedsMaster]
+	@Number int, 
+	@Version int
+AS
+BEGIN
+DELETE FROM dbo.MaterialNeedsMaster	Where Number=@Number and [Version] =@Version
+INSERT INTO dbo.MaterialNeedsMaster
+(
+	[dbo].[Number],
+	[dbo].[Version],
+	[dbo].[ProductionSet],
+	[dbo].[ReproductionNeedsCode],
+	[dbo].[MNSet],
+	[dbo].[CalculationDate],
+	[dbo].[Obsolete],
+	[dbo].[Description],
+	[dbo].[Discounted],
+	[dbo].[TypeMNSet],
+	[dbo].[ComponentsAssemblyUTCDate],
+	[dbo].[CalculationUTCDate]
+)
+ VALUES (@Number,  -- Number - int
+		@Version,  -- Version - int
+	 -1,  -- ProductionSet - int
+	 -1,  -- ReproductionNeedsCode - int
+	 1,  -- MNSet - smallint
+	 GETDATE(), -- CalculationDate - datetime
+	 0,  -- Obsolete - smallint
+	 N'1.- ' +CAST (GETDATE() AS NVARCHAR(16)) , -- Description - nvarchar(50)
+	 0,  -- Discounted - smallint
+	 1,  -- TypeMNSet - smallint
+	 NULL, -- ComponentsAssemblyUTCDate - datetime
+	 GETUTCDATE() -- CalculationUTCDate - datetime
+	 )
+END
+GO
+
 CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialNeeds] 
 	-- Add the parameters for the stored procedure here
 	@Number INT, 
@@ -619,7 +656,8 @@ SELECT
 		
 		
 
-		CASE WHEN MaterialType = 2  OR MaterialType=3 THEN CEILING(RequiredQuantity)  
+		CASE WHEN MaterialType = 1 THEN Quantity  
+		WHEN MaterialType = 2  OR MaterialType=3 THEN CEILING(RequiredQuantity)  
 		ELSE TotalQuantity END, 	-- QuantityToOrder
 		
 		RequiredQuantity, -- QuantityToDiscount,
@@ -644,42 +682,6 @@ Update vwSales Set BreakdownDate =GETDATE() Where Number=@Number and Version=@Ve
 END
 GO
 
-CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialNeedsMaster]
-	@Number int, 
-	@Version int
-AS
-BEGIN
-DELETE FROM dbo.MaterialNeedsMaster	Where Number=@Number and [Version] =@Version
-INSERT INTO dbo.MaterialNeedsMaster
-(
-	[dbo].[Number],
-	[dbo].[Version],
-	[dbo].[ProductionSet],
-	[dbo].[ReproductionNeedsCode],
-	[dbo].[MNSet],
-	[dbo].[CalculationDate],
-	[dbo].[Obsolete],
-	[dbo].[Description],
-	[dbo].[Discounted],
-	[dbo].[TypeMNSet],
-	[dbo].[ComponentsAssemblyUTCDate],
-	[dbo].[CalculationUTCDate]
-)
- VALUES (@Number,  -- Number - int
-		@Version,  -- Version - int
-	 -1,  -- ProductionSet - int
-	 -1,  -- ReproductionNeedsCode - int
-	 1,  -- MNSet - smallint
-	 GETDATE(), -- CalculationDate - datetime
-	 0,  -- Obsolete - smallint
-	 N'1.- ' +CAST (GETDATE() AS NVARCHAR(16)) , -- Description - nvarchar(50)
-	 0,  -- Discounted - smallint
-	 1,  -- TypeMNSet - smallint
-	 NULL, -- ComponentsAssemblyUTCDate - datetime
-	 GETUTCDATE() -- CalculationUTCDate - datetime
-	 )
-END
-GO
 
 
 -- Insert Order Navision codes

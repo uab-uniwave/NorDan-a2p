@@ -401,7 +401,7 @@ namespace a2p.WinForm
             MinimumSize = new Size(318, 394);
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "A2P v1.0.0.18";
+            Text = "A2P v1.0.0.19";
             WindowState = FormWindowState.Maximized;
             FormClosed += MainForm_FormClosed;
             Load += MainForm_Load;

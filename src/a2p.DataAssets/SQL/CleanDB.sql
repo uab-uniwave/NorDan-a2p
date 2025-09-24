@@ -24,9 +24,8 @@ DELETE FROM ReferenceSuppliers WHERE SupplierCode = 988
 
 
 --Attention NavisionCodes and UniwaveApi_Mapping
-
---DELETE FROM NavisionCodes WHERE  PrefsuiteReference NOT IN (SELECT Referencia FROM Materiales)	
---DELETE FROM UniwaveApi_Mapping WHERE PrefsuiteReference NOT IN (SELECT Referencia FROM Materiales)	 and EntityType = 1
+DELETE FROM NavisionCodes WHERE  PrefsuiteReference NOT IN (SELECT Referencia FROM Materiales)	
+DELETE FROM UniwaveApi_Mapping WHERE PrefsuiteReference NOT IN (SELECT Referencia FROM Materiales)	 and EntityType = 1
 
 DELETE FROM MaterialLevels WHERE Reference NOT IN (SELECT Referencia FROM Materiales)
 DELETE FROM Uniwave_a2p_ReferenceMappingLog

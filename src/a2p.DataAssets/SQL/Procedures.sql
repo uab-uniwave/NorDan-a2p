@@ -5,6 +5,91 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+-- Insert Provider and Stock 
+--==============================================================================
+CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertProvider] 
+	-- Add the parameters for the stored procedure here
+	@Code int = 979,
+	@Name NVARCHAR(60) = N'SAPA SWEDEN',
+	@Currency NVARCHAR(25) = N'NOK'
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	-- Insert statements for procedure here
+	IF NOT EXISTS(SELECT * FROM dbo.Proveedores WHERE CodigoProveedor = @Code)
+	INSERT INTO dbo.Proveedores
+	(
+		RowId,
+		CodigoProveedor,
+		Nombre,
+		Divisa,
+		Divisa2
+		
+	)
+	VALUES
+	( NEWID(), -- RowId - uniqueidentifier
+		@Code,  -- CodigoProveedor - int
+		@Name, -- Nombre - nvarchar(60)
+		@Currency, -- Divisa - nchar(25)
+		@Currency -- Divisa2 - nchar(25)
+		)
+END
+GO
+
+CREATE OR ALTER PROCEDURE[dbo].[Uniwave_a2p_InsertStock] 
+	-- Add the parameters for the stored procedure here
+	@Code INT =980, 
+	@ProviderCode INT = 979
+
+
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+		IF NOT EXISTS (SELECT * FROM dbo.Almacenes WHERE Codigo =@Code)
+		INSERT INTO dbo.Almacenes
+		(
+			Codigo,
+			Descripcion,
+			Externo,
+			ProviderCode,
+			Address,
+			Address2,
+			City,
+			PostalCode,
+			County,
+			Country,
+			UsedInMRP,
+			Kind
+		)
+		VALUES
+		( @Code, -- Codigo - smallint
+			N'TechDesign', -- Descripcion - nvarchar(60)
+			0, -- Externo - smallint
+			@ProviderCode, -- ProviderCode - int
+			N'', -- Address - nvarchar(60)
+			N'', -- Address2 - nvarchar(60)
+			N'', -- City - nvarchar(60)
+			N'', -- PostalCode - nvarchar(25)
+			N'', -- County - nvarchar(60)
+			N'', -- Country - nvarchar(50)
+			1, -- UsedInMRP - smallint
+			0 -- Kind - smallint
+			)
+END
+GO
+
+
+
+-- Insert Order and materials of order into A2P tables
+--==============================================================================
+
 CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_DeleteExistingData]
 	@SalesDocumentNumber int, 
 	@SalesDocumentVersion int,
@@ -434,6 +519,304 @@ BEGIN
 END;
 GO
 
+
+-- Insert Order Material Needs 
+--==============================================================================
+CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialNeeds] 
+	-- Add the parameters for the stored procedure here
+	@Number INT, 
+	@Version INT
+
+
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+
+	
+	--IF NOT EXISTS (SELECT * FROM MaterialNeeds Where Number=@Number AND Version=@Version)
+	INSERT INTO dbo.MaterialNeeds
+	(
+		GUID,
+		Number,
+		Version,
+		ProductionSet,
+		ReproductionNeedsCode,
+		MNSet,
+		Position,
+		SquareId,
+		HoleId,
+		ElementId,
+		MaterialType,
+		Complex,
+		Reference,
+		ColorConfiguration,
+		RawMaterialColorConfiguration,
+		RawReference,
+		Quantity,
+		Length,
+		Height,
+		Volume,
+		ProviderCode,
+		WarehouseCode,
+		XMLDoc,
+		AllowToOrder,
+		QuantityToOrder,
+		QuantityToDiscount,
+		DiscountedQuantity,
+		ReservedQuantity,
+		IsCopy,
+		FromNumber,
+		FromVersion,
+		TargetLevel,
+		Unmounted,
+		ProductTypeCode,
+		CustomLengthType,
+		DeltaQuantity,
+		OrderComponents,
+		Weight
+	)
+
+
+SELECT
+		NEWID(), -- GUID - uniqueidentifier -- 
+		SalesDocumentNumber, -- Number - int -- 
+		SalesDocumentVersion, -- Version - int -- 
+		-1, -- ProductionSet - int -- 
+		-1, -- ReproductionNeedsCode - int -- 
+		 1, -- MNSet - smallint -- 
+		-1, -- Position - int -- 
+		-1, -- SquareId - int -- 
+		-1, -- HoleId - int -- 
+		CASE WHEN MaterialType = '5' THEN 'G'+RTRIM(CAST(SortOrder AS NVARCHAR(9))) -- 
+			 ELSE '' -- 
+			 END, -- 
+		CASE WHEN MaterialType = 1 THEN 1 -- Profiles - Barras --
+			 WHEN MaterialType = 2 THEN 3 -- Gaskets - Metros --
+			 WHEN MaterialType = 3 THEN 2 -- Piece - Piezas --
+			 WHEN MaterialType = 4 THEN 4 -- Panels - Superficies --
+			 WHEN MaterialType = 5 THEN 4 -- Glass - Superficies --	
+			 END, -- TipoCalculo - nchar(15), -- MaterialType - smallint -- 
+		0, -- Complex - smallint -- 
+		Reference, -- Reference - nchar(25) -- 
+		(dbo.Uniwave_a2p_GetColorConfiguration(Uniwave_a2p_Materials.Color)), -- colorConfiguration int
+		0, -- RawMaterialColorConfiguration - int -- 
+		N'', -- RawReference - nchar(25) -- 
+		CASE WHEN MaterialType = 1   THEN Quantity  
+		     WHEN MaterialType = 2  OR MaterialType=3 THEN CEILING(RequiredQuantity)  
+		ELSE TotalQuantity END, --float -- 
+		Round(Width,0), -- Length - real -- 
+		Round(Height,0), -- Height - real -- 
+		0.0, -- Volume - real -- 
+		ISNULL((SELECT TOP 1 MaterialSupplierCode FROM dbo.Materiales WHERE Referencia = Reference),979), -- ProviderCode - int -- 
+		ISNULL((SELECT TOP 1 Almacen FROM dbo.Materiales WHERE Referencia = Reference),980), -- WarehouseCode - smallint -- 
+		 N'', -- XMLDoc - ntext -- 
+		
+		CASE WHEN (MaterialType = 2  OR MaterialType=3) AND RequiredQuantity <= (SELECT UP2/2 FROM Compras Where Proveedor=979 and APartir=1 and UP1=1 and ByDefault =1 and Referencia = Reference)   THEN 0
+		ELSE 1 END, -- AllowToOrder,
+		
+		
+
+		CASE WHEN MaterialType = 2  OR MaterialType=3 THEN CEILING(RequiredQuantity)  
+		ELSE TotalQuantity END, 	-- QuantityToOrder
+		
+		RequiredQuantity, -- QuantityToDiscount,
+
+		
+		0.0, -- DiscountedQuantity - float -- 
+		0.0, -- ReservedQuantity - float -- 
+		0, -- IsCopy - smallint -- 
+		0, -- FromNumber - int -- 
+		0, -- FromVersion - int -- 
+		1, -- TargetLevel - int -- 
+		0, -- Unmounted - smallint -- 
+		0, -- ProductTypeCode - int -- 
+		0, -- CustomLengthType - smallint -- 
+		0.0, -- DeltaQuantity - float -- 
+		0, -- OrderComponents - smallint -- 
+		TotalWeight -- Weight - float -- 
+	 
+FROM Uniwave_a2p_Materials Where SalesDocumentNumber = @Number and SalesDocumentVersion =@Version and DeletedUTCDateTime is null
+Update vwSales Set BreakdownDate =GETDATE() Where Number=@Number and Version=@Version	
+
+END
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialNeedsMaster]
+	@Number int, 
+	@Version int
+AS
+BEGIN
+DELETE FROM dbo.MaterialNeedsMaster	Where Number=@Number and [Version] =@Version
+INSERT INTO dbo.MaterialNeedsMaster
+(
+	[dbo].[Number],
+	[dbo].[Version],
+	[dbo].[ProductionSet],
+	[dbo].[ReproductionNeedsCode],
+	[dbo].[MNSet],
+	[dbo].[CalculationDate],
+	[dbo].[Obsolete],
+	[dbo].[Description],
+	[dbo].[Discounted],
+	[dbo].[TypeMNSet],
+	[dbo].[ComponentsAssemblyUTCDate],
+	[dbo].[CalculationUTCDate]
+)
+ VALUES (@Number,  -- Number - int
+		@Version,  -- Version - int
+	 -1,  -- ProductionSet - int
+	 -1,  -- ReproductionNeedsCode - int
+	 1,  -- MNSet - smallint
+	 GETDATE(), -- CalculationDate - datetime
+	 0,  -- Obsolete - smallint
+	 N'1.- ' +CAST (GETDATE() AS NVARCHAR(16)) , -- Description - nvarchar(50)
+	 0,  -- Discounted - smallint
+	 1,  -- TypeMNSet - smallint
+	 NULL, -- ComponentsAssemblyUTCDate - datetime
+	 GETUTCDATE() -- CalculationUTCDate - datetime
+	 )
+END
+GO
+
+
+-- Insert Order Navision codes
+--==============================================================================
+CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_UpdateBCMapping]
+	-- Add the parameters for the stored procedure here
+	@ReferenceBase nvarchar(25), 
+	@Reference nvarchar(25), 
+	@SourceReference nvarchar(50), 
+	@SourceColor nvarchar(50), 
+	@SourceColor1 nvarchar(50), 
+	@SourceColor2 nvarchar(50)
+	
+AS
+BEGIN
+Declare @SapaReferenceBase nvarchar(25),
+		@SapaReference nvarchar(25),
+		@SapaColor nvarchar(50),
+		@SapaColor1 nvarchar(50),
+		@SapaColor2 nvarchar(50),
+		@SapaExternalReference nvarchar(50),
+		@ExternalReference nvarchar(50),
+		@SapaPrefSuiteRowId uniqueidentifier,
+		@PrefSuiteRowId uniqueidentifier,
+		@ExternalRowId uniqueidentifier
+
+--SAPA
+--==============================================================================================================
+IF (LEFT(@SourceReference, 1) = 'S')
+BEGIN
+	--Get old SAPA ReferenceBase
+	--=============================================================
+	SET @SapaReferenceBase = 'SAPA_'+SUBSTRING(@SourceReference,2,LEN(@SourceReference))
+	SELECT @PrefSuiteRowId = RowId From Materiales Where Referencia =@Reference
+	--Get old SAPA Color in case color is complex
+ --============================================================================================
+	IF (ISNULL(@SourceColor1,'')!='' and ISNULL(@SourceColor,'')!='')
+	BEGIN 
+			SELECT TOP 1 @SapaColor1 = SapaLogicColor FROM NorDan_a2p_ColorMapping Where TechDesignColor = @SourceColor1
+			SELECT TOP 1 @SapaColor2 = SapaLogicColor FROM NorDan_a2p_ColorMapping Where TechDesignColor = @SourceColor2
+			SELECT @SapaColor = 'SAPA_' +@SapaColor1+'/'+@SapaColor2
+	END
+	--Get Old SAPA Color in case color is simple
+ --============================================================================================
+	ELSE IF (ISNULL(@SourceColor1,'')='' )
+	
+	BEGIN
+	--Source color not empty
+	--=======================
+		IF(ISNULL(@SourceColor,'') != '')
+		BEGIN 
+			SELECT TOP 1 @SapaColor = 'SAPA_'+SapaLogicColor FROM NorDan_a2p_ColorMapping Where TechDesignColor = @SourceColor
+		END
+ 
+ 
+	--Source color is empty
+	--=======================
+		ELSE
+		BEGIN
+			SET @SapaColor = 'SAPA_NoColor'
+		END
+	END 
+	
+
+ --Get Old SAPA Reference
+ --============================================================================================
+	SELECT @SapaReference = Referencia From Materiales MT inner Join MaterialesBase MB ON MB.ReferenciaBase = MT.ReferenciaBase and Nivel1 = '980 SAPA'
+	Where MB.ReferenciaBase = @SapaReferenceBase and MT.Color =@SapaColor 
+	
+	--Get External Reference, and RowId 
+ --============================================================================================
+	SELECT TOP 1 @SapaPrefSuiteRowId = @PrefSuiteRowId, @SapaExternalReference=ExternalReference, @ExternalRowId =ExternalRowId From UniwaveApi_Mapping Where EntityType = 1 and PrefSuiteReference = @SapaReference and PrefSuiteRowId is not null
+END
+
+
+--Not SAPA (for Example ASSA)
+--==============================================================================================================--
+ELSE 
+	BEGIN
+	SELECT @SapaReference = Referencia From Materiales MT 
+	inner Join MaterialesBase MB ON MB.ReferenciaBase = MT.ReferenciaBase and Nivel1 = '980 SAPA'
+	Where MT.Referencia = @Reference
+	SELECT TOP 1 @SapaPrefSuiteRowId = PrefSuiteRowId, @SapaExternalReference=ExternalReference, @ExternalRowId =ExternalRowId From UniwaveApi_Mapping Where EntityType = 1 and PrefSuiteReference = @SapaReference and PrefSuiteRowId is not null
+END
+
+ DECLARE @Max INT 
+	SELECT @Max = MAX(CAST(SUBSTRING(ExternalReference,5,16)AS INT)) FROM UniwaveApi_Mapping Where EntityType = 1 and LEN(ExternalReference)=10
+	SET @ExternalReference = 'ALU_'+RTRIM(CAST(@MAx+1 AS NVARCHAR(10))) 
+
+
+IF (@SapaExternalReference IS NOT NULL AND @Reference != @SapaReference)
+BEGIN 
+	Insert Into UniwaveApi_Mapping (RowId, ExternalSourceName, EntityType, PrefSuiteRowId, ExternalRowId, PrefSuiteReference, ExternalReference, CreationDate, LastModifiedDate)
+VALUES (NewId(), 'BC', 1, @PrefSuiteRowId, @ExternalRowId, @Reference, @SapaExternalReference, GetDAte(), GetDate() )
+END 
+ELSE IF (@SapaExternalReference IS NULL)
+BEGIN 
+ 
+	Insert Into UniwaveApi_Mapping (RowId, ExternalSourceName, EntityType, PrefSuiteRowId, PrefSuiteReference, ExternalReference, CreationDate, LastModifiedDate)
+	VALUES (NewId(), 'BC', 1, @PrefSuiteRowId, @Reference, 'ALU_'+RTRIM(CAST(@MAx+1 AS NVARCHAR(10))) , GetDAte(), GetDate())
+ 
+END
+
+
+
+IF (NOT EXISTS (SELECT * FROM Uniwave_a2p_ReferenceMappingLog Where Reference =@Reference))
+Insert Into Uniwave_a2p_ReferenceMappingLog
+	( [RefereNceBase]
+	 ,[Reference]
+	 ,[SourceReference]
+	 ,[SourceColor]
+	 ,[SourceColor1]
+	 ,[SourceColor2]
+	 ,[SapaReferenceBase]
+	 ,[SapaReference]
+	 ,[SapaColor]
+	 ,[SapaColor1]
+	 ,[SapaColor2]
+	 ,[ExternalReference])
+VALUES(@ReferenceBase 
+	 ,@Reference
+	 ,@SourceReference
+	 ,@SourceColor
+	 ,@SourceColor1
+	 ,@SourceColor2
+	 ,@SapaReferenceBase
+	 ,@SapaReference
+	 ,@SapaColor
+	 ,@SapaColor1
+	 ,@SapaColor2
+	 ,ISNULL(@SapaExternalReference,@ExternalReference))
+
+END
+GO
+
+-- Insert Colors nto PrefSuite DB
+--==============================================================================
 CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteColor] 
 	
 	@Color nvarchar(50), 
@@ -583,6 +966,9 @@ BEGIN
 END
 GO
 
+
+-- Insert Materials into Main PrefSuite DB tables 
+--==============================================================================
 CREATE OR ALTER PROCEDURE[dbo].[Uniwave_a2p_InsertPrefSuiteMaterial] 
 	@ReferenceBase NVARCHAR(25),
 	@Reference NVARCHAR(25),
@@ -775,6 +1161,9 @@ BEGIN
 END
 GO
 
+
+-- Insert Materials technical details into PrefSuite DB tables 
+--==============================================================================
 CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialMeter] 
 
 	@ReferenceBase NVARCHAR(25),
@@ -807,165 +1196,6 @@ BEGIN
 		)
 	END
 	END
-GO
-
-CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialNeeds] 
-	-- Add the parameters for the stored procedure here
-	@Number INT, 
-	@Version INT
-
-
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-
-	
-	--IF NOT EXISTS (SELECT * FROM MaterialNeeds Where Number=@Number AND Version=@Version)
-	INSERT INTO dbo.MaterialNeeds
-	(
-		GUID,
-		Number,
-		Version,
-		ProductionSet,
-		ReproductionNeedsCode,
-		MNSet,
-		Position,
-		SquareId,
-		HoleId,
-		ElementId,
-		MaterialType,
-		Complex,
-		Reference,
-		ColorConfiguration,
-		RawMaterialColorConfiguration,
-		RawReference,
-		Quantity,
-		Length,
-		Height,
-		Volume,
-		ProviderCode,
-		WarehouseCode,
-		XMLDoc,
-		AllowToOrder,
-		QuantityToOrder,
-		QuantityToDiscount,
-		DiscountedQuantity,
-		ReservedQuantity,
-		IsCopy,
-		FromNumber,
-		FromVersion,
-		TargetLevel,
-		Unmounted,
-		ProductTypeCode,
-		CustomLengthType,
-		DeltaQuantity,
-		OrderComponents,
-		Weight
-	)
-
-
-SELECT
-		NEWID(), -- GUID - uniqueidentifier -- 
-		SalesDocumentNumber, -- Number - int -- 
-		SalesDocumentVersion, -- Version - int -- 
-		-1, -- ProductionSet - int -- 
-		-1, -- ReproductionNeedsCode - int -- 
-		 1, -- MNSet - smallint -- 
-		-1, -- Position - int -- 
-		-1, -- SquareId - int -- 
-		-1, -- HoleId - int -- 
-		CASE WHEN MaterialType = '5' THEN 'G'+RTRIM(CAST(SortOrder AS NVARCHAR(9))) -- 
-			 ELSE '' -- 
-			 END, -- 
-		CASE WHEN MaterialType = 1 THEN 1 -- Profiles - Barras --
-			 WHEN MaterialType = 2 THEN 3 -- Gaskets - Metros --
-			 WHEN MaterialType = 3 THEN 2 -- Piece - Piezas --
-			 WHEN MaterialType = 4 THEN 4 -- Panels - Superficies --
-			 WHEN MaterialType = 5 THEN 4 -- Glass - Superficies --	
-			 END, -- TipoCalculo - nchar(15), -- MaterialType - smallint -- 
-		0, -- Complex - smallint -- 
-		Reference, -- Reference - nchar(25) -- 
-		(dbo.Uniwave_a2p_GetColorConfiguration(Uniwave_a2p_Materials.Color)), -- colorConfiguration int
-		0, -- RawMaterialColorConfiguration - int -- 
-		N'', -- RawReference - nchar(25) -- 
-		
-		CASE WHEN MaterialType = 2  OR MaterialType=3 THEN CEILING(RequiredQuantity)  
-		ELSE TotalQuantity END, --float -- 
-		Round(Width,0), -- Length - real -- 
-		Round(Height,0), -- Height - real -- 
-		0.0, -- Volume - real -- 
-		ISNULL((SELECT TOP 1 MaterialSupplierCode FROM dbo.Materiales WHERE Referencia = Reference),979), -- ProviderCode - int -- 
-		ISNULL((SELECT TOP 1 Almacen FROM dbo.Materiales WHERE Referencia = Reference),980), -- WarehouseCode - smallint -- 
-		 N'', -- XMLDoc - ntext -- 
-		
-		CASE WHEN (MaterialType = 2  OR MaterialType=3) AND RequiredQuantity <= (SELECT UP2/2 FROM Compras Where Proveedor=979 and APartir=1 and UP1=1 and ByDefault =1 and Referencia = Reference)   THEN 0
-		ELSE 1 END, -- AllowToOrder,
-		
-		
-
-		CASE WHEN MaterialType = 2  OR MaterialType=3 THEN CEILING(RequiredQuantity)  
-		ELSE TotalQuantity END, 	-- QuantityToOrder
-		
-		RequiredQuantity, -- QuantityToDiscount,
-
-		
-		0.0, -- DiscountedQuantity - float -- 
-		0.0, -- ReservedQuantity - float -- 
-		0, -- IsCopy - smallint -- 
-		0, -- FromNumber - int -- 
-		0, -- FromVersion - int -- 
-		1, -- TargetLevel - int -- 
-		0, -- Unmounted - smallint -- 
-		0, -- ProductTypeCode - int -- 
-		0, -- CustomLengthType - smallint -- 
-		0.0, -- DeltaQuantity - float -- 
-		0, -- OrderComponents - smallint -- 
-		TotalWeight -- Weight - float -- 
-	 
-FROM Uniwave_a2p_Materials Where SalesDocumentNumber = @Number and SalesDocumentVersion =@Version and DeletedUTCDateTime is null
-Update vwSales Set BreakdownDate =GETDATE() Where Number=@Number and Version=@Version	
-
-END
-GO
-
-CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialNeedsMaster]
-	@Number int, 
-	@Version int
-AS
-BEGIN
-DELETE FROM dbo.MaterialNeedsMaster	Where Number=@Number and [Version] =@Version
-INSERT INTO dbo.MaterialNeedsMaster
-(
-	[dbo].[Number],
-	[dbo].[Version],
-	[dbo].[ProductionSet],
-	[dbo].[ReproductionNeedsCode],
-	[dbo].[MNSet],
-	[dbo].[CalculationDate],
-	[dbo].[Obsolete],
-	[dbo].[Description],
-	[dbo].[Discounted],
-	[dbo].[TypeMNSet],
-	[dbo].[ComponentsAssemblyUTCDate],
-	[dbo].[CalculationUTCDate]
-)
- VALUES (@Number,  -- Number - int
-		@Version,  -- Version - int
-	 -1,  -- ProductionSet - int
-	 -1,  -- ReproductionNeedsCode - int
-	 1,  -- MNSet - smallint
-	 GETDATE(), -- CalculationDate - datetime
-	 0,  -- Obsolete - smallint
-	 N'1.- ' +CAST (GETDATE() AS NVARCHAR(16)) , -- Description - nvarchar(50)
-	 0,  -- Discounted - smallint
-	 1,  -- TypeMNSet - smallint
-	 NULL, -- ComponentsAssemblyUTCDate - datetime
-	 GETUTCDATE() -- CalculationUTCDate - datetime
-	 )
-END
 GO
 
 CREATE OR ALTER PROCEDURE[dbo].[Uniwave_a2p_InsertPrefSuiteMaterialPiece] 
@@ -1228,6 +1458,9 @@ BEGIN
 END
 GO
 
+
+-- Insert Materials purchase details into PrefSuite DB tables 
+--==============================================================================
 CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialPurchaseData] 
 	-- Add the parameters for the stored procedure here
 	@Reference NVARCHAR(25), 
@@ -1236,7 +1469,8 @@ CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialPurchaseData
 	@Description NVARCHAR(255),
 	@Color NVARCHAR(50),
 	@SourceReference NVARCHAR(50),
-	@SourceColor NVARCHAR(50)
+	@SourceColor NVARCHAR(50),
+	@MaterialType int
 
 AS
 BEGIN
@@ -1275,7 +1509,7 @@ BEGIN
 		979,  -- Proveedor - int
 		1,  -- APartir - int
 		1,  -- UP1 - int
-		@Package, -- UP2 - float
+		CASE WHEN @MaterialType = 1 THEN 1 ELSE  @Package END, -- UP2 - float
 		GETDATE(), -- FechaUltimaCompra - datetime
 		ISNULL(@Price,0), --PrecioUltimaCompra - float
 		@SourceReference, -- ReferenciaProveedor - nchar(50)
@@ -1286,8 +1520,19 @@ BEGIN
 		N'NOK', -- DivisaPrecioSC - nchar(25)
 		14,  -- EntregaMedia - int
 		N'', -- CodigoEAN13 - nchar(13)
-		N'', -- DescripcionUP1 - nvarchar(50)
-		N'', -- DescripcionUP2 - nvarchar(50)
+		CASE WHEN @MaterialType = 1 THEN 'Bar'
+			 WHEN @MaterialType = 2 and @Package =1  THEN 'Meter'
+			 WHEN @MaterialType = 2 and @Package >1  THEN 'Roll'
+			 WHEN @MaterialType = 3 and @Package =1  THEN 'Piece'
+			 WHEN @MaterialType = 3 and @Package >1  THEN 'Box'
+		ELSE N'' END, -- DescripcionUP1 - nvarchar(50)
+
+		CASE WHEN @MaterialType = 1 THEN 'Bar'
+			 WHEN @MaterialType = 2 and @Package =1  THEN 'Meter'
+			 WHEN @MaterialType = 2 and @Package >1  THEN 'Meters'
+			 WHEN @MaterialType = 3 and @Package =1  THEN 'Piece'
+			 WHEN @MaterialType = 3 and @Package >1  THEN 'Pieces'
+		ELSE N'' END, -- DescripcionUP2 - nvarchar(50)
 		1,  -- ByDefault - smallint
 		14,  -- SchedulerTime - int
 		0  -- ReorderingTime - int
@@ -1345,244 +1590,6 @@ BEGIN
 END
 GO
 
-CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertProvider] 
-	-- Add the parameters for the stored procedure here
-	@Code int = 979,
-	@Name NVARCHAR(60) = N'SAPA SWEDEN',
-	@Currency NVARCHAR(25) = N'NOK'
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
 
-	-- Insert statements for procedure here
-	IF NOT EXISTS(SELECT * FROM dbo.Proveedores WHERE CodigoProveedor = @Code)
-	INSERT INTO dbo.Proveedores
-	(
-		RowId,
-		CodigoProveedor,
-		Nombre,
-		Divisa,
-		Divisa2
-		
-	)
-	VALUES
-	( NEWID(), -- RowId - uniqueidentifier
-		@Code,  -- CodigoProveedor - int
-		@Name, -- Nombre - nvarchar(60)
-		@Currency, -- Divisa - nchar(25)
-		@Currency -- Divisa2 - nchar(25)
-		)
-END
-GO
-
-CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertSapaProvider] 
-	-- Add the parameters for the stored procedure here
-	@Code int = 988,
-	@Name NVARCHAR(60) =  N'SAPA V2',
-	@Currency NVARCHAR(25) = N'NOK'
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-	-- Insert statements for procedure here
-	IF NOT EXISTS(SELECT * FROM dbo.Proveedores WHERE CodigoProveedor = @Code)
-	INSERT INTO dbo.Proveedores
-	(
-		RowId,
-		CodigoProveedor,
-		Nombre,
-		Divisa,
-		Divisa2
-		
-	)
-	VALUES
-	(   NEWID(),      -- RowId - uniqueidentifier
-		@Code,         -- CodigoProveedor - int
-		@Name,       -- Nombre - nvarchar(60)
-		@Currency,       -- Divisa - nchar(25)
-		@Currency       -- Divisa2 - nchar(25)
-		)
-END
-GO
-
-CREATE OR ALTER PROCEDURE[dbo].[Uniwave_a2p_InsertStock] 
-	-- Add the parameters for the stored procedure here
-	@Code INT =980, 
-	@ProviderCode INT = 979
-
-
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-		IF NOT EXISTS (SELECT * FROM dbo.Almacenes WHERE Codigo =@Code)
-		INSERT INTO dbo.Almacenes
-		(
-			Codigo,
-			Descripcion,
-			Externo,
-			ProviderCode,
-			Address,
-			Address2,
-			City,
-			PostalCode,
-			County,
-			Country,
-			UsedInMRP,
-			Kind
-		)
-		VALUES
-		( @Code, -- Codigo - smallint
-			N'TechDesign', -- Descripcion - nvarchar(60)
-			0, -- Externo - smallint
-			@ProviderCode, -- ProviderCode - int
-			N'', -- Address - nvarchar(60)
-			N'', -- Address2 - nvarchar(60)
-			N'', -- City - nvarchar(60)
-			N'', -- PostalCode - nvarchar(25)
-			N'', -- County - nvarchar(60)
-			N'', -- Country - nvarchar(50)
-			1, -- UsedInMRP - smallint
-			0 -- Kind - smallint
-			)
-END
-GO
-
-CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_UpdateBCMapping]
-	-- Add the parameters for the stored procedure here
-	@ReferenceBase nvarchar(25), 
-	@Reference nvarchar(25), 
-	@SourceReference nvarchar(50), 
-	@SourceColor nvarchar(50), 
-	@SourceColor1 nvarchar(50), 
-	@SourceColor2 nvarchar(50)
-	
-AS
-BEGIN
-Declare @SapaReferenceBase nvarchar(25),
-		@SapaReference nvarchar(25),
-		@SapaColor nvarchar(50),
-		@SapaColor1 nvarchar(50),
-		@SapaColor2 nvarchar(50),
-		@SapaExternalReference nvarchar(50),
-		@ExternalReference nvarchar(50),
-		@SapaPrefSuiteRowId uniqueidentifier,
-		@PrefSuiteRowId uniqueidentifier,
-		@ExternalRowId uniqueidentifier
-
---SAPA
---==============================================================================================================
-IF (LEFT(@SourceReference, 1) = 'S')
-BEGIN
-	--Get old SAPA ReferenceBase
-	--=============================================================
-	SET @SapaReferenceBase = 'SAPA_'+SUBSTRING(@SourceReference,2,LEN(@SourceReference))
-	SELECT @PrefSuiteRowId = RowId From Materiales Where Referencia =@Reference
-	--Get old SAPA Color in case color is complex
- --============================================================================================
-	IF (ISNULL(@SourceColor1,'')!='' and ISNULL(@SourceColor,'')!='')
-	BEGIN 
-			SELECT TOP 1 @SapaColor1 = SapaLogicColor FROM NorDan_a2p_ColorMapping Where TechDesignColor = @SourceColor1
-			SELECT TOP 1 @SapaColor2 = SapaLogicColor FROM NorDan_a2p_ColorMapping Where TechDesignColor = @SourceColor2
-			SELECT @SapaColor = 'SAPA_' +@SapaColor1+'/'+@SapaColor2
-	END
-	--Get Old SAPA Color in case color is simple
- --============================================================================================
-	ELSE IF (ISNULL(@SourceColor1,'')='' )
-	
-	BEGIN
-	--Source color not empty
-	--=======================
-		IF(ISNULL(@SourceColor,'') != '')
-		BEGIN 
-			SELECT TOP 1 @SapaColor = 'SAPA_'+SapaLogicColor FROM NorDan_a2p_ColorMapping Where TechDesignColor = @SourceColor
-		END
- 
- 
-	--Source color is empty
-	--=======================
-		ELSE
-		BEGIN
-			SET @SapaColor = 'SAPA_NoColor'
-		END
-	END 
-	
-
- --Get Old SAPA Reference
- --============================================================================================
-	SELECT @SapaReference = Referencia From Materiales MT inner Join MaterialesBase MB ON MB.ReferenciaBase = MT.ReferenciaBase and Nivel1 = '980 SAPA'
-	Where MB.ReferenciaBase = @SapaReferenceBase and MT.Color =@SapaColor 
-	
-	--Get External Reference, and RowId 
- --============================================================================================
-	SELECT TOP 1 @SapaPrefSuiteRowId = @PrefSuiteRowId, @SapaExternalReference=ExternalReference, @ExternalRowId =ExternalRowId From UniwaveApi_Mapping Where EntityType = 1 and PrefSuiteReference = @SapaReference and PrefSuiteRowId is not null
-END
-
-
---Not SAPA (for Example ASSA)
---==============================================================================================================--
-ELSE 
-	BEGIN
-	SELECT @SapaReference = Referencia From Materiales MT 
-	inner Join MaterialesBase MB ON MB.ReferenciaBase = MT.ReferenciaBase and Nivel1 = '980 SAPA'
-	Where MT.Referencia = @Reference
-	SELECT TOP 1 @SapaPrefSuiteRowId = PrefSuiteRowId, @SapaExternalReference=ExternalReference, @ExternalRowId =ExternalRowId From UniwaveApi_Mapping Where EntityType = 1 and PrefSuiteReference = @SapaReference and PrefSuiteRowId is not null
-END
-
- DECLARE @Max INT 
-	SELECT @Max = MAX(CAST(SUBSTRING(ExternalReference,5,16)AS INT)) FROM UniwaveApi_Mapping Where EntityType = 1 and LEN(ExternalReference)=10
-	SET @ExternalReference = 'ALU_'+RTRIM(CAST(@MAx+1 AS NVARCHAR(10))) 
-
-
-IF (@SapaExternalReference IS NOT NULL AND @Reference != @SapaReference)
-BEGIN 
-	Insert Into UniwaveApi_Mapping (RowId, ExternalSourceName, EntityType, PrefSuiteRowId, ExternalRowId, PrefSuiteReference, ExternalReference, CreationDate, LastModifiedDate)
-VALUES (NewId(), 'BC', 1, @PrefSuiteRowId, @ExternalRowId, @Reference, @SapaExternalReference, GetDAte(), GetDate() )
-END 
-ELSE IF (@SapaExternalReference IS NULL)
-BEGIN 
- 
-	Insert Into UniwaveApi_Mapping (RowId, ExternalSourceName, EntityType, PrefSuiteRowId, PrefSuiteReference, ExternalReference, CreationDate, LastModifiedDate)
-	VALUES (NewId(), 'BC', 1, @PrefSuiteRowId, @Reference, 'ALU_'+RTRIM(CAST(@MAx+1 AS NVARCHAR(10))) , GetDAte(), GetDate())
- 
-END
-
-
-
-IF (NOT EXISTS (SELECT * FROM Uniwave_a2p_ReferenceMappingLog Where Reference =@Reference))
-Insert Into Uniwave_a2p_ReferenceMappingLog
-	( [RefereNceBase]
-	 ,[Reference]
-	 ,[SourceReference]
-	 ,[SourceColor]
-	 ,[SourceColor1]
-	 ,[SourceColor2]
-	 ,[SapaReferenceBase]
-	 ,[SapaReference]
-	 ,[SapaColor]
-	 ,[SapaColor1]
-	 ,[SapaColor2]
-	 ,[ExternalReference])
-VALUES(@ReferenceBase 
-	 ,@Reference
-	 ,@SourceReference
-	 ,@SourceColor
-	 ,@SourceColor1
-	 ,@SourceColor2
-	 ,@SapaReferenceBase
-	 ,@SapaReference
-	 ,@SapaColor
-	 ,@SapaColor1
-	 ,@SapaColor2
-	 ,ISNULL(@SapaExternalReference,@ExternalReference))
-
-END
-GO
 
 

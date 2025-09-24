@@ -1355,6 +1355,7 @@ namespace a2p.Shared.Application.Services
                 _ = cmd.Parameters.AddWithValue("@Color", materialDTO.Color); //required
                 _ = cmd.Parameters.AddWithValue("@SourceReference", materialDTO.SourceReference); //required
                 _ = cmd.Parameters.AddWithValue("@SourceColor", materialDTO.SourceColor); //required
+                _ = cmd.Parameters.AddWithValue("@MaterialType", materialDTO.MaterialType); //required
 
                 //=====================================================================================================================
                 int result = await _sqlRepository.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());

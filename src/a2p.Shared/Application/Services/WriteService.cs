@@ -42,7 +42,7 @@ namespace a2p.Shared.Application.Services
 
 
                 _progressValue.CurrentValue = _progressValue.CurrentValue + 30;   //30pts. x 1 per Orde               
-                _progressValue.ProgressTask2 = "Deleting any existsing data import pending oredrs.....";
+                _progressValue.ProgressTask2 = "Deleting any existsing data import pending orders.....";
                 _progressValue.ProgressTask3 = string.Empty;
                 _progress?.Report(_progressValue);
 

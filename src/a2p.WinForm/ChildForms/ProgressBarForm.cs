@@ -1,8 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using a2p.Shared.Application.Domain.Entities;
-
+using a2p.Application.DTO;
+using a2p.Domain.Entities;
 using System.Drawing.Drawing2D;
 
 namespace a2p.WinForm.ChildForms

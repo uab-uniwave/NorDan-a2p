@@ -1,14 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.13.35507.96
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11018.127 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "a2p.Shared", "src\a2p.Shared\a2p.Shared.csproj", "{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "a2p.WinForm", "src\a2p.WinForm\a2p.WinForm.csproj", "{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}"
-	ProjectSection(ProjectDependencies) = postProject
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8} = {BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
@@ -124,7 +119,6 @@ EndProject
 Project("{B7DD6F7E-DEF8-4E67-B5B7-07EF123DB6F0}") = "a2p.Installer", "build\a2p.Installer\a2p.Installer.wixproj", "{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1} = {220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8} = {BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{80D579FC-77B1-4965-934F-61FBE27F9DF2}"
@@ -139,16 +133,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{9368B7
 		build\a2p.Installer\Images\WixUIDialogBmp_493_312.png = build\a2p.Installer\Images\WixUIDialogBmp_493_312.png
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "a2p.WebApi", "src\a2p.WebApi\a2p.WebApi\a2p.WebApi.csproj", "{AB912F7C-5540-411E-ACE1-3D84CFCDBF6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "a2p.Domain", "src\a2p.Domain\a2p.Domain.csproj", "{B53D2A9F-FAA8-40CC-A2A7-24E6EF489C25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "a2p.Application", "src\a2p.Application\a2p.Application.csproj", "{B19FD186-C54D-45AA-A4B0-7F9A821A707E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "a2p.Infrastructure", "src\a2p.Infrastructure\a2p.Infrastructure.csproj", "{C6906D3E-4353-4DA2-8B91-B11ECA72CDDB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x64.ActiveCfg = Debug|x64
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Debug|x64.Build.0 = Debug|x64
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x64.ActiveCfg = Release|x64
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}.Release|x64.Build.0 = Release|x64
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x64.ActiveCfg = Debug|x64
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Debug|x64.Build.0 = Debug|x64
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1}.Release|x64.ActiveCfg = Release|x64
@@ -157,12 +155,27 @@ Global
 		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Debug|x64.Build.0 = Debug|x64
 		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Release|x64.ActiveCfg = Release|x64
 		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D}.Release|x64.Build.0 = Release|x64
+		{AB912F7C-5540-411E-ACE1-3D84CFCDBF6E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AB912F7C-5540-411E-ACE1-3D84CFCDBF6E}.Debug|x64.Build.0 = Debug|Any CPU
+		{AB912F7C-5540-411E-ACE1-3D84CFCDBF6E}.Release|x64.ActiveCfg = Release|Any CPU
+		{AB912F7C-5540-411E-ACE1-3D84CFCDBF6E}.Release|x64.Build.0 = Release|Any CPU
+		{B53D2A9F-FAA8-40CC-A2A7-24E6EF489C25}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B53D2A9F-FAA8-40CC-A2A7-24E6EF489C25}.Debug|x64.Build.0 = Debug|Any CPU
+		{B53D2A9F-FAA8-40CC-A2A7-24E6EF489C25}.Release|x64.ActiveCfg = Release|Any CPU
+		{B53D2A9F-FAA8-40CC-A2A7-24E6EF489C25}.Release|x64.Build.0 = Release|Any CPU
+		{B19FD186-C54D-45AA-A4B0-7F9A821A707E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B19FD186-C54D-45AA-A4B0-7F9A821A707E}.Debug|x64.Build.0 = Debug|Any CPU
+		{B19FD186-C54D-45AA-A4B0-7F9A821A707E}.Release|x64.ActiveCfg = Release|Any CPU
+		{B19FD186-C54D-45AA-A4B0-7F9A821A707E}.Release|x64.Build.0 = Release|Any CPU
+		{C6906D3E-4353-4DA2-8B91-B11ECA72CDDB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C6906D3E-4353-4DA2-8B91-B11ECA72CDDB}.Debug|x64.Build.0 = Debug|Any CPU
+		{C6906D3E-4353-4DA2-8B91-B11ECA72CDDB}.Release|x64.ActiveCfg = Release|Any CPU
+		{C6906D3E-4353-4DA2-8B91-B11ECA72CDDB}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8} = {E1A78A32-DF5F-4F65-A987-6FEF96E2B856}
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
@@ -179,10 +192,14 @@ Global
 		{794D2BF2-915F-4498-BA2A-271BAA957386} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
 		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D} = {33FD462D-4B12-4501-92BD-81095ACABC95}
 		{9368B7BC-31DF-47A0-8C2B-FFAED986B074} = {33FD462D-4B12-4501-92BD-81095ACABC95}
+		{AB912F7C-5540-411E-ACE1-3D84CFCDBF6E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{B53D2A9F-FAA8-40CC-A2A7-24E6EF489C25} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{B19FD186-C54D-45AA-A4B0-7F9A821A707E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{C6906D3E-4353-4DA2-8B91-B11ECA72CDDB} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {02931AC6-E3AF-4E96-A144-EE9EE4BE10E7}
-		BuildVersion_BuildVersioningStyle = None.None.None.Increment
 		BuildVersion_StartDate = 2000/1/1
+		BuildVersion_BuildVersioningStyle = None.None.None.Increment
+		SolutionGuid = {02931AC6-E3AF-4E96-A144-EE9EE4BE10E7}
 	EndGlobalSection
 EndGlobal

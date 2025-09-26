@@ -1,6 +1,7 @@
-using a2p.Shared.Application.Domain.Entities;
+using a2p.Application.DTO;
+using a2p.Application.Interfaces;
+using a2p.Domain.Entities;
 using a2p.Shared.Application.Domain.Enums;
-using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Application.Models;
 using a2p.Shared.Core.DTO.a2p.Shared.Core.DTO;
 using a2p.Shared.Infrastructure.Interfaces;
@@ -20,7 +21,7 @@ namespace a2p.WinForm.ChildForms
         private readonly ISQLRepository _sqlRepository;
         private readonly IReadService _readService;
         private readonly IWriteService _writeService;
-        private List<A2POrder> _a2pOrders;
+        private List<A2POrderDto> _a2pOrders;
 
         private DataTable _dataTable;
         private BindingSource _bindingSource;
@@ -719,7 +720,7 @@ namespace a2p.WinForm.ChildForms
 
                 //Read Orders Data
                 //=====================================================================================================
-                List<A2POrder> a2pOrders = await _readService.ReadAsync(_progressValue, _progress);
+                List<A2POrderDto> a2pOrders = await _readService.ReadAsync(_progressValue, _progress);
                 _progress?.Report(_progressValue);
 
                 if (a2pOrders == null || a2pOrders.Count == 0)
@@ -778,7 +779,7 @@ namespace a2p.WinForm.ChildForms
         }
         public async Task ImportAsync()
         {
-            List<A2POrder> importOrders = [];
+            List<A2POrderDto> importOrders = [];
 
             try
             {
@@ -968,13 +969,13 @@ namespace a2p.WinForm.ChildForms
             }
         }
 
-        public async Task<OrderDTO> MapToReadOrderDTOAsync(A2POrder a2pOrder, int type)   // type 1 - read; 2 - write 
+        public async Task<OrderGridDTO> MapToReadOrderDTOAsync(A2POrderDto a2pOrder, int type)   // type 1 - read; 2 - write 
         {
             try
             {
 
                 Image a = imageList1.Images[0];
-                OrderDTO orderDTO = new();
+                OrderGridDTO orderDTO = new();
                 int warningCount = 0;
                 int errorCount = 0;
                 int fatalCount = 0;
@@ -1122,61 +1123,61 @@ namespace a2p.WinForm.ChildForms
             catch (Exception ex)
             {
                 _logService.Error("Order Form: Unhandled error mapping OrderDTO for grid : {$Exception}.", ex.Message);
-                return new OrderDTO();
+                return new OrderGridDTO();
             }
         }
 
         //===============================================================
         // -= Read Errors =-
         //===============================================================
-        private int CountReadWarning(A2POrder a2pOrder)
+        private int CountReadWarning(A2POrderDto a2pOrder)
         {
             return a2pOrder.ErrorsRead.Count(error => error.Level == ErrorLevel.Warning);
         }
 
-        private int CountReadError(A2POrder a2pOrder)
+        private int CountReadError(A2POrderDto a2pOrder)
         {
             return a2pOrder.ErrorsRead.Count(error => error.Level == ErrorLevel.Error);
         }
 
-        private int CountReadFatal(A2POrder a2pOrder)
+        private int CountReadFatal(A2POrderDto a2pOrder)
         {
             return a2pOrder.ErrorsRead.Count(error => error.Level == ErrorLevel.Fatal);
         }
 
-        private int CountReadExistsError(A2POrder a2pOrder)
+        private int CountReadExistsError(A2POrderDto a2pOrder)
         {
             return a2pOrder.ErrorsRead.Count(error => error.Code == ErrorCode.DatabaseRead_OrderAlreadyImported);
         }
 
-        private int CountReadTotalError(A2POrder a2pOrder)
+        private int CountReadTotalError(A2POrderDto a2pOrder)
         {
             return a2pOrder.ErrorsRead.Count(error => error.Level is ErrorLevel.Warning or ErrorLevel.Error or ErrorLevel.Fatal);
         }
 
-        private int CountWriteFatal(A2POrder a2pOrder)
+        private int CountWriteFatal(A2POrderDto a2pOrder)
         {
             return a2pOrder.ErrorsWrite.Count(error => error.Level == ErrorLevel.Fatal);
         }
 
-        private int CountWriteError(A2POrder a2pOrder)
+        private int CountWriteError(A2POrderDto a2pOrder)
         {
             return a2pOrder.ErrorsWrite.Count(error => error.Level == ErrorLevel.Error);
         }
 
-        private int CountWriteWarning(A2POrder a2pOrder)
+        private int CountWriteWarning(A2POrderDto a2pOrder)
         {
             return a2pOrder.ErrorsWrite.Count(error => error.Level == ErrorLevel.Warning);
         }
 
-        private int CountWriteTotalError(A2POrder a2pOrder)
+        private int CountWriteTotalError(A2POrderDto a2pOrder)
         {
             return a2pOrder.ErrorsWrite.Count(error => error.Level is ErrorLevel.Warning or ErrorLevel.Error or ErrorLevel.Fatal);
         }
 
 
 
-        private async Task UpdateDatable(List<A2POrder> a2pOrders, int type)
+        private async Task UpdateDatable(List<A2POrderDto> a2pOrders, int type)
         {
 
             _dataTable.Rows.Clear();
@@ -1195,7 +1196,7 @@ namespace a2p.WinForm.ChildForms
             int warningCount = 0;
             int errorCount = 0;
             int fatalCount = 0;
-            foreach (A2POrder a2pOrder in a2pOrders)
+            foreach (A2POrderDto a2pOrder in a2pOrders)
             {
 
                 if (a2pOrder.Files.SelectMany(f => f.Worksheets).Count(w => w.WorksheetType == WorksheetType.Items) == 0)
@@ -1232,7 +1233,7 @@ namespace a2p.WinForm.ChildForms
                     lbInfoWarningCount.Text = warningCount.ToString();
                     lbInfoErrorCount.Text = errorCount.ToString();
 
-                    OrderDTO orderDTO = await MapToReadOrderDTOAsync(a2pOrder, type);   // 2 means import and should be used write errors
+                    OrderGridDTO orderDTO = await MapToReadOrderDTOAsync(a2pOrder, type);   // 2 means import and should be used write errors
 
                     Image image;
 

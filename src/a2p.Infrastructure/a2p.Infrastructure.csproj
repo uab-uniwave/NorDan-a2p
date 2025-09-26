@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	  <BaseOutputPath>..\..\build\</BaseOutputPath>
+	  <OutputPath>$(BaseOutputPath)\$(Configuration)\$(ProjectName)\</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Configuration.Abstractions" Version="2.0.2.45" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\a2p.Application\a2p.Application.csproj" />
+    <ProjectReference Include="..\a2p.Domain\a2p.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

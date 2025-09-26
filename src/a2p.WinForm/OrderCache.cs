@@ -1,4 +1,4 @@
-﻿using a2p.Shared.Application.Domain.Entities;
+using a2p.Shared.Application.Domain.Entities;
 
 using DocumentFormat.OpenXml.Drawing.Charts;
 
@@ -13,9 +13,9 @@ namespace a2p.WinForm
 
         public static class OrderCache
         {
-            public static List<A2POrder>? CachedOrders { get; private set; }
+            public static List<A2POrderDto>? CachedOrders { get; private set; }
 
-            public static void StoreOrder(List<A2POrder> orders)
+            public static void StoreOrder(List<A2POrderDto> orders)
             {
             CachedOrders = orders;
             }

@@ -1,0 +1,6 @@
+@a2p.WebApi_HostAddress = http://localhost:5199
+
+GET {{a2p.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

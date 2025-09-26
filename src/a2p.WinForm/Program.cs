@@ -4,9 +4,8 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-
+using a2p.Application.Interfaces;
 using a2p.Shared;
-using a2p.Shared.Application.Interfaces;
 using a2p.Shared.Application.Services;
 using a2p.Shared.Infrastructure.Interfaces;
 using a2p.Shared.Infrastructure.Services;

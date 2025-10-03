@@ -9,7 +9,7 @@ namespace a2p.Shared.Application.DTO
 {
     public class MaterialDTO
     {
-
+        public string RowId { get; set; } = Guid.NewGuid().ToString();
         [MaxLength(50)] public string Order { get; set; } = string.Empty;
         [MaxLength(255)] public string Worksheet { get; set; } = string.Empty;
         [Required] public int Line { get; set; } = -1;

@@ -79,7 +79,7 @@ namespace a2p.Shared.Application.Services
 
                             string Command = "<cmd:Commands name=\"CommandName\" xmlns:cmd=\"http://www.preference.com/XMLSchemas/2006/PrefCAD.Command\">" +
                                                                   "<cmd:Command name=\"Model.SetDimensions\">" +
-                                                                      $"<cmd:Parameter name=\"dimensions\" type=\"string\" value=\"W={a2pOrder.Items[i].Width};H={a2pOrder.Items[i].Height};\"/>" +
+                                                                      $"<cmd:Parameter name=\"dimensions\" type=\"string\" value=\"W={Math.Ceiling(a2pOrder.Items[i].Width)};H={Math.Ceiling(a2pOrder.Items[i].Height)};\"/>" +
                                                                   "</cmd:Command>" +
                                                                   "<cmd:Command name=\"Model.SetModelVariables\">" +
                                                                       "<cmd:Parameter name=\"variables\" type=\"list\">" +

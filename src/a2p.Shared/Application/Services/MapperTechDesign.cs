@@ -129,7 +129,7 @@ namespace a2p.Shared.Application.Services
                         itemDTO.TotalLaborCost = Math.Round(itemDTO.LaborCost * itemDTO.Quantity, 4);
                         itemDTO.TotalCost = Math.Round(itemDTO.Cost * itemDTO.Quantity, 4);
 
-                        itemDTO.TotalPrice = Math.Round(itemDTO.TotalPrice * discountCoeficient, 4);
+                        itemDTO.TotalPrice = Math.Round(itemDTO.TotalPrice / discountCoeficient, 0);
                         itemDTO.Price = Math.Round(itemDTO.TotalPrice / itemDTO.Quantity, 4);
 
                         itemDTO.ExchangeRateEUR = 1; //TODO': Exchange Rate 
@@ -540,8 +540,8 @@ namespace a2p.Shared.Application.Services
 
             try
             {
-                await Task.Run(async () =>
-                {
+                
+             
 
                     for (int i = 4; i < a2pWorksheet.RowCount; i++)
                     {
@@ -550,6 +550,8 @@ namespace a2p.Shared.Application.Services
                         line = i + 1;
                         try
                         {
+                            materialDTO.Worksheet = a2pWorksheet.Name ?? string.Empty;
+                            materialDTO.Order = a2pWorksheet.Order ?? string.Empty;
                             //===================================================================================================
                             materialDTO.Line = line;
                             materialDTO.WorksheetType = WorksheetType.Materials;
@@ -762,11 +764,11 @@ namespace a2p.Shared.Application.Services
                             continue;
                         }
 
-                    }
+                
 
                     _progressValue.ProgressTask3 = string.Empty;
                     _progress?.Report(_progressValue);
-                });
+                }
                 return (materialsDTO, a2pErrors);
             }
             catch (Exception ex)
@@ -797,8 +799,7 @@ namespace a2p.Shared.Application.Services
             try
             {
 
-                await Task.Run(async () =>
-                {
+             
 
                     for (int i = 4; i < a2pWorksheet.RowCount; i++)
                     {
@@ -808,6 +809,10 @@ namespace a2p.Shared.Application.Services
                         line = i + 1;
                         try
                         {
+
+                        materialDTO.Worksheet = a2pWorksheet.Name ?? string.Empty;
+                        materialDTO.Order = a2pWorksheet.Order ?? string.Empty;
+                  
 
                             //===================================================================================================
                             materialDTO.SourceReference = a2pWorksheet.WorksheetData[i][1]?.ToString();
@@ -975,11 +980,11 @@ namespace a2p.Shared.Application.Services
                             continue;
                         }
 
-                    }
+                  
 
                     _progressValue.ProgressTask3 = string.Empty;
                     _progress?.Report(_progressValue);
-                });
+                }
 
                 return (materialsDTO, a2pErrors);
             }
@@ -1011,8 +1016,8 @@ namespace a2p.Shared.Application.Services
             try
             {
 
-                await Task.Run(async () =>
-                {
+             
+           
 
                     for (int i = 4; i < a2pWorksheet.RowCount; i++)
                     {
@@ -1021,45 +1026,93 @@ namespace a2p.Shared.Application.Services
                         sortOrder++;
 
                         line = i + 1;
-                        try
+                    try
+                    {
+                        materialDTO.Worksheet = a2pWorksheet.Name ?? string.Empty;
+                        materialDTO.Order = a2pWorksheet.Order ?? string.Empty;
+                        //===================================================================================================
+                        //materialDTO.SourceReference = null;
+                        materialDTO.SourceDescription = a2pWorksheet.WorksheetData[i][4]?.ToString();
+                        materialDTO.SourceColor = a2pWorksheet.WorksheetData[i][2]?.ToString();
+                        materialDTO.SourceColorDescription = a2pWorksheet.WorksheetData[i][3] == null ? null : a2pWorksheet.WorksheetData[i][2].ToString();
+
+                        //===================================================================================================
+                        materialDTO.Line = line;
+                        materialDTO.WorksheetType = WorksheetType.Panels;
+
+                        //===================================================================================================
+                        materialDTO.Item = a2pWorksheet.WorksheetData[i][1].ToString() ?? string.Empty;
+
+                        //Reset Sort Order if new item
+                        //===================================================================================================
+                        if (materialDTO.Item != a2pWorksheet.WorksheetData[i - 1][1].ToString())
                         {
-                            //===================================================================================================
-                            materialDTO.SourceReference = null;
-                            materialDTO.SourceDescription = a2pWorksheet.WorksheetData[i][4]?.ToString();
-                            materialDTO.SourceColor = a2pWorksheet.WorksheetData[i][2]?.ToString();
-                            materialDTO.SourceColorDescription = a2pWorksheet.WorksheetData[i][3] == null ? null : a2pWorksheet.WorksheetData[i][2].ToString();
+                            sortOrder = 0;
+                        }
+                        materialDTO.SortOrder = sortOrder;
 
-                            //===================================================================================================
-                            materialDTO.Line = line;
-                            materialDTO.WorksheetType = WorksheetType.Panels;
+                        //===================================================================================================                          
+                        materialDTO.Description = a2pWorksheet.WorksheetData[i][4].ToString() ?? string.Empty;
+                        var pattern = @"\(XPS\)\s+\d{1,2}mm$";
+                        Match match = Regex.Match(materialDTO.Description, pattern);
+                        
+                        materialDTO.ReferenceBase = match.Success
+                            ? $"LOB_XPS{match.Groups[0].Value.Replace("(XPS)","").Replace("mm","").Trim()}"
+                            : string.Empty;
 
-                            //===================================================================================================
-                            materialDTO.Item = a2pWorksheet.WorksheetData[i][1].ToString() ?? string.Empty;
+                        materialDTO.Reference = match.Success
+                            ? $"LOB_XPS{match.Groups[0].Value.Replace("(XPS)", "").Replace("mm", "").Trim()}"
+                            : string.Empty;
 
-                            //Reset Sort Order if new item
-                            //===================================================================================================
-                            if (materialDTO.Item != a2pWorksheet.WorksheetData[i - 1][1].ToString())
+            
+
+                        materialDTO.Color = match.Success ?
+                        $"LOB_Surface" : string.Empty;
+
+       
+
+                        //===================================================================================================
+
+                        if (materialDTO.Color != "LOB_Surface")
+                        {
+
+                            if (string.IsNullOrEmpty(materialDTO.Reference) && (materialDTO.Description == "1 mm aluminium sheet" || materialDTO.Description == "1mm aluminium sheet"))
                             {
-                                sortOrder = 0;
+
+                                (string, A2PError?) result = TransformReference("AluSheet1", materialDTO.SourceColor ?? string.Empty, a2pWorksheet, line);
+                                if (string.IsNullOrEmpty(result.Item1))
+                                {
+                                    continue;
+                                }
+                                
+                                
+                                materialDTO.Reference = result.Item1;
+                                
+                                if (result.Item2 != null)
+                                {
+                                    a2pErrors.Add(result.Item2);
+                                }
+
                             }
-                            materialDTO.SortOrder = sortOrder;
-
-                            //===================================================================================================                          
-                            materialDTO.Description = a2pWorksheet.WorksheetData[i][4].ToString() ?? string.Empty;
-                            string pattern1 = @"(XPS\s+\d+mm)";
-                            Match match = Regex.Match(materialDTO.Description, pattern1);
-                            materialDTO.ReferenceBase = match.Success
-                                ? $"LOB_XPS{match.Groups[1].Value}"
-                                : string.Empty;
-                            materialDTO.Reference = match.Success ?
-                                $"LOB_XPS{match.Groups[1].Value}"
-                                : string.Empty;
-                            //===================================================================================================
-
-                            if (string.IsNullOrEmpty(materialDTO.Reference) && materialDTO.Description == "1mm aluminium sheet")
+                            else if (string.IsNullOrEmpty(materialDTO.Reference) && (materialDTO.Description == "1.25 mm aluminium sheet" || materialDTO.Description == "1.25mm aluminium sheet"))
                             {
 
-                                (string, A2PError?) result = TransformReference("AluSheet1", a2pWorksheet.WorksheetData[i][2].ToString() ?? string.Empty, a2pWorksheet, line);
+                                (string, A2PError?) result = TransformReference("AluSheet1.25", materialDTO.SourceColor ?? string.Empty, a2pWorksheet, line);
+                                if (string.IsNullOrEmpty(result.Item1))
+                                {
+                                    continue;
+                                }
+                                materialDTO.Reference = result.Item1;
+                                if (result.Item2 != null)
+                                {
+                                    a2pErrors.Add(result.Item2);
+                                }
+
+                            }
+                            else if (string.IsNullOrEmpty(materialDTO.Reference) && (materialDTO.Description == "1.5 mm aluminium sheet" || materialDTO.Description == "1.5mm aluminium sheet"))
+                            {
+
+                                (string, A2PError?) result = TransformReference("AluSheet1.5", materialDTO.SourceColor ?? string.Empty, a2pWorksheet, line);
                                 if (string.IsNullOrEmpty(result.Item1))
                                 {
                                     continue;
@@ -1073,7 +1126,7 @@ namespace a2p.Shared.Application.Services
                             }
                             else
                             {
-                                (string, A2PError?) result = TransformReference(a2pWorksheet.WorksheetData[i][1].ToString() ?? string.Empty, a2pWorksheet.WorksheetData[i][2].ToString() ?? string.Empty, a2pWorksheet, line);
+                                (string, A2PError?) result = TransformReference(materialDTO.SourceReference ?? string.Empty, materialDTO.SourceColor ?? string.Empty, a2pWorksheet, line);
 
                                 if (string.IsNullOrEmpty(result.Item1))
                                 {
@@ -1086,10 +1139,11 @@ namespace a2p.Shared.Application.Services
                                 {
                                     a2pErrors.Add(result.Item2);
                                 }
-                            }
-
+                             }
+                                materialDTO.Color = a2pWorksheet.WorksheetData[i][2].ToString() ?? string.Empty;
+                        }
                             //===================================================================================================
-                            materialDTO.Color = a2pWorksheet.WorksheetData[i][2].ToString() ?? string.Empty;
+                         
                             materialDTO.ColorDescription = a2pWorksheet.WorksheetData[i][3].ToString() ?? string.Empty;  // not used
 
                             //===================================================================================================
@@ -1098,7 +1152,7 @@ namespace a2p.Shared.Application.Services
 
                             //===================================================================================================
                             materialDTO.Quantity = a2pWorksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(a2pWorksheet.WorksheetData[i][3].ToString(), out int quantity) ? quantity : 1;
-                            materialDTO.PackageQuantity = 0;
+                            materialDTO.PackageQuantity = 1;
                             materialDTO.TotalQuantity = materialDTO.Quantity;
                             materialDTO.RequiredQuantity = materialDTO.TotalQuantity;
                             materialDTO.LeftOverQuantity = 0;// not used. Threated as unique piece material, that has no leftovers 
@@ -1109,11 +1163,14 @@ namespace a2p.Shared.Application.Services
                             materialDTO.RequiredWeight = 0;// not used
                             materialDTO.LeftOverWeight = 0;// not used
 
-                            //===================================================================================================
-                            materialDTO.Area = decimal.TryParse(a2pWorksheet.WorksheetData[i][10].ToString(), out decimal area) ? area : 0;
-                            materialDTO.TotalArea = Math.Round(materialDTO.Area * materialDTO.Quantity, 6);
-                            materialDTO.RequiredArea = materialDTO.TotalArea; // not used. Threated as unique piece material.
-                            materialDTO.LeftOverArea = 0;// not used. Threated as unique piece material, that has no leftovers 
+                        //===================================================================================================
+                        materialDTO.Area = materialDTO.Width * materialDTO.Height;
+
+                        materialDTO.TotalArea = materialDTO.Area * materialDTO.Quantity;
+
+
+                            materialDTO.RequiredArea = materialDTO.TotalArea; // not used 
+                            materialDTO.LeftOverArea = 0; // not used 
 
                             //===================================================================================================
                             materialDTO.Waste = 0; // not used, panels are not cut in production. Threated as piece material. 
@@ -1161,11 +1218,28 @@ namespace a2p.Shared.Application.Services
                             //===================================================================================================
                             materialDTO.MaterialType = MaterialType.Panels;
 
-                            //===================================================================================================
-                            _progressValue.ProgressTask3 = $"Panels {sortOrder} of {a2pWorksheet.RowCount - 5} - {materialDTO.Description}";
+
+                            if (string.IsNullOrEmpty(materialDTO.SourceColor))
+                            { 
+                                materialDTO.SourceColor = materialDTO.Color;
+
+                            }
+
+                            if (string.IsNullOrEmpty(materialDTO.SourceReference))
+                            {
+                                materialDTO.SourceReference = materialDTO.ReferenceBase;
+
+                            }
+
+                   
+
+                        //===================================================================================================
+                        _progressValue.ProgressTask3 = $"Panels {sortOrder} of {a2pWorksheet.RowCount - 5} - {materialDTO.Description}";
                             _progress?.Report(_progressValue);
 
                             //===================================================================================================
+
+                            
                             materialsDTO.Add(materialDTO);
 
                             //===================================================================================================
@@ -1211,11 +1285,11 @@ namespace a2p.Shared.Application.Services
                             continue;
                         }
 
-                    }
+                 
 
                     _progressValue.ProgressTask3 = string.Empty;
                     _progress?.Report(_progressValue);
-                });
+                }
 
                 return (materialsDTO, a2pErrors);
 
@@ -1248,8 +1322,8 @@ namespace a2p.Shared.Application.Services
             try
             {
 
-                await Task.Run(async () =>
-                {
+        
+             
 
                     for (int i = 4; i < a2pWorksheet.RowCount; i++)
                     {
@@ -1258,8 +1332,9 @@ namespace a2p.Shared.Application.Services
                         line = i + 1;
                         try
                         {
-
-                            materialDTO.SourceReference = null;
+                        materialDTO.Worksheet = a2pWorksheet.Name ?? string.Empty;
+                        materialDTO.Order = a2pWorksheet.Order ?? string.Empty;
+                        materialDTO.SourceReference = null;
                             materialDTO.SourceDescription = a2pWorksheet.WorksheetData[i][2]?.ToString();
                             materialDTO.SourceColor = null;
                             materialDTO.SourceColorDescription = null;
@@ -1453,8 +1528,7 @@ namespace a2p.Shared.Application.Services
 
                     _progressValue.ProgressTask3 = string.Empty;
                     _progress?.Report(_progressValue);
-                });
-
+            
                 return (materialsDTO, a2pErrors);
 
             }
@@ -1487,8 +1561,9 @@ namespace a2p.Shared.Application.Services
             try
             {
 
-                await Task.Run(async () =>
-                {
+                
+                    
+                
 
                     for (int i = 4; i < a2pWorksheet.RowCount; i++)
                     {
@@ -1498,7 +1573,10 @@ namespace a2p.Shared.Application.Services
                         line = i + 1;
                         try
                         {
-
+                             
+                            
+                            materialDTO.Worksheet = a2pWorksheet.Name  ?? string.Empty;
+                            materialDTO.Order = a2pWorksheet.Order ?? string.Empty;
                             materialDTO.Line = line;
                             materialDTO.WorksheetType = WorksheetType.Materials;
                             materialDTO.Item = null;// not used in others
@@ -1643,9 +1721,9 @@ namespace a2p.Shared.Application.Services
                             continue;
                         }
 
-                    }
+                    
 
-                });
+                }
                 _progressValue.ProgressTask3 = string.Empty;
                 _progress?.Report(_progressValue);
                 return (materialsDTO, a2pErrors);
@@ -1964,6 +2042,8 @@ namespace a2p.Shared.Application.Services
                     return (string.Empty, a2pError);
                 }
 
+
+
                 if (a2pWorksheet.Name is "ND_Gaskets" or "ND_Accessories")
                 {
                     if (string.IsNullOrEmpty(sapaReference))
@@ -1992,7 +2072,7 @@ namespace a2p.Shared.Application.Services
                 }
 
                 // Processing for ND_Profiles and ND_Accessories
-                if (a2pWorksheet.Name is "ND_Profiles" or "ND_Accessories" or "ND_Gaskets")
+                if (a2pWorksheet.Name is "ND_Profiles" or "ND_Accessories" or "ND_Gaskets" or "ND_Panels")
                 {
                     if (string.IsNullOrEmpty(sapaReference))
                     {

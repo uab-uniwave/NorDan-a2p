@@ -312,8 +312,9 @@ BEGIN
 END;
 GO
 
-CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertMaterial] 
-	 @SalesDocumentNumber [int]
+CREATE OR ALTER   PROCEDURE [dbo].[Uniwave_a2p_InsertMaterial] 
+	  @RowId [nvarchar] (37)
+	, @SalesDocumentNumber [int]
 	, @SalesDocumentVersion [int]
 	--==============================
 	, @Order [nvarchar] (50)
@@ -382,7 +383,8 @@ CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertMaterial]
 AS
 BEGIN
 	INSERT INTO [dbo].[Uniwave_a2p_Materials] (
-		 [SalesDocumentNumber]
+	   	  [RowId]	
+		, [SalesDocumentNumber]
 		, [SalesDocumentVersion]
 		--============================== 
 		, [Order]
@@ -450,7 +452,8 @@ BEGIN
 		, [ModifiedUTCDateTime]
 		)
 	VALUES (
-		 @SalesDocumentNumber
+		  @RowId
+		, @SalesDocumentNumber
 		, @SalesDocumentVersion 
 		--============================== 
 		, @Order
@@ -517,7 +520,7 @@ BEGIN
 		, @ModifiedUTCDateTime
 		);
 END;
-GO
+
 
 
 -- Insert Order Material Needs 
@@ -683,7 +686,6 @@ END
 GO
 
 
-
 -- Insert Order Navision codes
 --==============================================================================
 CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_UpdateBCMapping]
@@ -773,17 +775,15 @@ END
 
 
 IF (@SapaExternalReference IS NOT NULL AND @Reference != @SapaReference)
-BEGIN 
-	Insert Into UniwaveApi_Mapping (RowId, ExternalSourceName, EntityType, PrefSuiteRowId, ExternalRowId, PrefSuiteReference, ExternalReference, CreationDate, LastModifiedDate)
-VALUES (NewId(), 'BC', 1, @PrefSuiteRowId, @ExternalRowId, @Reference, @SapaExternalReference, GetDAte(), GetDate() )
-END 
+	BEGIN 
+		Insert Into UniwaveApi_Mapping (RowId, ExternalSourceName, EntityType, PrefSuiteRowId, ExternalRowId, PrefSuiteReference, ExternalReference, CreationDate, LastModifiedDate)
+		VALUES (NewId(), 'BC', 1, @PrefSuiteRowId, @ExternalRowId, @Reference, @SapaExternalReference, GetDAte(), GetDate() )
+	END 
 ELSE IF (@SapaExternalReference IS NULL)
-BEGIN 
- 
-	Insert Into UniwaveApi_Mapping (RowId, ExternalSourceName, EntityType, PrefSuiteRowId, PrefSuiteReference, ExternalReference, CreationDate, LastModifiedDate)
-	VALUES (NewId(), 'BC', 1, @PrefSuiteRowId, @Reference, 'ALU_'+RTRIM(CAST(@MAx+1 AS NVARCHAR(10))) , GetDAte(), GetDate())
- 
-END
+	BEGIN 
+		Insert Into UniwaveApi_Mapping (RowId, ExternalSourceName, EntityType, PrefSuiteRowId, PrefSuiteReference, ExternalReference, CreationDate, LastModifiedDate)
+		VALUES (NewId(), 'BC', 1, @PrefSuiteRowId, @Reference, 'ALU_'+RTRIM(CAST(@MAx+1 AS NVARCHAR(10))) , GetDAte(), GetDate())
+	END
 
 
 
@@ -816,6 +816,9 @@ VALUES(@ReferenceBase
 
 END
 GO
+
+
+
 
 -- Insert Colors nto PrefSuite DB
 --==============================================================================
@@ -1461,9 +1464,10 @@ END
 GO
 
 
+
 -- Insert Materials purchase details into PrefSuite DB tables 
 --==============================================================================
-CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialPurchaseData] 
+CREATE OR  ALTER   PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialPurchaseData] 
 	-- Add the parameters for the stored procedure here
 	@Reference NVARCHAR(25), 
 	@Package INT,
@@ -1527,6 +1531,8 @@ BEGIN
 			 WHEN @MaterialType = 2 and @Package >1  THEN 'Roll'
 			 WHEN @MaterialType = 3 and @Package =1  THEN 'Piece'
 			 WHEN @MaterialType = 3 and @Package >1  THEN 'Box'
+		     WHEN @MaterialType = 4 and @Package =1  THEN 'Piece'
+
 		ELSE N'' END, -- DescripcionUP1 - nvarchar(50)
 
 		CASE WHEN @MaterialType = 1 THEN 'Bar'
@@ -1534,6 +1540,7 @@ BEGIN
 			 WHEN @MaterialType = 2 and @Package >1  THEN 'Meters'
 			 WHEN @MaterialType = 3 and @Package =1  THEN 'Piece'
 			 WHEN @MaterialType = 3 and @Package >1  THEN 'Pieces'
+			 WHEN @MaterialType = 4 and @Package =1  THEN 'Piece'
 		ELSE N'' END, -- DescripcionUP2 - nvarchar(50)
 		1,  -- ByDefault - smallint
 		14,  -- SchedulerTime - int
@@ -1591,7 +1598,3 @@ BEGIN
 
 END
 GO
-
-
-
-

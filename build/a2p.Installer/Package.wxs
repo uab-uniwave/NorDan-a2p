@@ -1,6 +1,6 @@
 ﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
      xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
-  <Package  Name="Alu2PrefSuite" Manufacturer="Uniwave UAB" Version="1.0.0.19" UpgradeCode="E2417A15-E990-4DA0-AB71-6C75A7A8DA4B">
+  <Package  Name="Alu2PrefSuite" Manufacturer="Uniwave UAB" Version="1.0.0.21" UpgradeCode="E2417A15-E990-4DA0-AB71-6C85A7A8DA4B">
       <ui:WixUI
         Id="WixUI_Minimal"
             
@@ -24,7 +24,7 @@
       <ComponentGroupRef Id="SQL" />
      <ComponentGroupRef Id="ApplicationComponents" />
      <ComponentGroupRef Id="ExcelFiles" />
-        <ComponentGroupRef Id="PrefSuiteBackupFile" />
+        <!--<ComponentGroupRef Id="PrefSuiteBackupFile" />-->
         <ComponentGroupRef Id="RuntimeWinx64" />
         <ComponentGroupRef Id="RuntimeWin" />
         

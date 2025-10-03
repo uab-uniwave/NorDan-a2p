@@ -1,7 +1,4 @@
-﻿/****** Object:  Table [dbo].[Uniwave_a2p_ReferenceMappingLog]    Script Date: 2025-06-26 22:28:59 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Uniwave_a2p_ReferenceMappingLog]') AND type in (N'U'))
-DROP TABLE [dbo].[Uniwave_a2p_ReferenceMappingLog]
-GO
+﻿
 
 /****** Object:  Table [dbo].[Uniwave_a2p_Materials]    Script Date: 2025-06-26 22:28:59 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Uniwave_a2p_Materials]') AND type in (N'U'))
@@ -14,9 +11,6 @@ DROP TABLE [dbo].[Uniwave_a2p_Items]
 GO
 
 /****** Object:  Table [dbo].[NorDan_a2p_IntrastatData]    Script Date: 2025-06-26 22:28:59 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[NorDan_a2p_IntrastatData]') AND type in (N'U'))
-DROP TABLE [dbo].[NorDan_a2p_IntrastatData]
-GO
 
 /****** Object:  Table [dbo].[NorDan_a2p_ColorMapping]    Script Date: 2025-06-26 22:28:59 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[NorDan_a2p_ColorMapping]') AND type in (N'U'))
@@ -120,6 +114,7 @@ GO
 
 CREATE TABLE [dbo].[Uniwave_a2p_Materials](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[RowId] [uniqeidentifier] IDENTITY(1,1) NOT NULL,
 	[SalesDocumentNumber] [int] NOT NULL,
 	[SalesDocumentVersion] [int] NOT NULL,
 	[Order] [nvarchar](50) NOT NULL,

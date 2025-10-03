@@ -398,6 +398,7 @@ namespace a2p.Shared.Application.Services
                     CommandText = "[dbo].[Uniwave_a2p_InsertMaterial]",
                     CommandType = CommandType.StoredProcedure
                 };
+                _ = cmd.Parameters.AddWithValue("@RowId", materialDTO.RowId); //required
 
                 _ = cmd.Parameters.AddWithValue("@SalesDocumentNumber", number); //required
                 _ = cmd.Parameters.AddWithValue("@SalesDocumentVersion", version); //required

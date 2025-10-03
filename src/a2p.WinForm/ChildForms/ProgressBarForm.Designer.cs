@@ -1,4 +1,4 @@
-﻿
+
 namespace a2p.WinForm.ChildForms
 
 
@@ -140,7 +140,6 @@ namespace a2p.WinForm.ChildForms
             Opacity = 0.8D;
             StartPosition = FormStartPosition.CenterParent;
             Text = "ProgressBarForm";
-            TopMost = true;
             UseWaitCursor = true;
             FormClosed += ProgressBarForm_FormClosed;
             Load += ProgressBarForm_Load;

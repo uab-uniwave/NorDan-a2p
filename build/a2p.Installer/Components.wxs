@@ -276,12 +276,12 @@
             <File Source="..\Release\System.Text.Json.dll" />
         </Component>
     </ComponentGroup>
-          <ComponentGroup Id="PrefSuiteBackupFile" Directory="PrefSuiteBackupFolder">
+          <!--<ComponentGroup Id="PrefSuiteBackupFile" Directory="PrefSuiteBackupFolder">
               <Component>
                   <File Source="..\Release\PrefSuiteBackup\PrefSuiteTestCases.bkp" />
               </Component>
 
-      </ComponentGroup>
+      </ComponentGroup>-->
       <ComponentGroup Id="RuntimeWin" Directory="net8_0Folder">
           <Component>
               <File Source="..\Release\runtimes\win\lib\net8.0\Microsoft.Data.SqlClient.dll" />

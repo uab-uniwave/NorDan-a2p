@@ -116,8 +116,10 @@ namespace a2p.Shared.Application.Services
                         _progressValue.ProgressTask2 = $"Inserting materials {i + 1} of {a2pOrder.Materials.Count} into PrefSuite DB...";
                         _progressValue.ProgressTask3 = $"Material # {a2pOrder.Materials[i].ReferenceBase} {a2pOrder.Materials[i].Color}.";
                         _progress?.Report(_progressValue);
-                        A2PError? ErrorMaterialDTO = await _sqlRepository.InsertOrderMaterialDTOAsync(a2pOrder.Materials[i], a2pOrder.SalesDocumentNumber, a2pOrder.SalesDocumentVersion);
 
+                        // Insert MaterialDTO
+                        //=================================================================
+                        A2PError? ErrorMaterialDTO = await _sqlRepository.InsertOrderMaterialDTOAsync(a2pOrder.Materials[i], a2pOrder.SalesDocumentNumber, a2pOrder.SalesDocumentVersion);
                         if (ErrorMaterialDTO != null)
                         {
                             a2pOrder.ErrorsWrite.Add(ErrorMaterialDTO);
@@ -125,15 +127,19 @@ namespace a2p.Shared.Application.Services
                         }
 
 
-
+                        // Insert PrefSuite Material
+                        //=================================================================
                         A2PError? errorPrefColor = await _sqlRepository.InsertPrefSuiteColorAsync(a2pOrder.Materials[i]);
                         if (errorPrefColor != null)
                         {
                             a2pOrder.ErrorsWrite.Add(errorPrefColor);
                             continue;
                         }
-                        int GetColorConfiguration = await _sqlRepository.GetPrefSuiteColorConfigurationAsync(a2pOrder.Materials[i].Color);
 
+
+                        // Insert PrefSuite Material Configuration
+                        //=================================================================
+                        int GetColorConfiguration = await _sqlRepository.GetPrefSuiteColorConfigurationAsync(a2pOrder.Materials[i].Color);
                         A2PError? errorColorConfiguration = await _sqlRepository.InsertPrefSuiteColorConfigurationAsync(a2pOrder.Materials[i]);
                         if (errorColorConfiguration != null)
                         {
@@ -142,13 +148,17 @@ namespace a2p.Shared.Application.Services
                         }
 
 
-
+                        // Insert PrefSuite Material Base
+                        //=================================================================
                         A2PError? errorPrefMaterialBase = await _sqlRepository.InsertPrefSuiteMaterialBaseAsync(a2pOrder.Materials[i]);
                         if (errorPrefMaterialBase != null)
                         {
                             a2pOrder.ErrorsWrite.Add(errorPrefMaterialBase);
                             continue;
                         }
+
+                        // Insert PrefSuite Material 
+                        //=================================================================
                         A2PError? errorPrefMaterial = await _sqlRepository.InsertPrefSuiteMaterialAsync(a2pOrder.Materials[i]);
                         if (errorPrefMaterial != null)
                         {
@@ -156,6 +166,8 @@ namespace a2p.Shared.Application.Services
                             continue;
                         }
 
+                        // Insert PrefSuite material Profile 
+                        //=================================================================
                         if (a2pOrder.Materials[i].MaterialType == MaterialType.Profiles)
                         {
                             A2PError? errorPrefProfile = await _sqlRepository.InsertPrefSuiteMaterialProfileAsync(a2pOrder.Materials[i]);
@@ -166,6 +178,8 @@ namespace a2p.Shared.Application.Services
                             }
                         }
 
+                        // Insert PrefSuite material Gaskets
+                        //=================================================================
                         if (a2pOrder.Materials[i].MaterialType == MaterialType.Gaskets)
                         {
                             A2PError? errorPrefMeter = await _sqlRepository.InsertPrefSuiteMaterialMeterAsync(a2pOrder.Materials[i]);
@@ -177,6 +191,9 @@ namespace a2p.Shared.Application.Services
 
                         }
 
+
+                        // Insert PrefSuite material Pieces
+                        //=================================================================
                         if (a2pOrder.Materials[i].MaterialType == MaterialType.Piece)
                         {
                             A2PError? errorPrefPiece = await _sqlRepository.InsertPrefSuiteMaterialPieceAsync(a2pOrder.Materials[i]);
@@ -187,8 +204,9 @@ namespace a2p.Shared.Application.Services
                             }
                         }
 
-
-                        if (a2pOrder.Materials[i].MaterialType == MaterialType.Glasses || a2pOrder.Materials[i].MaterialType == MaterialType.Panels)
+                        // Insert PrefSuite material Panels
+                        //===============================================================
+                        if (a2pOrder.Materials[i].MaterialType == MaterialType.Panels)
                         {
 
                             A2PError? errorPrefSurface = await _sqlRepository.InsertPrefSuiteMaterialSurfaceAsync(a2pOrder.Materials[i]);
@@ -200,6 +218,22 @@ namespace a2p.Shared.Application.Services
 
                         }
 
+
+                        if (a2pOrder.Materials[i].MaterialType == MaterialType.Glasses)
+                        {
+
+                            A2PError? errorPrefSurface = await _sqlRepository.InsertPrefSuiteMaterialSurfaceAsync(a2pOrder.Materials[i]);
+                            if (errorPrefSurface != null)
+                            {
+                                a2pOrder.ErrorsWrite.Add(errorPrefSurface);
+                                continue;
+                            }
+
+                        }
+
+
+                        // Update BC Mapping
+                        //=================================================================
                         if (a2pOrder.Materials[i].MaterialType != MaterialType.Glasses)
                         {
                             A2PError? errorUpdateBC = await _sqlRepository.UpdateBCMapping(a2pOrder.Materials[i]);
@@ -208,15 +242,17 @@ namespace a2p.Shared.Application.Services
                                 a2pOrder.ErrorsWrite.Add(errorUpdateBC);
                                 continue;
                             }
+                            
+                        }
 
-                            if (!string.IsNullOrEmpty(a2pOrder.Materials[i].SourceReference))
+                        // Insert PrefSuite material Purchase Data
+                        if (!string.IsNullOrEmpty(a2pOrder.Materials[i].Reference))
+                        {
+                            A2PError? errorPurchaseData = await _sqlRepository.InsertPrefSuiteMaterialPurchaseDataAsync(a2pOrder.Materials[i]);
+                            if (errorPurchaseData != null)
                             {
-                                A2PError? errorPurchaseData = await _sqlRepository.InsertPrefSuiteMaterialPurchaseDataAsync(a2pOrder.Materials[i]);
-                                if (errorPurchaseData != null)
-                                {
-                                    a2pOrder.ErrorsWrite.Add(errorPurchaseData);
-                                    continue;
-                                }
+                                a2pOrder.ErrorsWrite.Add(errorPurchaseData);
+                                continue;
                             }
                         }
 

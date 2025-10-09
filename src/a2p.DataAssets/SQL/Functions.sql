@@ -221,9 +221,9 @@ GO
 
 CREATE OR ALTER FUNCTION [dbo].[Uniwave_SAPA_EDI_Data] ( @PurchaseNumber INT, @PurchaseNumeration INT)
 RETURNS @FP TABLE
-    (
-      CIP CHAR(17) NOT NULL ,
-      Nomenclatura CHAR(26) NOT NULL ,
+	(
+	  CIP CHAR(17) NOT NULL ,
+	  Nomenclatura CHAR(26) NOT NULL ,
 	  PurchaseDetailId CHAR(3) NOT NULL ,
 	  ReferenceBase CHAR(6) NOT NULL ,
 	  Description CHAR(60) NOT NULL , -- 50
@@ -232,13 +232,13 @@ RETURNS @FP TABLE
 	  Height CHAR(5) NOT NULL ,
 	  ProductionLot CHAR(6) NOT NULL ,
 	  ProductionSet CHAR(1) NOT NULL 
-    )
-    BEGIN
-     
+	)
+	BEGIN
+	 
 	 INSERT INTO @FP
 	 SELECT 
 	 CAST(ISNULL(P.Referencia,'') AS CHAR(17)),
-	 CAST(ISNULL(ISNULL(RG.Product,''),UM.Item) AS CHAR(26)),
+	 CAST(ISNULL(RG.[Product],ISNULL(UM.Item,'')) AS CHAR(26)),
 	 CAST(ISNULL(psd.LineID,0) + 1 AS CHAR(3)),
 	 CAST(ISNULL(mn.Reference,'') AS CHAR(6)),
 	 CAST(CASE WHEN LEN(ISNULL(lc.Translation,'')) = 0 THEN ISNULL(mb.Descripcion,'') ELSE lc.Translation END AS CHAR(50))+
@@ -251,11 +251,11 @@ RETURNS @FP TABLE
 	 CAST('NaN' AS CHAR(6)),
 	 ''q
 	 FROM    dbo.PurchasesSubDetail AS psd
-	        INNER JOIN dbo.PurchasesDetail AS pd ON pd.Numeration = psd.Numeration AND pd.Number = psd.Number AND pd.Id = psd.LineID
+			INNER JOIN dbo.PurchasesDetail AS pd ON pd.Numeration = psd.Numeration AND pd.Number = psd.Number AND pd.Id = psd.LineID
 			INNER JOIN dbo.Numeraciones AS NR ON psd.Numeration = NR.id AND  NR.DocumentType = 2
-            INNER JOIN dbo.MaterialNeeds AS mn ON mn.GUID = psd.MaterialNeedId
-            INNER JOIN dbo.PAF p ON mn.Number = p.Numero
-                              AND mn.Version = p.Version
+			INNER JOIN dbo.MaterialNeeds AS mn ON mn.GUID = psd.MaterialNeedId
+			INNER JOIN dbo.PAF p ON mn.Number = p.Numero
+							  AND mn.Version = p.Version
 			INNER JOIN dbo.Materiales m ON m.Referencia=mn.Reference
 			INNER JOIN dbo.MaterialesBase mb ON m.ReferenciaBase=mb.ReferenciaBase
 			INNER JOIN dbo.Superficies sup ON sup.ReferenciaBase=m.ReferenciaBase
@@ -273,5 +273,5 @@ RETURNS @FP TABLE
 	WHERE psd.Number = @PurchaseNumber AND psd.Numeration = @PurchaseNumeration --((sup.Tipo=0 AND sup.Composite=1) OR sup.Tipo=2) AND  
 	ORDER BY psd.LineID
 
-        RETURN 
-    END
+		RETURN 
+	END

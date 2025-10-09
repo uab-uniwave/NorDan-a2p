@@ -521,7 +521,7 @@ BEGIN
 		);
 END;
 
-
+GO
 
 -- Insert Order Material Needs 
 --==============================================================================
@@ -562,7 +562,10 @@ INSERT INTO dbo.MaterialNeedsMaster
 END
 GO
 
-CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialNeeds] 
+
+-- Insert Order Material Needs 
+--==============================================================================
+CREATE OR ALTER   PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialNeeds] 
 	-- Add the parameters for the stored procedure here
 	@Number INT, 
 	@Version INT
@@ -621,7 +624,7 @@ BEGIN
 
 
 SELECT
-		NEWID(), -- GUID - uniqueidentifier -- 
+		RowId, -- GUID - uniqueidentifier -- 
 		SalesDocumentNumber, -- Number - int -- 
 		SalesDocumentVersion, -- Version - int -- 
 		-1, -- ProductionSet - int -- 
@@ -630,9 +633,9 @@ SELECT
 		-1, -- Position - int -- 
 		-1, -- SquareId - int -- 
 		-1, -- HoleId - int -- 
-		CASE WHEN MaterialType = '5' THEN 'G'+RTRIM(CAST(SortOrder AS NVARCHAR(9))) -- 
-			 ELSE '' -- 
-			 END, -- 
+		CASE WHEN MaterialType = '5' THEN 'G'+RTRIM(CAST(SortOrder AS NVARCHAR(9))) 
+			 ELSE ''  
+			 END,  
 		CASE WHEN MaterialType = 1 THEN 1 -- Profiles - Barras --
 			 WHEN MaterialType = 2 THEN 3 -- Gaskets - Metros --
 			 WHEN MaterialType = 3 THEN 2 -- Piece - Piezas --
@@ -657,10 +660,9 @@ SELECT
 		CASE WHEN (MaterialType = 2  OR MaterialType=3) AND RequiredQuantity <= (SELECT UP2/2 FROM Compras Where Proveedor=979 and APartir=1 and UP1=1 and ByDefault =1 and Referencia = Reference)   THEN 0
 		ELSE 1 END, -- AllowToOrder,
 		
-		
-
-		CASE WHEN MaterialType = 1 THEN Quantity  
-		WHEN MaterialType = 2  OR MaterialType=3 THEN CEILING(RequiredQuantity)  
+		CASE WHEN MaterialType = 1 THEN Quantity
+		     WHEN MaterialType = 2 THEN CEILING(RequiredQuantity)  
+			 WHEN MaterialType=3 THEN CEILING(RequiredQuantity)  
 		ELSE TotalQuantity END, 	-- QuantityToOrder
 		
 		RequiredQuantity, -- QuantityToDiscount,
@@ -683,6 +685,7 @@ FROM Uniwave_a2p_Materials Where SalesDocumentNumber = @Number and SalesDocument
 Update vwSales Set BreakdownDate =GETDATE() Where Number=@Number and Version=@Version	
 
 END
+
 GO
 
 

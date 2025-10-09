@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.0.11018.127 d18.0
+VisualStudioVersion = 18.0.11018.127
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "a2p.Shared", "src\a2p.Shared\a2p.Shared.csproj", "{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8}"
 EndProject
@@ -33,32 +33,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{58E421E3-1FD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Excel", "Excel", "{E1A78A32-DF5F-4F65-A987-6FEF96E2B856}"
 	ProjectSection(SolutionItems) = preProject
-		src\a2p.DataAssets\Excel\0000Z000001-14 Price_Details.xlsx = src\a2p.DataAssets\Excel\0000Z000001-14 Price_Details.xlsx
-		src\a2p.DataAssets\Excel\0000Z000001-14 SumList.xlsx = src\a2p.DataAssets\Excel\0000Z000001-14 SumList.xlsx
-		src\a2p.DataAssets\Excel\0000Z00001-1 Price_Details.xlsx = src\a2p.DataAssets\Excel\0000Z00001-1 Price_Details.xlsx
-		src\a2p.DataAssets\Excel\0000Z00001-1 SumList.xlsx = src\a2p.DataAssets\Excel\0000Z00001-1 SumList.xlsx
-		src\a2p.DataAssets\Excel\0000Z00001-2 Price_Details.xlsx = src\a2p.DataAssets\Excel\0000Z00001-2 Price_Details.xlsx
-		src\a2p.DataAssets\Excel\0000Z00001-2 SumList.xlsx = src\a2p.DataAssets\Excel\0000Z00001-2 SumList.xlsx
-		src\a2p.DataAssets\Excel\0000Z00001-3 Price_Details.xlsx = src\a2p.DataAssets\Excel\0000Z00001-3 Price_Details.xlsx
-		src\a2p.DataAssets\Excel\0000Z00001-3 SumList.xlsx = src\a2p.DataAssets\Excel\0000Z00001-3 SumList.xlsx
-		src\a2p.DataAssets\Excel\0000Z00001-4 Price_Details.xlsx = src\a2p.DataAssets\Excel\0000Z00001-4 Price_Details.xlsx
-		src\a2p.DataAssets\Excel\0000Z00001-4 SumList.xlsx = src\a2p.DataAssets\Excel\0000Z00001-4 SumList.xlsx
-		src\a2p.DataAssets\Excel\0000Z00001-5 Price_Details.xlsx = src\a2p.DataAssets\Excel\0000Z00001-5 Price_Details.xlsx
-		src\a2p.DataAssets\Excel\0000Z00001-5 SumList.xlsx = src\a2p.DataAssets\Excel\0000Z00001-5 SumList.xlsx
-		src\a2p.DataAssets\Excel\0000Z00001-6 Price_Details.xlsx = src\a2p.DataAssets\Excel\0000Z00001-6 Price_Details.xlsx
-		src\a2p.DataAssets\Excel\0000Z00001-6 SumList.xlsx = src\a2p.DataAssets\Excel\0000Z00001-6 SumList.xlsx
-		src\a2p.DataAssets\Excel\0000Z00001-7 Price_Details.xlsx = src\a2p.DataAssets\Excel\0000Z00001-7 Price_Details.xlsx
-		src\a2p.DataAssets\Excel\0000Z00001-7 SumList.xlsx = src\a2p.DataAssets\Excel\0000Z00001-7 SumList.xlsx
-		src\a2p.DataAssets\Excel\0000Z00001-8 Price_Details.xlsx = src\a2p.DataAssets\Excel\0000Z00001-8 Price_Details.xlsx
-		src\a2p.DataAssets\Excel\0000Z00001-8 SumList.xlsx = src\a2p.DataAssets\Excel\0000Z00001-8 SumList.xlsx
-		src\a2p.DataAssets\Excel\0000Z00001-9 Price_Details.xlsx = src\a2p.DataAssets\Excel\0000Z00001-9 Price_Details.xlsx
-		src\a2p.DataAssets\Excel\0000Z00001-9 SumList.xlsx = src\a2p.DataAssets\Excel\0000Z00001-9 SumList.xlsx
-		src\a2p.DataAssets\Excel\0000Z00021-1 Price_Details_decimal_LT.xlsx = src\a2p.DataAssets\Excel\0000Z00021-1 Price_Details_decimal_LT.xlsx
-		src\a2p.DataAssets\Excel\0000Z00021-1 SumList_decimal_LT.xlsx = src\a2p.DataAssets\Excel\0000Z00021-1 SumList_decimal_LT.xlsx
-		src\a2p.DataAssets\Excel\0000Z00021-2 Price_Details_decimal_US.xlsx = src\a2p.DataAssets\Excel\0000Z00021-2 Price_Details_decimal_US.xlsx
-		src\a2p.DataAssets\Excel\0000Z00021-2 SumList_decimal_US_.xlsx = src\a2p.DataAssets\Excel\0000Z00021-2 SumList_decimal_US_.xlsx
-		src\a2p.DataAssets\Excel\0000Z00021-3 Price_Details_decimal_Mix.xlsx = src\a2p.DataAssets\Excel\0000Z00021-3 Price_Details_decimal_Mix.xlsx
-		src\a2p.DataAssets\Excel\0000Z00021-3 SumList__decimal_Mix.xlsx = src\a2p.DataAssets\Excel\0000Z00021-3 SumList__decimal_Mix.xlsx
 		src\a2p.DataAssets\Excel\NorDan_a2p_ColorMapping.csv = src\a2p.DataAssets\Excel\NorDan_a2p_ColorMapping.csv
 		src\a2p.DataAssets\Excel\NorDan_a2p_IntrastatData.csv = src\a2p.DataAssets\Excel\NorDan_a2p_IntrastatData.csv
 	EndProjectSection
@@ -139,6 +113,58 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{9368B7
 		build\a2p.Installer\Images\WixUIDialogBmp_493_312.png = build\a2p.Installer\Images\WixUIDialogBmp_493_312.png
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TechDesign", "TechDesign", "{775B9C55-F2C5-406F-98E8-88EC219E22E9}"
+	ProjectSection(SolutionItems) = preProject
+		src\a2p.DataAssets\Excel\TechDesign\0000Z000001-14 Price_Details.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z000001-14 Price_Details.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z000001-14 SumList.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z000001-14 SumList.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00001-1 Price_Details.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00001-1 Price_Details.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00001-1 SumList.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00001-1 SumList.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00001-13 Price_Details.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00001-13 Price_Details.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00001-13 SumList.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00001-13 SumList.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00001-2 Price_Details.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00001-2 Price_Details.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00001-2 SumList.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00001-2 SumList.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00001-3 Price_Details.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00001-3 Price_Details.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00001-3 SumList.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00001-3 SumList.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00001-4 Price_Details.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00001-4 Price_Details.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00001-4 SumList.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00001-4 SumList.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00001-5 Price_Details.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00001-5 Price_Details.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00001-5 SumList.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00001-5 SumList.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00001-6 Price_Details.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00001-6 Price_Details.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00001-6 SumList.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00001-6 SumList.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00001-7 Price_Details.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00001-7 Price_Details.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00001-7 SumList.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00001-7 SumList.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00001-8 Price_Details.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00001-8 Price_Details.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00001-8 SumList.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00001-8 SumList.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00001-9 Price_Details.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00001-9 Price_Details.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00001-9 SumList.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00001-9 SumList.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00021-1 Price_Details_decimal_LT.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00021-1 Price_Details_decimal_LT.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00021-1 SumList_decimal_LT.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00021-1 SumList_decimal_LT.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00021-2 Price_Details_decimal_US.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00021-2 Price_Details_decimal_US.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00021-2 SumList_decimal_US_.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00021-2 SumList_decimal_US_.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00021-3 Price_Details_decimal_Mix.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00021-3 Price_Details_decimal_Mix.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\0000Z00021-3 SumList__decimal_Mix.xlsx = src\a2p.DataAssets\Excel\TechDesign\0000Z00021-3 SumList__decimal_Mix.xlsx
+		src\a2p.DataAssets\Excel\TechDesign\NorDan_a2p_ColorMapping.csv = src\a2p.DataAssets\Excel\TechDesign\NorDan_a2p_ColorMapping.csv
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Schuco", "Schuco", "{9B747B11-9D04-4A9D-8E00-C88CCC2371D3}"
+	ProjectSection(SolutionItems) = preProject
+		src\a2p.DataAssets\Excel\Schuco\2408Z03867-1_ALU_Accessory_summary.xlsx = src\a2p.DataAssets\Excel\Schuco\2408Z03867-1_ALU_Accessory_summary.xlsx
+		src\a2p.DataAssets\Excel\Schuco\2408Z03867-1_ALU_Calculation.xlsx = src\a2p.DataAssets\Excel\Schuco\2408Z03867-1_ALU_Calculation.xlsx
+		src\a2p.DataAssets\Excel\Schuco\2408Z03867-1_ALU_Glass_panel_composition.xlsx = src\a2p.DataAssets\Excel\Schuco\2408Z03867-1_ALU_Glass_panel_composition.xlsx
+		src\a2p.DataAssets\Excel\Schuco\2408Z03867-1_ALU_Profile_summary.xlsx = src\a2p.DataAssets\Excel\Schuco\2408Z03867-1_ALU_Profile_summary.xlsx
+		src\a2p.DataAssets\Excel\Schuco\2408Z03932-8_ALU_Accessory_summary.xlsx = src\a2p.DataAssets\Excel\Schuco\2408Z03932-8_ALU_Accessory_summary.xlsx
+		src\a2p.DataAssets\Excel\Schuco\2408Z03932-8_ALU_CalcSapaLogic_IX1.xlsx = src\a2p.DataAssets\Excel\Schuco\2408Z03932-8_ALU_CalcSapaLogic_IX1.xlsx
+		src\a2p.DataAssets\Excel\Schuco\2408Z03932-8_ALU_Calculation_Schuco.xlsx = src\a2p.DataAssets\Excel\Schuco\2408Z03932-8_ALU_Calculation_Schuco.xlsx
+		src\a2p.DataAssets\Excel\Schuco\2408Z03932-8_ALU_FillingList.xlsx = src\a2p.DataAssets\Excel\Schuco\2408Z03932-8_ALU_FillingList.xlsx
+		src\a2p.DataAssets\Excel\Schuco\2408Z03932-8_ALU_Glass_panel_composition.xlsx = src\a2p.DataAssets\Excel\Schuco\2408Z03932-8_ALU_Glass_panel_composition.xlsx
+		src\a2p.DataAssets\Excel\Schuco\2408Z03932-8_ALU_MaterialList.xlsx = src\a2p.DataAssets\Excel\Schuco\2408Z03932-8_ALU_MaterialList.xlsx
+		src\a2p.DataAssets\Excel\Schuco\2408Z03932-8_ALU_Profile_summary.xlsx = src\a2p.DataAssets\Excel\Schuco\2408Z03932-8_ALU_Profile_summary.xlsx
+		src\a2p.DataAssets\Excel\Schuco\2409Z04081-5_ALU_Accessory_summary.xlsx = src\a2p.DataAssets\Excel\Schuco\2409Z04081-5_ALU_Accessory_summary.xlsx
+		src\a2p.DataAssets\Excel\Schuco\2409Z04081-5_ALU_Calculation.xlsx = src\a2p.DataAssets\Excel\Schuco\2409Z04081-5_ALU_Calculation.xlsx
+		src\a2p.DataAssets\Excel\Schuco\2409Z04081-5_ALU_Glass_panel_composition.xlsx = src\a2p.DataAssets\Excel\Schuco\2409Z04081-5_ALU_Glass_panel_composition.xlsx
+		src\a2p.DataAssets\Excel\Schuco\2409Z04081-5_ALU_Profile_summary.xlsx = src\a2p.DataAssets\Excel\Schuco\2409Z04081-5_ALU_Profile_summary.xlsx
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -164,8 +190,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-		{0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-		{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{0B4AB28F-ABFC-4AD4-87CF-5066D3B5B6AF} = {80D579FC-77B1-4965-934F-61FBE27F9DF2}
+		{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D} = {80D579FC-77B1-4965-934F-61FBE27F9DF2}
 		{58E421E3-1FDA-4904-8877-B0639EB6CF9D} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
 		{E1A78A32-DF5F-4F65-A987-6FEF96E2B856} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
 		{58A4D13F-3B73-48F5-959A-94ACCB93A37C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71B8}
@@ -179,10 +205,12 @@ Global
 		{794D2BF2-915F-4498-BA2A-271BAA957386} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
 		{F3A3C0DB-C6EE-4509-BF5B-FD688C9D141D} = {33FD462D-4B12-4501-92BD-81095ACABC95}
 		{9368B7BC-31DF-47A0-8C2B-FFAED986B074} = {33FD462D-4B12-4501-92BD-81095ACABC95}
+		{775B9C55-F2C5-406F-98E8-88EC219E22E9} = {E1A78A32-DF5F-4F65-A987-6FEF96E2B856}
+		{9B747B11-9D04-4A9D-8E00-C88CCC2371D3} = {E1A78A32-DF5F-4F65-A987-6FEF96E2B856}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		BuildVersion_StartDate = 2000/1/1
-		BuildVersion_BuildVersioningStyle = None.None.None.Increment
 		SolutionGuid = {02931AC6-E3AF-4E96-A144-EE9EE4BE10E7}
+		BuildVersion_BuildVersioningStyle = None.None.None.Increment
+		BuildVersion_StartDate = 2000/1/1
 	EndGlobalSection
 EndGlobal

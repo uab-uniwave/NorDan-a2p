@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pl="http://www.preference.com/XMLSchemas/2006/PrefProduction.ProductionLot" targetNamespace="http://www.preference.com/XMLSchemas/2006/PrefProduction.ProductionLot" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xsd:element name="ProductionLot">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Attributes">
+					<xsd:complexType>
+						<xsd:choice minOccurs="0" maxOccurs="unbounded">
+							<xsd:element name="Reference" minOccurs="0">
+								<xsd:complexType>
+									<xsd:attribute name="value" type="xsd:string" use="required"/>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="OptimizationLevel" minOccurs="0">
+								<xsd:complexType>
+									<xsd:attribute name="value" use="required">
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:integer">
+												<xsd:enumeration value="1"/>
+												<xsd:enumeration value="2"/>
+												<xsd:enumeration value="3"/>
+												<xsd:enumeration value="4"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:attribute>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="UseWaste" minOccurs="0">
+								<xsd:complexType>
+									<xsd:attribute name="value" type="xsd:boolean" use="required"/>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="WarehouseCode" minOccurs="0">
+								<xsd:complexType>
+									<xsd:attribute name="value" type="xsd:positiveInteger" use="required"/>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="ScheduledShopEntryDate" minOccurs="0">
+								<xsd:complexType>
+									<xsd:attribute name="value" type="xsd:dateTime" use="required"/>
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:choice>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="ProductionLines" type="pl:typeProductionLineList"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:simpleType name="guid">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="typeOrder">
+		<xsd:attribute name="reference" type="xsd:string"/>
+		<xsd:attribute name="number" type="xsd:integer"/>
+		<xsd:attribute name="version" type="xsd:integer"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeOrderList">
+		<xsd:choice>
+			<xsd:element name="Order" type="pl:typeOrder" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="typeItem">
+		<xsd:attribute name="orderReference" type="xsd:string"/>
+		<xsd:attribute name="nomenclature" type="xsd:string"/>
+		<xsd:attribute name="number" type="xsd:integer"/>
+		<xsd:attribute name="version" type="xsd:integer"/>
+		<xsd:attribute name="position" type="xsd:integer"/>
+		<xsd:attribute name="quantity" type="xsd:integer" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeItemList">
+		<xsd:choice>
+			<xsd:element name="Item" type="pl:typeItem" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="typeSubModel">
+		<xsd:attribute name="number" type="xsd:integer" use="required"/>
+		<xsd:attribute name="version" type="xsd:integer" use="required"/>
+		<xsd:attribute name="position" type="xsd:integer" use="required"/>
+		<xsd:attribute name="instance" type="xsd:integer" use="required"/>
+		<xsd:attribute name="subModel" type="xsd:integer" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeSubModelList">
+		<xsd:choice>
+			<xsd:element name="SubModel" type="pl:typeSubModel" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="typeProductionSet">
+		<xsd:sequence>
+			<xsd:element name="Orders" type="pl:typeOrderList" minOccurs="0"/>
+			<xsd:element name="Items" type="pl:typeItemList" minOccurs="0"/>
+			<xsd:element name="SubModels" type="pl:typeSubModelList" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeProductionSetList">
+		<xsd:choice>
+			<xsd:element name="ProductionSet" type="pl:typeProductionSet" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="typeProductionLine">
+		<xsd:choice>
+			<xsd:element name="ProductionSets" type="pl:typeProductionSetList" minOccurs="0"/>
+		</xsd:choice>
+		<xsd:attribute name="lineId" type="pl:guid" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeProductionLineList">
+		<xsd:choice>
+			<xsd:element name="ProductionLine" type="pl:typeProductionLine" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:choice>
+	</xsd:complexType>
+</xsd:schema>

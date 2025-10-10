@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:pmsg="http://www.preference.com/XMLSchemas/2007/PrefSuite.Messages" targetNamespace="http://www.preference.com/XMLSchemas/2007/PrefSuite.Messages" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="Messages">
+		<xs:annotation>
+			<xs:documentation>Messages Root</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="Message">
+					<xs:complexType>
+						<xs:attribute name="Type" use="required">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="Error"/>
+									<xs:enumeration value="Warning"/>
+									<xs:enumeration value="Info"/>
+									<xs:enumeration value="ExtraInfo"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="Info" type="xs:string" use="required">
+							<xs:annotation>
+								<xs:documentation>Main error message</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="ExtraInfo" type="xs:string" use="optional">
+							<xs:annotation>
+								<xs:documentation>Additional error info</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="MessageCode" type="xs:integer" default="0" use="optional">
+							<xs:annotation>
+								<xs:documentation>Code that identiffies this error message</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="Time" type="xs:dateTime" use="optional">
+							<xs:annotation>
+								<xs:documentation>Date and time on which the error happened</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

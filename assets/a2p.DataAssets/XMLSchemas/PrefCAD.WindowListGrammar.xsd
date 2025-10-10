@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pwlg="http://www.preference.com/XMLSchemas/2006/PrefCAD.WindowListGrammar" targetNamespace="http://www.preference.com/XMLSchemas/2006/PrefCAD.WindowListGrammar" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xsd:element name="Grammar">
+		<xsd:complexType>
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element name="SetBooleanFlag" type="pwlg:TypeSetBooleanFlag" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element name="SelectCase" type="pwlg:TypeCase"/>
+				<xsd:element name="Section" type="pwlg:TypeCase"/>
+			</xsd:choice>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="TypeSetBooleanFlag">
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="value" type="xsd:boolean" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="TypeCheckBooleanFlag">
+		<xsd:choice minOccurs="0">
+			<xsd:element name="CancelMatch"/>
+		</xsd:choice>
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="value" type="xsd:boolean" use="required"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="TypeCase">
+		<xsd:choice maxOccurs="unbounded">
+			<xsd:element name="Match" type="pwlg:TypeMatch"/>
+		</xsd:choice>
+		<xsd:attribute name="required" type="xsd:boolean" use="required"/>
+		<xsd:attribute name="comment" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	
+	<xsd:complexType name="TypeSetModelCode">
+		<xsd:attribute name="code" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="TypeAppendToModelCode">
+		<xsd:attribute name="value" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="TypeMatch">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:any namespace="http://www.preference.com/XMLSchemas/2006/PrefCAD.Model" processContents="skip"/>
+			<xsd:element name="SetBooleanFlag" type="pwlg:TypeSetBooleanFlag" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="CheckBooleanFlag" type="pwlg:TypeCheckBooleanFlag" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="SetModelCode" type="pwlg:TypeSetModelCode" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="AppendToModelCode" type="pwlg:TypeAppendToModelCode" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="SelectCase" type="pwlg:TypeCase"/>
+			<xsd:element name="Section" type="pwlg:TypeCase"/>
+		</xsd:choice>
+		<xsd:attribute name="item" type="xsd:string" use="optional"/>
+		<xsd:attribute name="number" type="xsd:boolean" use="optional"/>
+	</xsd:complexType>
+</xsd:schema>

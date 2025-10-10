@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:vfo="http://www.preference.com/XMLSchemas/2007/Preference.Vfo" xmlns:cmd="http://www.preference.com/XMLSchemas/2006/PrefCAD.Command" targetNamespace="http://www.preference.com/XMLSchemas/2007/Preference.Vfo" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xsd:simpleType name="enumerationCase">
+		<xsd:annotation>
+			<xsd:documentation>Tipos aplicables a los términos.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="sensitive"/>
+			<xsd:enumeration value="insensitive"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="enumerationUse">
+		<xsd:annotation>
+			<xsd:documentation>Indica si el termino es obligatorio o no.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="optional"/>
+			<xsd:enumeration value="required"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="enumerationSelectionType">
+		<xsd:annotation>
+			<xsd:documentation>Tipos de selecciones standard. Siempre entre corchetes. Podemos usar notación del tipo 'H1-H5;H6' o 'H1:H5'</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="id"/>
+			<xsd:enumeration value="ids"/>
+			<xsd:enumeration value="row"/>
+			<xsd:enumeration value="rows"/>
+			<xsd:enumeration value="column"/>
+			<xsd:enumeration value="columns"/>
+			<xsd:enumeration value="cell"/>
+			<xsd:enumeration value="cells"/>
+			<xsd:enumeration value="custom"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="nonEmptyString">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:element name="Grammar">
+		<xsd:annotation>
+			<xsd:documentation>Gramática que define el lenguaje de diseño rápido de items.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="SyntaxRules" type="vfo:typeSyntaxRules" minOccurs="0"/>
+				<xsd:element name="Defaults" type="vfo:typeDefaults" minOccurs="0"/>
+				<xsd:element name="CommandSelectors" type="vfo:typeCommandSelectors" minOccurs="0"/>
+				<xsd:element name="Variables" type="vfo:typeGlobalVariables" minOccurs="0"/>
+				<xsd:element name="Macros">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="Macro" type="vfo:typeMacro" maxOccurs="unbounded">
+								<xsd:annotation>
+									<xsd:documentation>Define cada una de las cadenas que se transformarán en comandos. Está compuesto por un mnemónico y una serie de términos que van configurando los comandos a aplicar.</xsd:documentation>
+								</xsd:annotation>
+								<xsd:unique name="uniqueTermNameInMacro">
+									<xsd:selector xpath="vfo:Macro/*"/>
+									<xsd:field xpath="@id"/>
+								</xsd:unique>
+							</xsd:element>
+						</xsd:sequence>
+						<xsd:attribute name="case" type="vfo:enumerationCase" default="insensitive"/>
+					</xsd:complexType>
+					<xsd:unique name="uniqueMacroMnemonic">
+						<xsd:selector xpath="vfo:Macro"/>
+						<xsd:field xpath="@mnemonic"/>
+					</xsd:unique>
+					<xsd:unique name="uniqueMacroId">
+						<xsd:selector xpath="vfo:Macro"/>
+						<xsd:field xpath="@id"/>
+					</xsd:unique>
+				</xsd:element>
+				<xsd:element name="Grid" minOccurs="0">
+					<xsd:complexType>
+						<xsd:choice minOccurs="0" maxOccurs="unbounded">
+							<xsd:element name="Column" type="vfo:typeColumn"/>
+							<xsd:element name="ColumnGroup">
+								<xsd:complexType>
+									<xsd:sequence maxOccurs="unbounded">
+										<xsd:element name="Column" type="vfo:typeColumn"/>
+									</xsd:sequence>
+									<xsd:attribute name="variable" type="xsd:string" use="required"/>
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:choice>
+					</xsd:complexType>
+					<xsd:key name="keyColumn">
+						<xsd:selector xpath="vfo:Column | vfo:ColumnGroup/vfo:Column"/>
+						<xsd:field xpath="@id"/>
+					</xsd:key>
+				</xsd:element>
+				<xsd:element name="Assembly" type="vfo:typeAssembly" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Modulo utilizado para la ejecución de helpers y funciones de usuario.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+		<xsd:key name="keyCommonTermId">
+			<xsd:selector xpath="vfo:CommonTerms/*"/>
+			<xsd:field xpath="@id"/>
+		</xsd:key>
+		<xsd:keyref name="keyrefToCommonTermId" refer="vfo:keyCommonTermId">
+			<xsd:selector xpath="vfo:Macros/vfo:Macro/vfo:Terms/vfo:Reference"/>
+			<xsd:field xpath="@reference"/>
+		</xsd:keyref>
+	</xsd:element>
+	<xsd:element name="If" type="vfo:typeIfTerm"/>
+	<xsd:complexType name="typeSyntaxRules">
+		<xsd:attribute name="normalizeBlanks" type="xsd:boolean" default="true"/>
+		<xsd:attribute name="macroSeparator" type="xsd:string" default=";"/>
+		<xsd:attribute name="defaultCase" type="vfo:enumerationCase" default="insensitive"/>
+		<xsd:attribute name="defaultSelectionOpen" type="xsd:string" default="["/>
+		<xsd:attribute name="defaultSelectionClose" type="xsd:string" default="["/>
+		<xsd:attribute name="culture" type="xsd:string"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeAssembly">
+		<xsd:attribute name="identity" type="xsd:string" use="required">
+			<xsd:annotation>
+				<xsd:documentation>Nombre del assembly</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="extensionClass" type="xsd:string"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeMacro" mixed="true">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="Literal" type="vfo:typeLiteralTerm"/>
+			<xsd:element name="Enumeration" type="vfo:typeEnumerationTerm"/>
+			<xsd:element name="Number" type="vfo:typeNumberTerm"/>
+			<xsd:element name="Dimension" type="vfo:typeDimensionTerm"/>
+			<xsd:element name="String" type="vfo:typeStringTerm"/>
+			<xsd:element name="Selection" type="vfo:typeSelectionTerm"/>
+			<xsd:element name="Group" type="vfo:typeGroupTerm"/>
+			<xsd:element name="If" type="vfo:typeIfTerm"/>
+			<xsd:element name="Switch" type="vfo:typeSwitchTerm"/>
+			<xsd:element name="Designer" type="vfo:typeDesignerTerm"/>
+			<xsd:element name="Helper" type="vfo:typeHelper" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Especifica el helper que se va a utilizar para editar la macro. Un helper será una clase que está en el módulo especificado en la propiedad Assembly de la gramática. El helper implementará una interfaz conocida. El helper recibirá datos por parte del intérprete y devolverá una cadena resultado. Hay que ver como se gestiona el hecho de que el Helper ha de funcionar en cualquier entorno, incluido la web.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:group ref="vfo:commandFragments" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:choice>
+		<xsd:attribute name="id" type="xsd:string" use="optional">
+			<xsd:annotation>
+				<xsd:documentation>Identifica a la macro. </xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="mnemonic" type="vfo:nonEmptyString" use="required">
+			<xsd:annotation>
+				<xsd:documentation>Identifica a la macro. Debería evitarse tener mnemónicos que comiencen por los mismos caracteres.</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="default" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation>Default value for macro initialization.</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="help" type="xsd:string" use="optional">
+			<xsd:annotation>
+				<xsd:documentation>Help string for final users.</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="autoInitialize" type="xsd:boolean" use="optional" default="false">
+			<xsd:annotation>
+				<xsd:documentation>Determines if the macro is automatically initialized for construction processes like grid editing.</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="syntax" type="xsd:string" use="optional">
+			<xsd:annotation>
+				<xsd:documentation>describes the syntax of the macro</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="resetCommand" type="xsd:boolean" default="false">
+			<xsd:annotation>
+				<xsd:documentation>indica que antes de aplicar los comandos generados por la macro, se debe aplicar un comando que vacíe el modelo.</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="typeParameter">
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="value" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeHelper">
+		<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="Parameter" type="vfo:typeParameter"/>
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:string" use="required">
+			<xsd:annotation>
+				<xsd:documentation>Nombre de la clase que implementa el helper.</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="assembly">
+			<xsd:annotation>
+				<xsd:documentation>identificador del assembly en que se encuentra la clase que implementa el helper</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="typeTerm">
+		<xsd:attribute name="id" type="xsd:string" use="optional"/>
+		<xsd:attribute name="use" type="vfo:enumerationUse" default="required"/>
+		<xsd:attribute name="default" type="xsd:string"/>
+		<xsd:attribute name="help" type="xsd:string"/>
+		<xsd:attribute name="idCommand" type="vfo:nonEmptyString" use="optional"/>
+		<xsd:attribute name="selector" type="xsd:string"/>
+		<xsd:attribute name="recursion" type="vfo:nonEmptyString"/>
+		<xsd:attribute name="composeValue" type="xsd:boolean" default="true"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeLiteralTerm">
+		<xsd:complexContent>
+			<xsd:extension base="vfo:typeTerm">
+				<xsd:choice>
+					<xsd:element name="Literal" type="vfo:typeLiteralTerm"/>
+					<xsd:element name="Enumeration" type="vfo:typeEnumerationTerm"/>
+					<xsd:element name="Number" type="vfo:typeNumberTerm"/>
+					<xsd:element name="Dimension" type="vfo:typeDimensionTerm"/>
+					<xsd:element name="String" type="vfo:typeStringTerm"/>
+					<xsd:element name="Selection" type="vfo:typeSelectionTerm"/>
+					<xsd:element name="Group" type="vfo:typeGroupTerm"/>
+					<xsd:element name="If" type="vfo:typeIfTerm"/>
+					<xsd:element name="Switch" type="vfo:typeSwitchTerm"/>
+					<xsd:element name="Designer" type="vfo:typeDesignerTerm"/>
+					<xsd:element name="Translation" type="vfo:typeTranslation" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:group ref="vfo:commandFragments" minOccurs="0" maxOccurs="unbounded"/>
+				</xsd:choice>
+				<xsd:attribute name="text" type="xsd:string" use="required"/>
+				<xsd:attribute name="value" type="xsd:string" use="optional"/>
+				<xsd:attribute name="case" type="vfo:enumerationCase" default="insensitive"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeEnumerationTerm" mixed="true">
+		<xsd:complexContent mixed="true">
+			<xsd:extension base="vfo:typeTerm">
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element name="Item" type="vfo:typeEnumerationTermItem" maxOccurs="unbounded"/>
+					<xsd:element name="If" type="vfo:typeIfTerm"/>
+					<xsd:element name="Switch" type="vfo:typeSwitchTerm"/>
+					<xsd:element name="Helper" type="vfo:typeHelper"/>
+					<xsd:group ref="vfo:commandFragments" minOccurs="0" maxOccurs="unbounded"/>
+				</xsd:choice>
+				<xsd:attribute name="case" type="vfo:enumerationCase" default="insensitive"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeEnumerationTermItem" mixed="true">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="Literal" type="vfo:typeLiteralTerm"/>
+			<xsd:element name="Enumeration" type="vfo:typeEnumerationTerm"/>
+			<xsd:element name="Number" type="vfo:typeNumberTerm"/>
+			<xsd:element name="Dimension" type="vfo:typeDimensionTerm"/>
+			<xsd:element name="String" type="vfo:typeStringTerm"/>
+			<xsd:element name="Selection" type="vfo:typeSelectionTerm"/>
+			<xsd:element name="Group" type="vfo:typeGroupTerm"/>
+			<xsd:element name="If" type="vfo:typeIfTerm"/>
+			<xsd:element name="Switch" type="vfo:typeSwitchTerm"/>
+			<xsd:element name="Designer" type="vfo:typeDesignerTerm"/>
+			<xsd:element name="Translation" type="vfo:typeTranslation" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:group ref="vfo:commandFragments" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:choice>
+		<xsd:attribute name="literal" type="xsd:string" use="required"/>
+		<xsd:attribute name="help" type="xsd:string"/>
+		<xsd:attribute name="value" type="xsd:string"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeNumberTerm">
+		<xsd:complexContent>
+			<xsd:extension base="vfo:typeTerm">
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element name="If" type="vfo:typeIfTerm" minOccurs="0"/>
+					<xsd:element name="Switch" type="vfo:typeSwitchTerm"/>
+					<xsd:element name="Helper" type="vfo:typeHelper" minOccurs="0"/>
+					<xsd:group ref="vfo:commandFragments" minOccurs="0" maxOccurs="unbounded"/>
+				</xsd:choice>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeDimensionTerm">
+		<xsd:complexContent>
+			<xsd:extension base="vfo:typeTerm">
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element name="If" type="vfo:typeIfTerm" minOccurs="0"/>
+					<xsd:element name="Switch" type="vfo:typeSwitchTerm"/>
+					<xsd:element name="Helper" type="vfo:typeHelper" minOccurs="0"/>
+					<xsd:group ref="vfo:commandFragments" minOccurs="0" maxOccurs="unbounded"/>
+				</xsd:choice>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeStringTerm">
+		<xsd:complexContent>
+			<xsd:extension base="vfo:typeTerm">
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element name="If" type="vfo:typeIfTerm" minOccurs="0"/>
+					<xsd:element name="Switch" type="vfo:typeSwitchTerm"/>
+					<xsd:element name="Helper" type="vfo:typeHelper" minOccurs="0"/>
+					<xsd:group ref="vfo:commandFragments" minOccurs="0" maxOccurs="unbounded"/>
+				</xsd:choice>
+				<xsd:attribute name="minLength" type="xsd:nonNegativeInteger"/>
+				<xsd:attribute name="maxLength" type="xsd:positiveInteger"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeSelectionTerm">
+		<xsd:complexContent>
+			<xsd:extension base="vfo:typeTerm">
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element name="If" type="vfo:typeIfTerm" minOccurs="0"/>
+					<xsd:element name="Switch" type="vfo:typeSwitchTerm"/>
+					<xsd:element name="Helper" type="vfo:typeHelper" minOccurs="0"/>
+					<xsd:group ref="vfo:commandFragments" minOccurs="0" maxOccurs="unbounded"/>
+				</xsd:choice>
+				<xsd:attribute name="type" type="vfo:enumerationSelectionType" use="optional"/>
+				<xsd:attribute name="open" type="xsd:string"/>
+				<xsd:attribute name="close" type="xsd:string"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeGroupTerm" mixed="true">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="Literal" type="vfo:typeLiteralTerm"/>
+			<xsd:element name="Enumeration" type="vfo:typeEnumerationTerm"/>
+			<xsd:element name="Number" type="vfo:typeNumberTerm"/>
+			<xsd:element name="Dimension" type="vfo:typeDimensionTerm"/>
+			<xsd:element name="String" type="vfo:typeStringTerm"/>
+			<xsd:element name="Selection" type="vfo:typeSelectionTerm"/>
+			<xsd:element name="Group" type="vfo:typeGroupTerm"/>
+			<xsd:element name="If" type="vfo:typeIfTerm"/>
+			<xsd:element name="Switch" type="vfo:typeSwitchTerm"/>
+			<xsd:element name="Designer" type="vfo:typeDesignerTerm"/>
+			<xsd:group ref="vfo:commandFragments" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:choice>
+		<xsd:attribute name="id" type="xsd:string" use="optional"/>
+		<xsd:attribute name="use" type="vfo:enumerationUse" default="required"/>
+		<xsd:attribute name="default" type="xsd:string"/>
+		<xsd:attribute name="case" type="vfo:enumerationCase" default="insensitive"/>
+		<xsd:attribute name="help" type="xsd:string"/>
+		<xsd:attribute name="recursion" type="vfo:nonEmptyString"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeIfTerm" mixed="true">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="Literal" type="vfo:typeLiteralTerm"/>
+			<xsd:element name="Enumeration" type="vfo:typeEnumerationTerm"/>
+			<xsd:element name="Number" type="vfo:typeNumberTerm"/>
+			<xsd:element name="Dimension" type="vfo:typeDimensionTerm"/>
+			<xsd:element name="String" type="vfo:typeStringTerm"/>
+			<xsd:element name="Selection" type="vfo:typeSelectionTerm"/>
+			<xsd:element name="Group" type="vfo:typeGroupTerm"/>
+			<xsd:element name="If" type="vfo:typeIfTerm"/>
+			<xsd:element name="Switch" type="vfo:typeSwitchTerm"/>
+			<xsd:element name="Designer" type="vfo:typeDesignerTerm"/>
+			<xsd:element name="Else" type="vfo:typeElseTerm" minOccurs="0"/>
+			<xsd:group ref="vfo:commandFragments" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:choice>
+		<xsd:attribute name="variable" type="vfo:nonEmptyString" use="required"/>
+		<xsd:attribute name="equal" type="xsd:string"/>
+		<xsd:attribute name="notequal" type="xsd:string"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeElseTerm" mixed="true">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="Literal" type="vfo:typeLiteralTerm"/>
+			<xsd:element name="Enumeration" type="vfo:typeEnumerationTerm"/>
+			<xsd:element name="Number" type="vfo:typeNumberTerm"/>
+			<xsd:element name="Dimension" type="vfo:typeDimensionTerm"/>
+			<xsd:element name="String" type="vfo:typeStringTerm"/>
+			<xsd:element name="Selection" type="vfo:typeSelectionTerm"/>
+			<xsd:element name="Group" type="vfo:typeGroupTerm"/>
+			<xsd:element name="If" type="vfo:typeIfTerm"/>
+			<xsd:element name="Switch" type="vfo:typeSwitchTerm"/>
+			<xsd:element name="Designer" type="vfo:typeDesignerTerm"/>
+			<xsd:group ref="vfo:commandFragments" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="typeSwitchTerm" mixed="true">
+		<xsd:complexContent mixed="true">
+			<xsd:extension base="vfo:typeTerm">
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element name="Case" type="vfo:typeCase" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:element name="DefaultCase" type="vfo:typeDefaultCase" minOccurs="0"/>
+					<xsd:element name="Helper" type="vfo:typeHelper"/>
+				</xsd:choice>
+				<xsd:attribute name="variable" type="vfo:nonEmptyString" use="required"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="typeCase" mixed="true">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="Literal" type="vfo:typeLiteralTerm"/>
+			<xsd:element name="Enumeration" type="vfo:typeEnumerationTerm"/>
+			<xsd:element name="Number" type="vfo:typeNumberTerm"/>
+			<xsd:element name="Dimension" type="vfo:typeDimensionTerm"/>
+			<xsd:element name="String" type="vfo:typeStringTerm"/>
+			<xsd:element name="Selection" type="vfo:typeSelectionTerm"/>
+			<xsd:element name="Group" type="vfo:typeGroupTerm"/>
+			<xsd:element name="If" type="vfo:typeIfTerm"/>
+			<xsd:element name="Switch" type="vfo:typeSwitchTerm"/>
+			<xsd:element name="Designer" type="vfo:typeDesignerTerm"/>
+			<xsd:group ref="vfo:commandFragments" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:choice>
+		<xsd:attribute name="value" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeDefaultCase" mixed="true">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="Literal" type="vfo:typeLiteralTerm"/>
+			<xsd:element name="Enumeration" type="vfo:typeEnumerationTerm"/>
+			<xsd:element name="Number" type="vfo:typeNumberTerm"/>
+			<xsd:element name="Dimension" type="vfo:typeDimensionTerm"/>
+			<xsd:element name="String" type="vfo:typeStringTerm"/>
+			<xsd:element name="Selection" type="vfo:typeSelectionTerm"/>
+			<xsd:element name="Group" type="vfo:typeGroupTerm"/>
+			<xsd:element name="If" type="vfo:typeIfTerm"/>
+			<xsd:element name="Switch" type="vfo:typeSwitchTerm"/>
+			<xsd:element name="Designer" type="vfo:typeDesignerTerm"/>
+			<xsd:group ref="vfo:commandFragments" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="typeDesignerTerm" mixed="true">
+		<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="Parameter" type="vfo:typeParameter"/>
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="assembly">
+			<xsd:annotation>
+				<xsd:documentation>identificador del assembly en que se encuentra la clase que implementa el desginer</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="typeDefaults" mixed="true">
+		<xsd:choice maxOccurs="unbounded">
+			<xsd:element name="Case" type="vfo:typeCaseDefaults" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="DefaultCase" type="vfo:typeDefaultCaseDefaults" minOccurs="0"/>
+		</xsd:choice>
+		<xsd:attribute name="variable" type="vfo:nonEmptyString" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeCaseDefaults" mixed="true">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="Default" type="vfo:typeDefault" minOccurs="0"/>
+		</xsd:choice>
+		<xsd:attribute name="value" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeDefaultCaseDefaults" mixed="true">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="Default" type="vfo:typeDefault" minOccurs="0"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="typeDefault">
+		<xsd:attribute name="variable" type="xsd:string" use="required"/>
+		<xsd:attribute name="value" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeTranslation">
+		<xsd:attribute name="attribute" type="xsd:string" use="required"/>
+		<xsd:attribute name="language" type="xsd:nonNegativeInteger" use="required"/>
+		<xsd:attribute name="value" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeColumn">
+		<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="Translation" type="vfo:typeTranslation" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="Designer" type="vfo:typeDesignerTerm" minOccurs="0"/>
+			<xsd:element name="ConditionalReadOnly" type="vfo:typeConditionalReadOnlyColumn" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="caption" type="xsd:string" use="required"/>
+		<xsd:attribute name="id" type="xsd:string" use="required"/>
+		<xsd:attribute name="variable" type="xsd:string" use="optional"/>
+		<xsd:attribute name="view" type="xsd:string" use="optional"/>
+		<xsd:attribute name="commandExecutionOrder" type="xsd:positiveInteger"/>
+		<xsd:attribute name="isSalesDocItemField" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="readOnly" type="xsd:boolean" use="optional" default="false"/>
+		<xsd:attribute name="initial" type="xsd:boolean" use="optional" default="false"/>
+		<xsd:attribute name="inheritable" type="xsd:boolean" use="optional" default="false"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeConditionalReadOnlyColumn">
+		<xsd:attribute name="variable" type="vfo:nonEmptyString" use="required"/>
+		<xsd:attribute name="equal" type="xsd:string" use="optional"/>
+		<xsd:attribute name="notequal" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	<xsd:element name="typeCommandFragment" type="xsd:anyType"/>
+	<xsd:group name="commandFragments">
+		<xsd:choice>
+			<xsd:element ref="vfo:typeCommandFragment"/>
+			<xsd:any namespace="##other" processContents="lax"/>
+			<xsd:any namespace="##local" processContents="lax"/>
+		</xsd:choice>
+	</xsd:group>
+	<xsd:complexType name="typeGlobalVariable">
+		<xsd:attribute name="name" type="vfo:nonEmptyString" use="required"/>
+		<xsd:attribute name="idCommand" type="vfo:nonEmptyString" use="optional"/>
+		<xsd:attribute name="selector" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeGlobalVariables">
+		<xsd:choice>
+			<xsd:element name="Variable" type="vfo:typeGlobalVariable" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="typeCommandSelectors">
+		<xsd:choice maxOccurs="unbounded">
+			<xsd:element name="CommandSelector" type="vfo:typeCommandSelector"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="typeCommandSelector">
+		<xsd:choice>
+			<xsd:any namespace="##other" processContents="lax"/>
+		</xsd:choice>
+		<xsd:attribute name="id" type="vfo:nonEmptyString" use="required"/>
+	</xsd:complexType>
+</xsd:schema>

@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:cmd="PrefWiseDDECommand" targetNamespace="PrefWiseDDECommand" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="root" type="cmd:typeCommandList">
+		<xs:annotation>
+			<xs:documentation>root node of the document</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="typeCommandList">
+		<xs:annotation>
+			<xs:documentation>Command List Type</xs:documentation>
+		</xs:annotation>
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="typeGenericCmd" type="cmd:typeGenericCmd"/>
+			<xs:element name="typeGoToTopicCmd" type="cmd:typeGoToTopicCmd"/>
+			<xs:element name="typeLoadReferenceCmd" type="cmd:typeLoadReferenceCmd"/>
+			<xs:element name="typeLoadDistanceCmd" type="cmd:typeLoadDistanceCmd"/>
+			<xs:element name="typeLoadGlazingCmd" type="cmd:typeLoadGlazingCmd"/>
+			<xs:element name="typeLoadGlobalVarCmd" type="cmd:typeLoadGlobalVarCmd"/>
+			<xs:element name="typeLoadMachineCmd" type="cmd:typeLoadMachineCmd"/>
+			<xs:element name="typeLoadOperationCmd" type="cmd:typeLoadOperationCmd"/>
+			<xs:element name="typeLoadOptionValueCmd" type="cmd:typeLoadOptionValueCmd"/>
+			<xs:element name="typeLoadRuleCmd" type="cmd:typeLoadRuleCmd"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:simpleType name="typeTopicEnum">
+		<xs:annotation>
+			<xs:documentation>Topics Enumeration</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="BaseMaterials"/>
+			<xs:enumeration value="Materials"/>
+			<xs:enumeration value="Colors"/>
+			<xs:enumeration value="RawMaterials"/>
+			<xs:enumeration value="Series"/>
+			<xs:enumeration value="GlassWall"/>
+			<xs:enumeration value="Sections"/>
+			<xs:enumeration value="Dimensions"/>
+			<xs:enumeration value="Distances"/>
+			<xs:enumeration value="CustomDimensions"/>
+			<xs:enumeration value="PieceRules"/>
+			<xs:enumeration value="MechanizedRules"/>
+			<xs:enumeration value="GlazingWedgeRules"/>
+			<xs:enumeration value="BarRules"/>
+			<xs:enumeration value="MeterRules"/>
+			<xs:enumeration value="Glazings"/>
+			<xs:enumeration value="DXF"/>
+			<xs:enumeration value="Symbols"/>
+			<xs:enumeration value="PrefErrors"/>
+			<xs:enumeration value="OperationsEditor"/>
+			<xs:enumeration value="ProfileOperations"/>
+			<xs:enumeration value="OperationsDistributions"/>
+			<xs:enumeration value="GlobalOptions"/>
+			<xs:enumeration value="Machine"/>
+			<xs:enumeration value="UserSymbols"/>
+			<xs:enumeration value="Tools"/>
+			<xs:enumeration value="Synchronize"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="typeRuleTypeEnum">
+		<xs:annotation>
+			<xs:documentation>Rules Enumeration</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PieceRules"/>
+			<xs:enumeration value="MechanizedRules"/>
+			<xs:enumeration value="GlazingWedgeRules"/>
+			<xs:enumeration value="BarRules"/>
+			<xs:enumeration value="MeterRules"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="typeDistanceTypeEnum">
+		<xs:annotation>
+			<xs:documentation>Distance Type Enumeration</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Interior"/>
+			<xs:enumeration value="Exterior"/>
+			<xs:enumeration value="Mecanizado Interior"/>
+			<xs:enumeration value="Mecanizado Exterior"/>
+			<xs:enumeration value="Batiente Interior"/>
+			<xs:enumeration value="Batiente Exterior"/>
+			<xs:enumeration value="Soldado Interior"/>
+			<xs:enumeration value="Soldado Exterior"/>
+			<xs:enumeration value="Ensamblado Interior"/>
+			<xs:enumeration value="Ensamblado Exterior"/>
+			<xs:enumeration value=""/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="typeGlobalVariableEnum">
+		<xs:annotation>
+			<xs:documentation>All global variables enumeration</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Soldado"/>
+			<xs:enumeration value="Soldado Formas"/>
+			<xs:enumeration value="Soldado Postes"/>
+			<xs:enumeration value="mm Curvadora"/>
+			<xs:enumeration value="mm Curvas"/>
+			<xs:enumeration value="Despl. Accionamiento"/>
+			<xs:enumeration value="Recargo MO"/>
+			<xs:enumeration value="Color"/>
+			<xs:enumeration value="Vidrio"/>
+			<xs:enumeration value="ColorVidrio"/>
+			<xs:enumeration value="CamaraDefecto"/>
+			<xs:enumeration value="Tarifa"/>
+			<xs:enumeration value="Conector Herraje"/>
+			<xs:enumeration value="Escandallo Herraje"/>
+			<xs:enumeration value="Escandallo Persiana"/>
+			<xs:enumeration value="Perfil Persiana"/>
+			<xs:enumeration value="Opcion Lamas"/>
+			<xs:enumeration value="Opcion Cajon"/>
+			<xs:enumeration value="DXFProfile"/>
+			<xs:enumeration value="PatternModelDefault"/>
+			<xs:enumeration value="CotasACuerpo"/>
+			<xs:enumeration value="ManoObraDatos"/>
+			<xs:enumeration value="AgrupaInforme"/>
+			<xs:enumeration value="InvertirMedidas"/>
+			<xs:enumeration value="CorregirSoldado"/>
+			<xs:enumeration value="RedondeaCotas"/>
+			<xs:enumeration value="FiltrarColores"/>
+			<xs:enumeration value="SquaresByProfileFamily"/>
+			<xs:enumeration value="InvertTurnOpenings"/>
+			<xs:enumeration value="InvertSlidingOpenings"/>
+			<xs:enumeration value="DimensionColor"/>
+			<xs:enumeration value="Opciones Genéricas"/>
+			<xs:enumeration value="Angle Union Lost"/>
+			<xs:enumeration value="UseFaces"/>
+			<xs:enumeration value="UseFacesInPrefCam"/>
+			<xs:enumeration value="SpacerExtension"/>
+			<xs:enumeration value="OuterViewMode"/>
+			<xs:enumeration value="Constructive XML"/>
+			<xs:enumeration value="CalculateMachining"/>
+			<xs:enumeration value="MechanizeInCurvedShape"/>
+      <xs:enumeration value="PriorPreferredUnionType"/>
+			<xs:enumeration value="PrefUserDLLName"/>
+			<xs:enumeration value="ProductionTablesMode"/>
+			<xs:enumeration value="WeldingChamfer"/>
+			<xs:enumeration value="OpeningDefinitionMode"/>
+			<xs:enumeration value="UnmountedGlassWeight"/>
+			<xs:enumeration value="UnmountedGlassWeightModel"/>
+			<xs:enumeration value="XMLOptionsForOrders"/>
+			<xs:enumeration value="XMLOptionsForProduction"/>
+			<xs:enumeration value="WindowListGrammar"/>
+			<xs:enumeration value="TSUseSmallestToolIfAllBig"/>
+			<xs:enumeration value="TSUseBiggestMatchingTool"/>
+			<xs:enumeration value="GlassDensity"/>
+			<xs:enumeration value="DraftMode"/>
+			<xs:enumeration value="AcumSubModelDimensions"/>
+			<xs:enumeration value="VertSectionOrientation"/>
+			<xs:enumeration value="HorSectionOrientation"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="typeGoToTopicCmd">
+		<xs:annotation>
+			<xs:documentation>Go To Form Command</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="TargetTopic" type="cmd:typeTopicEnum" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="typeGenericCmd">
+		<xs:annotation>
+			<xs:documentation>Generic Command Type</xs:documentation>
+		</xs:annotation>
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="typeParameter" type="cmd:typeParameter"/>
+		</xs:choice>
+		<xs:attribute name="TargetTopic" type="cmd:typeTopicEnum" use="optional"/>
+		<xs:attribute name="TargetItem" type="xs:string" use="optional"/>
+		<xs:attribute name="TargetSubitem" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="typeParameter">
+		<xs:annotation>
+			<xs:documentation>Parameter Type</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="name" type="xs:string" use="required"/>
+		<xs:attribute name="value" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="typeLoadReferenceCmd">
+		<xs:annotation>
+			<xs:documentation>Loads a Material or Color or Option in some forms</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="TargetTopic" type="cmd:typeTopicEnum" use="required"/>
+		<xs:attribute name="Reference" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="typeLoadDistanceCmd">
+		<xs:annotation>
+			<xs:documentation>Takes directly to a distance definition</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="Master" type="xs:string" use="required"/>
+		<xs:attribute name="Slave" type="xs:string" use="optional"/>
+		<xs:attribute name="DistanceType" type="cmd:typeDistanceTypeEnum" use="optional"/>
+		<xs:attribute name="Level" type="xs:integer" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="typeLoadGlazingCmd">
+		<xs:annotation>
+			<xs:documentation>Loads a particular glazing ( glazingtype: 1=inner,2=outer,3=inner/outer )</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="GlassWidth" type="xs:double" use="required"/>
+		<xs:attribute name="Profile" type="xs:string" use="optional"/>
+		<xs:attribute name="GlassStop" type="xs:string" use="optional"/>
+		<xs:attribute name="GlazingType" type="xs:integer" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="typeLoadRuleCmd">
+		<xs:annotation>
+			<xs:documentation>Loads a certain rule for a material</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="RuleType" type="cmd:typeRuleTypeEnum" use="required"/>
+		<xs:attribute name="Reference" type="xs:string" use="required"/>
+		<xs:attribute name="Generated" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="typeLoadOptionValueCmd">
+		<xs:annotation>
+			<xs:documentation>Selects the given value from the loaded option</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="OptionName" type="xs:string" use="required"/>
+		<xs:attribute name="OptionValue" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="typeLoadOperationCmd">
+		<xs:annotation>
+			<xs:documentation>Loads the Operation</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="TargetTopic" type="cmd:typeTopicEnum" use="required"/>
+		<xs:attribute name="OperationName" type="xs:string" use="required"/>
+		<xs:attribute name="Outer" type="xs:boolean" use="required"/>
+		<xs:attribute name="Reference" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="typeLoadMachineCmd">
+		<xs:annotation>
+			<xs:documentation>Loads the specified Machine or Tool in machine</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="MachineId" type="xs:integer" use="required"/>
+		<xs:attribute name="TargetTopic" type="cmd:typeTopicEnum" use="required"/>
+		<xs:attribute name="ToolName" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="typeLoadGlobalVarCmd">
+		<xs:annotation>
+			<xs:documentation>Opens and selects a global variable</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="GlobalVarName" type="cmd:typeGlobalVariableEnum" use="required"/>
+	</xs:complexType>
+</xs:schema>

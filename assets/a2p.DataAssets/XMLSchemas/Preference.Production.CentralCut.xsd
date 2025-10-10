@@ -1,0 +1,48 @@
+﻿<xs:schema xmlns:oxci="http://www.preference.com/XMLSchemas/2008/Production.OptimizationXmlCreationInput" targetNamespace="http://www.preference.com/XMLSchemas/2008/Production.OptimizationXmlCreationInput" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <xs:simpleType name="typeOptimizationLevel">
+    <xs:restriction base="xs:positiveInteger">
+      <xs:enumeration value="1"/>
+      <xs:enumeration value="2"/>
+      <xs:enumeration value="3"/>
+      <xs:enumeration value="4"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="typeGuid">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="typeReference">
+    <xs:attribute type="xs:string" name="reference" use="required"/>
+    <xs:attribute type="xs:string" name="color" use="required"/>
+    <xs:attribute type="xs:nonNegativeInteger" name="colorConfiguration" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="typeProductionSet">
+    <xs:sequence>
+      <xs:element name="Reference" type="oxci:typeReference" maxOccurs="unbounded" minOccurs="1"/>
+    </xs:sequence>
+    <xs:attribute type="xs:integer" name="number"/>
+  </xs:complexType>
+  <xs:complexType name="typeProductionLot">
+    <xs:sequence>
+      <xs:choice>
+        <xs:element name="Reference" type="oxci:typeReference" maxOccurs="unbounded" minOccurs="1"/>
+        <xs:element name="ProductionSet" type="oxci:typeProductionSet" minOccurs="1" maxOccurs="unbounded">
+        </xs:element>
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute type="xs:integer" name="number" use="required"/>
+  </xs:complexType>
+  <xs:element name="Optimization">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="ProductionLot" type="oxci:typeProductionLot" minOccurs="1" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute type="xs:integer" name="machineId" use="required"/>
+      <xs:attribute type="oxci:typeOptimizationLevel" name="optimizationLevel" use="required"/>
+      <xs:attribute type="xs:boolean" name="useWastePieces" use="required"/>
+      <xs:attribute type="xs:positiveInteger" name="warehouseCode"/>
+      <xs:attribute type="oxci:typeGuid" name="productionLineId"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

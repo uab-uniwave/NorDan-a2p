@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ps="http://www.preference.com/XMLSchemas/2006/PrefSales.SalesDoc" xmlns:pcm="http://www.preference.com/XMLSchemas/2006/PrefCAD.Model" targetNamespace="http://www.preference.com/XMLSchemas/2006/PrefSales.SalesDoc" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xsd:import namespace="http://www.preference.com/XMLSchemas/2006/PrefCAD.Model" schemaLocation="http://www.preference.com/XMLSchemas/2006/PrefCAD.Model/PrefCAD.Model.xsd"/>
+	<xsd:complexType name="typeDocumentType">
+		<xsd:attribute name="value" use="required">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="Offer"/>
+					<xsd:enumeration value="Order"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="typeDocumentStatus">
+		<xsd:attribute name="value" use="required">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="Confirmed"/>
+					<xsd:enumeration value="NotConfirmed"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="typeDocumentReference">
+		<xsd:attribute name="id" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeCustomer">
+		<xsd:sequence>
+			<xsd:element name="FIN" minOccurs="0">
+				<xsd:complexType>
+					<xsd:attribute name="value" type="xsd:string" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="Name">
+				<xsd:complexType>
+					<xsd:attribute name="value" type="xsd:string" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="Address1" minOccurs="0">
+				<xsd:complexType>
+					<xsd:attribute name="value" type="xsd:string" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="Address2" minOccurs="0">
+				<xsd:complexType>
+					<xsd:attribute name="value" type="xsd:string" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="City" minOccurs="0">
+				<xsd:complexType>
+					<xsd:attribute name="value" type="xsd:string" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="PostalCode" minOccurs="0">
+				<xsd:complexType>
+					<xsd:attribute name="value" type="xsd:string" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="Province" minOccurs="0">
+				<xsd:complexType>
+					<xsd:attribute name="value" type="xsd:string" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="Country" minOccurs="0">
+				<xsd:complexType>
+					<xsd:attribute name="value" type="xsd:string" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="Telephone" minOccurs="0">
+				<xsd:complexType>
+					<xsd:attribute name="value" type="xsd:string" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="code" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="typeHeader">
+		<xsd:sequence>
+			<xsd:element name="Reference" type="ps:typeDocumentReference"/>
+			<xsd:element name="Type" type="ps:typeDocumentType"/>
+			<xsd:element name="Status" type="ps:typeDocumentStatus"/>
+			<xsd:element name="Customer" type="ps:typeCustomer"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeUpdateHeader">
+		<xsd:sequence>
+			<xsd:element name="Reference" type="ps:typeDocumentReference"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeItem">
+		<xsd:sequence>
+			<xsd:element name="Nomenclature">
+				<xsd:complexType>
+					<xsd:attribute name="value" type="xsd:string" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="Quantity">
+				<xsd:complexType>
+					<xsd:attribute name="value" type="xsd:long" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="Comments">
+				<xsd:complexType>
+					<xsd:attribute name="value" type="xsd:string" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="Model" type="pcm:TypeModel"/>
+		</xsd:sequence>
+		<xsd:attribute name="type" use="required">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="Model"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="typeDeleteItem">
+		<xsd:sequence>
+			<xsd:element name="Nomenclature">
+				<xsd:complexType>
+					<xsd:attribute name="value" type="xsd:string" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeDetail">
+		<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="Item" type="ps:typeItem"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeUpdateDetail">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="Item" type="ps:typeItem"/>
+			<xsd:element name="UpdateItem" type="ps:typeItem"/>
+			<xsd:element name="DeleteItem" type="ps:typeDeleteItem"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="typeSalesDocument">
+		<xsd:sequence>
+			<xsd:element name="Header" type="ps:typeHeader"/>
+			<xsd:element name="Detail" type="ps:typeDetail"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeUpdateSalesDocument">
+		<xsd:sequence>
+			<xsd:element name="Header" type="ps:typeUpdateHeader"/>
+			<xsd:element name="Detail" type="ps:typeUpdateDetail"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="typeSalesDocuments">
+		<xsd:choice maxOccurs="unbounded">
+			<xsd:element name="SalesDocument" type="ps:typeSalesDocument"/>
+			<xsd:element name="UpdateSalesDocument" type="ps:typeUpdateSalesDocument"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:element name="SalesDocuments" type="ps:typeSalesDocuments"/>
+</xsd:schema>

@@ -114,7 +114,7 @@ GO
 
 CREATE TABLE [dbo].[Uniwave_a2p_Materials](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[RowId] [uniqeidentifier] IDENTITY(1,1) NOT NULL,
+	[RowId] [uniqueidentifier],
 	[SalesDocumentNumber] [int] NOT NULL,
 	[SalesDocumentVersion] [int] NOT NULL,
 	[Order] [nvarchar](50) NOT NULL,

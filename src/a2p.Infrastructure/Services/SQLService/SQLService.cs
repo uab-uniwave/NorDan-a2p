@@ -10,28 +10,28 @@ namespace a2p.Infrastructure.Services.SQLService
 {
     public class SQLService : ISQLService
     {
-        private readonly ISettingsService _userSettingsService;
+        private readonly ISettingsService _settingsService;
         private SettingsContainer _settingsContainer;
         private AppSettings _appSettings;
         private readonly string _connectionString;
 
         private readonly ILogService _logService;
 
-        public SQLService(ISettingsService userSettingsService, ILogService logService)
+        public SQLService(ISettingsService settingsService, ILogService logService)
         {
             try
             {
                 _logService = logService ?? throw new ArgumentNullException(nameof(logService));
 
-                if (userSettingsService == null)
+                if (settingsService == null)
                 {
                     _logService.Error("UserSettingsService is null", "SQL Repository: Unhandled error initializing SQL Repository. Please check Settings.");
-                    throw new ArgumentNullException(nameof(userSettingsService));
+                    throw new ArgumentNullException(nameof(settingsService));
                 }
 
-                _userSettingsService = userSettingsService;
+                _settingsService = settingsService;
 
-                _appSettings = _userSettingsService.LoadSettings();
+                _appSettings = _settingsService.LoadSettings();
 
                 if (_appSettings == null)
                 {
@@ -39,7 +39,7 @@ namespace a2p.Infrastructure.Services.SQLService
                     throw new ArgumentNullException(nameof(_appSettings));
                 }
 
-                _settingsContainer = _userSettingsService.LoadAllSettings();
+                _settingsContainer = _settingsService.LoadAllSettings();
 
                 if (_settingsContainer == null)
                 {

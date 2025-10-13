@@ -26,9 +26,9 @@ namespace a2p.Domain.Respoitories
         Task<ErrorEntity?> InsertPrefSuiteMaterialSurfaceAsync(MaterialEntity material);
         Task<ErrorEntity?> UpdateBCMapping(MaterialEntity materialDTO);
         Task<ErrorEntity?> InsertPrefSuiteMaterialPurchaseDataAsync(MaterialEntity material);
-        Task<ErrorEntity?> InsertOrderMaterialDTOAsync(MaterialEntity material, int number, int version);
+        Task<ErrorEntity?> InsertOrderMaterialAsync(MaterialEntity material, int number, int version);
         //============================================================================================================================
-        Task<ErrorEntity?> InsertOrderItemDTOAsync(ItemEntity item, int number, int version, string idPos);
+        Task<ErrorEntity?> InsertOrderItemAsync(ItemEntity item, int number, int version, string idPos);
         Task<ErrorEntity?> InsertPrefSuiteMaterialNeedsMasterAsync(string order, int number, int version);
         Task<ErrorEntity?> InsertPrefSuiteMaterialNeedsAsync(string order, int number, int version);
 

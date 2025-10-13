@@ -6,7 +6,7 @@ namespace a2p.Infrastructure.Services.SettingsService
     {
         private readonly ISettingsService _SettingsService;
 
-        public SettingsManager(ISettingsService userSettingsService) => _SettingsService = userSettingsService;
+        public SettingsManager(ISettingsService settingsService) => _SettingsService = settingsService;
 
         public AppSettings LoadSettings() => _SettingsService.LoadSettings();
 

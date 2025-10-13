@@ -11,19 +11,19 @@ namespace a2p.Infrastructure.Services
     public class FileService : IFileService
     {
         private readonly ILogService _logService;
-        private readonly ISettingsService _userSettingsService;
+        private readonly ISettingsService _settingsService;
         private readonly AppSettings _appSettings;
         private readonly SettingsContainer _settingsContainer;
 
-        public FileService(ISettingsService userSettingsService,
+        public FileService(ISettingsService settingsService,
                            ILogService logService)
 
         {
             _logService = logService;
 
-            _userSettingsService = userSettingsService;
-            _appSettings = _userSettingsService.LoadSettings();
-            _settingsContainer = _userSettingsService.LoadAllSettings();
+            _settingsService = settingsService;
+            _appSettings = _settingsService.LoadSettings();
+            _settingsContainer = _settingsService.LoadAllSettings();
         }
 
         public List<string>? GetFiles()

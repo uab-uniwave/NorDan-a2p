@@ -1,4 +1,4 @@
-using a2p.Application.DTO;
+
 using a2p.Application.Services;
 using a2p.Application.Services.MappingService;
 using a2p.Domain.Entities;
@@ -25,16 +25,16 @@ namespace a2p.Infrastructure.Services.MappingService
             _progressValue = new ProgressValue();
         }
 
-        public async Task<(List<ItemDTO>, List<ErrorEntity>)> MapItemsAsync(Worksheet worksheet, ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
+        public async Task<(List<ItemEntity>, List<ErrorEntity>)> MapItemsAsync(Worksheet worksheet, ProgressValue? progressValue, IProgress<ProgressValue>? progress = null)
         {
             _progressValue = progressValue;
             _progress = progress;
 
-            List<ItemDTO> itemsDTO = [];
-            List<ErrorEntity> errorEntities = [];
+            List<ItemEntity> items = [];
+            List<ErrorEntity> errors = [];
             if (worksheet == null || !worksheet.WorksheetData.Any())
             {
-                return (itemsDTO, errorEntities);
+                return (items, errors);
             }
 
             try
@@ -54,7 +54,7 @@ namespace a2p.Infrastructure.Services.MappingService
 
                 for (int i = 1; i < worksheet.RowCount; i++)
                 {
-                    ItemDTO itemDTO = new();
+                    ItemEntity item = new();
                     try
                     {
 
@@ -65,25 +65,25 @@ namespace a2p.Infrastructure.Services.MappingService
                         _progressValue.ProgressTask3 = $"Reading row {rowCounter} of {worksheet.RowCount - 2})";
                         _progress?.Report(_progressValue);
 
-                        itemDTO.Order = worksheet.Order ?? string.Empty;
-                        itemDTO.Worksheet = worksheet.Name ?? string.Empty;
-                        itemDTO.Line = line;
-                        itemDTO.Column = -1;
-                        itemDTO.Item = worksheet.WorksheetData[i][2].ToString() ?? string.Empty;
-                        itemDTO.SortOrder = sortOrder;
-                        itemDTO.Description = worksheet.WorksheetData[i][0].ToString();
-                        itemDTO.Quantity = int.TryParse(worksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 0;
-                        itemDTO.Width = decimal.TryParse(worksheet.WorksheetData[i][3].ToString(), out decimal width) ? width : 0;
-                        itemDTO.Height = decimal.TryParse(worksheet.WorksheetData[i][4].ToString(), out decimal height) ? height : 0;
-                        itemDTO.Weight = decimal.TryParse(worksheet.WorksheetData[i][6].ToString(), out decimal weight) ? weight : 0;
-                        itemDTO.WeightGlass = decimal.TryParse(worksheet.WorksheetData[i][7].ToString(), out decimal weightGlass) ? weightGlass : 0;
-                        itemDTO.LaborCost = decimal.TryParse(worksheet.WorksheetData[i][17].ToString(), out decimal laborCost) ? laborCost : 0;
-                        itemDTO.Hours = decimal.TryParse(worksheet.WorksheetData[i][18].ToString(), out decimal hours) ? hours : 0;
-                        itemDTO.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][22].ToString(), out decimal price) ? price : 0;
-                        itemDTO.WorksheetType = worksheet.WorksheetType;
-                        itemDTO.CurrencyCode = worksheet.Currency ?? "Unknown";
+                        item.Order = worksheet.Order ?? string.Empty;
+                        item.Worksheet = worksheet.Name ?? string.Empty;
+                        item.Line = line;
+                        item.Column = -1;
+                        item.ItemName = worksheet.WorksheetData[i][2].ToString() ?? string.Empty;
+                        item.SortOrder = sortOrder;
+                        item.Description = worksheet.WorksheetData[i][0].ToString();
+                        item.Quantity = int.TryParse(worksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 0;
+                        item.Width = decimal.TryParse(worksheet.WorksheetData[i][3].ToString(), out decimal width) ? width : 0;
+                        item.Height = decimal.TryParse(worksheet.WorksheetData[i][4].ToString(), out decimal height) ? height : 0;
+                        item.Weight = decimal.TryParse(worksheet.WorksheetData[i][6].ToString(), out decimal weight) ? weight : 0;
+                        item.WeightGlass = decimal.TryParse(worksheet.WorksheetData[i][7].ToString(), out decimal weightGlass) ? weightGlass : 0;
+                        item.LaborCost = decimal.TryParse(worksheet.WorksheetData[i][17].ToString(), out decimal laborCost) ? laborCost : 0;
+                        item.Hours = decimal.TryParse(worksheet.WorksheetData[i][18].ToString(), out decimal hours) ? hours : 0;
+                        item.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][22].ToString(), out decimal price) ? price : 0;
+                        item.WorksheetType = worksheet.WorksheetType;
+                        item.CurrencyCode = worksheet.Currency ?? "Unknown";
 
-                        if (string.IsNullOrEmpty(itemDTO.Item))
+                        if (string.IsNullOrEmpty(item.ItemName))
                         {
                             _logService.Debug("{$Class}.{$Method}." +
                            "\nOrder {$Order}." +
@@ -92,14 +92,14 @@ namespace a2p.Infrastructure.Services.MappingService
                            "\nItem {$Data}.",
                           nameof(MapperTechDesign),
                             nameof(MapItemsAsync),
-                           itemDTO.Order ?? string.Empty,
-                           itemDTO.Worksheet ?? string.Empty,
-                           itemDTO.Line,
+                           item.Order ?? string.Empty,
+                           item.Worksheet ?? string.Empty,
+                           item.Line,
                            worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty);
                             continue;
 
                         }
-                        _progressValue.ProgressTask3 = $"Item {sortOrder} of {worksheet.RowCount - 2} - Item # \"{itemDTO.Item}\"";
+                        _progressValue.ProgressTask3 = $"Item {sortOrder} of {worksheet.RowCount - 2} - Item # \"{item.ItemName}\"";
                         _progress?.Report(_progressValue);
 
                         decimal profileCost = decimal.TryParse(worksheet.WorksheetData[i][8].ToString(), out decimal profile) ? profile : 0;
@@ -113,37 +113,37 @@ namespace a2p.Infrastructure.Services.MappingService
                         decimal panelCost = decimal.TryParse(worksheet.WorksheetData[i][16].ToString(), out decimal panel) ? panel : 0;
                         decimal specialCost = decimal.TryParse(worksheet.WorksheetData[i][19].ToString(), out decimal special) ? special : 0;
 
-                        itemDTO.WeightWithoutGlass = Math.Round(itemDTO.Weight - itemDTO.WeightGlass, 4);
-                        itemDTO.TotalWeight = Math.Round(itemDTO.Weight * itemDTO.Quantity, 4);
-                        itemDTO.TotalWeightWithoutGlass = Math.Round(itemDTO.WeightWithoutGlass * itemDTO.Quantity, 4);
-                        itemDTO.TotalWeightGlass = Math.Round(itemDTO.WeightGlass * itemDTO.Quantity, 4);
-                        itemDTO.Area = Math.Round(itemDTO.Width * itemDTO.Height / 1000000, 4);
-                        itemDTO.TotalArea = Math.Round(itemDTO.Area * itemDTO.Quantity, 4);
+                        item.WeightWithoutGlass = Math.Round(item.Weight - item.WeightGlass, 4);
+                        item.TotalWeight = Math.Round(item.Weight * item.Quantity, 4);
+                        item.TotalWeightWithoutGlass = Math.Round(item.WeightWithoutGlass * item.Quantity, 4);
+                        item.TotalWeightGlass = Math.Round(item.WeightGlass * item.Quantity, 4);
+                        item.Area = Math.Round(item.Width * item.Height / 1000000, 4);
+                        item.TotalArea = Math.Round(item.Area * item.Quantity, 4);
 
-                        itemDTO.TotalHours = Math.Round(itemDTO.Hours * itemDTO.Quantity, 4);
-                        itemDTO.MaterialCost = Math.Round(profileCost + fittingCost + gasketAccessoriesCost + aluminumSheetCost + surchargeALuProfilesCost + surfaceTreatmentCost + clientMaterialsCost + panelCost + glassCost, 6);
-                        itemDTO.Cost = Math.Round(itemDTO.MaterialCost + itemDTO.LaborCost, 4);
-                        itemDTO.TotalMaterialCost = Math.Round(itemDTO.MaterialCost * itemDTO.Quantity, 4);
-                        itemDTO.TotalLaborCost = Math.Round(itemDTO.LaborCost * itemDTO.Quantity, 4);
-                        itemDTO.TotalCost = Math.Round(itemDTO.Cost * itemDTO.Quantity, 4);
+                        item.TotalHours = Math.Round(item.Hours * item.Quantity, 4);
+                        item.MaterialCost = Math.Round(profileCost + fittingCost + gasketAccessoriesCost + aluminumSheetCost + surchargeALuProfilesCost + surfaceTreatmentCost + clientMaterialsCost + panelCost + glassCost, 6);
+                        item.Cost = Math.Round(item.MaterialCost + item.LaborCost, 4);
+                        item.TotalMaterialCost = Math.Round(item.MaterialCost * item.Quantity, 4);
+                        item.TotalLaborCost = Math.Round(item.LaborCost * item.Quantity, 4);
+                        item.TotalCost = Math.Round(item.Cost * item.Quantity, 4);
 
-                        itemDTO.TotalPrice = Math.Round(itemDTO.TotalPrice / discountCoeficient, 0);
-                        itemDTO.Price = Math.Round(itemDTO.TotalPrice / itemDTO.Quantity, 4);
+                        item.TotalPrice = Math.Round(item.TotalPrice / discountCoeficient, 0);
+                        item.Price = Math.Round(item.TotalPrice / item.Quantity, 4);
 
-                        itemDTO.ExchangeRateEUR = 1; //TODO': Exchange Rate 
+                        item.ExchangeRateEUR = 1; //TODO': Exchange Rate 
 
-                        itemDTO.MaterialCostEUR = Math.Round(itemDTO.MaterialCost * itemDTO.ExchangeRateEUR, 4);
-                        itemDTO.TotalMaterialCostEUR = Math.Round(itemDTO.TotalMaterialCost * itemDTO.ExchangeRateEUR, 4);
-                        itemDTO.TotalLaborCostEUR = Math.Round(itemDTO.TotalLaborCost * itemDTO.ExchangeRateEUR, 4);
-                        itemDTO.CostEUR = Math.Round(itemDTO.Cost * itemDTO.ExchangeRateEUR, 4);
-                        itemDTO.TotalCostEUR = Math.Round(itemDTO.TotalCost * itemDTO.ExchangeRateEUR, 4);
-                        itemDTO.PriceEUR = Math.Round(itemDTO.Price * itemDTO.ExchangeRateEUR, 4);
-                        itemDTO.TotalPriceEUR = Math.Round(itemDTO.TotalPrice * itemDTO.ExchangeRateEUR, 4);
+                        item.MaterialCostEUR = Math.Round(item.MaterialCost * item.ExchangeRateEUR, 4);
+                        item.TotalMaterialCostEUR = Math.Round(item.TotalMaterialCost * item.ExchangeRateEUR, 4);
+                        item.TotalLaborCostEUR = Math.Round(item.TotalLaborCost * item.ExchangeRateEUR, 4);
+                        item.CostEUR = Math.Round(item.Cost * item.ExchangeRateEUR, 4);
+                        item.TotalCostEUR = Math.Round(item.TotalCost * item.ExchangeRateEUR, 4);
+                        item.PriceEUR = Math.Round(item.Price * item.ExchangeRateEUR, 4);
+                        item.TotalPriceEUR = Math.Round(item.TotalPrice * item.ExchangeRateEUR, 4);
 
-                        // itemDTO.WorksheetType = WorksheetType.Items;
-                        itemsDTO.Add(itemDTO);
+                        // item.WorksheetType = WorksheetType.Items;
+                        items.Add(item);
 
-                        await LogMappedItemDTOAsync(itemDTO);
+                        await LogMappedItemEntityAsync(item);
 
                     }
                     catch (Exception ex)
@@ -160,13 +160,13 @@ namespace a2p.Infrastructure.Services.MappingService
                             nameof(MapItemsAsync),
                             worksheet.Order ?? string.Empty,
                             worksheet.Name ?? string.Empty,
-                            itemDTO.Line,
-                            itemDTO.Item ?? string.Empty,
-                            itemDTO.Description ?? string.Empty,
+                            item.Line,
+                            item.ItemName ?? string.Empty,
+                            item.Description ?? string.Empty,
                             worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty,
                         ex.Message ?? string.Empty);
 
-                        errorEntities.Add(new ErrorEntity()
+                        errors.Add(new ErrorEntity()
                         {
                             OrderNumber = worksheet.Order ?? string.Empty,
                             Level = ErrorLevel.Error,
@@ -174,9 +174,9 @@ namespace a2p.Infrastructure.Services.MappingService
                             Message = $"Unhandled Error {nameof(MapperTechDesign)}.{nameof(MapItemsAsync)}, " +
                           $"\nOrder: {worksheet.Order ?? string.Empty}," +
                           $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
-                          $"\nLine {itemDTO.Line}," +
-                          $"\nItem: {itemDTO.Item ?? string.Empty}," +
-                          $"\nDescription: {itemDTO.Description ?? string.Empty}," +
+                          $"\nLine {item.Line}," +
+                          $"\nItem: {item.ItemName ?? string.Empty}," +
+                          $"\nDescription: {item.Description ?? string.Empty}," +
                           $"\nData: {worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}," +
                           $"\nException: {ex.Message ?? string.Empty}."
                         });
@@ -185,7 +185,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     }
                 }
 
-                return (itemsDTO, errorEntities);
+                return (items, errors);
             }
 
             catch (Exception ex)
@@ -198,22 +198,22 @@ namespace a2p.Infrastructure.Services.MappingService
                     worksheet.Order ?? string.Empty,
                     ex.Message);
 
-                return (itemsDTO, errorEntities);
+                return (items, errors);
                 ;
             }
 
         }
 
-        public async Task<(List<MaterialDTO>, List<ErrorEntity>)> MapMaterialsAsync(Worksheet worksheet, ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
+        public async Task<(List<MaterialEntity>, List<ErrorEntity>)> MapMaterialsAsync(Worksheet worksheet, ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
         {
             _progressValue = progressValue;
             _progress = progress;
 
-            List<MaterialDTO> materialsDTO = [];
-            List<ErrorEntity> ErrorEntitys = [];
+            List<MaterialEntity> materials = [];
+            List<ErrorEntity> errors = [];
             if (worksheet == null || !worksheet.WorksheetData.Any())
             {
-                return (materialsDTO, ErrorEntitys);
+                return (materials, errors);
             }
 
             try
@@ -225,83 +225,83 @@ namespace a2p.Infrastructure.Services.MappingService
 
                 if (worksheet.Name == "ND_Profiles")
                 {
-                    (List<MaterialDTO>, List<ErrorEntity>) result = await MapProfilesAsync(worksheet);
+                    (List<MaterialEntity>, List<ErrorEntity>) result = await MapProfilesAsync(worksheet);
                     if (result.Item1 != null)
                     {
-                        materialsDTO.AddRange(result.Item1);
+                        materials.AddRange(result.Item1);
                     }
                     if (result.Item2 != null)
                     {
-                        ErrorEntitys.AddRange(result.Item2);
+                        errors.AddRange(result.Item2);
                     }
 
                 }
                 else if (worksheet.Name == "ND_Gaskets")
                 {
-                    (List<MaterialDTO>, List<ErrorEntity>) result = await MapGasketsAsync(worksheet);
+                    (List<MaterialEntity>, List<ErrorEntity>) result = await MapGasketsAsync(worksheet);
                     if (result.Item1 != null)
                     {
-                        materialsDTO.AddRange(result.Item1);
+                        materials.AddRange(result.Item1);
                     }
                     if (result.Item2 != null)
                     {
-                        ErrorEntitys.AddRange(result.Item2);
+                        errors.AddRange(result.Item2);
                     }
 
                 }
 
                 else if (worksheet.Name == "ND_Accessories")
                 {
-                    (List<MaterialDTO>, List<ErrorEntity>) result = await MapAccessoriesAsync(worksheet);
+                    (List<MaterialEntity>, List<ErrorEntity>) result = await MapAccessoriesAsync(worksheet);
                     if (result.Item1 != null)
                     {
-                        materialsDTO.AddRange(result.Item1);
+                        materials.AddRange(result.Item1);
                     }
                     if (result.Item2 != null)
                     {
-                        ErrorEntitys.AddRange(result.Item2);
+                        errors.AddRange(result.Item2);
                     }
                 }
 
                 else if (worksheet.Name == "ND_Panels")
                 {
-                    (List<MaterialDTO>, List<ErrorEntity>) result = await MapPanelsAsync(worksheet);
+                    (List<MaterialEntity>, List<ErrorEntity>) result = await MapPanelsAsync(worksheet);
                     if (result.Item1 != null)
                     {
-                        materialsDTO.AddRange(result.Item1);
+                        materials.AddRange(result.Item1);
                     }
                     if (result.Item2 != null)
                     {
-                        ErrorEntitys.AddRange(result.Item2);
+                        errors.AddRange(result.Item2);
                     }
 
                 }
                 else if (worksheet.Name == "ND_Glasses")
                 {
-                    (List<MaterialDTO>, List<ErrorEntity>) result = await MapGlassesAsync(worksheet);
+                    (List<MaterialEntity>, List<ErrorEntity>) result = await MapGlassesAsync(worksheet);
                     if (result.Item1 != null)
                     {
-                        materialsDTO.AddRange(result.Item1);
+                        materials.AddRange(result.Item1);
                     }
                     if (result.Item2 != null)
                     {
-                        ErrorEntitys.AddRange(result.Item2);
+                        errors.AddRange(result.Item2);
                     }
                 }
                 else if (worksheet.Name == "ND_Others")
                 {
-                    (List<MaterialDTO>, List<ErrorEntity>) result = await MapOthersAsync(worksheet);
+                    (List<MaterialEntity>, List<ErrorEntity>) result = await MapOthersAsync(worksheet);
                     if (result.Item1 != null)
                     {
-                        materialsDTO.AddRange(result.Item1);
+                        materials.AddRange(result.Item1);
                     }
                     if (result.Item2 != null)
                     {
-                        ErrorEntitys.AddRange(result.Item2);
+                        errors.AddRange(result.Item2);
                     }
                 }
 
-                return (materialsDTO, ErrorEntitys);
+                return (materials, errors);
             }
             catch (Exception ex)
             {
@@ -315,7 +315,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     worksheet.Name ?? string.Empty,
                     ex.Message);
 
-                ErrorEntitys.Add(new ErrorEntity()
+                errors.Add(new ErrorEntity()
                 {
                     OrderNumber = worksheet.Order ?? string.Empty,
                     Level = ErrorLevel.Error,
@@ -326,18 +326,18 @@ namespace a2p.Infrastructure.Services.MappingService
                        $"\nException: {ex.Message ?? string.Empty}."
                 });
 
-                return (materialsDTO, ErrorEntitys);
+                return (materials, errors);
             }
 
         }
 
-        private async Task<(List<MaterialDTO>, List<ErrorEntity>)> MapProfilesAsync(Worksheet worksheet)
+        private async Task<(List<MaterialEntity>, List<ErrorEntity>)> MapProfilesAsync(Worksheet worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
 
-            List<MaterialDTO> materialsDTO = [];
+            List<MaterialEntity> materials = [];
             List<ErrorEntity> ErrorEntitys = [];
             try
             {
@@ -346,123 +346,123 @@ namespace a2p.Infrastructure.Services.MappingService
                 {
                     sortOrder++;
                     line = i + 1;
-                    MaterialDTO materialDTO = new();
+                    MaterialEntity material = new();
                     try
                     {
                         //===================================================================================================
-                        materialDTO.Line = line;
-                        materialDTO.WorksheetType = WorksheetType.Materials;
-                        materialDTO.Item = null; // not used in profiles
-                        materialDTO.SortOrder = -1; // not used in profiles
+                        material.Line = line;
+                        material.WorksheetType = WorksheetType.Materials;
+                        material.Item = null; // not used in profiles
+                        material.SortOrder = -1; // not used in profiles
 
                         //===================================================================================================
-                        materialDTO.SourceReference = worksheet.WorksheetData[i][1]?.ToString();
-                        materialDTO.SourceColor = worksheet.WorksheetData[i][2].ToString() == null ? null : worksheet.WorksheetData[i][2].ToString();
-                        materialDTO.SourceColorDescription = worksheet.WorksheetData[i][3].ToString() == null ? null : worksheet.WorksheetData[i][3].ToString();
-                        materialDTO.SourceDescription = worksheet.WorksheetData[i][4].ToString() == null ? null : worksheet.WorksheetData[i][4].ToString();
+                        material.SourceReference = worksheet.WorksheetData[i][1]?.ToString();
+                        material.SourceColor = worksheet.WorksheetData[i][2].ToString() == null ? null : worksheet.WorksheetData[i][2].ToString();
+                        material.SourceColorDescription = worksheet.WorksheetData[i][3].ToString() == null ? null : worksheet.WorksheetData[i][3].ToString();
+                        material.SourceDescription = worksheet.WorksheetData[i][4].ToString() == null ? null : worksheet.WorksheetData[i][4].ToString();
 
                         //===================================================================================================
-                        materialDTO.ReferenceBase = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
+                        material.ReferenceBase = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
 
-                        (string, ErrorEntity?) result = TransformReference(materialDTO.ReferenceBase, materialDTO.SourceColor ?? string.Empty, worksheet, line);
+                        (string, ErrorEntity?) result = TransformReference(material.ReferenceBase, material.SourceColor ?? string.Empty, worksheet, line);
                         if (string.IsNullOrEmpty(result.Item1))
                         {
                             continue;
                         }
 
-                        materialDTO.Reference = result.Item1;
+                        material.Reference = result.Item1;
 
                         if (result.Item2 != null)
                         {
                             ErrorEntitys.Add(result.Item2);
                         }
 
-                        materialDTO.Description = worksheet.WorksheetData[i][4].ToString() ?? string.Empty;
+                        material.Description = worksheet.WorksheetData[i][4].ToString() ?? string.Empty;
 
                         //===================================================================================================
-                        materialDTO.Color = worksheet.WorksheetData[i][2].ToString() ?? string.Empty;
-                        materialDTO.ColorDescription = worksheet.WorksheetData[i][3].ToString() ?? string.Empty;
+                        material.Color = worksheet.WorksheetData[i][2].ToString() ?? string.Empty;
+                        material.ColorDescription = worksheet.WorksheetData[i][3].ToString() ?? string.Empty;
 
                         //===================================================================================================
-                        materialDTO.Quantity = worksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(worksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 1;
-                        materialDTO.PackageQuantity = worksheet.WorksheetData[i][6] == null ? 1 : decimal.TryParse(worksheet.WorksheetData[i][6].ToString(), out decimal packageQuantity) ? packageQuantity : 1;
-                        materialDTO.TotalQuantity = worksheet.WorksheetData[i][7] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][7].ToString(), out decimal totalQuantity) ? totalQuantity : 0;
-                        materialDTO.RequiredQuantity = worksheet.WorksheetData[i][8] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][8].ToString(), out decimal requiredQuantity) ? requiredQuantity : 0;
-                        materialDTO.LeftOverQuantity = Math.Round(materialDTO.TotalQuantity - materialDTO.RequiredQuantity, 6) < 0 ? 0 : Math.Round(materialDTO.TotalQuantity - materialDTO.RequiredQuantity, 6);
+                        material.Quantity = worksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(worksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 1;
+                        material.PackageQuantity = worksheet.WorksheetData[i][6] == null ? 1 : decimal.TryParse(worksheet.WorksheetData[i][6].ToString(), out decimal packageQuantity) ? packageQuantity : 1;
+                        material.TotalQuantity = worksheet.WorksheetData[i][7] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][7].ToString(), out decimal totalQuantity) ? totalQuantity : 0;
+                        material.RequiredQuantity = worksheet.WorksheetData[i][8] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][8].ToString(), out decimal requiredQuantity) ? requiredQuantity : 0;
+                        material.LeftOverQuantity = Math.Round(material.TotalQuantity - material.RequiredQuantity, 6) < 0 ? 0 : Math.Round(material.TotalQuantity - material.RequiredQuantity, 6);
 
                         //===================================================================================================
-                        materialDTO.Width = materialDTO.PackageQuantity * 1000; //used as bar length in mm
-                        materialDTO.Height = 0;
+                        material.Width = material.PackageQuantity * 1000; //used as bar length in mm
+                        material.Height = 0;
 
                         //===================================================================================================
-                        materialDTO.TotalWeight = worksheet.WorksheetData[i][11] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][11].ToString(), out decimal totalWeight) ? totalWeight : 0;
-                        materialDTO.Weight = materialDTO.TotalQuantity == 0 ? 0 : Math.Round(materialDTO.TotalWeight / materialDTO.TotalQuantity, 6);
-                        materialDTO.RequiredWeight = Math.Round(materialDTO.Weight * materialDTO.RequiredQuantity, 6);
-                        materialDTO.LeftOverWeight = Math.Round(materialDTO.TotalWeight - materialDTO.RequiredWeight, 6) < 0 ? 0 : Math.Round(materialDTO.TotalWeight - materialDTO.RequiredWeight, 6);
+                        material.TotalWeight = worksheet.WorksheetData[i][11] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][11].ToString(), out decimal totalWeight) ? totalWeight : 0;
+                        material.Weight = material.TotalQuantity == 0 ? 0 : Math.Round(material.TotalWeight / material.TotalQuantity, 6);
+                        material.RequiredWeight = Math.Round(material.Weight * material.RequiredQuantity, 6);
+                        material.LeftOverWeight = Math.Round(material.TotalWeight - material.RequiredWeight, 6) < 0 ? 0 : Math.Round(material.TotalWeight - material.RequiredWeight, 6);
 
                         //===================================================================================================
-                        materialDTO.TotalArea = worksheet.WorksheetData[i][10] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][10].ToString(), out decimal totalArea) ? totalArea : 0;
-                        materialDTO.Area = materialDTO.TotalQuantity == 0 ? 0 : Math.Round(materialDTO.TotalArea / materialDTO.TotalQuantity, 6);
-                        materialDTO.RequiredArea = Math.Round(materialDTO.Area * materialDTO.RequiredQuantity, 6);
-                        materialDTO.LeftOverArea = Math.Round(materialDTO.TotalArea - materialDTO.RequiredArea, 6) < 0 ? 0 : Math.Round(materialDTO.TotalArea - materialDTO.RequiredArea, 6);
+                        material.TotalArea = worksheet.WorksheetData[i][10] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][10].ToString(), out decimal totalArea) ? totalArea : 0;
+                        material.Area = material.TotalQuantity == 0 ? 0 : Math.Round(material.TotalArea / material.TotalQuantity, 6);
+                        material.RequiredArea = Math.Round(material.Area * material.RequiredQuantity, 6);
+                        material.LeftOverArea = Math.Round(material.TotalArea - material.RequiredArea, 6) < 0 ? 0 : Math.Round(material.TotalArea - material.RequiredArea, 6);
 
                         //===================================================================================================
-                        materialDTO.Waste = materialDTO.RequiredWeight != 0
-                            ? worksheet.WorksheetData[i][9] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][9].ToString(), out decimal lostWeight) ? lostWeight : 0 / materialDTO.RequiredWeight * 100
+                        material.Waste = material.RequiredWeight != 0
+                            ? worksheet.WorksheetData[i][9] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][9].ToString(), out decimal lostWeight) ? lostWeight : 0 / material.RequiredWeight * 100
                             : 0;
                         //===================================================================================================                                                        
-                        materialDTO.Price = decimal.TryParse(worksheet.WorksheetData[i][12].ToString(), out decimal price) ? price : 0;
-                        materialDTO.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][13].ToString(), out decimal totalPrice) ? totalPrice : 0;
-                        materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (decimal)materialDTO.RequiredQuantity, 6);
-                        materialDTO.LeftOverPrice = Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6) < 0 ? 0 : Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6);
+                        material.Price = decimal.TryParse(worksheet.WorksheetData[i][12].ToString(), out decimal price) ? price : 0;
+                        material.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][13].ToString(), out decimal totalPrice) ? totalPrice : 0;
+                        material.RequiredPrice = Math.Round(material.Price * (decimal)material.RequiredQuantity, 6);
+                        material.LeftOverPrice = Math.Round(material.TotalPrice - material.RequiredPrice, 6) < 0 ? 0 : Math.Round(material.TotalPrice - material.RequiredPrice, 6);
 
                         //===================================================================================================
-                        materialDTO.SquareMeterPrice = 0; // not used in profiles 
+                        material.SquareMeterPrice = 0; // not used in profiles 
 
                         //===================================================================================================
-                        materialDTO.Pallet = null;
+                        material.Pallet = null;
 
                         //===================================================================================================
 
 
-                        if (!string.IsNullOrWhiteSpace(materialDTO.SourceColor))
+                        if (!string.IsNullOrWhiteSpace(material.SourceColor))
                         {
-                            (string, string)? customColors = SplitColors(materialDTO.SourceColor);
+                            (string, string)? customColors = SplitColors(material.SourceColor);
 
 
                             if (customColors != null)
                             {
-                                materialDTO.CustomField1 = customColors.Value.Item1; // used for custom color
-                                materialDTO.CustomField2 = customColors.Value.Item2;
+                                material.CustomField1 = customColors.Value.Item1; // used for custom color
+                                material.CustomField2 = customColors.Value.Item2;
                             }
 
                             else
                             {
-                                materialDTO.CustomField1 = null; // not used
-                                materialDTO.CustomField2 = null; // not used
+                                material.CustomField1 = null; // not used
+                                material.CustomField2 = null; // not used
                             }
                         }
                         else
                         {
-                            materialDTO.CustomField1 = null; // not used
-                            materialDTO.CustomField2 = null; // not used
+                            material.CustomField1 = null; // not used
+                            material.CustomField2 = null; // not used
                         }
-                        materialDTO.CustomField3 = null; // not used
-                        materialDTO.CustomField4 = null; // not used
-                        materialDTO.CustomField5 = null; // not used
+                        material.CustomField3 = null; // not used
+                        material.CustomField4 = null; // not used
+                        material.CustomField5 = null; // not used
 
                         //===================================================================================================
-                        materialDTO.MaterialType = MaterialType.Profiles;
+                        material.MaterialType = MaterialType.Profiles;
 
                         //===================================================================================================
-                        _progressValue.ProgressTask3 = $"Profiles {sortOrder} of {worksheet.RowCount - 5} - {materialDTO.Reference}";
+                        _progressValue.ProgressTask3 = $"Profiles {sortOrder} of {worksheet.RowCount - 5} - {material.Reference}";
                         _progress?.Report(_progressValue);
 
                         //===================================================================================================
-                        materialsDTO.Add(materialDTO);
+                        materials.Add(material);
 
                         //===================================================================================================
-                        await LogMappedMaterialDTOAsync(materialDTO);
+                        await LogMappedMaterialEntityAsync(material);
 
                     }
                     catch (Exception ex)
@@ -480,11 +480,11 @@ namespace a2p.Infrastructure.Services.MappingService
                             nameof(MapProfilesAsync),
                             worksheet.Order ?? string.Empty,
                             worksheet.Name ?? string.Empty,
-                            materialDTO.SourceReference ?? string.Empty,
-                            materialDTO.SourceColor ?? string.Empty,
-                            materialDTO.ReferenceBase ?? string.Empty,
-                            materialDTO.Reference ?? string.Empty,
-                            materialDTO.Description ?? string.Empty,
+                            material.SourceReference ?? string.Empty,
+                            material.SourceColor ?? string.Empty,
+                            material.ReferenceBase ?? string.Empty,
+                            material.Reference ?? string.Empty,
+                            material.Description ?? string.Empty,
                             ex.Message ?? string.Empty);
 
 
@@ -496,9 +496,9 @@ namespace a2p.Infrastructure.Services.MappingService
                             Message = $"Unhandled Error {nameof(MapperTechDesign)}.{nameof(MapProfilesAsync)}, " +
                            $"\nOrder: {worksheet.Order ?? string.Empty}," +
                            $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
-                           $"\nLine {materialDTO.Line}," +
-                           $"\nItem: {materialDTO.Item ?? string.Empty}," +
-                           $"\nDescription: {materialDTO.Description ?? string.Empty}," +
+                           $"\nLine {material.Line}," +
+                           $"\nItem: {material.Item ?? string.Empty}," +
+                           $"\nDescription: {material.Description ?? string.Empty}," +
                            $"\nData: {worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}," +
                            $"\nException: {ex.Message ?? string.Empty}."
                         });
@@ -509,7 +509,7 @@ namespace a2p.Infrastructure.Services.MappingService
 
                 _progressValue.ProgressTask3 = string.Empty;
                 _progress?.Report(_progressValue);
-                return (materialsDTO, ErrorEntitys);
+                return (materials, ErrorEntitys);
             }
             catch (Exception ex)
             {
@@ -523,17 +523,17 @@ namespace a2p.Infrastructure.Services.MappingService
                     worksheet.Name ?? string.Empty,
                     ex.Message);
 
-                return (materialsDTO, ErrorEntitys);
+                return (materials, ErrorEntitys);
             }
 
         }
 
-        private async Task<(List<MaterialDTO>, List<ErrorEntity>)> MapGasketsAsync(Worksheet worksheet)
+        private async Task<(List<MaterialEntity>, List<ErrorEntity>)> MapGasketsAsync(Worksheet worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
-            List<MaterialDTO> materialsDTO = [];
+            List<MaterialEntity> materials = [];
             List<ErrorEntity> ErrorEntitys = [];
 
             try
@@ -543,29 +543,29 @@ namespace a2p.Infrastructure.Services.MappingService
 
                 for (int i = 4; i < worksheet.RowCount; i++)
                 {
-                    MaterialDTO materialDTO = new();
+                    MaterialEntity material = new();
                     sortOrder++;
                     line = i + 1;
                     try
                     {
-                        materialDTO.Worksheet = worksheet.Name ?? string.Empty;
-                        materialDTO.Order = worksheet.Order ?? string.Empty;
+                        material.Worksheet = worksheet.Name ?? string.Empty;
+                        material.Order = worksheet.Order ?? string.Empty;
                         //===================================================================================================
-                        materialDTO.Line = line;
-                        materialDTO.WorksheetType = WorksheetType.Materials;
-                        materialDTO.Item = null; // not used 
-                        materialDTO.SortOrder = -1; // not used 
+                        material.Line = line;
+                        material.WorksheetType = WorksheetType.Materials;
+                        material.Item = null; // not used 
+                        material.SortOrder = -1; // not used 
 
                         //===================================================================================================
-                        materialDTO.SourceReference = worksheet.WorksheetData[i][1]?.ToString();
-                        materialDTO.SourceColor = worksheet.WorksheetData[i][2].ToString() == null ? null : worksheet.WorksheetData[i][2].ToString();
-                        materialDTO.SourceColorDescription = worksheet.WorksheetData[i][3].ToString() == null ? null : worksheet.WorksheetData[i][3].ToString();
-                        materialDTO.SourceDescription = worksheet.WorksheetData[i][4].ToString() == null ? null : worksheet.WorksheetData[i][4].ToString();
+                        material.SourceReference = worksheet.WorksheetData[i][1]?.ToString();
+                        material.SourceColor = worksheet.WorksheetData[i][2].ToString() == null ? null : worksheet.WorksheetData[i][2].ToString();
+                        material.SourceColorDescription = worksheet.WorksheetData[i][3].ToString() == null ? null : worksheet.WorksheetData[i][3].ToString();
+                        material.SourceDescription = worksheet.WorksheetData[i][4].ToString() == null ? null : worksheet.WorksheetData[i][4].ToString();
                         //===================================================================================================
-                        materialDTO.Color = worksheet.WorksheetData[i][2].ToString() ?? string.Empty;
-                        materialDTO.ColorDescription = worksheet.WorksheetData[i][3].ToString() ?? string.Empty;
+                        material.Color = worksheet.WorksheetData[i][2].ToString() ?? string.Empty;
+                        material.ColorDescription = worksheet.WorksheetData[i][3].ToString() ?? string.Empty;
 
-                        if (string.IsNullOrEmpty(materialDTO.SourceReference) && string.IsNullOrEmpty(materialDTO.SourceColor))
+                        if (string.IsNullOrEmpty(material.SourceReference) && string.IsNullOrEmpty(material.SourceColor))
                         {
                             _logService.Error("{$Class}.{$Method}. Sapa article and color are missing. Line will be skipped." +
                               "\nOrder {$Order}, " +
@@ -575,7 +575,7 @@ namespace a2p.Infrastructure.Services.MappingService
                             nameof(MapGasketsAsync),
                             worksheet.Order ?? string.Empty,
                             worksheet.Name ?? string.Empty,
-                            materialDTO.Description ?? string.Empty
+                            material.Description ?? string.Empty
                          );
 
                             ErrorEntitys.Add(new ErrorEntity()
@@ -586,29 +586,29 @@ namespace a2p.Infrastructure.Services.MappingService
                                 Message = $"Sapa article and color are missing. Line will be skipped." +
                                $"\nOrder: {worksheet.Order ?? string.Empty}," +
                                $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
-                               $"\nDescription: {materialDTO.Description ?? string.Empty}," +
+                               $"\nDescription: {material.Description ?? string.Empty}," +
                                $"\nData: {worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}"
                             });
                             continue;
                         }
-                        materialDTO.SourceColor = worksheet.WorksheetData[i][2].ToString() == null ? null : worksheet.WorksheetData[i][2].ToString();
+                        material.SourceColor = worksheet.WorksheetData[i][2].ToString() == null ? null : worksheet.WorksheetData[i][2].ToString();
 
-                        if (string.IsNullOrEmpty(materialDTO.Color) && (string.IsNullOrEmpty(materialDTO.ColorDescription) || materialDTO.ColorDescription.Contains("Without finish")))
+                        if (string.IsNullOrEmpty(material.Color) && (string.IsNullOrEmpty(material.ColorDescription) || material.ColorDescription.Contains("Without finish")))
                         {
-                            materialDTO.Color = "Without";
+                            material.Color = "Without";
                         }
 
                         //===================================================================================================
-                        materialDTO.ReferenceBase = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
-                        if (materialDTO.Color != "Without")
+                        material.ReferenceBase = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
+                        if (material.Color != "Without")
                         {
-                            (string, ErrorEntity?) result = TransformReference(materialDTO.ReferenceBase, materialDTO.Color, worksheet, line);
+                            (string, ErrorEntity?) result = TransformReference(material.ReferenceBase, material.Color, worksheet, line);
                             if (string.IsNullOrEmpty(result.Item1))
                             {
                                 continue;
                             }
 
-                            materialDTO.Reference = result.Item1;
+                            material.Reference = result.Item1;
                             if (result.Item2 != null)
                             {
                                 ErrorEntitys.Add(result.Item2);
@@ -618,23 +618,23 @@ namespace a2p.Infrastructure.Services.MappingService
 
                         else
                         {
-                            (string, ErrorEntity?) result = TransformReference(materialDTO.ReferenceBase, "", worksheet, line);
+                            (string, ErrorEntity?) result = TransformReference(material.ReferenceBase, "", worksheet, line);
                             if (string.IsNullOrEmpty(result.Item1))
                             {
                                 continue;
 
                             }
-                            materialDTO.Reference = result.Item1;
+                            material.Reference = result.Item1;
                         }
 
-                        materialDTO.Description = worksheet.WorksheetData[i][4].ToString() ?? string.Empty;
+                        material.Description = worksheet.WorksheetData[i][4].ToString() ?? string.Empty;
 
                         //===================================================================================================
-                        materialDTO.Quantity = worksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(worksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 1;
-                        materialDTO.PackageQuantity = worksheet.WorksheetData[i][6] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][6].ToString(), out decimal packageQuantity) ? packageQuantity : 0;
-                        materialDTO.TotalQuantity = worksheet.WorksheetData[i][7] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][7].ToString(), out decimal totalQuantity) ? totalQuantity : 0;
-                        materialDTO.RequiredQuantity = worksheet.WorksheetData[i][8] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][8].ToString(), out decimal requiredQuantity) ? requiredQuantity : 0;
-                        materialDTO.LeftOverQuantity = Math.Round(materialDTO.TotalQuantity - materialDTO.RequiredQuantity, 6) < 0 ? 0 : Math.Round(materialDTO.TotalQuantity - materialDTO.RequiredQuantity, 6);
+                        material.Quantity = worksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(worksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 1;
+                        material.PackageQuantity = worksheet.WorksheetData[i][6] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][6].ToString(), out decimal packageQuantity) ? packageQuantity : 0;
+                        material.TotalQuantity = worksheet.WorksheetData[i][7] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][7].ToString(), out decimal totalQuantity) ? totalQuantity : 0;
+                        material.RequiredQuantity = worksheet.WorksheetData[i][8] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][8].ToString(), out decimal requiredQuantity) ? requiredQuantity : 0;
+                        material.LeftOverQuantity = Math.Round(material.TotalQuantity - material.RequiredQuantity, 6) < 0 ? 0 : Math.Round(material.TotalQuantity - material.RequiredQuantity, 6);
 
                         //===================================================================================================
                         if (!string.IsNullOrEmpty(worksheet.WorksheetData[i][9]?.ToString()))
@@ -645,84 +645,84 @@ namespace a2p.Infrastructure.Services.MappingService
                                 string[] split = worksheet.WorksheetData[i][9]?.ToString()?.Split('/') ?? Array.Empty<string>();
                                 if (split.Length == 2)
                                 {
-                                    materialDTO.Width = decimal.TryParse(split[0], out decimal width) ? width : 0;
-                                    materialDTO.Height = decimal.TryParse(split[1], out decimal height) ? height : 0;
+                                    material.Width = decimal.TryParse(split[0], out decimal width) ? width : 0;
+                                    material.Height = decimal.TryParse(split[1], out decimal height) ? height : 0;
                                 }
                             }
                         }
                         else
                         {
 
-                            materialDTO.Width = 0; // not used 
-                            materialDTO.Height = 0; // not used 
+                            material.Width = 0; // not used 
+                            material.Height = 0; // not used 
                         }
                         //===================================================================================================
-                        materialDTO.TotalWeight = 0; // not used 
-                        materialDTO.Weight = 0; // not used 
-                        materialDTO.RequiredWeight = 0; // not used 
-                        materialDTO.LeftOverWeight = 0; // not used 
+                        material.TotalWeight = 0; // not used 
+                        material.Weight = 0; // not used 
+                        material.RequiredWeight = 0; // not used 
+                        material.LeftOverWeight = 0; // not used 
 
                         //================================================================================================================
-                        materialDTO.TotalArea = 0; // not used 
-                        materialDTO.Area = 0; // not used 
-                        materialDTO.RequiredArea = 0; // not used 
-                        materialDTO.LeftOverArea = 0; // not used 
+                        material.TotalArea = 0; // not used 
+                        material.Area = 0; // not used 
+                        material.RequiredArea = 0; // not used 
+                        material.LeftOverArea = 0; // not used 
 
                         //================================================================================================================
-                        materialDTO.Waste = 0; // not used 
+                        material.Waste = 0; // not used 
 
                         //=================================================================================================                                
-                        materialDTO.Price = decimal.TryParse(worksheet.WorksheetData[i][10].ToString(), out decimal price) ? price : 0;
-                        materialDTO.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][11].ToString(), out decimal totalPrice) ? totalPrice : 0;
-                        materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (decimal)materialDTO.RequiredQuantity, 6);
-                        materialDTO.LeftOverPrice = Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6) < 0 ? 0 : Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6);
+                        material.Price = decimal.TryParse(worksheet.WorksheetData[i][10].ToString(), out decimal price) ? price : 0;
+                        material.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][11].ToString(), out decimal totalPrice) ? totalPrice : 0;
+                        material.RequiredPrice = Math.Round(material.Price * (decimal)material.RequiredQuantity, 6);
+                        material.LeftOverPrice = Math.Round(material.TotalPrice - material.RequiredPrice, 6) < 0 ? 0 : Math.Round(material.TotalPrice - material.RequiredPrice, 6);
 
                         //===================================================================================================
-                        materialDTO.SquareMeterPrice = 0; // not used 
+                        material.SquareMeterPrice = 0; // not used 
 
                         //================================================================================================================
-                        materialDTO.Pallet = null;
+                        material.Pallet = null;
 
                         //===================================================================================================\
 
-                        if (!string.IsNullOrWhiteSpace(materialDTO.SourceColor))
+                        if (!string.IsNullOrWhiteSpace(material.SourceColor))
                         {
-                            (string, string)? customColors = SplitColors(materialDTO.SourceColor);
+                            (string, string)? customColors = SplitColors(material.SourceColor);
 
 
                             if (customColors != null)
                             {
-                                materialDTO.CustomField1 = customColors.Value.Item1; // used for custom color
-                                materialDTO.CustomField2 = customColors.Value.Item2;
+                                material.CustomField1 = customColors.Value.Item1; // used for custom color
+                                material.CustomField2 = customColors.Value.Item2;
                             }
 
                             else
                             {
-                                materialDTO.CustomField1 = null; // not used
-                                materialDTO.CustomField2 = null; // not used
+                                material.CustomField1 = null; // not used
+                                material.CustomField2 = null; // not used
                             }
                         }
                         else
                         {
-                            materialDTO.CustomField1 = null; // not used
-                            materialDTO.CustomField2 = null; // not used
+                            material.CustomField1 = null; // not used
+                            material.CustomField2 = null; // not used
                         }
-                        materialDTO.CustomField3 = null; // not used 
-                        materialDTO.CustomField4 = null; // not used 
-                        materialDTO.CustomField5 = null; // not used 
+                        material.CustomField3 = null; // not used 
+                        material.CustomField4 = null; // not used 
+                        material.CustomField5 = null; // not used 
 
                         //================================================================================================================
-                        materialDTO.MaterialType = MaterialType.Gaskets;
+                        material.MaterialType = MaterialType.Gaskets;
 
                         //===================================================================================================
-                        _progressValue.ProgressTask3 = $"Gaskets {sortOrder} of {worksheet.RowCount - 5} - {materialDTO.Description}";
+                        _progressValue.ProgressTask3 = $"Gaskets {sortOrder} of {worksheet.RowCount - 5} - {material.Description}";
                         _progress?.Report(_progressValue);
 
                         //================================================================================================================
-                        materialsDTO.Add(materialDTO);
+                        materials.Add(material);
 
                         //================================================================================================================
-                        await LogMappedMaterialDTOAsync(materialDTO);
+                        await LogMappedMaterialEntityAsync(material);
                     }
                     catch (Exception ex)
                     {
@@ -739,11 +739,11 @@ namespace a2p.Infrastructure.Services.MappingService
                             nameof(MapGasketsAsync),
                             worksheet.Order ?? string.Empty,
                             worksheet.Name ?? string.Empty,
-                            materialDTO.SourceReference ?? string.Empty,
-                            materialDTO.SourceColor ?? string.Empty,
-                            materialDTO.ReferenceBase ?? string.Empty,
-                            materialDTO.Reference ?? string.Empty,
-                            materialDTO.Description ?? string.Empty,
+                            material.SourceReference ?? string.Empty,
+                            material.SourceColor ?? string.Empty,
+                            material.ReferenceBase ?? string.Empty,
+                            material.Reference ?? string.Empty,
+                            material.Description ?? string.Empty,
                              ex.Message ?? string.Empty);
                         ErrorEntitys.Add(new ErrorEntity()
                         {
@@ -753,9 +753,9 @@ namespace a2p.Infrastructure.Services.MappingService
                             Message = $"Unhandled Error {nameof(MapperTechDesign)}.{nameof(MapGasketsAsync)}, " +
                            $"\nOrder: {worksheet.Order ?? string.Empty}," +
                            $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
-                           $"\nLine {materialDTO.Line}," +
-                           $"\nItem: {materialDTO.Item ?? string.Empty}," +
-                           $"\nDescription: {materialDTO.Description ?? string.Empty}," +
+                           $"\nLine {material.Line}," +
+                           $"\nItem: {material.Item ?? string.Empty}," +
+                           $"\nDescription: {material.Description ?? string.Empty}," +
                            $"\nData: {worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}," +
                            $"\nException: {ex.Message ?? string.Empty}."
                         });
@@ -767,7 +767,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     _progressValue.ProgressTask3 = string.Empty;
                     _progress?.Report(_progressValue);
                 }
-                return (materialsDTO, ErrorEntitys);
+                return (materials, ErrorEntitys);
             }
             catch (Exception ex)
             {
@@ -781,19 +781,19 @@ namespace a2p.Infrastructure.Services.MappingService
                     worksheet.Name ?? string.Empty,
                     ex.Message);
 
-                return (materialsDTO, ErrorEntitys);
+                return (materials, ErrorEntitys);
             }
 
         }
 
-        private async Task<(List<MaterialDTO>, List<ErrorEntity>)> MapAccessoriesAsync(Worksheet worksheet)
+        private async Task<(List<MaterialEntity>, List<ErrorEntity>)> MapAccessoriesAsync(Worksheet worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
 
             List<ErrorEntity> ErrorEntitys = [];
-            List<MaterialDTO> materialsDTO = [];
+            List<MaterialEntity> materials = [];
             try
             {
 
@@ -801,47 +801,47 @@ namespace a2p.Infrastructure.Services.MappingService
 
                 for (int i = 4; i < worksheet.RowCount; i++)
                 {
-                    MaterialDTO materialDTO = new();
+                    MaterialEntity material = new();
                     sortOrder++;
 
                     line = i + 1;
                     try
                     {
 
-                        materialDTO.Worksheet = worksheet.Name ?? string.Empty;
-                        materialDTO.Order = worksheet.Order ?? string.Empty;
+                        material.Worksheet = worksheet.Name ?? string.Empty;
+                        material.Order = worksheet.Order ?? string.Empty;
 
 
                         //===================================================================================================
-                        materialDTO.SourceReference = worksheet.WorksheetData[i][1]?.ToString();
-                        materialDTO.SourceColor = worksheet.WorksheetData[i][2].ToString() == null ? null : worksheet.WorksheetData[i][2].ToString();
-                        materialDTO.SourceColorDescription = worksheet.WorksheetData[i][3].ToString() == null ? null : worksheet.WorksheetData[i][3].ToString();
-                        materialDTO.SourceDescription = worksheet.WorksheetData[i][4].ToString() == null ? null : worksheet.WorksheetData[i][4].ToString();
+                        material.SourceReference = worksheet.WorksheetData[i][1]?.ToString();
+                        material.SourceColor = worksheet.WorksheetData[i][2].ToString() == null ? null : worksheet.WorksheetData[i][2].ToString();
+                        material.SourceColorDescription = worksheet.WorksheetData[i][3].ToString() == null ? null : worksheet.WorksheetData[i][3].ToString();
+                        material.SourceDescription = worksheet.WorksheetData[i][4].ToString() == null ? null : worksheet.WorksheetData[i][4].ToString();
 
                         //===================================================================================================
-                        materialDTO.Line = line;
-                        materialDTO.WorksheetType = WorksheetType.Materials;
-                        materialDTO.Item = null; // not used 
-                        materialDTO.SortOrder = -1; // not used           
+                        material.Line = line;
+                        material.WorksheetType = WorksheetType.Materials;
+                        material.Item = null; // not used 
+                        material.SortOrder = -1; // not used           
 
                         //===================================================================================================
-                        materialDTO.Color = worksheet.WorksheetData[i][2].ToString() ?? string.Empty;
-                        materialDTO.ColorDescription = worksheet.WorksheetData[i][3].ToString() ?? string.Empty;
-                        if (string.IsNullOrEmpty(materialDTO.Color) && (string.IsNullOrEmpty(materialDTO.ColorDescription) || materialDTO.ColorDescription.Contains("Without finish")))
+                        material.Color = worksheet.WorksheetData[i][2].ToString() ?? string.Empty;
+                        material.ColorDescription = worksheet.WorksheetData[i][3].ToString() ?? string.Empty;
+                        if (string.IsNullOrEmpty(material.Color) && (string.IsNullOrEmpty(material.ColorDescription) || material.ColorDescription.Contains("Without finish")))
                         {
-                            materialDTO.Color = "Without";
+                            material.Color = "Without";
                         }
 
                         //=================================================================================================== 
-                        materialDTO.ReferenceBase = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
-                        if (materialDTO.Color != "Without")
+                        material.ReferenceBase = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
+                        if (material.Color != "Without")
                         {
-                            (string, ErrorEntity?) result = TransformReference(materialDTO.ReferenceBase, materialDTO.Color, worksheet, line);
+                            (string, ErrorEntity?) result = TransformReference(material.ReferenceBase, material.Color, worksheet, line);
                             if (string.IsNullOrEmpty(result.Item1))
                             {
                                 continue;
                             }
-                            materialDTO.Reference = result.Item1;
+                            material.Reference = result.Item1;
                             if (result.Item2 != null)
                             {
                                 ErrorEntitys.Add(result.Item2);
@@ -850,94 +850,94 @@ namespace a2p.Infrastructure.Services.MappingService
                         }
                         else
                         {
-                            (string, ErrorEntity?) result = TransformReference(materialDTO.ReferenceBase, "", worksheet, line);
+                            (string, ErrorEntity?) result = TransformReference(material.ReferenceBase, "", worksheet, line);
                             if (string.IsNullOrEmpty(result.Item1))
                             {
                                 continue;
 
                             }
-                            materialDTO.Reference = result.Item1;
+                            material.Reference = result.Item1;
                         }
-                        materialDTO.Description = worksheet.WorksheetData[i][4].ToString() ?? string.Empty;
+                        material.Description = worksheet.WorksheetData[i][4].ToString() ?? string.Empty;
 
                         //===================================================================================================
-                        materialDTO.Quantity = worksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(worksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 1;
-                        materialDTO.PackageQuantity = worksheet.WorksheetData[i][6] == null ? 1 : decimal.TryParse(worksheet.WorksheetData[i][6].ToString(), out decimal packageQuantity) ? packageQuantity : 1;
-                        materialDTO.TotalQuantity = worksheet.WorksheetData[i][7] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][7].ToString(), out decimal totalQuantity) ? totalQuantity : 0;
-                        materialDTO.RequiredQuantity = worksheet.WorksheetData[i][8] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][8].ToString(), out decimal requiredQuantity) ? requiredQuantity : 0;
-                        materialDTO.LeftOverQuantity = Math.Round(materialDTO.TotalQuantity - materialDTO.RequiredQuantity, 6) < 0 ? 0 : Math.Round(materialDTO.TotalQuantity - materialDTO.RequiredQuantity, 6);
+                        material.Quantity = worksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(worksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 1;
+                        material.PackageQuantity = worksheet.WorksheetData[i][6] == null ? 1 : decimal.TryParse(worksheet.WorksheetData[i][6].ToString(), out decimal packageQuantity) ? packageQuantity : 1;
+                        material.TotalQuantity = worksheet.WorksheetData[i][7] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][7].ToString(), out decimal totalQuantity) ? totalQuantity : 0;
+                        material.RequiredQuantity = worksheet.WorksheetData[i][8] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][8].ToString(), out decimal requiredQuantity) ? requiredQuantity : 0;
+                        material.LeftOverQuantity = Math.Round(material.TotalQuantity - material.RequiredQuantity, 6) < 0 ? 0 : Math.Round(material.TotalQuantity - material.RequiredQuantity, 6);
 
                         //===================================================================================================
-                        materialDTO.Width = 0; // not used 
-                        materialDTO.Height = 0; // not used 
+                        material.Width = 0; // not used 
+                        material.Height = 0; // not used 
 
                         //===================================================================================================
-                        materialDTO.TotalWeight = 0; // not used 
-                        materialDTO.Weight = 0; // not used 
-                        materialDTO.RequiredWeight = 0; // not used 
-                        materialDTO.LeftOverWeight = 0; // not used 
+                        material.TotalWeight = 0; // not used 
+                        material.Weight = 0; // not used 
+                        material.RequiredWeight = 0; // not used 
+                        material.LeftOverWeight = 0; // not used 
 
                         //===================================================================================================
-                        materialDTO.TotalArea = 0; // not used 
-                        materialDTO.Area = 0; // not used 
-                        materialDTO.RequiredArea = 0; // not used 
-                        materialDTO.LeftOverArea = 0; // not used 
+                        material.TotalArea = 0; // not used 
+                        material.Area = 0; // not used 
+                        material.RequiredArea = 0; // not used 
+                        material.LeftOverArea = 0; // not used 
 
                         //===================================================================================================
-                        materialDTO.Waste = 0; // not used 
+                        material.Waste = 0; // not used 
 
                         //===================================================================================================
-                        materialDTO.Price = decimal.TryParse(worksheet.WorksheetData[i][9].ToString(), out decimal price) ? price : 0;
-                        materialDTO.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][10].ToString(), out decimal totalPrice) ? totalPrice : 0;
-                        materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (decimal)materialDTO.RequiredQuantity, 6);
-                        materialDTO.LeftOverPrice = Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6) < 0 ? 0 : Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6);
+                        material.Price = decimal.TryParse(worksheet.WorksheetData[i][9].ToString(), out decimal price) ? price : 0;
+                        material.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][10].ToString(), out decimal totalPrice) ? totalPrice : 0;
+                        material.RequiredPrice = Math.Round(material.Price * (decimal)material.RequiredQuantity, 6);
+                        material.LeftOverPrice = Math.Round(material.TotalPrice - material.RequiredPrice, 6) < 0 ? 0 : Math.Round(material.TotalPrice - material.RequiredPrice, 6);
 
                         //===================================================================================================
-                        materialDTO.SquareMeterPrice = 0; // not used 
+                        material.SquareMeterPrice = 0; // not used 
 
                         //===================================================================================================
-                        materialDTO.Pallet = null;
+                        material.Pallet = null;
 
                         //===================================================================================================
 
-                        if (!string.IsNullOrWhiteSpace(materialDTO.SourceColor))
+                        if (!string.IsNullOrWhiteSpace(material.SourceColor))
                         {
-                            (string, string)? customColors = SplitColors(materialDTO.SourceColor);
+                            (string, string)? customColors = SplitColors(material.SourceColor);
 
 
                             if (customColors != null)
                             {
-                                materialDTO.CustomField1 = customColors.Value.Item1; // used for custom color
-                                materialDTO.CustomField2 = customColors.Value.Item2;
+                                material.CustomField1 = customColors.Value.Item1; // used for custom color
+                                material.CustomField2 = customColors.Value.Item2;
                             }
 
                             else
                             {
-                                materialDTO.CustomField1 = null; // not used
-                                materialDTO.CustomField2 = null; // not used
+                                material.CustomField1 = null; // not used
+                                material.CustomField2 = null; // not used
                             }
                         }
                         else
                         {
-                            materialDTO.CustomField1 = null; // not used
-                            materialDTO.CustomField2 = null; // not used
+                            material.CustomField1 = null; // not used
+                            material.CustomField2 = null; // not used
                         }
-                        materialDTO.CustomField3 = null; // not used 
-                        materialDTO.CustomField4 = null; // not used 
-                        materialDTO.CustomField5 = null; // not used 
+                        material.CustomField3 = null; // not used 
+                        material.CustomField4 = null; // not used 
+                        material.CustomField5 = null; // not used 
 
                         //===================================================================================================
-                        materialDTO.MaterialType = MaterialType.Piece;
+                        material.MaterialType = MaterialType.Piece;
 
                         //===================================================================================================
-                        _progressValue.ProgressTask3 = $"Accessories {sortOrder} of {worksheet.RowCount - 5} - {materialDTO.Description}";
+                        _progressValue.ProgressTask3 = $"Accessories {sortOrder} of {worksheet.RowCount - 5} - {material.Description}";
                         _progress?.Report(_progressValue);
 
                         //===================================================================================================
-                        materialsDTO.Add(materialDTO);
+                        materials.Add(material);
 
                         //===================================================================================================
-                        await LogMappedMaterialDTOAsync(materialDTO);
+                        await LogMappedMaterialEntityAsync(material);
                     }
                     catch (Exception ex)
                     {
@@ -954,11 +954,11 @@ namespace a2p.Infrastructure.Services.MappingService
                             nameof(MapAccessoriesAsync),
                             worksheet.Order ?? string.Empty,
                             worksheet.Name ?? string.Empty,
-                            materialDTO.SourceReference ?? string.Empty,
-                            materialDTO.SourceColor ?? string.Empty,
-                            materialDTO.ReferenceBase ?? string.Empty,
-                            materialDTO.Reference ?? string.Empty,
-                            materialDTO.Description ?? string.Empty,
+                            material.SourceReference ?? string.Empty,
+                            material.SourceColor ?? string.Empty,
+                            material.ReferenceBase ?? string.Empty,
+                            material.Reference ?? string.Empty,
+                            material.Description ?? string.Empty,
                              ex.Message ?? string.Empty);
 
                         ErrorEntitys.Add(new ErrorEntity()
@@ -971,7 +971,7 @@ namespace a2p.Infrastructure.Services.MappingService
                            $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
 
 
-                           $"\nDescription: {materialDTO.Description ?? string.Empty}," +
+                           $"\nDescription: {material.Description ?? string.Empty}," +
                            $"\nData: {worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}," +
                            $"\nException: {ex.Message ?? string.Empty}."
                         });
@@ -984,7 +984,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     _progress?.Report(_progressValue);
                 }
 
-                return (materialsDTO, ErrorEntitys);
+                return (materials, ErrorEntitys);
             }
             catch (Exception ex)
             {
@@ -998,17 +998,17 @@ namespace a2p.Infrastructure.Services.MappingService
                     worksheet.Name ?? string.Empty,
                     ex.Message);
 
-                return (materialsDTO, ErrorEntitys);
+                return (materials, ErrorEntitys);
             }
 
         }
 
-        private async Task<(List<MaterialDTO>, List<ErrorEntity>)> MapPanelsAsync(Worksheet worksheet)
+        private async Task<(List<MaterialEntity>, List<ErrorEntity>)> MapPanelsAsync(Worksheet worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
-            List<MaterialDTO> materialsDTO = [];
+            List<MaterialEntity> materials = [];
             List<ErrorEntity> ErrorEntitys = [];
 
             try
@@ -1019,72 +1019,72 @@ namespace a2p.Infrastructure.Services.MappingService
 
                 for (int i = 4; i < worksheet.RowCount; i++)
                 {
-                    MaterialDTO materialDTO = new();
+                    MaterialEntity material = new();
 
                     sortOrder++;
 
                     line = i + 1;
                     try
                     {
-                        materialDTO.Worksheet = worksheet.Name ?? string.Empty;
-                        materialDTO.Order = worksheet.Order ?? string.Empty;
+                        material.Worksheet = worksheet.Name ?? string.Empty;
+                        material.Order = worksheet.Order ?? string.Empty;
                         //===================================================================================================
-                        //materialDTO.SourceReference = null;
-                        materialDTO.SourceDescription = worksheet.WorksheetData[i][4]?.ToString();
-                        materialDTO.SourceColor = worksheet.WorksheetData[i][2]?.ToString();
-                        materialDTO.SourceColorDescription = worksheet.WorksheetData[i][3] == null ? null : worksheet.WorksheetData[i][2].ToString();
+                        //material.SourceReference = null;
+                        material.SourceDescription = worksheet.WorksheetData[i][4]?.ToString();
+                        material.SourceColor = worksheet.WorksheetData[i][2]?.ToString();
+                        material.SourceColorDescription = worksheet.WorksheetData[i][3] == null ? null : worksheet.WorksheetData[i][2].ToString();
 
                         //===================================================================================================
-                        materialDTO.Line = line;
-                        materialDTO.WorksheetType = WorksheetType.Panels;
+                        material.Line = line;
+                        material.WorksheetType = WorksheetType.Panels;
 
                         //===================================================================================================
-                        materialDTO.Item = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
+                        material.Item = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
 
                         //Reset Sort Order if new item
                         //===================================================================================================
-                        if (materialDTO.Item != worksheet.WorksheetData[i - 1][1].ToString())
+                        if (material.Item != worksheet.WorksheetData[i - 1][1].ToString())
                         {
                             sortOrder = 0;
                         }
-                        materialDTO.SortOrder = sortOrder;
+                        material.SortOrder = sortOrder;
 
                         //===================================================================================================                          
-                        materialDTO.Description = worksheet.WorksheetData[i][4].ToString() ?? string.Empty;
+                        material.Description = worksheet.WorksheetData[i][4].ToString() ?? string.Empty;
                         var pattern = @"\(XPS\)\s+\d{1,2}mm$";
-                        Match match = Regex.Match(materialDTO.Description, pattern);
+                        Match match = Regex.Match(material.Description, pattern);
 
-                        materialDTO.ReferenceBase = match.Success
+                        material.ReferenceBase = match.Success
                             ? $"LOB_XPS{match.Groups[0].Value.Replace("(XPS)", "").Replace("mm", "").Trim()}"
                             : string.Empty;
 
-                        materialDTO.Reference = match.Success
+                        material.Reference = match.Success
                             ? $"LOB_XPS{match.Groups[0].Value.Replace("(XPS)", "").Replace("mm", "").Trim()}"
                             : string.Empty;
 
 
 
-                        materialDTO.Color = match.Success ?
+                        material.Color = match.Success ?
                         $"LOB_Surface" : string.Empty;
 
 
 
                         //===================================================================================================
 
-                        if (materialDTO.Color != "LOB_Surface")
+                        if (material.Color != "LOB_Surface")
                         {
 
-                            if (string.IsNullOrEmpty(materialDTO.Reference) && (materialDTO.Description == "1 mm aluminium sheet" || materialDTO.Description == "1mm aluminium sheet"))
+                            if (string.IsNullOrEmpty(material.Reference) && (material.Description == "1 mm aluminium sheet" || material.Description == "1mm aluminium sheet"))
                             {
 
-                                (string, ErrorEntity?) result = TransformReference("AluSheet1", materialDTO.SourceColor ?? string.Empty, worksheet, line);
+                                (string, ErrorEntity?) result = TransformReference("AluSheet1", material.SourceColor ?? string.Empty, worksheet, line);
                                 if (string.IsNullOrEmpty(result.Item1))
                                 {
                                     continue;
                                 }
 
 
-                                materialDTO.Reference = result.Item1;
+                                material.Reference = result.Item1;
 
                                 if (result.Item2 != null)
                                 {
@@ -1092,30 +1092,30 @@ namespace a2p.Infrastructure.Services.MappingService
                                 }
 
                             }
-                            else if (string.IsNullOrEmpty(materialDTO.Reference) && (materialDTO.Description == "1.25 mm aluminium sheet" || materialDTO.Description == "1.25mm aluminium sheet"))
+                            else if (string.IsNullOrEmpty(material.Reference) && (material.Description == "1.25 mm aluminium sheet" || material.Description == "1.25mm aluminium sheet"))
                             {
 
-                                (string, ErrorEntity?) result = TransformReference("AluSheet1.25", materialDTO.SourceColor ?? string.Empty, worksheet, line);
+                                (string, ErrorEntity?) result = TransformReference("AluSheet1.25", material.SourceColor ?? string.Empty, worksheet, line);
                                 if (string.IsNullOrEmpty(result.Item1))
                                 {
                                     continue;
                                 }
-                                materialDTO.Reference = result.Item1;
+                                material.Reference = result.Item1;
                                 if (result.Item2 != null)
                                 {
                                     ErrorEntitys.Add(result.Item2);
                                 }
 
                             }
-                            else if (string.IsNullOrEmpty(materialDTO.Reference) && (materialDTO.Description == "1.5 mm aluminium sheet" || materialDTO.Description == "1.5mm aluminium sheet"))
+                            else if (string.IsNullOrEmpty(material.Reference) && (material.Description == "1.5 mm aluminium sheet" || material.Description == "1.5mm aluminium sheet"))
                             {
 
-                                (string, ErrorEntity?) result = TransformReference("AluSheet1.5", materialDTO.SourceColor ?? string.Empty, worksheet, line);
+                                (string, ErrorEntity?) result = TransformReference("AluSheet1.5", material.SourceColor ?? string.Empty, worksheet, line);
                                 if (string.IsNullOrEmpty(result.Item1))
                                 {
                                     continue;
                                 }
-                                materialDTO.Reference = result.Item1;
+                                material.Reference = result.Item1;
                                 if (result.Item2 != null)
                                 {
                                     ErrorEntitys.Add(result.Item2);
@@ -1124,124 +1124,124 @@ namespace a2p.Infrastructure.Services.MappingService
                             }
                             else
                             {
-                                (string, ErrorEntity?) result = TransformReference(materialDTO.SourceReference ?? string.Empty, materialDTO.SourceColor ?? string.Empty, worksheet, line);
+                                (string, ErrorEntity?) result = TransformReference(material.SourceReference ?? string.Empty, material.SourceColor ?? string.Empty, worksheet, line);
 
                                 if (string.IsNullOrEmpty(result.Item1))
                                 {
                                     continue;
                                 }
 
-                                materialDTO.Reference = result.Item1;
+                                material.Reference = result.Item1;
 
                                 if (result.Item2 != null)
                                 {
                                     ErrorEntitys.Add(result.Item2);
                                 }
                             }
-                            materialDTO.Color = worksheet.WorksheetData[i][2].ToString() ?? string.Empty;
+                            material.Color = worksheet.WorksheetData[i][2].ToString() ?? string.Empty;
                         }
                         //===================================================================================================
 
-                        materialDTO.ColorDescription = worksheet.WorksheetData[i][3].ToString() ?? string.Empty;  // not used
+                        material.ColorDescription = worksheet.WorksheetData[i][3].ToString() ?? string.Empty;  // not used
 
                         //===================================================================================================
-                        materialDTO.Width = decimal.TryParse(worksheet.WorksheetData[i][6].ToString(), out decimal width) ? width : 0;
-                        materialDTO.Height = decimal.TryParse(worksheet.WorksheetData[i][7].ToString(), out decimal height) ? height : 0;
+                        material.Width = decimal.TryParse(worksheet.WorksheetData[i][6].ToString(), out decimal width) ? width : 0;
+                        material.Height = decimal.TryParse(worksheet.WorksheetData[i][7].ToString(), out decimal height) ? height : 0;
 
                         //===================================================================================================
-                        materialDTO.Quantity = worksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(worksheet.WorksheetData[i][3].ToString(), out int quantity) ? quantity : 1;
-                        materialDTO.PackageQuantity = 1;
-                        materialDTO.TotalQuantity = materialDTO.Quantity;
-                        materialDTO.RequiredQuantity = materialDTO.TotalQuantity;
-                        materialDTO.LeftOverQuantity = 0;// not used. Threated as unique piece material, that has no leftovers 
+                        material.Quantity = worksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(worksheet.WorksheetData[i][3].ToString(), out int quantity) ? quantity : 1;
+                        material.PackageQuantity = 1;
+                        material.TotalQuantity = material.Quantity;
+                        material.RequiredQuantity = material.TotalQuantity;
+                        material.LeftOverQuantity = 0;// not used. Threated as unique piece material, that has no leftovers 
 
                         //===================================================================================================
-                        materialDTO.Weight = 0;// not used
-                        materialDTO.TotalWeight = 0;// not used
-                        materialDTO.RequiredWeight = 0;// not used
-                        materialDTO.LeftOverWeight = 0;// not used
+                        material.Weight = 0;// not used
+                        material.TotalWeight = 0;// not used
+                        material.RequiredWeight = 0;// not used
+                        material.LeftOverWeight = 0;// not used
 
                         //===================================================================================================
-                        materialDTO.Area = materialDTO.Width * materialDTO.Height;
+                        material.Area = material.Width * material.Height;
 
-                        materialDTO.TotalArea = materialDTO.Area * materialDTO.Quantity;
+                        material.TotalArea = material.Area * material.Quantity;
 
 
-                        materialDTO.RequiredArea = materialDTO.TotalArea; // not used 
-                        materialDTO.LeftOverArea = 0; // not used 
-
-                        //===================================================================================================
-                        materialDTO.Waste = 0; // not used, panels are not cut in production. Threated as piece material. 
+                        material.RequiredArea = material.TotalArea; // not used 
+                        material.LeftOverArea = 0; // not used 
 
                         //===================================================================================================
-                        materialDTO.Price = decimal.TryParse(worksheet.WorksheetData[i][9].ToString(), out decimal price) ? price : 0;
-                        materialDTO.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][11].ToString(), out decimal totalPrice) ? totalPrice : 0;
-                        materialDTO.RequiredPrice = materialDTO.TotalPrice; // not used. Threated as unique piece material 
-                        materialDTO.LeftOverPrice = 0; /// not used. Threated as unique piece material, that has no leftovers 
+                        material.Waste = 0; // not used, panels are not cut in production. Threated as piece material. 
 
                         //===================================================================================================
-                        materialDTO.SquareMeterPrice = decimal.TryParse(worksheet.WorksheetData[i][8].ToString(), out decimal squareMeterPrice) ? squareMeterPrice : 0;
+                        material.Price = decimal.TryParse(worksheet.WorksheetData[i][9].ToString(), out decimal price) ? price : 0;
+                        material.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][11].ToString(), out decimal totalPrice) ? totalPrice : 0;
+                        material.RequiredPrice = material.TotalPrice; // not used. Threated as unique piece material 
+                        material.LeftOverPrice = 0; /// not used. Threated as unique piece material, that has no leftovers 
 
                         //===================================================================================================
-                        materialDTO.Pallet = null;
+                        material.SquareMeterPrice = decimal.TryParse(worksheet.WorksheetData[i][8].ToString(), out decimal squareMeterPrice) ? squareMeterPrice : 0;
+
+                        //===================================================================================================
+                        material.Pallet = null;
 
                         //===================================================================================================
 
-                        if (!string.IsNullOrWhiteSpace(materialDTO.SourceColor))
+                        if (!string.IsNullOrWhiteSpace(material.SourceColor))
                         {
-                            (string, string)? customColors = SplitColors(materialDTO.SourceColor);
+                            (string, string)? customColors = SplitColors(material.SourceColor);
 
 
                             if (customColors != null)
                             {
-                                materialDTO.CustomField1 = customColors.Value.Item1; // used for custom color
-                                materialDTO.CustomField2 = customColors.Value.Item2;
+                                material.CustomField1 = customColors.Value.Item1; // used for custom color
+                                material.CustomField2 = customColors.Value.Item2;
                             }
 
                             else
                             {
-                                materialDTO.CustomField1 = null; // not used
-                                materialDTO.CustomField2 = null; // not used
+                                material.CustomField1 = null; // not used
+                                material.CustomField2 = null; // not used
                             }
                         }
                         else
                         {
-                            materialDTO.CustomField1 = null; // not used
-                            materialDTO.CustomField2 = null; // not used
+                            material.CustomField1 = null; // not used
+                            material.CustomField2 = null; // not used
                         }
-                        materialDTO.CustomField3 = null; // not used
-                        materialDTO.CustomField4 = null; // not used
-                        materialDTO.CustomField5 = null; // not used
+                        material.CustomField3 = null; // not used
+                        material.CustomField4 = null; // not used
+                        material.CustomField5 = null; // not used
 
                         //===================================================================================================
-                        materialDTO.MaterialType = MaterialType.Panels;
+                        material.MaterialType = MaterialType.Panels;
 
 
-                        if (string.IsNullOrEmpty(materialDTO.SourceColor))
+                        if (string.IsNullOrEmpty(material.SourceColor))
                         {
-                            materialDTO.SourceColor = materialDTO.Color;
+                            material.SourceColor = material.Color;
 
                         }
 
-                        if (string.IsNullOrEmpty(materialDTO.SourceReference))
+                        if (string.IsNullOrEmpty(material.SourceReference))
                         {
-                            materialDTO.SourceReference = materialDTO.ReferenceBase;
+                            material.SourceReference = material.ReferenceBase;
 
                         }
 
 
 
                         //===================================================================================================
-                        _progressValue.ProgressTask3 = $"Panels {sortOrder} of {worksheet.RowCount - 5} - {materialDTO.Description}";
+                        _progressValue.ProgressTask3 = $"Panels {sortOrder} of {worksheet.RowCount - 5} - {material.Description}";
                         _progress?.Report(_progressValue);
 
                         //===================================================================================================
 
 
-                        materialsDTO.Add(materialDTO);
+                        materials.Add(material);
 
                         //===================================================================================================
-                        await LogMappedMaterialDTOAsync(materialDTO);
+                        await LogMappedMaterialEntityAsync(material);
 
                     }
                     catch (Exception ex)
@@ -1259,11 +1259,11 @@ namespace a2p.Infrastructure.Services.MappingService
                             nameof(MapPanelsAsync),
                             worksheet.Order ?? string.Empty,
                             worksheet.Name ?? string.Empty,
-                            materialDTO.SourceReference ?? string.Empty,
-                            materialDTO.SourceColor ?? string.Empty,
-                            materialDTO.ReferenceBase ?? string.Empty,
-                            materialDTO.Reference ?? string.Empty,
-                            materialDTO.Description ?? string.Empty,
+                            material.SourceReference ?? string.Empty,
+                            material.SourceColor ?? string.Empty,
+                            material.ReferenceBase ?? string.Empty,
+                            material.Reference ?? string.Empty,
+                            material.Description ?? string.Empty,
                              ex.Message ?? string.Empty);
 
                         ErrorEntitys.Add(new ErrorEntity()
@@ -1274,9 +1274,9 @@ namespace a2p.Infrastructure.Services.MappingService
                             Message = $"Unhandled Error {nameof(MapperTechDesign)}.{nameof(MapPanelsAsync)}, " +
                         $"\nOrder: {worksheet.Order ?? string.Empty}," +
                         $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
-                        $"\nReference: {materialDTO.SourceReference ?? string.Empty}," +
-                        $"\nColor: {materialDTO.SourceColor ?? string.Empty}," +
-                        $"\nDescription: {materialDTO.Description ?? string.Empty}," +
+                        $"\nReference: {material.SourceReference ?? string.Empty}," +
+                        $"\nColor: {material.SourceColor ?? string.Empty}," +
+                        $"\nDescription: {material.Description ?? string.Empty}," +
                         $"\nData: {worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}," +
                         $"\nException: {ex.Message ?? string.Empty}."
                         });
@@ -1289,7 +1289,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     _progress?.Report(_progressValue);
                 }
 
-                return (materialsDTO, ErrorEntitys);
+                return (materials, ErrorEntitys);
 
             }
             catch (Exception ex)
@@ -1304,17 +1304,17 @@ namespace a2p.Infrastructure.Services.MappingService
                     worksheet.Name ?? string.Empty,
                     ex.Message);
 
-                return (materialsDTO, ErrorEntitys);
+                return (materials, ErrorEntitys);
             }
 
         }
 
-        private async Task<(List<MaterialDTO>, List<ErrorEntity>)> MapGlassesAsync(Worksheet worksheet)
+        private async Task<(List<MaterialEntity>, List<ErrorEntity>)> MapGlassesAsync(Worksheet worksheet)
         {
             int sortOrder = -1;
             int line = -1;
 
-            List<MaterialDTO> materialsDTO = [];
+            List<MaterialEntity> materials = [];
             List<ErrorEntity> ErrorEntitys = [];
 
             try
@@ -1325,34 +1325,34 @@ namespace a2p.Infrastructure.Services.MappingService
 
                 for (int i = 4; i < worksheet.RowCount; i++)
                 {
-                    MaterialDTO materialDTO = new();
+                    MaterialEntity material = new();
                     sortOrder++;
                     line = i + 1;
                     try
                     {
-                        materialDTO.Worksheet = worksheet.Name ?? string.Empty;
-                        materialDTO.Order = worksheet.Order ?? string.Empty;
-                        materialDTO.SourceReference = null;
-                        materialDTO.SourceDescription = worksheet.WorksheetData[i][2]?.ToString();
-                        materialDTO.SourceColor = null;
-                        materialDTO.SourceColorDescription = null;
+                        material.Worksheet = worksheet.Name ?? string.Empty;
+                        material.Order = worksheet.Order ?? string.Empty;
+                        material.SourceReference = null;
+                        material.SourceDescription = worksheet.WorksheetData[i][2]?.ToString();
+                        material.SourceColor = null;
+                        material.SourceColorDescription = null;
                         //===================================================================================================
-                        materialDTO.Line = line;
-                        materialDTO.WorksheetType = WorksheetType.Glasses;
+                        material.Line = line;
+                        material.WorksheetType = WorksheetType.Glasses;
 
                         //===================================================================================================
-                        materialDTO.Item = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
+                        material.Item = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
 
                         //===================================================================================================
                         //Reset Sort Order if new item
-                        if (materialDTO.Item != worksheet.WorksheetData[i - 1][1].ToString())
+                        if (material.Item != worksheet.WorksheetData[i - 1][1].ToString())
                         {
                             sortOrder = 0;
                         }
-                        materialDTO.SortOrder = sortOrder;
+                        material.SortOrder = sortOrder;
                         //===================================================================================================
-                        materialDTO.Description = worksheet.WorksheetData[i][2].ToString() ?? string.Empty;
-                        if (string.IsNullOrEmpty(materialDTO.Description))
+                        material.Description = worksheet.WorksheetData[i][2].ToString() ?? string.Empty;
+                        if (string.IsNullOrEmpty(material.Description))
                         {
                             _logService.Error("{$Class}.{$Method}. Glass description is missing." +
                            "\nOrder {$Order}, " +
@@ -1364,8 +1364,8 @@ namespace a2p.Infrastructure.Services.MappingService
                            nameof(MapGlassesAsync),
                            worksheet.Order ?? string.Empty,
                            worksheet.Name ?? string.Empty,
-                           materialDTO.SourceReference ?? string.Empty,
-                           materialDTO.Description ?? string.Empty
+                           material.SourceReference ?? string.Empty,
+                           material.Description ?? string.Empty
                             );
 
                             ErrorEntitys.Add(new ErrorEntity()
@@ -1376,14 +1376,14 @@ namespace a2p.Infrastructure.Services.MappingService
                                 Message = $"Glass description is missing." +
                                 $"\nOrder: {worksheet.Order}, " +
                                 $"\nWorksheet: {worksheet.Name}, " +
-                                $"\nReference: {materialDTO.SourceReference ?? "not found"}," +
-                                $"\nDescription: {materialDTO.Description ?? "not found"}"
+                                $"\nReference: {material.SourceReference ?? "not found"}," +
+                                $"\nDescription: {material.Description ?? "not found"}"
 
                             });
                             continue;
                         }
                         //===================================================================================================
-                        string resultPredicted = await GetGlassPredictedReferenceAsync(materialDTO.Description) ?? string.Empty;
+                        string resultPredicted = await GetGlassPredictedReferenceAsync(material.Description) ?? string.Empty;
                         string resultGlassReference = string.Empty;
                         if (!string.IsNullOrEmpty(resultPredicted))
                         {
@@ -1403,8 +1403,8 @@ namespace a2p.Infrastructure.Services.MappingService
                               nameof(MapGlassesAsync),
                               worksheet.Order ?? string.Empty,
                               worksheet.Name ?? string.Empty,
-                              materialDTO.SourceReference ?? string.Empty,
-                              materialDTO.SourceDescription ?? string.Empty,
+                              material.SourceReference ?? string.Empty,
+                              material.SourceDescription ?? string.Empty,
                               resultPredicted);
 
                             ErrorEntitys.Add(new ErrorEntity()
@@ -1415,73 +1415,73 @@ namespace a2p.Infrastructure.Services.MappingService
                                 Message = $"Glass not exists in PrefSuite DB." +
                                 $"\nOrder: {worksheet.Order}," +
                                 $"\nWorksheet: {worksheet.Name}." +
-                                $"\nGlass description: {materialDTO.SourceDescription}" +
+                                $"\nGlass description: {material.SourceDescription}" +
                                 $"\nExpected PrefSuite Reference: {resultPredicted ?? "not found"}."
 
                             });
                             continue;
                         }
-                        materialDTO.ReferenceBase = resultGlassReference;
-                        materialDTO.Reference = resultGlassReference;
+                        material.ReferenceBase = resultGlassReference;
+                        material.Reference = resultGlassReference;
 
                         //===================================================================================================
-                        materialDTO.Color = "Transparent"; // not used
-                        materialDTO.ColorDescription = "Transparent"; // not used
+                        material.Color = "Transparent"; // not used
+                        material.ColorDescription = "Transparent"; // not used
 
                         //================================================================================================================
-                        materialDTO.Width = decimal.TryParse(worksheet.WorksheetData[i][4].ToString(), out decimal width) ? width : 0;
-                        materialDTO.Height = decimal.TryParse(worksheet.WorksheetData[i][5].ToString(), out decimal height) ? height : 0;
+                        material.Width = decimal.TryParse(worksheet.WorksheetData[i][4].ToString(), out decimal width) ? width : 0;
+                        material.Height = decimal.TryParse(worksheet.WorksheetData[i][5].ToString(), out decimal height) ? height : 0;
                         //===================================================================================================
-                        materialDTO.Quantity = worksheet.WorksheetData[i][3] == null ? 1 : int.TryParse(worksheet.WorksheetData[i][3].ToString(), out int quantity) ? quantity : 1;
-                        materialDTO.PackageQuantity = 0;
-                        materialDTO.TotalQuantity = materialDTO.Quantity;
-                        materialDTO.RequiredQuantity = materialDTO.TotalQuantity;
-                        materialDTO.LeftOverQuantity = 0;// not used. Threated as unique piece material, that has no leftovers 
+                        material.Quantity = worksheet.WorksheetData[i][3] == null ? 1 : int.TryParse(worksheet.WorksheetData[i][3].ToString(), out int quantity) ? quantity : 1;
+                        material.PackageQuantity = 0;
+                        material.TotalQuantity = material.Quantity;
+                        material.RequiredQuantity = material.TotalQuantity;
+                        material.LeftOverQuantity = 0;// not used. Threated as unique piece material, that has no leftovers 
 
                         //================================================================================================================
-                        materialDTO.Weight = decimal.TryParse(worksheet.WorksheetData[i][8].ToString(), out decimal weight) ? weight : 0;
-                        materialDTO.TotalWeight = decimal.TryParse(worksheet.WorksheetData[i][9].ToString(), out decimal totalWeight) ? totalWeight : 0;
-                        materialDTO.RequiredWeight = materialDTO.TotalWeight;
-                        materialDTO.LeftOverWeight = 0;// not used. Threated as unique piece material, that has no leftovers 
+                        material.Weight = decimal.TryParse(worksheet.WorksheetData[i][8].ToString(), out decimal weight) ? weight : 0;
+                        material.TotalWeight = decimal.TryParse(worksheet.WorksheetData[i][9].ToString(), out decimal totalWeight) ? totalWeight : 0;
+                        material.RequiredWeight = material.TotalWeight;
+                        material.LeftOverWeight = 0;// not used. Threated as unique piece material, that has no leftovers 
 
                         //================================================================================================================
-                        materialDTO.Area = decimal.TryParse(worksheet.WorksheetData[i][10].ToString(), out decimal area) ? area : 0;
-                        materialDTO.TotalArea = Math.Round(materialDTO.Area * materialDTO.Quantity, 6);
-                        materialDTO.RequiredArea = materialDTO.TotalArea; // not used. Threated as unique piece material.
-                        materialDTO.LeftOverArea = 0;// not used. Threated as unique piece material, that has no leftovers 
+                        material.Area = decimal.TryParse(worksheet.WorksheetData[i][10].ToString(), out decimal area) ? area : 0;
+                        material.TotalArea = Math.Round(material.Area * material.Quantity, 6);
+                        material.RequiredArea = material.TotalArea; // not used. Threated as unique piece material.
+                        material.LeftOverArea = 0;// not used. Threated as unique piece material, that has no leftovers 
 
                         //================================================================================================================
-                        materialDTO.Waste = 0; // not used, glasses are not cut in production. Threated as piece material. 
+                        material.Waste = 0; // not used, glasses are not cut in production. Threated as piece material. 
 
                         //===================================================================================================
-                        materialDTO.Price = decimal.TryParse(worksheet.WorksheetData[i][7].ToString(), out decimal price) ? price : 0;
-                        materialDTO.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][11].ToString(), out decimal totalPrice) ? totalPrice : 0;
-                        materialDTO.RequiredPrice = materialDTO.TotalPrice; // not used. Threated as unique piece material 
-                        materialDTO.LeftOverPrice = 0; /// not used. Threated as unique piece material, that has no leftovers 
+                        material.Price = decimal.TryParse(worksheet.WorksheetData[i][7].ToString(), out decimal price) ? price : 0;
+                        material.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][11].ToString(), out decimal totalPrice) ? totalPrice : 0;
+                        material.RequiredPrice = material.TotalPrice; // not used. Threated as unique piece material 
+                        material.LeftOverPrice = 0; /// not used. Threated as unique piece material, that has no leftovers 
 
                         //===================================================================================================
-                        materialDTO.SquareMeterPrice = decimal.TryParse(worksheet.WorksheetData[i][6].ToString(), out decimal squareMeterPrice) ? squareMeterPrice : 0;
+                        material.SquareMeterPrice = decimal.TryParse(worksheet.WorksheetData[i][6].ToString(), out decimal squareMeterPrice) ? squareMeterPrice : 0;
 
                         //===================================================================================================
-                        materialDTO.Pallet = worksheet.WorksheetData[i][12].ToString();
+                        material.Pallet = worksheet.WorksheetData[i][12].ToString();
 
                         //===================================================================================================
-                        materialDTO.CustomField1 = null; // not used
-                        materialDTO.CustomField2 = null; // not used 
-                        materialDTO.CustomField3 = null; // not used
-                        materialDTO.CustomField4 = null; // not used 
-                        materialDTO.CustomField5 = null; // not used
+                        material.CustomField1 = null; // not used
+                        material.CustomField2 = null; // not used 
+                        material.CustomField3 = null; // not used
+                        material.CustomField4 = null; // not used 
+                        material.CustomField5 = null; // not used
 
                         //================================================================================================================
-                        materialDTO.MaterialType = MaterialType.Glasses;
+                        material.MaterialType = MaterialType.Glasses;
                         //===================================================================================================
 
-                        _progressValue.ProgressTask3 = $"Glasses {sortOrder} of {worksheet.RowCount - 5} - {materialDTO.Description}";
+                        _progressValue.ProgressTask3 = $"Glasses {sortOrder} of {worksheet.RowCount - 5} - {material.Description}";
                         _progress?.Report(_progressValue);
 
-                        materialsDTO.Add(materialDTO);
+                        materials.Add(material);
 
-                        await LogMappedMaterialDTOAsync(materialDTO);
+                        await LogMappedMaterialEntityAsync(material);
 
                     }
                     catch (Exception ex)
@@ -1498,11 +1498,11 @@ namespace a2p.Infrastructure.Services.MappingService
                             nameof(MapGlassesAsync),
                             worksheet.Order ?? string.Empty,
                             worksheet.Name ?? string.Empty,
-                            materialDTO.SourceReference ?? string.Empty,
-                            materialDTO.SourceDescription ?? string.Empty,
-                            materialDTO.ReferenceBase ?? string.Empty,
-                            materialDTO.Reference ?? string.Empty,
-                            materialDTO.Description ?? string.Empty,
+                            material.SourceReference ?? string.Empty,
+                            material.SourceDescription ?? string.Empty,
+                            material.ReferenceBase ?? string.Empty,
+                            material.Reference ?? string.Empty,
+                            material.Description ?? string.Empty,
                              ex.Message ?? string.Empty);
 
                         ErrorEntitys.Add(new ErrorEntity()
@@ -1513,10 +1513,10 @@ namespace a2p.Infrastructure.Services.MappingService
                             Message = $"Unhandled Error {nameof(MapperTechDesign)}.{nameof(MapGlassesAsync)}, " +
                      $"\nOrder: {worksheet.Order ?? string.Empty}," +
                      $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
-                     $"\nReference: {materialDTO.SourceReference ?? string.Empty}," +
-                     $"\nColor: {materialDTO.SourceColor ?? string.Empty}," +
-                     $"\nItem: {materialDTO.Item ?? string.Empty}," +
-                     $"\nDescription: {materialDTO.Description ?? string.Empty}," +
+                     $"\nReference: {material.SourceReference ?? string.Empty}," +
+                     $"\nColor: {material.SourceColor ?? string.Empty}," +
+                     $"\nItem: {material.Item ?? string.Empty}," +
+                     $"\nDescription: {material.Description ?? string.Empty}," +
                      $"\nException: {ex.Message ?? string.Empty}."
                         });
                         continue;
@@ -1527,7 +1527,7 @@ namespace a2p.Infrastructure.Services.MappingService
                 _progressValue.ProgressTask3 = string.Empty;
                 _progress?.Report(_progressValue);
 
-                return (materialsDTO, ErrorEntitys);
+                return (materials, ErrorEntitys);
 
             }
             catch (Exception ex)
@@ -1542,18 +1542,18 @@ namespace a2p.Infrastructure.Services.MappingService
                     worksheet.Name ?? string.Empty,
                     ex.Message);
 
-                return (materialsDTO, ErrorEntitys);
+                return (materials, ErrorEntitys);
             }
 
         }
 
-        private async Task<(List<MaterialDTO>, List<ErrorEntity>)> MapOthersAsync(Worksheet worksheet)
+        private async Task<(List<MaterialEntity>, List<ErrorEntity>)> MapOthersAsync(Worksheet worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
 
-            List<MaterialDTO> materialsDTO = [];
+            List<MaterialEntity> materials = [];
             List<ErrorEntity> ErrorEntitys = [];
 
             try
@@ -1565,7 +1565,7 @@ namespace a2p.Infrastructure.Services.MappingService
 
                 for (int i = 4; i < worksheet.RowCount; i++)
                 {
-                    MaterialDTO materialDTO = new();
+                    MaterialEntity material = new();
                     sortOrder++;
 
                     line = i + 1;
@@ -1573,35 +1573,35 @@ namespace a2p.Infrastructure.Services.MappingService
                     {
 
 
-                        materialDTO.Worksheet = worksheet.Name ?? string.Empty;
-                        materialDTO.Order = worksheet.Order ?? string.Empty;
-                        materialDTO.Line = line;
-                        materialDTO.WorksheetType = WorksheetType.Materials;
-                        materialDTO.Item = null;// not used in others
-                        materialDTO.SortOrder = -1;// not used in others
-                        materialDTO.SourceReference = worksheet.WorksheetData[i][1]?.ToString();
-                        materialDTO.SourceColor = worksheet.WorksheetData[i][2].ToString() == null ? null : worksheet.WorksheetData[i][2].ToString();
-                        materialDTO.SourceColorDescription = worksheet.WorksheetData[i][3].ToString() == null ? null : worksheet.WorksheetData[i][3].ToString();
-                        materialDTO.SourceDescription = worksheet.WorksheetData[i][4].ToString() == null ? null : worksheet.WorksheetData[i][4].ToString();
+                        material.Worksheet = worksheet.Name ?? string.Empty;
+                        material.Order = worksheet.Order ?? string.Empty;
+                        material.Line = line;
+                        material.WorksheetType = WorksheetType.Materials;
+                        material.Item = null;// not used in others
+                        material.SortOrder = -1;// not used in others
+                        material.SourceReference = worksheet.WorksheetData[i][1]?.ToString();
+                        material.SourceColor = worksheet.WorksheetData[i][2].ToString() == null ? null : worksheet.WorksheetData[i][2].ToString();
+                        material.SourceColorDescription = worksheet.WorksheetData[i][3].ToString() == null ? null : worksheet.WorksheetData[i][3].ToString();
+                        material.SourceDescription = worksheet.WorksheetData[i][4].ToString() == null ? null : worksheet.WorksheetData[i][4].ToString();
                         //===================================================================================================
-                        materialDTO.Color = worksheet.WorksheetData[i][2].ToString() ?? string.Empty;
-                        materialDTO.ColorDescription = worksheet.WorksheetData[i][3].ToString() ?? string.Empty;
+                        material.Color = worksheet.WorksheetData[i][2].ToString() ?? string.Empty;
+                        material.ColorDescription = worksheet.WorksheetData[i][3].ToString() ?? string.Empty;
 
-                        if ((string.IsNullOrEmpty(materialDTO.Color) && string.IsNullOrEmpty(materialDTO.ColorDescription)) || materialDTO.ColorDescription.Contains("Mill finished") || materialDTO.Color == "MF")
+                        if ((string.IsNullOrEmpty(material.Color) && string.IsNullOrEmpty(material.ColorDescription)) || material.ColorDescription.Contains("Mill finished") || material.Color == "MF")
                         {
-                            materialDTO.Color = "Without";
+                            material.Color = "Without";
                         }
                         //===================================================================================================
-                        materialDTO.ReferenceBase = $"ASSA_{worksheet.WorksheetData[i][1].ToString() ?? string.Empty}";
-                        if (materialDTO.Color != "Without")
+                        material.ReferenceBase = $"ASSA_{worksheet.WorksheetData[i][1].ToString() ?? string.Empty}";
+                        if (material.Color != "Without")
                         {
 
-                            (string, ErrorEntity?) result = TransformReference(materialDTO.ReferenceBase, materialDTO.Color, worksheet, line);
+                            (string, ErrorEntity?) result = TransformReference(material.ReferenceBase, material.Color, worksheet, line);
                             if (string.IsNullOrEmpty(result.Item1))
                             {
                                 continue;
                             }
-                            materialDTO.Reference = result.Item1;
+                            material.Reference = result.Item1;
                             if (result.Item2 != null)
                             {
                                 ErrorEntitys.Add(result.Item2);
@@ -1610,76 +1610,76 @@ namespace a2p.Infrastructure.Services.MappingService
                         }
                         else
                         {
-                            materialDTO.Reference = materialDTO.ReferenceBase;
+                            material.Reference = material.ReferenceBase;
                         }
-                        materialDTO.Description = worksheet.WorksheetData[i][4].ToString() ?? string.Empty;
+                        material.Description = worksheet.WorksheetData[i][4].ToString() ?? string.Empty;
                         //===================================================================================================
-                        materialDTO.Quantity = worksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(worksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 1;
-                        materialDTO.PackageQuantity = worksheet.WorksheetData[i][6] == null ? 1 : decimal.TryParse(worksheet.WorksheetData[i][6].ToString(), out decimal packageQuantity) ? packageQuantity : 1;
-                        materialDTO.TotalQuantity = worksheet.WorksheetData[i][7] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][7].ToString(), out decimal totalQuantity) ? totalQuantity : 0;
-                        materialDTO.RequiredQuantity = worksheet.WorksheetData[i][8] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][8].ToString(), out decimal requiredQuantity) ? requiredQuantity : 0;
-                        materialDTO.LeftOverQuantity = Math.Round(materialDTO.TotalQuantity - materialDTO.RequiredQuantity, 6) < 0 ? 0 : Math.Round(materialDTO.TotalQuantity - materialDTO.RequiredQuantity, 6);
+                        material.Quantity = worksheet.WorksheetData[i][5] == null ? 1 : int.TryParse(worksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 1;
+                        material.PackageQuantity = worksheet.WorksheetData[i][6] == null ? 1 : decimal.TryParse(worksheet.WorksheetData[i][6].ToString(), out decimal packageQuantity) ? packageQuantity : 1;
+                        material.TotalQuantity = worksheet.WorksheetData[i][7] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][7].ToString(), out decimal totalQuantity) ? totalQuantity : 0;
+                        material.RequiredQuantity = worksheet.WorksheetData[i][8] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][8].ToString(), out decimal requiredQuantity) ? requiredQuantity : 0;
+                        material.LeftOverQuantity = Math.Round(material.TotalQuantity - material.RequiredQuantity, 6) < 0 ? 0 : Math.Round(material.TotalQuantity - material.RequiredQuantity, 6);
                         //===================================================================================================
-                        materialDTO.Width = 0; // not used in others
-                        materialDTO.Height = 0; // not used in others
-                                                //================================================================================================================
-                        materialDTO.TotalWeight = 0; // not used in others
-                        materialDTO.Weight = 0; // not used in others
-                        materialDTO.RequiredWeight = 0; // not used in others
-                        materialDTO.LeftOverWeight = 0; // not used in others
-                                                        //================================================================================================================
-                        materialDTO.TotalArea = 0; // not used in others
-                        materialDTO.Area = 0; // not used in others
-                        materialDTO.RequiredArea = 0; // not used in others
-                        materialDTO.LeftOverArea = 0; // not used in others
-                                                      //================================================================================================================
-                        materialDTO.Waste = 0; // not used in others
-                                               //=================================================================================================                                
-                        materialDTO.Price = decimal.TryParse(worksheet.WorksheetData[i][9].ToString(), out decimal price) ? price : 0;
-                        materialDTO.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][10].ToString(), out decimal totalPrice) ? totalPrice : 0;
-                        materialDTO.RequiredPrice = Math.Round(materialDTO.Price * (decimal)materialDTO.RequiredQuantity, 6);
-                        materialDTO.LeftOverPrice = Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6) < 0 ? 0 : Math.Round(materialDTO.TotalPrice - materialDTO.RequiredPrice, 6);
+                        material.Width = 0; // not used in others
+                        material.Height = 0; // not used in others
+                                             //================================================================================================================
+                        material.TotalWeight = 0; // not used in others
+                        material.Weight = 0; // not used in others
+                        material.RequiredWeight = 0; // not used in others
+                        material.LeftOverWeight = 0; // not used in others
+                                                     //================================================================================================================
+                        material.TotalArea = 0; // not used in others
+                        material.Area = 0; // not used in others
+                        material.RequiredArea = 0; // not used in others
+                        material.LeftOverArea = 0; // not used in others
+                                                   //================================================================================================================
+                        material.Waste = 0; // not used in others
+                                            //=================================================================================================                                
+                        material.Price = decimal.TryParse(worksheet.WorksheetData[i][9].ToString(), out decimal price) ? price : 0;
+                        material.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][10].ToString(), out decimal totalPrice) ? totalPrice : 0;
+                        material.RequiredPrice = Math.Round(material.Price * (decimal)material.RequiredQuantity, 6);
+                        material.LeftOverPrice = Math.Round(material.TotalPrice - material.RequiredPrice, 6) < 0 ? 0 : Math.Round(material.TotalPrice - material.RequiredPrice, 6);
                         //===================================================================================================
-                        materialDTO.SquareMeterPrice = 0; // not used in others
-                                                          //================================================================================================================
-                        materialDTO.Pallet = null; // not used in others
-                                                   //================================================================================================================\
+                        material.SquareMeterPrice = 0; // not used in others
+                                                       //================================================================================================================
+                        material.Pallet = null; // not used in others
+                                                //================================================================================================================\
 
-                        if (!string.IsNullOrWhiteSpace(materialDTO.SourceColor))
+                        if (!string.IsNullOrWhiteSpace(material.SourceColor))
                         {
-                            (string, string)? customColors = SplitColors(materialDTO.SourceColor);
+                            (string, string)? customColors = SplitColors(material.SourceColor);
 
 
                             if (customColors != null)
                             {
-                                materialDTO.CustomField1 = customColors.Value.Item1; // used for custom color
-                                materialDTO.CustomField2 = customColors.Value.Item2;
+                                material.CustomField1 = customColors.Value.Item1; // used for custom color
+                                material.CustomField2 = customColors.Value.Item2;
                             }
 
                             else
                             {
-                                materialDTO.CustomField1 = null; // not used
-                                materialDTO.CustomField2 = null; // not used
+                                material.CustomField1 = null; // not used
+                                material.CustomField2 = null; // not used
                             }
                         }
                         else
                         {
-                            materialDTO.CustomField1 = null; // not used
-                            materialDTO.CustomField2 = null; // not used
+                            material.CustomField1 = null; // not used
+                            material.CustomField2 = null; // not used
                         }
-                        materialDTO.CustomField3 = null; // not used in others
-                                                         //================================================================================================================
-                        materialDTO.CustomField4 = null; // not used in others
-                        materialDTO.CustomField5 = null; // not used in others
-                                                         //================================================================================================================
-                        materialDTO.MaterialType = MaterialType.Piece;
+                        material.CustomField3 = null; // not used in others
+                                                      //================================================================================================================
+                        material.CustomField4 = null; // not used in others
+                        material.CustomField5 = null; // not used in others
+                                                      //================================================================================================================
+                        material.MaterialType = MaterialType.Piece;
                         //===================================================================================================
-                        _progressValue.ProgressTask3 = $"Other materials {sortOrder} of {worksheet.RowCount - 5} -  {materialDTO.ReferenceBase}_{materialDTO.Color}";
+                        _progressValue.ProgressTask3 = $"Other materials {sortOrder} of {worksheet.RowCount - 5} -  {material.ReferenceBase}_{material.Color}";
                         _progress?.Report(_progressValue);
 
-                        materialsDTO.Add(materialDTO);
+                        materials.Add(material);
 
-                        await LogMappedMaterialDTOAsync(materialDTO);
+                        await LogMappedMaterialEntityAsync(material);
 
                     }
                     catch (Exception ex)
@@ -1697,9 +1697,9 @@ namespace a2p.Infrastructure.Services.MappingService
                             worksheet.Order ?? string.Empty,
                             worksheet.Name ?? string.Empty,
                             line,
-                            materialDTO.ReferenceBase ?? string.Empty,
-                            materialDTO.Reference ?? string.Empty,
-                            materialDTO.Description ?? string.Empty,
+                            material.ReferenceBase ?? string.Empty,
+                            material.Reference ?? string.Empty,
+                            material.Description ?? string.Empty,
                              ex.Message ?? string.Empty);
 
                         ErrorEntitys.Add(new ErrorEntity()
@@ -1710,9 +1710,9 @@ namespace a2p.Infrastructure.Services.MappingService
                             Message = $"Unhandled Error {nameof(MapperTechDesign)}.{nameof(MapOthersAsync)}, " +
                              $"\nOrder: {worksheet.Order ?? string.Empty}," +
                              $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
-                             $"\nLine {materialDTO.Line}," +
-                             $"\nItem: {materialDTO.Item ?? string.Empty}," +
-                             $"\nDescription: {materialDTO.Description ?? string.Empty}," +
+                             $"\nLine {material.Line}," +
+                             $"\nItem: {material.Item ?? string.Empty}," +
+                             $"\nDescription: {material.Description ?? string.Empty}," +
                              $"\nData: {worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}," +
                              $"\nException: {ex.Message ?? string.Empty}."
                         });
@@ -1724,7 +1724,7 @@ namespace a2p.Infrastructure.Services.MappingService
                 }
                 _progressValue.ProgressTask3 = string.Empty;
                 _progress?.Report(_progressValue);
-                return (materialsDTO, ErrorEntitys);
+                return (materials, ErrorEntitys);
             }
             catch (Exception ex)
             {
@@ -1738,12 +1738,12 @@ namespace a2p.Infrastructure.Services.MappingService
                     worksheet.Name ?? string.Empty,
                     ex.Message);
 
-                return (materialsDTO, ErrorEntitys);
+                return (materials, ErrorEntitys);
             }
 
         }
 
-        private async Task LogMappedMaterialDTOAsync(MaterialDTO materialDTO)
+        private async Task LogMappedMaterialEntityAsync(MaterialEntity material)
         {
             await Task.Run(() =>
             {
@@ -1789,51 +1789,51 @@ namespace a2p.Infrastructure.Services.MappingService
                                                               "| SourceColorDescription : {$SourceColorDescription} " +
                                                               "| WorksheetType : {$WorksheetType} " +
                                                               "|",
-                                                              materialDTO.Order ?? string.Empty,
-                                                              materialDTO.Worksheet ?? string.Empty,
-                                                              materialDTO.Line,
-                                                              materialDTO.Reference ?? string.Empty,
-                                                              materialDTO.Description ?? string.Empty,
-                                                              materialDTO.Color ?? string.Empty,
-                                                              materialDTO.ColorDescription ?? string.Empty,
-                                                              materialDTO.Width,
-                                                              materialDTO.Height,
-                                                              materialDTO.Weight,
-                                                              materialDTO.Area,
-                                                              materialDTO.Quantity,
-                                                              materialDTO.PackageQuantity,
-                                                              materialDTO.TotalQuantity,
-                                                              materialDTO.RequiredQuantity,
-                                                              materialDTO.LeftOverQuantity,
-                                                              materialDTO.Waste,
-                                                              materialDTO.TotalWeight,
-                                                              materialDTO.RequiredWeight,
-                                                              materialDTO.LeftOverWeight,
-                                                              materialDTO.TotalArea,
-                                                              materialDTO.RequiredArea,
-                                                              materialDTO.LeftOverArea,
-                                                              materialDTO.Price,
-                                                              materialDTO.TotalPrice,
-                                                              materialDTO.RequiredPrice,
-                                                              materialDTO.LeftOverPrice,
-                                                              materialDTO.Pallet ?? string.Empty,
-                                                              materialDTO.MaterialType.ToString() ?? string.Empty,
-                                                              materialDTO.CustomField1 ?? string.Empty,
-                                                              materialDTO.CustomField2 ?? string.Empty,
-                                                              materialDTO.CustomField3 ?? string.Empty,
-                                                              materialDTO.CustomField4 ?? string.Empty,
-                                                              materialDTO.CustomField5 ?? string.Empty,
-                                                              materialDTO.SquareMeterPrice,
-                                                              materialDTO.SourceReference ?? string.Empty,
-                                                              materialDTO.SourceDescription ?? string.Empty,
+                                                              material.Order ?? string.Empty,
+                                                              material.Worksheet ?? string.Empty,
+                                                              material.Line,
+                                                              material.Reference ?? string.Empty,
+                                                              material.Description ?? string.Empty,
+                                                              material.Color ?? string.Empty,
+                                                              material.ColorDescription ?? string.Empty,
+                                                              material.Width,
+                                                              material.Height,
+                                                              material.Weight,
+                                                              material.Area,
+                                                              material.Quantity,
+                                                              material.PackageQuantity,
+                                                              material.TotalQuantity,
+                                                              material.RequiredQuantity,
+                                                              material.LeftOverQuantity,
+                                                              material.Waste,
+                                                              material.TotalWeight,
+                                                              material.RequiredWeight,
+                                                              material.LeftOverWeight,
+                                                              material.TotalArea,
+                                                              material.RequiredArea,
+                                                              material.LeftOverArea,
+                                                              material.Price,
+                                                              material.TotalPrice,
+                                                              material.RequiredPrice,
+                                                              material.LeftOverPrice,
+                                                              material.Pallet ?? string.Empty,
+                                                              material.MaterialType.ToString() ?? string.Empty,
+                                                              material.CustomField1 ?? string.Empty,
+                                                              material.CustomField2 ?? string.Empty,
+                                                              material.CustomField3 ?? string.Empty,
+                                                              material.CustomField4 ?? string.Empty,
+                                                              material.CustomField5 ?? string.Empty,
+                                                              material.SquareMeterPrice,
+                                                              material.SourceReference ?? string.Empty,
+                                                              material.SourceDescription ?? string.Empty,
 
-                                                              materialDTO.SourceColor ?? string.Empty,
-                                                              materialDTO.SourceColorDescription ?? string.Empty,
-                                                              materialDTO.WorksheetType);
+                                                              material.SourceColor ?? string.Empty,
+                                                              material.SourceColorDescription ?? string.Empty,
+                                                              material.WorksheetType);
             });
         }
 
-        private async Task LogMappedItemDTOAsync(ItemDTO itemDTO)
+        private async Task LogMappedItemEntityAsync(ItemEntity item)
         {
             await Task.Run(() =>
             {
@@ -1876,43 +1876,43 @@ namespace a2p.Infrastructure.Services.MappingService
                     "| Price EUR : {$PriceEUR} " +
                     "| Total Price EUR : {$TotalPriceEUR} " +
                     "| Worksheet Type : {$WorksheetType} ",
-                    itemDTO.Order ?? string.Empty,
-                    itemDTO.Worksheet ?? string.Empty,
-                    itemDTO.Line,
-                    itemDTO.Item ?? string.Empty,
-                    itemDTO.SortOrder,
-                    itemDTO.Description ?? string.Empty,
-                    itemDTO.Quantity,
-                    itemDTO.Width,
-                    itemDTO.Height,
-                    itemDTO.Weight,
-                    itemDTO.WeightWithoutGlass,
-                    itemDTO.WeightGlass,
-                    itemDTO.TotalWeight,
-                    itemDTO.TotalWeightGlass,
-                    itemDTO.Area,
-                    itemDTO.TotalArea,
-                    itemDTO.Hours,
-                    itemDTO.TotalHours,
-                    itemDTO.MaterialCost,
-                    itemDTO.LaborCost,
-                    itemDTO.Cost,
-                    itemDTO.TotalMaterialCost,
-                    itemDTO.TotalLaborCost,
-                    itemDTO.TotalCost,
-                    itemDTO.Price,
-                    itemDTO.TotalPrice,
-                    itemDTO.CurrencyCode,
-                    itemDTO.ExchangeRateEUR,
-                    itemDTO.MaterialCostEUR,
-                    itemDTO.LaborCostEUR,
-                    itemDTO.CostEUR,
-                    itemDTO.TotalMaterialCostEUR,
-                    itemDTO.TotalLaborCostEUR,
-                    itemDTO.TotalCostEUR,
-                    itemDTO.PriceEUR,
-                    itemDTO.TotalPriceEUR,
-                    itemDTO.WorksheetType.ToString() ?? string.Empty
+                    item.Order ?? string.Empty,
+                    item.Worksheet ?? string.Empty,
+                    item.Line,
+                    item.ItemName ?? string.Empty,
+                    item.SortOrder,
+                    item.Description ?? string.Empty,
+                    item.Quantity,
+                    item.Width,
+                    item.Height,
+                    item.Weight,
+                    item.WeightWithoutGlass,
+                    item.WeightGlass,
+                    item.TotalWeight,
+                    item.TotalWeightGlass,
+                    item.Area,
+                    item.TotalArea,
+                    item.Hours,
+                    item.TotalHours,
+                    item.MaterialCost,
+                    item.LaborCost,
+                    item.Cost,
+                    item.TotalMaterialCost,
+                    item.TotalLaborCost,
+                    item.TotalCost,
+                    item.Price,
+                    item.TotalPrice,
+                    item.CurrencyCode,
+                    item.ExchangeRateEUR,
+                    item.MaterialCostEUR,
+                    item.LaborCostEUR,
+                    item.CostEUR,
+                    item.TotalMaterialCostEUR,
+                    item.TotalLaborCostEUR,
+                    item.TotalCostEUR,
+                    item.PriceEUR,
+                    item.TotalPriceEUR,
+                    item.WorksheetType.ToString() ?? string.Empty
                     );
 
             });

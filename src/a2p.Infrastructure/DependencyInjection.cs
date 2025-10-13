@@ -4,8 +4,8 @@ using a2p.Application.Services;
 using a2p.Application.Services.MappingService;
 using a2p.Domain.Respoitories;
 using a2p.Infrastructure.Services;
-using a2p.Infrastructure.Services
 using a2p.Infrastructure.Services.Logger;
+using a2p.Infrastructure.Services.MappingService;
 using a2p.Infrastructure.Services.SettingsService;
 using a2p.Infrastructure.Services.SQLService;
 

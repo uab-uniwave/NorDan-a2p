@@ -1,8 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using a2p.Infrastructure.Models;
-using a2p.Infrastructure.Services.Logger;
+using a2p.Application.Services;
+using a2p.Domain.Models;
 
 using Microsoft.Extensions.Configuration;
 
@@ -12,7 +12,7 @@ using System.Collections.Concurrent;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace a2p.Shared.Infrastructure.Services.Logger
+namespace a2p.Infrastructure.Services.Logger
 {
     public class LogService : ILogService
     {
@@ -158,10 +158,10 @@ namespace a2p.Shared.Infrastructure.Services.Logger
                 //==============================================================
                 if (!string.IsNullOrEmpty(folder) && !string.IsNullOrEmpty(log))
                 {
-                    if (File.Exists(file))
+                    if (System.IO.File.Exists(file))
                     {
-                        File.Copy(file, fileCopy, true);
-                        File.Delete(file);
+                        System.IO.File.Copy(file, fileCopy, true);
+                        System.IO.File.Delete(file);
                     }
                 }
 
@@ -170,10 +170,10 @@ namespace a2p.Shared.Infrastructure.Services.Logger
                 string[] logFiles = Directory.GetFiles(Path.Combine(folder, log));
                 foreach (string oldFile in logFiles)
                 {
-                    DateTime creationTime = File.GetCreationTime(oldFile);
+                    DateTime creationTime = System.IO.File.GetCreationTime(oldFile);
                     if (creationTime < DateTime.Now.AddDays(-30)) // Delete logs older than 30 days
                     {
-                        File.Delete(oldFile);
+                        System.IO.File.Delete(oldFile);
                     }
                 }
 

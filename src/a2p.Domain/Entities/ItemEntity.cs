@@ -14,7 +14,7 @@ namespace a2p.Domain.Entities
         //============================================================================================================================
         public string? Project { get; set; } = string.Empty;
 
-        public string ItemNumber { get; set; } = string.Empty;
+        public string ItemName { get; set; } = string.Empty;
         public int SortOrder { get; set; } = -1;
         public string? Description { get; set; } = string.Empty;
         //============================================================================================================================

@@ -1,16 +1,16 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using a2p.Infrastructure.Services;
-using a2p.Infrastructure.Services.Logger;
-using a2p.Shared.Application.Domain.Entities;
-using a2p.Shared.Application.Domain.Enums;
+using a2p.Application.Services;
+using a2p.Domain.Entities;
+using a2p.Domain.Enums;
+using a2p.Domain.Models;
 
 using ClosedXML.Excel;
 
 using System.Globalization;
 
-namespace a2p.Shared.Infrastructure.Services
+namespace a2p.Infrastructure.Services
 {
     public class ExcelService : IExcelService
     {
@@ -31,11 +31,11 @@ namespace a2p.Shared.Infrastructure.Services
 
         }
 
-        public async Task<List<A2PWorksheet>> GetWorksheetsAsync(A2PFile file, ProgressValue progressValue, IProgress<ProgressValue>? progress)
+        public async Task<List<Worksheet>> GetWorksheetsAsync(Domain.Models.File file, ProgressValue progressValue, IProgress<ProgressValue>? progress)
         {
 
-            XLWorkbook workbook = new(file.File);
-            List<A2PWorksheet> worksheets = [];
+            XLWorkbook workbook = new(file.FullName);
+            List<Worksheet> worksheets = [];
             int worksheetCounter = 0;
             try
             {
@@ -44,7 +44,7 @@ namespace a2p.Shared.Infrastructure.Services
                 {
                     worksheetCounter++;
 
-                    A2PWorksheet worksheet = new()
+                    Worksheet worksheet = new()
                     {
                         Order = file.Order,
                         WorksheetType = GetWorksheetType(file.FileName, ixlWorksheet.Name),
@@ -259,11 +259,11 @@ namespace a2p.Shared.Infrastructure.Services
 
 
 
-        public void WriteExcelErrorLog(string file, List<A2PError> A2PError)
+        public void WriteExcelErrorLog(string file, List<ErrorEntity> errors)
         {
 
 
-            List<A2PError> criticalErrors = A2PError
+            List<ErrorEntity> criticalErrors = errors
                 .Where(e => e.Level == ErrorLevel.Fatal || e.Level == ErrorLevel.Error)
                 .ToList();
 
@@ -283,9 +283,9 @@ namespace a2p.Shared.Infrastructure.Services
                 using (XLWorkbook workbook = new())
                 {
 
-                    foreach (A2PError error in criticalErrors)
+                    foreach (ErrorEntity error in criticalErrors)
                     {
-                        _ = dataTable.Rows.Add(error.Order, error.Level.ToString(), error.Code.ToString(), error.Message);
+                        _ = dataTable.Rows.Add(error.OrderNumber, error.Level.ToString(), error.Code.ToString(), error.Message);
 
                         _logService.Information("{$Class}.{$Method}.Log saved successfully to \"{$FileName}\"",
                     nameof(ExcelService),

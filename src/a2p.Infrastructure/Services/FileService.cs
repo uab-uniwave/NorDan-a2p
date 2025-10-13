@@ -1,24 +1,21 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using a2p.Infrastructure.Services;
-using a2p.Infrastructure.Services.Logger;
-using a2p.Shared.Application.Domain.Entities;
-using a2p.Shared.Application.Interfaces.Models;
-using a2p.Shared.Application.Models;
+using a2p.Application.Services;
+using a2p.Domain.Models;
 
 using System.Data;
 
-namespace a2p.Shared.Infrastructure.Services
+namespace a2p.Infrastructure.Services
 {
     public class FileService : IFileService
     {
         private readonly ILogService _logService;
-        private readonly IUserSettingsService _userSettingsService;
+        private readonly ISettingsService _userSettingsService;
         private readonly AppSettings _appSettings;
         private readonly SettingsContainer _settingsContainer;
 
-        public FileService(IUserSettingsService userSettingsService,
+        public FileService(ISettingsService userSettingsService,
                            ILogService logService)
 
         {
@@ -92,10 +89,10 @@ namespace a2p.Shared.Infrastructure.Services
             }
         }
 
-        public List<A2PFile> GetOrderFiles(string order)
+        public List<Domain.Models.File> GetOrderFiles(string order)
         {
 
-            List<A2PFile> a2pFiles = [];
+            List<Domain.Models.File> files = [];
             try
             {
 
@@ -106,18 +103,18 @@ namespace a2p.Shared.Infrastructure.Services
                 for (int i = 0; i < orderFiles.Count; i++)
                 {
 
-                    A2PFile a2pFile = new()
+                    Domain.Models.File a2pFile = new()
                     {
 
-                        File = orderFiles[i],
+                        FullName = orderFiles[i],
                         IsLocked = IsLocked(orderFiles[i]),
                         FilePath = Path.GetDirectoryName(orderFiles[i]) ?? string.Empty,
                         FileName = Path.GetFileName(orderFiles[i]) ?? string.Empty
                     };
 
-                    a2pFiles.Add(a2pFile);
+                    files.Add(a2pFile);
                 }
-                return a2pFiles;
+                return files;
             }
             catch (Exception ex)
             {
@@ -125,7 +122,7 @@ namespace a2p.Shared.Infrastructure.Services
                     nameof(FileService),
                     nameof(GetOrderFiles),
                     ex.Message);
-                return a2pFiles;
+                return files;
             }
         }
 
@@ -162,26 +159,26 @@ namespace a2p.Shared.Infrastructure.Services
                 foreach (string file in files)
                 {
 
-                    if (File.Exists(file) && success == true)
+                    if (System.IO.File.Exists(file) && success == true)
                     {
                         string destinationFile = file.Replace(GetRootFolder(), GetSuccessFolder());
-                        if (File.Exists(destinationFile))
+                        if (System.IO.File.Exists(destinationFile))
                         {
-                            File.Delete(destinationFile);
+                            System.IO.File.Delete(destinationFile);
                         }
 
 
-                        File.Move(file, destinationFile);
+                        System.IO.File.Move(file, destinationFile);
                     }
-                    else if (File.Exists(file) && success == false)
+                    else if (System.IO.File.Exists(file) && success == false)
                     {
 
                         string destinationFile = file.Replace(GetRootFolder(), GetFailedFolder());
-                        if (File.Exists(destinationFile))
+                        if (System.IO.File.Exists(destinationFile))
                         {
-                            File.Delete(destinationFile);
+                            System.IO.File.Delete(destinationFile);
                         }
-                        File.Move(file, destinationFile);
+                        System.IO.File.Move(file, destinationFile);
 
                     }
                 }

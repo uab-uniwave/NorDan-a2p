@@ -17,13 +17,6 @@
 
 
 	<ItemGroup>
-	  <Compile Remove="Application\Models\Models\**" />
-	  <EmbeddedResource Remove="Application\Models\Models\**" />
-	  <None Remove="Application\Models\Models\**" />
-	</ItemGroup>
-
-
-	<ItemGroup>
 		<PackageReference Include="ClosedXML" Version="0.104.2" />
 		<PackageReference Include="MathNet.Numerics" Version="5.0.0" />
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.0-preview3.24332.3" />

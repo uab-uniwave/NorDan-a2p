@@ -4,7 +4,7 @@ using Serilog;
 
 using System.Diagnostics;
 
-namespace a2p.Shared.Infrastructure.Services.Logger
+namespace a2p.Infrastructure.Services.Logger
 {
     public static class LoggerSetup
     {

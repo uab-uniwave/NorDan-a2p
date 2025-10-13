@@ -1,15 +1,20 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-
-using a2p.Shared.Infrastructure.Services;
-using a2p.Shared.Infrastructure.Services.Logger;
+using a2p.Application.Services;
+using a2p.Application.Services.MappingService;
+using a2p.Domain.Respoitories;
+using a2p.Infrastructure.Services;
+using a2p.Infrastructure.Services
+using a2p.Infrastructure.Services.Logger;
+using a2p.Infrastructure.Services.SettingsService;
+using a2p.Infrastructure.Services.SQLService;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using Serilog;
 
-namespace a2p.Shared
+namespace a2p.Infrastructure
 {
     public static class DependencyInjection
     {
@@ -35,10 +40,8 @@ namespace a2p.Shared
 
             // Register core services
             _ = services.AddSingleton<ILogService, LogService>();
-            _ = services.AddSingleton<IUserSettingsService, UserSettingsService>();
+            _ = services.AddSingleton<ISettingsService, SettingsService>();
             _ = services.AddSingleton<SettingsManager>();
-            _ = services.AddSingleton<IWriteService, WriteService>();
-            _ = services.AddSingleton<IReadService, ReadService>();
             _ = services.AddSingleton<IExcelService, ExcelService>();
             _ = services.AddSingleton<IPrefSuiteService, PrefSuiteService>();
             _ = services.AddSingleton<ISQLRepository, SQLRepository>();

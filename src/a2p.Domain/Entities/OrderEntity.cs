@@ -16,6 +16,9 @@ namespace a2p.Domain.Entities
         //===================================================================================
         public bool DeleteExistsing { get; set; } = true;
         //===================================================================================
+        public List<ItemEntity> Items { get; set; } = new();
+        public List<MaterialEntity> Materials { get; set; } = new();
+        public List<ErrorEntity> Errors { get; set; } = new();
         //===================================================================================
         public int SalesDocumentNumber { get; set; } = -1;
         public int SalesDocumentVersion { get; set; } = -1;

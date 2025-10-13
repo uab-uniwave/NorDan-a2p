@@ -4,7 +4,7 @@ namespace a2p.Domain.Entities
 {
     public class ErrorEntity
     {
-        public string OrderNunber { get; set; } = string.Empty;
+        public string OrderNumber { get; set; } = string.Empty;
         public ErrorLevel Level { get; set; } = ErrorLevel.Fatal;
         public ErrorCode Code { get; set; } = ErrorCode.Application;
         public string Message { get; set; } = string.Empty;

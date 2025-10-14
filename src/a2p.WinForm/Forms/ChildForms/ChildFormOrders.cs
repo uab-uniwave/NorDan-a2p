@@ -1004,7 +1004,7 @@ namespace a2p.WinForm.ChildForms
 
                     if (type == 1)
                     {
-                        warningCount = order.ErrorsRead
+                        warningCount = order.Errors
                             .Where(error => error.Level is ErrorLevel.Warning)
                             .Where(error => (int)error.Code < 3000)
                             .Select(error => new { error.Level, error.Code, error.Message })
@@ -1012,12 +1012,12 @@ namespace a2p.WinForm.ChildForms
                             .Count();
 
                         orderDTO.WarningCount = warningCount;
-                        orderDTO.WarningList = string.Join("\n", order.ErrorsRead
+                        orderDTO.WarningList = string.Join("\n", order.Errors
                                     .Where(error => error.Level is ErrorLevel.Warning)
                                     .Select(error => $"ErrorLevel: {error.Level}, ErrorCode: {error.Code}, Message: {error.Message}")
                                     .Distinct());
 
-                        errorCount = order.ErrorsRead
+                        errorCount = order.Errors
                             .Where(error => error.Level is ErrorLevel.Error)
                             .Select(error => new { error.Level, error.Code, error.Message })
                             .Distinct()
@@ -1026,19 +1026,19 @@ namespace a2p.WinForm.ChildForms
 
                         orderDTO.ErrorCount = errorCount;
 
-                        orderDTO.ErrorList = string.Join("\n", order.ErrorsRead
+                        orderDTO.ErrorList = string.Join("\n", order.Errors
                             .Where(error => error.Level is ErrorLevel.Error or ErrorLevel.Fatal)
                             .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
                             .Distinct());
 
-                        fatalCount = order.ErrorsRead
+                        fatalCount = order.Errors
                         .Where(error => error.Level is ErrorLevel.Fatal)
                         .Select(error => new { error.Level, error.Code, error.Message })
                         .Distinct()
                         .Count();
 
                         orderDTO.FatalCount = fatalCount;
-                        orderDTO.FatalList = string.Join("\n", order.ErrorsRead
+                        orderDTO.FatalList = string.Join("\n", order.Errors
                             .Where(error => error.Level is ErrorLevel.Fatal)
                             .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
                             .Distinct());
@@ -1050,7 +1050,7 @@ namespace a2p.WinForm.ChildForms
                     {
 
 
-                        warningCount = order.ErrorsRead
+                        warningCount = order.Errors
                              .Where(error => error.Level is ErrorLevel.Warning)
                              .Where(error => (int)error.Code > 3000)
                              .Select(error => new { error.Level, error.Code, error.Message })
@@ -1058,12 +1058,12 @@ namespace a2p.WinForm.ChildForms
                              .Distinct()
                              .Count();
                         orderDTO.WarningCount = warningCount;
-                        orderDTO.WarningList = string.Join("\n", order.ErrorsRead
+orderDTO.WarningList = string.Join("\n", order.Errors
                                     .Where(error => error.Level is ErrorLevel.Warning)
                                     .Select(error => $"ErrorLevel: {error.Level}, ErrorCode: {error.Code}, Message: {error.Message}")
                                     .Distinct());
 
-                        errorCount = order.ErrorsRead
+                        errorCount = order.Errors
                             .Where(error => error.Level is ErrorLevel.Error)
                             .Select(error => new { error.Level, error.Code, error.Message })
                             .Distinct()
@@ -1076,7 +1076,7 @@ namespace a2p.WinForm.ChildForms
 
                         orderDTO.ErrorCount = errorCount;
 
-                        orderDTO.ErrorList = string.Join("\n", order.ErrorsRead
+                        orderDTO.ErrorList = string.Join("\n", order.Errors
                             .Where(error => error.Level is ErrorLevel.Error or ErrorLevel.Fatal)
                             .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
                             .Distinct()) +
@@ -1086,7 +1086,7 @@ namespace a2p.WinForm.ChildForms
                             .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
                             .Distinct());
 
-                        fatalCount = order.ErrorsRead
+                        fatalCount = order.Errors
                         .Where(error => error.Level is ErrorLevel.Fatal)
                         .Select(error => new { error.Level, error.Code, error.Message })
                         .Distinct()
@@ -1097,7 +1097,7 @@ namespace a2p.WinForm.ChildForms
                         .Count();
 
                         orderDTO.FatalCount = fatalCount;
-                        orderDTO.FatalList = string.Join("\n", order.ErrorsRead
+                        orderDTO.FatalList = string.Join("\n", order.Errors
                             .Where(error => error.Level is ErrorLevel.Fatal)
                             .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
                             .Distinct()) +
@@ -1133,27 +1133,27 @@ namespace a2p.WinForm.ChildForms
         //===============================================================
         private int CountReadWarning(OrderEntity order)
         {
-            return order.ErrorsRead.Count(error => error.Level == ErrorLevel.Warning);
+            return order.Errors.Count(error => error.Level == ErrorLevel.Warning);
         }
 
         private int CountReadError(OrderEntity order)
         {
-            return order.ErrorsRead.Count(error => error.Level == ErrorLevel.Error);
+            return order.Errors.Count(error => error.Level == ErrorLevel.Error);
         }
 
         private int CountReadFatal(OrderEntity order)
         {
-            return order.ErrorsRead.Count(error => error.Level == ErrorLevel.Fatal);
+            return order.Errors.Count(error => error.Level == ErrorLevel.Fatal);
         }
 
         private int CountReadExistsError(OrderEntity order)
         {
-            return order.ErrorsRead.Count(error => error.Code == ErrorCode.DatabaseRead_OrderAlreadyImported);
+            return order.Errors.Count(error => error.Code == ErrorCode.DatabaseRead_OrderAlreadyImported);
         }
 
         private int CountReadTotalError(OrderEntity order)
         {
-            return order.ErrorsRead.Count(error => error.Level is ErrorLevel.Warning or ErrorLevel.Error or ErrorLevel.Fatal);
+            return order.Errors.Count(error => error.Level is ErrorLevel.Warning or ErrorLevel.Error or ErrorLevel.Fatal);
         }
 
         private int CountWriteFatal(OrderEntity order)

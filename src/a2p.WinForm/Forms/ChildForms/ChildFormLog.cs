@@ -1,24 +1,18 @@
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
-using a2p.Shared.Application.Domain.Entities;
-using a2p.Shared.Application.Models;
-using a2p.Shared.Infrastructure.Interfaces;
-using a2p.WinForm.Models;
+using a2p.Application.Services;
+using a2p.Domain.Models;
 
 using ClosedXML.Excel;
 
 using System.Data;
 using System.Text.Json.Nodes;
-
-namespace a2p.WinForm.ChildForms
+namespace a2p.WinForm.Forms.ChildForms
 {
     public partial class ChildFormLog : Form
     {
 
         private readonly ILogService _logService;
         private readonly Color _backColor = Color.FromArgb(56, 57, 60);
-        private IUserSettingsService _userSettingsService;
+        private ISettingsService _settingsService;
         private ProgressValue _progressValue;
         private AppSettings _appSettings;
         private DataTable _dataTableLog;
@@ -29,7 +23,7 @@ namespace a2p.WinForm.ChildForms
 
         private string _file;
 
-        public ChildFormLog(IUserSettingsService userSettingsService, ILogService logService)
+        public ChildFormLog(ISettingsService settingsService, ILogService logService)
         {
             _logService = logService;
             _dataTableLog = new DataTable();
@@ -37,9 +31,9 @@ namespace a2p.WinForm.ChildForms
             _dataTableProperties = new DataTable();
             _bindingSourceProperties = [];
             _progressValue = new ProgressValue();
-            _userSettingsService = userSettingsService;
-            _appSettings = _userSettingsService.LoadSettings();
-            _settingsContainer = _userSettingsService.LoadAllSettings();
+            _settingsService = settingsService;
+            _appSettings = _settingsService.LoadSettings();
+            _settingsContainer = _settingsService.LoadAllSettings();
 
             _file = Path.Combine(_appSettings.Folders.RootFolder, _appSettings.Folders.Log, "a2pLog.json");
 
@@ -383,14 +377,14 @@ namespace a2p.WinForm.ChildForms
                 if (!string.IsNullOrEmpty(line))
                 {
                     // Parse the JSON line
-                    A2PLogRecord logEntry = await LogParseLineAsync(line);
+                    LogRecord logEntry = await LogParseLineAsync(line);
                     // Add the parsed data to the DataTable
                     await Task.Run(() => LogAddAsync(logEntry));
                 }
 
             }
         }
-        private async Task<A2PLogRecord> LogParseLineAsync(string jsonLine)
+        private async Task<LogRecord> LogParseLineAsync(string jsonLine)
         {
             try
             {
@@ -401,7 +395,7 @@ namespace a2p.WinForm.ChildForms
                 if (root == null || root["Properties"] is not JsonObject propertiesNode)
                 {
                     _logService.Warning("LF: Invalid log entry or missing Properties.");
-                    return new A2PLogRecord();
+                    return new LogRecord();
                 }
 
                 // Convert Properties to a dictionary
@@ -410,7 +404,7 @@ namespace a2p.WinForm.ChildForms
                  kvp => kvp.Value?.ToString() as object
                 );
 
-                A2PLogRecord logRecord = new()
+                LogRecord logRecord = new()
                 {
                     Order = propertiesNode["Order"]?.ToString() ?? string.Empty,
                     Worksheet = propertiesNode["Worksheet"]?.ToString() ?? string.Empty,
@@ -432,17 +426,16 @@ namespace a2p.WinForm.ChildForms
 
                 }
 
-                logRecord.Properties = properties ?? [];
                 return logRecord;
 
             }
             catch (Exception ex)
             {
                 _logService.Error("LF: Error parsing log entry: {Exception}", ex.Message);
-                return new A2PLogRecord();
+                return new LogRecord();
             }
         }
-        private void LogAddAsync(A2PLogRecord logEntry)
+        private void LogAddAsync(LogRecord logEntry)
         {
             try
             {
@@ -474,13 +467,13 @@ namespace a2p.WinForm.ChildForms
             try
             {
 
-                List<A2PLogRecord> logEntries = await _logService.GetRepository(string.Empty);
+                List<LogRecord> logEntries = await _logService.GetRepository(string.Empty);
 
                 if (logEntries != null)
                 {
 
                     // Remove duplicates based on unique properties (e.g., Timestamp, Message, etc.)
-                    List<A2PLogRecord> distinctLogEntries = logEntries
+                    List<LogRecord> distinctLogEntries = logEntries
                      .GroupBy(entry => new
                      {
                          entry.Order,
@@ -493,7 +486,7 @@ namespace a2p.WinForm.ChildForms
                      .Select(group => group.First())
                      .ToList();
 
-                    foreach (A2PLogRecord? logEntry in distinctLogEntries)
+                    foreach (LogRecord? logEntry in distinctLogEntries)
                     {
 
                         _ = _dataTableLog.Rows.Add(logEntry.Order, logEntry.Worksheet, logEntry.Reference, logEntry.Color, logEntry.Level, logEntry.Message);

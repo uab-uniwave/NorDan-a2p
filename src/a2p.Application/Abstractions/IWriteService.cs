@@ -11,7 +11,7 @@ namespace a2p.Application.Abstractions
 {
     public interface IWriteService
     {
-        Task<(OrderEntity, ProgressValue)> WriteAsync(OrderEntity a2pOrders, ProgressValue progressValue, IProgress<ProgressValue>? progress = null);
+        Task<(OrderEntity, ProgressValue)> WriteAsync(OrderEntity orders, ProgressValue progressValue, IProgress<ProgressValue>? progress = null);
 
     }
 }

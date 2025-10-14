@@ -13,15 +13,15 @@ namespace a2p.Infrastructure.Services.MappingService
     {
         private readonly ILogService _logService;
 
-        private readonly ISQLRepository _sqlRepository;
-        //  private IPrefSuiteService _prefSuiteService;
+        private readonly IOrderRepository _orderRepository;
+        private IPrefSuiteDataService _prefSuiteDataService;
         private ProgressValue _progressValue;
         private IProgress<ProgressValue>? _progress;
 
-        public MapperTechDesign(ILogService logService, ISQLRepository sqlRepository)
+        public MapperTechDesign(ILogService logService, IOrderRepository orderRepository, IPrefSuiteDataService prefSuiteDataService)
         {
             _logService = logService;
-            _sqlRepository = sqlRepository;
+            _orderRepository = orderRepository;
             _progressValue = new ProgressValue();
         }
 
@@ -65,7 +65,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         _progressValue.ProgressTask3 = $"Reading row {rowCounter} of {worksheet.RowCount - 2})";
                         _progress?.Report(_progressValue);
 
-                        item.Order = worksheet.Order ?? string.Empty;
+                        item.OrderNumber = worksheet.Order ?? string.Empty;
                         item.Worksheet = worksheet.Name ?? string.Empty;
                         item.Line = line;
                         item.Column = -1;
@@ -92,7 +92,7 @@ namespace a2p.Infrastructure.Services.MappingService
                            "\nItem {$Data}.",
                           nameof(MapperTechDesign),
                             nameof(MapItemsAsync),
-                           item.Order ?? string.Empty,
+                           item.OrderNumber ?? string.Empty,
                            item.Worksheet ?? string.Empty,
                            item.Line,
                            worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty);
@@ -352,7 +352,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         //===================================================================================================
                         material.Line = line;
                         material.WorksheetType = WorksheetType.Materials;
-                        material.Item = null; // not used in profiles
+                        material.ItemName = string.Empty; // not used in profiles
                         material.SortOrder = -1; // not used in profiles
 
                         //===================================================================================================
@@ -497,7 +497,7 @@ namespace a2p.Infrastructure.Services.MappingService
                            $"\nOrder: {worksheet.Order ?? string.Empty}," +
                            $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
                            $"\nLine {material.Line}," +
-                           $"\nItem: {material.Item ?? string.Empty}," +
+                           $"\nItem: {material.ItemName ?? string.Empty}," +
                            $"\nDescription: {material.Description ?? string.Empty}," +
                            $"\nData: {worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}," +
                            $"\nException: {ex.Message ?? string.Empty}."
@@ -549,11 +549,11 @@ namespace a2p.Infrastructure.Services.MappingService
                     try
                     {
                         material.Worksheet = worksheet.Name ?? string.Empty;
-                        material.Order = worksheet.Order ?? string.Empty;
+                        material.OrderNumber = worksheet.Order ?? string.Empty;
                         //===================================================================================================
                         material.Line = line;
                         material.WorksheetType = WorksheetType.Materials;
-                        material.Item = null; // not used 
+                        material.ItemName = null; // not used 
                         material.SortOrder = -1; // not used 
 
                         //===================================================================================================
@@ -754,7 +754,7 @@ namespace a2p.Infrastructure.Services.MappingService
                            $"\nOrder: {worksheet.Order ?? string.Empty}," +
                            $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
                            $"\nLine {material.Line}," +
-                           $"\nItem: {material.Item ?? string.Empty}," +
+                           $"\nItem: {material.ItemName ?? string.Empty}," +
                            $"\nDescription: {material.Description ?? string.Empty}," +
                            $"\nData: {worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}," +
                            $"\nException: {ex.Message ?? string.Empty}."
@@ -809,7 +809,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     {
 
                         material.Worksheet = worksheet.Name ?? string.Empty;
-                        material.Order = worksheet.Order ?? string.Empty;
+                        material.OrderNumber = worksheet.Order ?? string.Empty;
 
 
                         //===================================================================================================
@@ -821,7 +821,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         //===================================================================================================
                         material.Line = line;
                         material.WorksheetType = WorksheetType.Materials;
-                        material.Item = null; // not used 
+                        material.ItemName = string.Empty; // not used 
                         material.SortOrder = -1; // not used           
 
                         //===================================================================================================
@@ -896,7 +896,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         material.SquareMeterPrice = 0; // not used 
 
                         //===================================================================================================
-                        material.Pallet = null;
+                        material.Pallet = string.Empty;
 
                         //===================================================================================================
 
@@ -1027,7 +1027,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     try
                     {
                         material.Worksheet = worksheet.Name ?? string.Empty;
-                        material.Order = worksheet.Order ?? string.Empty;
+                        material.OrderNumber = worksheet.Order ?? string.Empty;
                         //===================================================================================================
                         //material.SourceReference = null;
                         material.SourceDescription = worksheet.WorksheetData[i][4]?.ToString();
@@ -1039,11 +1039,11 @@ namespace a2p.Infrastructure.Services.MappingService
                         material.WorksheetType = WorksheetType.Panels;
 
                         //===================================================================================================
-                        material.Item = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
+                        material.ItemName = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
 
                         //Reset Sort Order if new item
                         //===================================================================================================
-                        if (material.Item != worksheet.WorksheetData[i - 1][1].ToString())
+                        if (material.ItemName != worksheet.WorksheetData[i - 1][1].ToString())
                         {
                             sortOrder = 0;
                         }
@@ -1331,7 +1331,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     try
                     {
                         material.Worksheet = worksheet.Name ?? string.Empty;
-                        material.Order = worksheet.Order ?? string.Empty;
+                        material.OrderNumber = worksheet.Order ?? string.Empty;
                         material.SourceReference = null;
                         material.SourceDescription = worksheet.WorksheetData[i][2]?.ToString();
                         material.SourceColor = null;
@@ -1341,11 +1341,11 @@ namespace a2p.Infrastructure.Services.MappingService
                         material.WorksheetType = WorksheetType.Glasses;
 
                         //===================================================================================================
-                        material.Item = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
+                        material.ItemName = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
 
                         //===================================================================================================
                         //Reset Sort Order if new item
-                        if (material.Item != worksheet.WorksheetData[i - 1][1].ToString())
+                        if (material.ItemName != worksheet.WorksheetData[i - 1][1].ToString())
                         {
                             sortOrder = 0;
                         }
@@ -1515,7 +1515,7 @@ namespace a2p.Infrastructure.Services.MappingService
                      $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
                      $"\nReference: {material.SourceReference ?? string.Empty}," +
                      $"\nColor: {material.SourceColor ?? string.Empty}," +
-                     $"\nItem: {material.Item ?? string.Empty}," +
+                     $"\nItem: {material.ItemName ?? string.Empty}," +
                      $"\nDescription: {material.Description ?? string.Empty}," +
                      $"\nException: {ex.Message ?? string.Empty}."
                         });
@@ -1574,10 +1574,10 @@ namespace a2p.Infrastructure.Services.MappingService
 
 
                         material.Worksheet = worksheet.Name ?? string.Empty;
-                        material.Order = worksheet.Order ?? string.Empty;
+                        material.OrderNumber = worksheet.Order ?? string.Empty;
                         material.Line = line;
                         material.WorksheetType = WorksheetType.Materials;
-                        material.Item = null;// not used in others
+                        material.ItemName = string.Empty;// not used in others
                         material.SortOrder = -1;// not used in others
                         material.SourceReference = worksheet.WorksheetData[i][1]?.ToString();
                         material.SourceColor = worksheet.WorksheetData[i][2].ToString() == null ? null : worksheet.WorksheetData[i][2].ToString();
@@ -1711,7 +1711,7 @@ namespace a2p.Infrastructure.Services.MappingService
                              $"\nOrder: {worksheet.Order ?? string.Empty}," +
                              $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
                              $"\nLine {material.Line}," +
-                             $"\nItem: {material.Item ?? string.Empty}," +
+                             $"\nItem: {material.ItemName ?? string.Empty}," +
                              $"\nDescription: {material.Description ?? string.Empty}," +
                              $"\nData: {worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}," +
                              $"\nException: {ex.Message ?? string.Empty}."
@@ -1789,7 +1789,7 @@ namespace a2p.Infrastructure.Services.MappingService
                                                               "| SourceColorDescription : {$SourceColorDescription} " +
                                                               "| WorksheetType : {$WorksheetType} " +
                                                               "|",
-                                                              material.Order ?? string.Empty,
+                                                              material.OrderNumber ?? string.Empty,
                                                               material.Worksheet ?? string.Empty,
                                                               material.Line,
                                                               material.Reference ?? string.Empty,
@@ -1876,7 +1876,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     "| Price EUR : {$PriceEUR} " +
                     "| Total Price EUR : {$TotalPriceEUR} " +
                     "| Worksheet Type : {$WorksheetType} ",
-                    item.Order ?? string.Empty,
+                    item.OrderNumber ?? string.Empty,
                     item.Worksheet ?? string.Empty,
                     item.Line,
                     item.ItemName ?? string.Empty,
@@ -1979,7 +1979,7 @@ namespace a2p.Infrastructure.Services.MappingService
             try
             {
 
-                reference = await _sqlRepository.GetGlassReferenceAsync(description);
+                reference = await _prefSuiteDataService.GetGlassReferenceAsync(description);
 
                 return reference?.Trim();
             }

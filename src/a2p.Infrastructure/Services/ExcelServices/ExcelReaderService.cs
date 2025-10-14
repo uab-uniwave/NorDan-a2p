@@ -10,9 +10,9 @@ using ClosedXML.Excel;
 
 using System.Globalization;
 
-namespace a2p.Infrastructure.Services
+namespace a2p.Infrastructure.Services.ExcelServices
 {
-    public class ExcelService : IExcelService
+    public class ExcelReaderService : IExcelService
     {
 
         private readonly ILogService _logService;
@@ -21,7 +21,7 @@ namespace a2p.Infrastructure.Services
         private ProgressValue _progressValue;
         private string _currency = string.Empty;
 
-        public ExcelService(ILogService logService, IFileService fileService)
+        public ExcelReaderService(ILogService logService, IFileService fileService)
         {
 
             _logService = logService;
@@ -288,7 +288,7 @@ namespace a2p.Infrastructure.Services
                         _ = dataTable.Rows.Add(error.OrderNumber, error.Level.ToString(), error.Code.ToString(), error.Message);
 
                         _logService.Information("{$Class}.{$Method}.Log saved successfully to \"{$FileName}\"",
-                    nameof(ExcelService),
+                    nameof(ExcelReaderService),
                     nameof(WriteExcelErrorLog),
                     file);
 

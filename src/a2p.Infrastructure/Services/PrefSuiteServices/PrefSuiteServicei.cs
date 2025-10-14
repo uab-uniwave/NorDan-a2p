@@ -6,7 +6,7 @@ using a2p.Domain.Entities;
 using a2p.Domain.Enums;
 using a2p.Domain.Models;
 
-namespace a2p.Infrastructure.Services
+namespace a2p.Infrastructure.Services.PrefSuiteServices
 {
     public class PrefSuiteService : IPrefSuiteService
     {
@@ -64,7 +64,7 @@ namespace a2p.Infrastructure.Services
                             _progressValue.ProgressTask3 = $"Item # {order.Items[i].ItemName}";
                             _progress?.Report(_progressValue);
 
-                            string idPos = Guid.NewGuid().ToString();
+                            Guid idPos = Guid.NewGuid();
 
                             string Command = "<cmd:Commands name=\"CommandName\" xmlns:cmd=\"http://www.preference.com/XMLSchemas/2006/PrefCAD.Command\">" +
                                               "<cmd:Command name=\"Model.SetDimensions\">" +
@@ -82,7 +82,7 @@ namespace a2p.Infrastructure.Services
                                               "<cmd:Command name=\"Model.Regenerate\"/>" +
                                               "</cmd:Commands>";
 
-                            var sdi = salesDoc.Items.Add(idPos);
+                            var sdi = salesDoc.Items.Add(idPos.ToString());
                             sdi.SetCode("Sapa_ALU", false);
                             sdi.ExecuteCommandStr(Command, out string? resultStr, true);
 
@@ -95,7 +95,7 @@ namespace a2p.Infrastructure.Services
                             sdi.Fields["Description"].Value = order.Items[i].Description;
                             sdi.Fields["Nomenclature"].Value = order.Items[i].ItemName;
 
-                            order.Items[i].SalesDocumentIdPos = idPos;
+                            order.Items[i].IdPos = idPos;
 
                             _logService.Information($"PrefSuite Service: Item {order.Items[i].ItemName} inserted for order {order.OrderNumber}.");
                         }
@@ -111,7 +111,7 @@ namespace a2p.Infrastructure.Services
                                 "\nException: {$Exception}",
                                 nameof(PrefSuiteService),
                                 nameof(InsertItemsAsync),
-                                order.Items[i].Order ?? string.Empty,
+                                order.Items[i].OrderNumber ?? string.Empty,
                                 order.Items[i].Worksheet ?? string.Empty,
                                 order.Items[i].Line,
                                 order.Items[i].ItemName ?? string.Empty,
@@ -120,11 +120,11 @@ namespace a2p.Infrastructure.Services
                             );
                             order.Errors.Add(new ErrorEntity()
                             {
-                                OrderNumber = order.Items[i].Order ?? string.Empty,
+                                OrderNumber = order.Items[i].OrderNumber ?? string.Empty,
                                 Level = ErrorLevel.Error,
                                 Code = ErrorCode.DatabaseWrite_Material,
                                 Message = $"{nameof(PrefSuiteService)}.{nameof(InsertItemsAsync)}. Unhandled error." +
-                                    $"\nOrder {order.Items[i].Order ?? string.Empty}," +
+                                    $"\nOrder {order.Items[i].OrderNumber ?? string.Empty}," +
                                     $"\nWorksheet {order.Items[i].Worksheet ?? string.Empty}," +
                                     $"\nLine {order.Items[i].Line}," +
                                     $"\nReferenceBase {order.Items[i].ItemName ?? string.Empty}, " +

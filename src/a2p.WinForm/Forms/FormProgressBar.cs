@@ -1,10 +1,6 @@
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
-using a2p.WinForm.Models;
+using a2p.Domain.Models;
 
 using System.Drawing.Drawing2D;
-
 namespace a2p.WinForm.Forms
 {
     public partial class FormProgressBar : Form

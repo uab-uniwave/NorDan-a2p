@@ -1,52 +1,52 @@
-using a2p.Shared.Application.Domain.Enums;
-using a2p.Shared.Application.Interfaces;
-using a2p.Shared.Application.Models;
-using a2p.Shared.Core.DTO.a2p.Shared.Core.DTO;
-using a2p.Shared.Infrastructure.Interfaces;
-using a2p.WinForm.Models;
+using a2p.Application.Abstractions;
+using a2p.Application.Services;
+using a2p.Domain.Entities;
+using a2p.Domain.Models;
+using a2p.Domain.Respoitories;
+
+using ClosedXML.Excel;
 
 using System.Data;
-
 namespace a2p.WinForm.Forms.ChildForms
 {
     public partial class ChildFormOrders : Form
     {
-        private readonly IUserSettingsService _userSettingsService;
+        private readonly ISettingsService _settingsService;
         private SettingsContainer _settingsContainer;
         private AppSettings _appSettings;
         private readonly ILogService _logService;
         private readonly IFileService _fileService;
         private readonly IExcelService _excelService;
-        private readonly ISQLRepository _sqlRepository;
+        private readonly IOrderRepository _orderRepository;
         private readonly IReadService _readService;
         private readonly IWriteService _writeService;
-        private List<A2POrder> _a2pOrders;
+        private List<OrderEntity> _orders;
 
         private DataTable _dataTable;
         private BindingSource _bindingSource;
         private IProgress<ProgressValue>? _progress;
         private ProgressValue _progressValue;
-        public ChildFormOrders(IUserSettingsService userSettingsService,
+        public ChildFormOrders(ISettingsService userSettingsService,
                           ILogService logService,
                           IFileService fileService,
                           IExcelService excelService,
-                          ISQLRepository sqlRepository,
+                          IOrderRepository orderRepository,
                           IReadService readService,
-                          IWriteService writeService,
-                          DataCache dataCache)
+                          IWriteService writeService)
+
         {
 
-            _userSettingsService = userSettingsService;
-            _appSettings = _userSettingsService.LoadSettings();
-            _settingsContainer = _userSettingsService.LoadAllSettings();
+            _settingsService = userSettingsService;
+            _appSettings = _settingsService.LoadSettings();
+            _settingsContainer = _settingsService.LoadAllSettings();
             _fileService = fileService;
             _logService = logService;
             _excelService = excelService;
             _writeService = writeService;
             _readService = readService;
-            _sqlRepository = sqlRepository;
+            _orderRepository = orderRepository;
 
-            _a2pOrders = [];
+            _orders = [];
             //==================================
             _dataTable = new DataTable();
             _bindingSource = [];
@@ -608,14 +608,14 @@ namespace a2p.WinForm.Forms.ChildForms
                         continue;
                     }
 
-                    for (int j = 0; j < _a2pOrders.Count; j++)
+                    for (int j = 0; j < _orders.Count; j++)
                     {
-                        if (_a2pOrders[j].Order == orderNumber)
+                        if (_orders[j].Order == orderNumber)
                         {
                             rowIndex = j;
 
-                            int readFatal = CountReadFatal(_a2pOrders[j]);
-                            int readError = CountReadError(_a2pOrders[j]);
+                            int readFatal = CountReadFatal(_orders[j]);
+                            int readError = CountReadError(_orders[j]);
 
                             if (readFatal > 0)
                             {
@@ -719,19 +719,19 @@ namespace a2p.WinForm.Forms.ChildForms
 
                 //Read Orders Data
                 //=====================================================================================================
-                List<A2POrder> a2pOrders = await _readService.ReadAsync(_progressValue, _progress);
+                List<OrderEntity> orders = await _readService.ReadAsync(_progressValue, _progress);
                 _progress?.Report(_progressValue);
 
-                if (a2pOrders == null || a2pOrders.Count == 0)
+                if (orders == null || orders.Count == 0)
                 {
                     return;
 
                 }
-                _a2pOrders = a2pOrders;
+                _orders = orders;
 
                 //Populate DataTable
                 //=====================================================================================================
-                await UpdateDatable(a2pOrders, 1);
+                await UpdateDatable(orders, 1);
                 _progressValue.ProgressTask1 = string.Empty;
                 _progressValue.ProgressTask2 = "Loading Finished.";
                 _progressValue.ProgressTask3 = string.Empty;
@@ -778,7 +778,7 @@ namespace a2p.WinForm.Forms.ChildForms
         }
         public async Task ImportAsync()
         {
-            List<A2POrder> importOrders = [];
+            List<OrderEntity> importOrders = [];
 
             try
             {
@@ -789,20 +789,20 @@ namespace a2p.WinForm.Forms.ChildForms
                     if ((bool)dataGridViewFiles.Rows[i].Cells["Import"].Value)
                     {
 
-                        for (int j = 0; j < _a2pOrders.Count; j++)
+                        for (int j = 0; j < _orders.Count; j++)
                         {
 
-                            if (_a2pOrders[j].Order == dataGridViewFiles.Rows[i].Cells["Order"].Value.ToString())
+                            if (_orders[j].Order == dataGridViewFiles.Rows[i].Cells["Order"].Value.ToString())
                             {
-                                _a2pOrders[j].Import = true;
+                                _orders[j].Import = true;
 
-                                importOrders.Add(_a2pOrders[j]);
+                                importOrders.Add(_orders[j]);
 
-                                if (CountReadExistsError(_a2pOrders[j]) > 0)
+                                if (CountReadExistsError(_orders[j]) > 0)
                                 {
 
                                     DialogResult result
-                                        = MessageBox.Show($"Order {_a2pOrders[j].Order} contains data!\n" +
+                                        = MessageBox.Show($"Order {_orders[j].Order} contains data!\n" +
                                "\nYes - Positions and Material Needs will be deleted." +
                                "\nNo - Positions and Material Needs will kept." +
                                "\n         Attention!!! Positions and Material Needs could be duplicated!" +
@@ -810,7 +810,7 @@ namespace a2p.WinForm.Forms.ChildForms
                                                                  MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error);
                                     if (result == DialogResult.Yes)
                                     {
-                                        _a2pOrders[j].DeleteExistsing = true;
+                                        _orders[j].DeleteExistsing = true;
 
 
 
@@ -818,7 +818,7 @@ namespace a2p.WinForm.Forms.ChildForms
                                     if (result == DialogResult.No)
                                     {
 
-                                        _a2pOrders[j].DeleteExistsing = false;
+                                        _orders[j].DeleteExistsing = false;
 
 
                                     }
@@ -827,7 +827,7 @@ namespace a2p.WinForm.Forms.ChildForms
                                     {
 
                                         dataGridViewFiles.Rows[i].Cells["Import"].Value = false;
-                                        importOrders.Remove(_a2pOrders[j]);
+                                        importOrders.Remove(_orders[j]);
 
                                     }
 
@@ -968,7 +968,7 @@ namespace a2p.WinForm.Forms.ChildForms
             }
         }
 
-        public async Task<OrderRecordDTO> MapToReadOrderDTOAsync(A2POrder a2pOrder, int type)   // type 1 - read; 2 - write 
+        public async Task<OrderRecordDTO> MapToReadOrderDTOAsync(OrderEntity order, int type)   // type 1 - read; 2 - write 
         {
             try
             {
@@ -981,28 +981,28 @@ namespace a2p.WinForm.Forms.ChildForms
 
                 await Task.Run(() =>
                 {
-                    orderDTO.Order = a2pOrder.Order;
-                    orderDTO.SalesDocument = $"{a2pOrder.SalesDocumentNumber}/{a2pOrder.SalesDocumentVersion}";
-                    orderDTO.Items = a2pOrder.Items.Count; // Added line to count Items
-                    orderDTO.ItemList = string.Join("\n", a2pOrder.Items.Select(item => item.Item));
-                    orderDTO.Quantity = a2pOrder.Items.ToArray().Sum(item => item.Quantity);
-                    orderDTO.Area = a2pOrder.Items.ToArray().Sum(item => item.TotalArea);
-                    orderDTO.Weight = a2pOrder.Items.ToArray().Sum(item => item.TotalWeight);
-                    orderDTO.Hours = a2pOrder.Items.ToArray().Sum(item => item.TotalHours);
-                    orderDTO.Cost = a2pOrder.Items.ToArray().Sum(item => item.TotalCost);
-                    orderDTO.Amount = a2pOrder.Items.ToArray().Sum(item => item.TotalPrice);
-                    orderDTO.Currency = a2pOrder.Files
+                    orderDTO.Order = order.Order;
+                    orderDTO.SalesDocument = $"{order.SalesDocumentNumber}/{order.SalesDocumentVersion}";
+                    orderDTO.Items = order.Items.Count; // Added line to count Items
+                    orderDTO.ItemList = string.Join("\n", order.Items.Select(item => item.Item));
+                    orderDTO.Quantity = order.Items.ToArray().Sum(item => item.Quantity);
+                    orderDTO.Area = order.Items.ToArray().Sum(item => item.TotalArea);
+                    orderDTO.Weight = order.Items.ToArray().Sum(item => item.TotalWeight);
+                    orderDTO.Hours = order.Items.ToArray().Sum(item => item.TotalHours);
+                    orderDTO.Cost = order.Items.ToArray().Sum(item => item.TotalCost);
+                    orderDTO.Amount = order.Items.ToArray().Sum(item => item.TotalPrice);
+                    orderDTO.Currency = order.Files
                         .SelectMany(file => file.Worksheets)
                         .FirstOrDefault(worksheet => !string.IsNullOrEmpty(worksheet.Currency))?.Currency ?? string.Empty;
-                    orderDTO.FileCount = a2pOrder.Files.Count;
-                    orderDTO.FileList = string.Join("\n", a2pOrder.Files.Select(file => file.FileName));
-                    orderDTO.WorksheetCount = a2pOrder.Files.Sum(file => file.Worksheets?.Count ?? 0);
-                    orderDTO.WorksheetList = string.Join("\n", a2pOrder.Files.SelectMany(file => file.Worksheets).Select(ws => ws.Name));
-                    orderDTO.Materials = a2pOrder.Materials.Count; // Added line to count Materials
+                    orderDTO.FileCount = order.Files.Count;
+                    orderDTO.FileList = string.Join("\n", order.Files.Select(file => file.FileName));
+                    orderDTO.WorksheetCount = order.Files.Sum(file => file.Worksheets?.Count ?? 0);
+                    orderDTO.WorksheetList = string.Join("\n", order.Files.SelectMany(file => file.Worksheets).Select(ws => ws.Name));
+                    orderDTO.Materials = order.Materials.Count; // Added line to count Materials
 
                     if (type == 1)
                     {
-                        warningCount = a2pOrder.ErrorsRead
+                        warningCount = order.ErrorsRead
                             .Where(error => error.Level is ErrorLevel.Warning)
                             .Where(error => (int)error.Code < 3000)
                             .Select(error => new { error.Level, error.Code, error.Message })
@@ -1010,12 +1010,12 @@ namespace a2p.WinForm.Forms.ChildForms
                             .Count();
 
                         orderDTO.WarningCount = warningCount;
-                        orderDTO.WarningList = string.Join("\n", a2pOrder.ErrorsRead
+                        orderDTO.WarningList = string.Join("\n", order.ErrorsRead
                                     .Where(error => error.Level is ErrorLevel.Warning)
                                     .Select(error => $"ErrorLevel: {error.Level}, ErrorCode: {error.Code}, Message: {error.Message}")
                                     .Distinct());
 
-                        errorCount = a2pOrder.ErrorsRead
+                        errorCount = order.ErrorsRead
                             .Where(error => error.Level is ErrorLevel.Error)
                             .Select(error => new { error.Level, error.Code, error.Message })
                             .Distinct()
@@ -1024,19 +1024,19 @@ namespace a2p.WinForm.Forms.ChildForms
 
                         orderDTO.ErrorCount = errorCount;
 
-                        orderDTO.ErrorList = string.Join("\n", a2pOrder.ErrorsRead
+                        orderDTO.ErrorList = string.Join("\n", order.ErrorsRead
                             .Where(error => error.Level is ErrorLevel.Error or ErrorLevel.Fatal)
                             .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
                             .Distinct());
 
-                        fatalCount = a2pOrder.ErrorsRead
+                        fatalCount = order.ErrorsRead
                         .Where(error => error.Level is ErrorLevel.Fatal)
                         .Select(error => new { error.Level, error.Code, error.Message })
                         .Distinct()
                         .Count();
 
                         orderDTO.FatalCount = fatalCount;
-                        orderDTO.FatalList = string.Join("\n", a2pOrder.ErrorsRead
+                        orderDTO.FatalList = string.Join("\n", order.ErrorsRead
                             .Where(error => error.Level is ErrorLevel.Fatal)
                             .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
                             .Distinct());
@@ -1048,7 +1048,7 @@ namespace a2p.WinForm.Forms.ChildForms
                     {
 
 
-                        warningCount = a2pOrder.ErrorsRead
+                        warningCount = order.ErrorsRead
                              .Where(error => error.Level is ErrorLevel.Warning)
                              .Where(error => (int)error.Code > 3000)
                              .Select(error => new { error.Level, error.Code, error.Message })
@@ -1056,17 +1056,17 @@ namespace a2p.WinForm.Forms.ChildForms
                              .Distinct()
                              .Count();
                         orderDTO.WarningCount = warningCount;
-                        orderDTO.WarningList = string.Join("\n", a2pOrder.ErrorsRead
+                        orderDTO.WarningList = string.Join("\n", order.ErrorsRead
                                     .Where(error => error.Level is ErrorLevel.Warning)
                                     .Select(error => $"ErrorLevel: {error.Level}, ErrorCode: {error.Code}, Message: {error.Message}")
                                     .Distinct());
 
-                        errorCount = a2pOrder.ErrorsRead
+                        errorCount = order.ErrorsRead
                             .Where(error => error.Level is ErrorLevel.Error)
                             .Select(error => new { error.Level, error.Code, error.Message })
                             .Distinct()
                             .Count()
-                        + a2pOrder.ErrorsWrite
+                        + order.ErrorsWrite
                             .Where(error => error.Level is ErrorLevel.Error)
                             .Select(error => new { error.Level, error.Code, error.Message })
                             .Distinct()
@@ -1074,32 +1074,32 @@ namespace a2p.WinForm.Forms.ChildForms
 
                         orderDTO.ErrorCount = errorCount;
 
-                        orderDTO.ErrorList = string.Join("\n", a2pOrder.ErrorsRead
+                        orderDTO.ErrorList = string.Join("\n", order.ErrorsRead
                             .Where(error => error.Level is ErrorLevel.Error or ErrorLevel.Fatal)
                             .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
                             .Distinct()) +
 
-                        string.Join("\n", a2pOrder.ErrorsWrite
+                        string.Join("\n", order.ErrorsWrite
                             .Where(error => error.Level is ErrorLevel.Error or ErrorLevel.Fatal)
                             .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
                             .Distinct());
 
-                        fatalCount = a2pOrder.ErrorsRead
+                        fatalCount = order.ErrorsRead
                         .Where(error => error.Level is ErrorLevel.Fatal)
                         .Select(error => new { error.Level, error.Code, error.Message })
                         .Distinct()
-                        .Count() + a2pOrder.ErrorsWrite
+                        .Count() + order.ErrorsWrite
                         .Where(error => error.Level is ErrorLevel.Fatal)
                         .Select(error => new { error.Level, error.Code, error.Message })
                         .Distinct()
                         .Count();
 
                         orderDTO.FatalCount = fatalCount;
-                        orderDTO.FatalList = string.Join("\n", a2pOrder.ErrorsRead
+                        orderDTO.FatalList = string.Join("\n", order.ErrorsRead
                             .Where(error => error.Level is ErrorLevel.Fatal)
                             .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
                             .Distinct()) +
-                                            string.Join("\n", a2pOrder.ErrorsWrite
+                                            string.Join("\n", order.ErrorsWrite
                                                    .Where(error => error.Level is ErrorLevel.Fatal)
                                                    .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
 
@@ -1108,7 +1108,7 @@ namespace a2p.WinForm.Forms.ChildForms
 
 
                     }
-                    orderDTO.Import = CountReadTotalError(a2pOrder) <= 0;
+                    orderDTO.Import = CountReadTotalError(order) <= 0;
 
                 });
 
@@ -1129,54 +1129,54 @@ namespace a2p.WinForm.Forms.ChildForms
         //===============================================================
         // -= Read Errors =-
         //===============================================================
-        private int CountReadWarning(A2POrder a2pOrder)
+        private int CountReadWarning(OrderEntity order)
         {
-            return a2pOrder.ErrorsRead.Count(error => error.Level == ErrorLevel.Warning);
+            return order.ErrorsRead.Count(error => error.Level == ErrorLevel.Warning);
         }
 
-        private int CountReadError(A2POrder a2pOrder)
+        private int CountReadError(OrderEntity order)
         {
-            return a2pOrder.ErrorsRead.Count(error => error.Level == ErrorLevel.Error);
+            return order.ErrorsRead.Count(error => error.Level == ErrorLevel.Error);
         }
 
-        private int CountReadFatal(A2POrder a2pOrder)
+        private int CountReadFatal(OrderEntity order)
         {
-            return a2pOrder.ErrorsRead.Count(error => error.Level == ErrorLevel.Fatal);
+            return order.ErrorsRead.Count(error => error.Level == ErrorLevel.Fatal);
         }
 
-        private int CountReadExistsError(A2POrder a2pOrder)
+        private int CountReadExistsError(OrderEntity order)
         {
-            return a2pOrder.ErrorsRead.Count(error => error.Code == ErrorCode.DatabaseRead_OrderAlreadyImported);
+            return order.ErrorsRead.Count(error => error.Code == ErrorCode.DatabaseRead_OrderAlreadyImported);
         }
 
-        private int CountReadTotalError(A2POrder a2pOrder)
+        private int CountReadTotalError(OrderEntity order)
         {
-            return a2pOrder.ErrorsRead.Count(error => error.Level is ErrorLevel.Warning or ErrorLevel.Error or ErrorLevel.Fatal);
+            return order.ErrorsRead.Count(error => error.Level is ErrorLevel.Warning or ErrorLevel.Error or ErrorLevel.Fatal);
         }
 
-        private int CountWriteFatal(A2POrder a2pOrder)
+        private int CountWriteFatal(OrderEntity order)
         {
-            return a2pOrder.ErrorsWrite.Count(error => error.Level == ErrorLevel.Fatal);
+            return order.ErrorsWrite.Count(error => error.Level == ErrorLevel.Fatal);
         }
 
-        private int CountWriteError(A2POrder a2pOrder)
+        private int CountWriteError(OrderEntity order)
         {
-            return a2pOrder.ErrorsWrite.Count(error => error.Level == ErrorLevel.Error);
+            return order.ErrorsWrite.Count(error => error.Level == ErrorLevel.Error);
         }
 
-        private int CountWriteWarning(A2POrder a2pOrder)
+        private int CountWriteWarning(OrderEntity order)
         {
-            return a2pOrder.ErrorsWrite.Count(error => error.Level == ErrorLevel.Warning);
+            return order.ErrorsWrite.Count(error => error.Level == ErrorLevel.Warning);
         }
 
-        private int CountWriteTotalError(A2POrder a2pOrder)
+        private int CountWriteTotalError(OrderEntity order)
         {
-            return a2pOrder.ErrorsWrite.Count(error => error.Level is ErrorLevel.Warning or ErrorLevel.Error or ErrorLevel.Fatal);
+            return order.ErrorsWrite.Count(error => error.Level is ErrorLevel.Warning or ErrorLevel.Error or ErrorLevel.Fatal);
         }
 
 
 
-        private async Task UpdateDatable(List<A2POrder> a2pOrders, int type)
+        private async Task UpdateDatable(List<OrderEntity> orders, int type)
         {
 
             _dataTable.Rows.Clear();
@@ -1195,13 +1195,13 @@ namespace a2p.WinForm.Forms.ChildForms
             int warningCount = 0;
             int errorCount = 0;
             int fatalCount = 0;
-            foreach (A2POrder a2pOrder in a2pOrders)
+            foreach (OrderEntity order in orders)
             {
 
-                if (a2pOrder.Files.SelectMany(f => f.Worksheets).Count(w => w.WorksheetType == WorksheetType.Items) == 0)
+                if (order.Files.SelectMany(f => f.Worksheets).Count(w => w.WorksheetType == WorksheetType.Items) == 0)
                 {
 
-                    _logService.Warning("Found order {$Order}, files, but items worksheet  is missing", a2pOrder.Order);
+                    _logService.Warning("Found order {$Order}, files, but items worksheet  is missing", order.Order);
                     continue;
 
                 }
@@ -1212,7 +1212,7 @@ namespace a2p.WinForm.Forms.ChildForms
                 }
                 if (type == 2)
                 {
-                    if (a2pOrder.Import == false)
+                    if (order.Import == false)
                     {
                         continue;
                     }
@@ -1232,7 +1232,7 @@ namespace a2p.WinForm.Forms.ChildForms
                     lbInfoWarningCount.Text = warningCount.ToString();
                     lbInfoErrorCount.Text = errorCount.ToString();
 
-                    OrderRecordDTO orderDTO = await MapToReadOrderDTOAsync(a2pOrder, type);   // 2 means import and should be used write errors
+                    OrderRecordDTO orderDTO = await MapToReadOrderDTOAsync(order, type);   // 2 means import and should be used write errors
 
                     Image image;
 
@@ -1323,7 +1323,7 @@ namespace a2p.WinForm.Forms.ChildForms
                     if (type == 2)
                     {
                         // Fix: Select file names as strings, not as chars
-                        var fileNames = a2pOrder.Files.Select(f => f.File).ToList();
+                        var fileNames = order.Files.Select(f => f.File).ToList();
                         if (orderDTO.ErrorCount + orderDTO.FatalCount > 0)
                         {
                             _fileService.MoveOrderFiles(fileNames, false);
@@ -1339,7 +1339,7 @@ namespace a2p.WinForm.Forms.ChildForms
                 }
                 catch (Exception ex)
                 {
-                    _logService.Debug("Error adding individual a2pOrder to data table. Excepton: {$Exceptiom}", ex.Message);
+                    _logService.Debug("Error adding individual order to data table. Excepton: {$Exceptiom}", ex.Message);
                 }
             }
             if (InvokeRequired)

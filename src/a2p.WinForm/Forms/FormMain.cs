@@ -1,16 +1,8 @@
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
-using a2p.Shared.Application.Interfaces;
-using a2p.Shared.Application.Interfaces.Models;
-using a2p.Shared.Application.Models;
-using a2p.Shared.Infrastructure.Interfaces;
-using a2p.WinForm.ChildForms;
-using a2p.WinForm.Models;
-
-using Newtonsoft.Json;
-
-using System.Runtime.InteropServices;
+using a2p.Application.Abstractions;
+using a2p.Application.Services;
+using a2p.Domain.Models;
+using a2p.Domain.Respoitories;
+using a2p.WinForm.Forms.ChildForms;
 
 namespace a2p.WinForm.Forms
 {
@@ -24,10 +16,10 @@ namespace a2p.WinForm.Forms
         private readonly IReadService _readService;
         private readonly IWriteService _writeService;
         private readonly IExcelService _excelService;
-        private readonly ISQLRepository _sqlRepository;
-        private readonly IUserSettingsService _userSettingsService;
+        private readonly IOrderRepository _orderRepository;
+        private readonly ISettingsService _settingsService;
         private readonly ILogService _logService;
-        private readonly DataCache _dataCache;
+
         private readonly IFileService _fileService;
 
         private static ProgressValue? _progressValue;
@@ -57,29 +49,28 @@ namespace a2p.WinForm.Forms
 
         public FormMain(IReadService readService,
                         IExcelService excelService,
-                        ISQLRepository sqlRepository,
+                        IOrderRepository orderRepository,
                         ILogService logService,
                         IFileService fileService,
-                        IUserSettingsService userSettingsService,
+                        ISettingsService settingsService,
                         IWriteService writeService)
         {
             _readService = readService;
             _writeService = writeService;
             _excelService = excelService;
             _logService = logService;
-            _dataCache = new DataCache(logService);
             _fileService = fileService;
-            _userSettingsService = userSettingsService;
-            _appSettings = _userSettingsService.LoadSettings();
-            _settingsContainer = _userSettingsService.LoadAllSettings();
+            _settingsService = settingsService;
+            _appSettings = this._settingsService.LoadSettings();
+            _settingsContainer = this._settingsService.LoadAllSettings();
 
             _progressValue = new ProgressValue();
             _progress = new Progress<ProgressValue>();
             _toolTip = new ToolTip();
-            _orderForm = new ChildFormOrders(userSettingsService, _logService, _fileService, _excelService, _sqlRepository, _readService, _writeService, _dataCache);
+            _orderForm = new ChildFormOrders(_settingsService, _logService, _fileService, _excelService, _orderRepository, _readService, _writeService, _dataCache);
 
-            _logForm = new ChildFormLog(userSettingsService, _logService);
-            _settingForm = new ChildFormSetting(_logService, _userSettingsService);
+            _logForm = new ChildFormLog(_settingsService, _logService);
+            _settingForm = new ChildFormSetting(_logService, _settingsService);
 
             this.AutoScaleMode = AutoScaleMode.Dpi;
             this.SuspendLayout();
@@ -126,15 +117,15 @@ namespace a2p.WinForm.Forms
         private void MainForm_Load(object sender, EventArgs e)
         {
 
-            string settingsPath = _userSettingsService.GetSettingsFilePath();
-            if (!File.Exists(settingsPath))
+            string settingsPath = _settingsService.GetSettingsFilePath();
+            if (!System.IO.File.Exists(settingsPath))
             {
 
                 _appSettings.Folders.RootFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                 _appSettings.Folders.ImportFailed = "Import_Failed";
                 _appSettings.Folders.ImportSuccess = "Import_Success";
                 _appSettings.Folders.Log = "Log";
-                _userSettingsService.SaveSettings(_appSettings);
+                _settingsService.SaveSettings(_appSettings);
 
 
             }
@@ -166,7 +157,7 @@ namespace a2p.WinForm.Forms
             try
             {
                 await ShowFormAsync(_orderForm,
-                    () => new ChildFormOrders(_userSettingsService, _logService, _fileService, _excelService, _sqlRepository, _readService, _writeService, _dataCache));
+                    () => new ChildFormOrders(_settingsService, _logService, _fileService, _excelService, _orderRepository, _readService, _writeService, _dataCache));
                 if (_appSettings.RefreshFilesOnStartup)
                 {
 
@@ -463,7 +454,7 @@ namespace a2p.WinForm.Forms
             try
             {
                 await ShowFormAsync(_orderForm,
-                        () => new ChildFormOrders(_userSettingsService, _logService, _fileService, _excelService, _sqlRepository, _readService, _writeService, _dataCache));
+                        () => new ChildFormOrders(_settingsService, _logService, _fileService, _excelService, _orderRepository, _readService, _writeService, _dataCache));
 
                 await _orderForm.OrdersLoad();
 
@@ -488,7 +479,7 @@ namespace a2p.WinForm.Forms
                 await Task.Run(DisableButtons); // Disable buttons at the beginning
 
                 await ShowFormAsync(_orderForm,
-                         () => new ChildFormOrders(_userSettingsService, _logService, _fileService, _excelService, _sqlRepository, _readService, _writeService, _dataCache));
+                         () => new ChildFormOrders(_settingsService, _logService, _fileService, _excelService, _orderRepository, _readService, _writeService, _dataCache));
                 await _orderForm.ImportAsync();
             }
             catch (Exception ex)
@@ -515,7 +506,7 @@ namespace a2p.WinForm.Forms
                 await Task.Run(DisableButtons); // Disable buttons at the beginning
 
                 await ShowFormAsync(_logForm,
-                        () => new ChildFormLog(_userSettingsService, _logService));
+                        () => new ChildFormLog(_settingsService, _logService));
 
                 await _logForm.LogRefreshAsync();
 
@@ -540,7 +531,7 @@ namespace a2p.WinForm.Forms
         private async void BtnProperties_Click(object sender, EventArgs e)
         {
             await ShowFormAsync(_settingForm,
-                () => new ChildFormSetting(_logService, _userSettingsService));
+                () => new ChildFormSetting(_logService, _settingsService));
         }
 
         private void BtnExit_Click(object sender, EventArgs e)

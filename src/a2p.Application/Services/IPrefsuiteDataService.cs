@@ -1,9 +1,9 @@
 
 using a2p.Domain.Entities;
 
-namespace a2p.Domain.Respoitories
+namespace a2p.Application.Services
 {
-    public interface ISQLRepository
+    public interface IPrefSuiteDataService
     {
 
         //============================================================================================================================
@@ -24,11 +24,9 @@ namespace a2p.Domain.Respoitories
         Task<ErrorEntity?> InsertPrefSuiteMaterialMeterAsync(MaterialEntity material);
         Task<ErrorEntity?> InsertPrefSuiteMaterialPieceAsync(MaterialEntity material);
         Task<ErrorEntity?> InsertPrefSuiteMaterialSurfaceAsync(MaterialEntity material);
-        Task<ErrorEntity?> UpdateBCMapping(MaterialEntity materialDTO);
+        Task<ErrorEntity?> UpdateBCMapping(MaterialEntity material);
         Task<ErrorEntity?> InsertPrefSuiteMaterialPurchaseDataAsync(MaterialEntity material);
-        Task<ErrorEntity?> InsertOrderMaterialAsync(MaterialEntity material, int number, int version);
         //============================================================================================================================
-        Task<ErrorEntity?> InsertOrderItemAsync(ItemEntity item, int number, int version, string idPos);
         Task<ErrorEntity?> InsertPrefSuiteMaterialNeedsMasterAsync(string order, int number, int version);
         Task<ErrorEntity?> InsertPrefSuiteMaterialNeedsAsync(string order, int number, int version);
 

@@ -1,28 +1,22 @@
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
+using a2p.Application.Services;
+using a2p.Domain.Models;
 
-using a2p.Shared.Application.Models;
-using a2p.Shared.Infrastructure.Interfaces;
-
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-
-using System.Text.Json;
 
 namespace a2p.WinForm.Forms.ChildForms
 {
     public partial class ChildFormSetting : Form
     {
         private readonly ILogService _logService;
-        private readonly IUserSettingsService _userSettingsService;
+        private readonly ISettingsService _settingsService;
         private bool _isSettingsChanged = false; // Flag to track changes
         private AppSettings _currentSettings; // Store the current settings
         private readonly IConfiguration _configuration;
 
-        public ChildFormSetting(ILogService logService, IUserSettingsService userSettingsService)
+        public ChildFormSetting(ILogService logService, ISettingsService userSettingsService)
         {
             _logService = logService;
-            _userSettingsService = userSettingsService;
+            _settingsService = userSettingsService;
 
             IConfigurationBuilder builder = new ConfigurationBuilder()
                 .AddUserSecrets<ChildFormSetting>();
@@ -47,7 +41,7 @@ namespace a2p.WinForm.Forms.ChildForms
             chxLoadOnStart.CheckedChanged += OnSettingChanged;
             chxTrusted.CheckedChanged += OnSettingChanged;
             cbxLogLevel.SelectedIndexChanged += OnSettingChanged;
-            _currentSettings = _userSettingsService.LoadSettings();
+            _currentSettings = _settingsService.LoadSettings();
         }
 
         private void SettingForm_Load(object sender, EventArgs e)
@@ -147,8 +141,8 @@ namespace a2p.WinForm.Forms.ChildForms
                 }
 
                 // Save settings asynchronously
-                await Task.Run(() => _userSettingsService.SaveSettings(_currentSettings));
-                await Task.Run(() => _userSettingsService.SaveConnectionString(BuildConnectionStringFromForm()));
+                await Task.Run(() => _settingsService.SaveSettings(_currentSettings));
+                await Task.Run(() => _settingsService.SaveConnectionString(BuildConnectionStringFromForm()));
 
                 // Update UI controls on the UI thread
                 if (InvokeRequired)
@@ -205,7 +199,7 @@ namespace a2p.WinForm.Forms.ChildForms
             txbLogFolder.Text = string.IsNullOrEmpty(settings.Folders.Log.ToString()) == true
                ? "Log" : settings.Folders.Log.ToString();
 
-            cbxLogLevel.SelectedItem = _userSettingsService.LoadSerilogMinimumLevel();
+            cbxLogLevel.SelectedItem = _settingsService.LoadSerilogMinimumLevel();
             chxTrusted.Checked = IsIntegratedSecurityEnabled();
             txbServerName.Text = ExtractValueFromConnectionString("Data Source");
             txbDatabaseName.Text = ExtractValueFromConnectionString("Initial Catalog");
@@ -286,7 +280,7 @@ namespace a2p.WinForm.Forms.ChildForms
 
         public string ExtractValueFromConnectionString(string key)
         {
-            string settingsJson = File.ReadAllText(_userSettingsService.GetSettingsFilePath());
+            string settingsJson = File.ReadAllText(_settingsService.GetSettingsFilePath());
             var jsonDoc = JsonDocument.Parse(settingsJson);
 
             if (!jsonDoc.RootElement.TryGetProperty("ConnectionStrings", out JsonElement connectionStrings))

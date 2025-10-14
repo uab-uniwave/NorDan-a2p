@@ -47,10 +47,6 @@
 
 
 	<ItemGroup>
-
-		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.0-preview3.24332.3" />
-
-		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.0-preview.2.25163.2" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
@@ -102,6 +98,12 @@
 		<PackagePath>\</PackagePath>
 	  </None>
 	  <None Include="Forms\FormSplashScreen.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\a2p.Application\a2p.Application.csproj" />
+	  <ProjectReference Include="..\a2p.Domain\a2p.Domain.csproj" />
+	  <ProjectReference Include="..\a2p.Infrastructure\a2p.Infrastructure.csproj" />
 	</ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">

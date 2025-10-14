@@ -3,35 +3,35 @@
 
 using a2p.Domain.Enums;
 
-using System.ComponentModel.DataAnnotations;
-
 namespace a2p.Domain.Entities
 {
     public class MaterialEntity
     {
-        public string RowId { get; set; } = Guid.NewGuid().ToString();
-        [MaxLength(50)] public string Order { get; set; } = string.Empty;
-        [MaxLength(255)] public string Worksheet { get; set; } = string.Empty;
-        [Required] public int Line { get; set; } = -1;
-        [Required] public int Column { get; set; } = -1;
+        public Guid RowId { get; set; } = Guid.Empty;
+        public string OrderNumber { get; set; } = string.Empty;
+        public string Worksheet { get; set; } = string.Empty;
+        public int SalesDocumentNumber { get; set; } = -1;
+        public int SalesDocumentVersion { get; set; } = -1;
+        public int Line { get; set; } = -1;
+        public int Column { get; set; } = -1;
         //============================================================================================================================
-        public string? Item { get; set; } = string.Empty;
+        public string? ItemName { get; set; } = string.Empty;
         public int SortOrder { get; set; } = -1;
         //============================================================================================================================
-        [MaxLength(25)] public string ReferenceBase { get; set; } = string.Empty;
-        [MaxLength(25)] public string Reference { get; set; } = string.Empty;
-        [MaxLength(255)] public string? Description { get; set; }
+        public string ReferenceBase { get; set; } = string.Empty;
+        public string Reference { get; set; } = string.Empty;
+        public string? Description { get; set; }
         //============================================================================================================================
-        [MaxLength(50)] public string Color { get; set; } = string.Empty;
-        [MaxLength(120)] public string? ColorDescription { get; set; }
+        public string Color { get; set; } = string.Empty;
+        public string? ColorDescription { get; set; }
         //============================================================================================================================
         public decimal Width { get; set; } = 0m;
         public decimal Height { get; set; } = 0m;
         //============================================================================================================================       
-        [Required] public int Quantity { get; set; } = 0;
+        public int Quantity { get; set; } = 0;
         public decimal PackageQuantity { get; set; } = 0m;
         public decimal TotalQuantity { get; set; } = 0m;
-        [Required] public decimal RequiredQuantity { get; set; } = 0m;
+        public decimal RequiredQuantity { get; set; } = 0m;
         public decimal LeftOverQuantity { get; set; } = 0m;
         //============================================================================================================================  
         public decimal Weight { get; set; } = 0m;
@@ -53,24 +53,25 @@ namespace a2p.Domain.Entities
         //============================================================================================================================  
         public decimal SquareMeterPrice { get; set; } = 0m;
         //============================================================================================================================`
-        [MaxLength(255)] public string? Pallet { get; set; }
+        public string Pallet { get; set; } = string.Empty;
         //============================================================================================================================
-        [MaxLength(255)] public string? CustomField1 { get; set; }
-        [MaxLength(255)] public string? CustomField2 { get; set; }
-        [MaxLength(255)] public string? CustomField3 { get; set; }
+        public string? CustomField1 { get; set; } = null;
+        public string? CustomField2 { get; set; } = null;
+        public string? CustomField3 { get; set; } = null;
         //============================================================================================================================
-        [MaxLength(255)] public string? CustomField4 { get; set; }
-        [MaxLength(255)] public string? CustomField5 { get; set; }
+        public string? CustomField4 { get; set; } = null;
+        public string? CustomField5 { get; set; } = null;
         //============================================================================================================================
-        [Required] public MaterialType MaterialType { get; set; } = 0;
-        [Required] public WorksheetType WorksheetType { get; set; } = 0;
+        public MaterialType MaterialType { get; set; } = 0;
+
+        public WorksheetType WorksheetType { get; set; } = 0;
         //============================================================================================================================
-        [MaxLength(255)] public string? SourceReference { get; set; }
-        [MaxLength(255)] public string? SourceDescription { get; set; }
-        [MaxLength(255)] public string? SourceColor { get; set; }
-        [MaxLength(255)] public string? SourceColorDescription { get; set; }
+        public string SourceReference { get; set; } = string.Empty;
+        public string SourceDescription { get; set; } = string.Empty;
+        public string SourceColor { get; set; } = string.Empty;
+        public string? SourceColorDescription { get; set; } = string.Empty;
         //============================================================================================================================
-        public int? CommodityCode { get; set; }
+        public int? CommodityCode { get; set; } = null;
 
     }
 }

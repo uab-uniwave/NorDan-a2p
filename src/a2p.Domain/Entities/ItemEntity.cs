@@ -4,19 +4,18 @@ namespace a2p.Domain.Entities
 {
     public class ItemEntity
     {
-        public int SalesDocumentNumber { get; set; } = -1;
-        public int SalesDocumentVersion { get; set; } = -1;
-        public string SalesDocumentIdPos { get; set; } = Guid.NewGuid().ToString();
-        public string Order { get; set; } = string.Empty;
-        public string Worksheet { get; set; } = string.Empty;
+        public Guid IdPos { get; set; } = Guid.Empty;
         public int Line { get; set; } = -1;
         public int Column { get; set; } = -1;
         //============================================================================================================================
-        public string? Project { get; set; } = string.Empty;
+        public string OrderNumber { get; set; } = string.Empty;
+        public string Worksheet { get; set; } = string.Empty;
+        public int SalesDocumentNumber { get; set; } = -1;
+        public int SalesDocumentVersion { get; set; } = -1;
 
         public string ItemName { get; set; } = string.Empty;
         public int SortOrder { get; set; } = -1;
-        public string? Description { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         //============================================================================================================================
         public int Quantity { get; set; } = 0;
         //============================================================================================================================

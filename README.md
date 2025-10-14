@@ -437,7 +437,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <pre id="codeBlock" class="language-csharp">
 <code class="language-csharp">
 
-     a2pOrder.WriteErrors.Add(new A2PError{Order = a2pOrder.Order,
+     order.WriteErrors.Add(new A2PError{Order = order.Order,
                                           Level = ErrorLevel.Error,
                                           Code = ErrorCode.MappingService_MapMaterial,
                                           Description = $"Material of Order :{itemDTO.Order}, " +

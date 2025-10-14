@@ -5,7 +5,7 @@ namespace a2p.Application.Services
 {
     public interface IPrefSuiteService
     {
-        Task<(OrderEntity, ProgressValue)> InsertItemsAsync(OrderEntity a2pOrder, ProgressValue progressValue, IProgress<ProgressValue>? progress = null);
+        Task<(OrderEntity, ProgressValue)> InsertItemsAsync(OrderEntity order, ProgressValue progressValue, IProgress<ProgressValue>? progress = null);
     }
 }
 

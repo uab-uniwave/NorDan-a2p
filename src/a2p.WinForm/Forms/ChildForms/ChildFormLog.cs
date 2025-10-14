@@ -50,7 +50,7 @@ namespace a2p.WinForm.Forms.ChildForms
             try
             {
 
-                dataGridViewLog.CellFormatting += LogGridView_CellFormatting!;
+                DataGridViewRow.CellFormatting += LogGridView_CellFormatting!;
                 dataGridViewLog.CellClick += LogGridView_CellClick!;
 
                 // DataGridViewProperties Columns 

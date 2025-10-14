@@ -8,7 +8,7 @@ using ClosedXML.Excel;
 using System.Windows.Forms;
 
 using System.Data;
-namespace a2p.WinForm.Forms.ChildForms
+namespace a2p.WinForm.ChildForms
 {
     public partial class ChildFormOrders : Form
     {

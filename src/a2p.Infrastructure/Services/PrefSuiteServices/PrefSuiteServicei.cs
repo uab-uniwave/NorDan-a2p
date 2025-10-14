@@ -13,7 +13,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
         private readonly ILogService _logService;
         private readonly ISQLService _sqlRepository;
 
-        private readonly Interop.PrefDataManager.IPrefDataSource _prefSuiteOLEDBConnection;
+        private readonly PrefDataManager.IPrefDataSource _prefSuiteOLEDBConnection;
         private ProgressValue _progressValue;
         private IProgress<ProgressValue>? _progress;
 
@@ -23,7 +23,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
             _sqlRepository = sqlRepository;
             _progressValue = new ProgressValue();
             _progress = new Progress<ProgressValue>();
-            _prefSuiteOLEDBConnection = new Interop.PrefDataManager.PrefDataSource();
+            _prefSuiteOLEDBConnection = new PrefDataManager.PrefDataSource();
         }
 
         public async Task<(OrderEntity, ProgressValue)> InsertItemsAsync(OrderEntity order, ProgressValue progressValue, IProgress<ProgressValue>? progress = null)

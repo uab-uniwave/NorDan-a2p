@@ -38,7 +38,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 //==============================================================================
                 await Task.Run(() =>
                 {
-                    Interop.PrefSales.SalesDoc salesDoc = new()
+                    PrefSales.SalesDoc salesDoc = new()
                     {
                         ConnectionString = _prefSuiteOLEDBConnection.ConnectionString
                     };

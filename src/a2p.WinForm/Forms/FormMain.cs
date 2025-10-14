@@ -13,6 +13,9 @@ namespace a2p.WinForm.Forms
         private int borderWidth = 1;
         private Button? selectedButton = null;
 
+        // Added missing declaration for plFormContainer
+        private Panel plFormContainer;
+
         private readonly IReadService _readService;
         private readonly IWriteService _writeService;
         private readonly IExcelService _excelService;

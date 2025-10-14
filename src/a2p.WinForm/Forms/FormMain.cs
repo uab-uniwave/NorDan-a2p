@@ -186,8 +186,10 @@ namespace a2p.WinForm.Forms
             plTBPanel.PerformLayout();
             statusStrip.ResumeLayout(false);
             statusStrip.PerformLayout();
-            plFormContainer.ResumeLayout(false);
-            plFormContainer.PerformLayout();
+            if (plFormContainer != null)
+                plFormContainer.ResumeLayout(false);
+            if (plFormContainer != null)
+                plFormContainer.PerformLayout();
             plNordanHeaderLogo.ResumeLayout(false);
             plNordanHeaderLogo.PerformLayout();
             plTbSBInfo.ResumeLayout(false);

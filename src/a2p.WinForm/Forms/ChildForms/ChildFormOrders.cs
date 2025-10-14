@@ -3,6 +3,7 @@ using a2p.Application.Services;
 using a2p.Domain.Entities;
 using a2p.Domain.Interfaces;
 using a2p.Domain.Models;
+using a2p.Domain.Enums;
 
 using ClosedXML.Excel;
 using System.Windows.Forms;

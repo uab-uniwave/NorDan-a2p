@@ -6,7 +6,7 @@ using a2p.Domain.Enums;
 
 namespace a2p.Domain.Entities
 {
-    public class OrderEntity
+    public class OrderEntity : BaseEntity
     {
 
         //===============================================
@@ -20,16 +20,11 @@ namespace a2p.Domain.Entities
 
         public List<ItemEntity> Items { get; set; } = new();
         public List<MaterialEntity> Materials { get; set; } = new();
-        public List<ErrorEntity> Errors { get; set; } = new();
         //===================================================================================
 
-        public int SalesDocumentState { get; set; } = 0;
-        //===================================================================================
         public string? Currency { get; set; }
         public double ExchangeRate { get; set; }
         //===================================================================================
-        public bool Import { get; set; } = false;
-        public bool DeleteExistsing { get; set; } = true;
 
     }
 }

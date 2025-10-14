@@ -1,4 +1,4 @@
-using a2p.Application.Services;
+using a2p.Application.Interfaces;
 using a2p.Domain.Models;
 namespace a2p.Infrastructure.Services.SettingsService
 {

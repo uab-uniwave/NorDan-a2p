@@ -3,7 +3,7 @@ namespace a2p.Domain.Models
     public class OrderRecord
     {
 
-        public string Order = string.Empty;
+        public string OrderNumber = string.Empty;
         public string SalesDocument { get; set; } = string.Empty;
         public int Quantity { get; set; } = 0;
         public decimal Area { get; set; } = 0m;

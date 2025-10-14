@@ -2,9 +2,9 @@ using a2p.Domain.Enums;
 
 namespace a2p.Domain.Entities
 {
-    public class ItemEntity
+    public class ItemEntity : BaseEntity
     {
-        public Guid IdPos { get; set; } = Guid.Empty;
+
         public int Line { get; set; } = -1;
         public int Column { get; set; } = -1;
         //============================================================================================================================

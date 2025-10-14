@@ -5,17 +5,18 @@ using a2p.Domain.Enums;
 
 namespace a2p.Domain.Entities
 {
-    public class MaterialEntity
+    public class MaterialEntity : BaseEntity
     {
-        public Guid RowId { get; set; } = Guid.Empty;
+        public Guid OrderId { get; set; } = Guid.Empty;
         public string OrderNumber { get; set; } = string.Empty;
         public string Worksheet { get; set; } = string.Empty;
-        public int SalesDocumentNumber { get; set; } = -1;
-        public int SalesDocumentVersion { get; set; } = -1;
         public int Line { get; set; } = -1;
         public int Column { get; set; } = -1;
         //============================================================================================================================
         public string? ItemName { get; set; } = string.Empty;
+
+        public Guid? ItemId { get; set; } = null;
+
         public int SortOrder { get; set; } = -1;
         //============================================================================================================================
         public string ReferenceBase { get; set; } = string.Empty;
@@ -23,7 +24,7 @@ namespace a2p.Domain.Entities
         public string? Description { get; set; }
         //============================================================================================================================
         public string Color { get; set; } = string.Empty;
-        public string? ColorDescription { get; set; }
+        public string ColorDescription { get; set; } = null;
         //============================================================================================================================
         public decimal Width { get; set; } = 0m;
         public decimal Height { get; set; } = 0m;
@@ -53,7 +54,7 @@ namespace a2p.Domain.Entities
         //============================================================================================================================  
         public decimal SquareMeterPrice { get; set; } = 0m;
         //============================================================================================================================`
-        public string Pallet { get; set; } = string.Empty;
+        public string? Pallet { get; set; } = null;
         //============================================================================================================================
         public string? CustomField1 { get; set; } = null;
         public string? CustomField2 { get; set; } = null;
@@ -63,8 +64,6 @@ namespace a2p.Domain.Entities
         public string? CustomField5 { get; set; } = null;
         //============================================================================================================================
         public MaterialType MaterialType { get; set; } = 0;
-
-        public WorksheetType WorksheetType { get; set; } = 0;
         //============================================================================================================================
         public string SourceReference { get; set; } = string.Empty;
         public string SourceDescription { get; set; } = string.Empty;

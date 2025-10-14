@@ -1,6 +1,6 @@
 
-using a2p.Application.Services;
-using a2p.Application.Services.MappingService;
+using a2p.Application.Interfaces;
+using a2p.Application.Interfaces.MappingService;
 using a2p.Domain.Entities;
 using a2p.Domain.Enums;
 using a2p.Domain.Interfaces;
@@ -13,12 +13,12 @@ namespace a2p.Infrastructure.Services.MappingService
     {
         private readonly ILogService _logService;
 
-        private readonly IOrderRepository _orderRepository;
+        private readonly IMyRepository _orderRepository;
         private IPrefSuiteDataService _prefSuiteDataService;
         private ProgressValue _progressValue;
         private IProgress<ProgressValue>? _progress;
 
-        public MapperTechDesign(ILogService logService, IOrderRepository orderRepository, IPrefSuiteDataService prefSuiteDataService)
+        public MapperTechDesign(ILogService logService, IMyRepository orderRepository, IPrefSuiteDataService prefSuiteDataService)
         {
             _logService = logService;
             _orderRepository = orderRepository;
@@ -86,7 +86,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         if (string.IsNullOrEmpty(item.ItemName))
                         {
                             _logService.Debug("{$Class}.{$Method}." +
-                           "\nOrder {$Order}." +
+                           "\nOrder {$OrderNumber}." +
                            "\nWorksheet {$Worksheet}." +
                            "\nLine {$Line}. Item name is missing." +
                            "\nItem {$Data}.",
@@ -149,7 +149,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     catch (Exception ex)
                     {
                         _logService.Error("Unhandled error {$Class}.{Method}." +
-                            "\nOrder {$Order}." +
+                            "\nOrder {$OrderNumber}." +
                             "\nWorksheet {$Worksheet}." +
                             "\nLine {$Line}" +
                             "\nItem {$Item}." +
@@ -191,7 +191,7 @@ namespace a2p.Infrastructure.Services.MappingService
             catch (Exception ex)
             {
                 _logService.Error("Unhandled error {$Class}.{Method}." +
-                    "\nOrder {$Order}." +
+                    "\nOrder {$OrderNumber}." +
                     "\n{$Exception}",
                nameof(MapperTechDesign),
                     nameof(MapItemsAsync),
@@ -306,7 +306,7 @@ namespace a2p.Infrastructure.Services.MappingService
             catch (Exception ex)
             {
                 _logService.Error("Unhandled error {$Class}.{Method}." +
-                    "\nOrder {$Order}." +
+                    "\nOrder {$OrderNumber}." +
                     "\nWorksheet {$Worksheet}." +
                     "\n{$Exception}",
                nameof(MapperTechDesign),
@@ -468,7 +468,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     catch (Exception ex)
                     {
                         _logService.Error("Unhandled error {$Class}.{Method}." +
-                            "\nOrder {$Order}, " +
+                            "\nOrder {$OrderNumber}, " +
                             "\nWorksheet: {$Worksheet}, " +
                             "\nReference: {$Reference }, " +
                             "\nColor: {$Color }, " +
@@ -514,7 +514,7 @@ namespace a2p.Infrastructure.Services.MappingService
             catch (Exception ex)
             {
                 _logService.Error("Unhandled error {$Class}.{Method}." +
-                    "\nOrder {$Order}." +
+                    "\nOrder {$OrderNumber}." +
                     "\nWorksheet {$Worksheet}." +
                     "\n{$Exception}",
                nameof(MapperTechDesign),
@@ -568,7 +568,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         if (string.IsNullOrEmpty(material.SourceReference) && string.IsNullOrEmpty(material.SourceColor))
                         {
                             _logService.Error("{$Class}.{$Method}. Sapa article and color are missing. Line will be skipped." +
-                              "\nOrder {$Order}, " +
+                              "\nOrder {$OrderNumber}, " +
                             "\nWorksheet: {$Worksheet}, " +
                             "\nDescription {$Description}," +
                             nameof(MapperTechDesign),
@@ -727,7 +727,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     catch (Exception ex)
                     {
                         _logService.Error("Unhandled error {$Class}.{Method}." +
-                            "\nOrder {$Order}, " +
+                            "\nOrder {$OrderNumber}, " +
                             "\nWorksheet: {$Worksheet}, " +
                             "\nReference: {$Reference }, " +
                             "\nColor: {$Color }, " +
@@ -772,7 +772,7 @@ namespace a2p.Infrastructure.Services.MappingService
             catch (Exception ex)
             {
                 _logService.Error("Unhandled error {$Class}.{Method}." +
-                    "\nOrder {$Order}." +
+                    "\nOrder {$OrderNumber}." +
                     "\nWorksheet {$Worksheet}." +
                     "\n{$Exception}",
                nameof(MapperTechDesign),
@@ -942,7 +942,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     catch (Exception ex)
                     {
                         _logService.Error("Unhandled error {$Class}.{Method}." +
-                           "\nOrder {$Order}, " +
+                           "\nOrder {$OrderNumber}, " +
                             "\nWorksheet: {$Worksheet}, " +
                             "\nReference: {$Reference }, " +
                             "\nColor: {$Color }, " +
@@ -989,7 +989,7 @@ namespace a2p.Infrastructure.Services.MappingService
             catch (Exception ex)
             {
                 _logService.Error("Unhandled error {$Class}.{Method}." +
-                    "\nOrder {$Order}." +
+                    "\nOrder {$OrderNumber}." +
                     "\nWorksheet {$Worksheet}." +
                     "\n{$Exception}",
                nameof(MapperTechDesign),
@@ -1041,7 +1041,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         //===================================================================================================
                         material.ItemName = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
 
-                        //Reset Sort Order if new item
+                        //Reset Sort OrderNumber if new item
                         //===================================================================================================
                         if (material.ItemName != worksheet.WorksheetData[i - 1][1].ToString())
                         {
@@ -1247,7 +1247,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     catch (Exception ex)
                     {
                         _logService.Error("Unhandled error {$Class}.{$Method}." +
-                            "\nOrder {$Order}, " +
+                            "\nOrder {$OrderNumber}, " +
                             "\nWorksheet: {$Worksheet}, " +
                             "\nReference: {$Reference}, " +
                             "\nColor: {$Color}, " +
@@ -1295,7 +1295,7 @@ namespace a2p.Infrastructure.Services.MappingService
             catch (Exception ex)
             {
                 _logService.Error("Unhandled error {$Class}.{Method}." +
-                    "\nOrder {$Order}." +
+                    "\nOrder {$OrderNumber}." +
                     "\nWorksheet {$Worksheet}." +
                     "\n{$Exception}",
                nameof(MapperTechDesign),
@@ -1344,7 +1344,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         material.ItemName = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
 
                         //===================================================================================================
-                        //Reset Sort Order if new item
+                        //Reset Sort OrderNumber if new item
                         if (material.ItemName != worksheet.WorksheetData[i - 1][1].ToString())
                         {
                             sortOrder = 0;
@@ -1355,7 +1355,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         if (string.IsNullOrEmpty(material.Description))
                         {
                             _logService.Error("{$Class}.{$Method}. Glass description is missing." +
-                           "\nOrder {$Order}, " +
+                           "\nOrder {$OrderNumber}, " +
                            "\nWorksheet: {$Worksheet}, " +
                            "\nReference {$Reference}, " +
                            "\nColor {$Color}," +
@@ -1393,7 +1393,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         if (string.IsNullOrEmpty(resultGlassReference))
                         {
                             _logService.Error("{$Class}.{$Method}. Glass not exists in PrefSuite DB." +
-                          "\nOrder {$Order}, " +
+                          "\nOrder {$OrderNumber}, " +
                           "\nWorksheet: {$Worksheet}, " +
                           "\nReference: {$Reference}, " +
                           "\nDescription: {$Color} not found. " +
@@ -1487,7 +1487,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     catch (Exception ex)
                     {
                         _logService.Error("Unhandled error  {$Class}.{Method}" +
-                            "\nOrder {$Order}, " +
+                            "\nOrder {$OrderNumber}, " +
                             "\nWorksheet: {$Worksheet}, " +
                             "\nReference {$Reference}, " +
                             "\nColor {$Color}, " +
@@ -1533,7 +1533,7 @@ namespace a2p.Infrastructure.Services.MappingService
             catch (Exception ex)
             {
                 _logService.Error("Unhandled error {$Class}.{Method}." +
-                    "\nOrder {$Order}." +
+                    "\nOrder {$OrderNumber}." +
                     "\nWorksheet {$Worksheet}." +
                     "\n{$Exception}",
                nameof(MapperTechDesign),
@@ -1685,7 +1685,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     catch (Exception ex)
                     {
                         _logService.Error("Unhandled error {$Class}.{Method}." +
-                            "\nOrder {$Order}, " +
+                            "\nOrder {$OrderNumber}, " +
                             "\nWorksheet: {$Worksheet}, " +
                             "\nLine {$Line}, " +
                             "\nReference base {$ReferenceBase}, " +
@@ -1729,7 +1729,7 @@ namespace a2p.Infrastructure.Services.MappingService
             catch (Exception ex)
             {
                 _logService.Error("Unhandled error {$Class}.{Method}." +
-                    "\nOrder {$Order}." +
+                    "\nOrder {$OrderNumber}." +
                     "\nWorksheet {$Worksheet}." +
                     "\n{$Exception}",
                nameof(MapperTechDesign),
@@ -1747,7 +1747,7 @@ namespace a2p.Infrastructure.Services.MappingService
         {
             await Task.Run(() =>
             {
-                _logService.Verbose("Mapper Sapa 2 Service: Map Materials | Order : {$Order} " +
+                _logService.Verbose("Mapper Sapa 2 Service: Map Materials | OrderNumber : {$OrderNumber} " +
                                                               "| Worksheet {Worksheet$} " +
                                                               "| Line: {$Line} " +
                                                               "| Sort order: " +
@@ -1838,7 +1838,7 @@ namespace a2p.Infrastructure.Services.MappingService
             await Task.Run(() =>
             {
                 _logService.Verbose(
-                    "Mapper Sapa 2 Service: Map Items | Order : {$Order} " +
+                    "Mapper Sapa 2 Service: Map Items | OrderNumber : {$OrderNumber} " +
                     "| Worksheet {Worksheet$} " +
                     "| Line: {$Line} " +
                     "| Sort order: " +
@@ -2012,7 +2012,7 @@ namespace a2p.Infrastructure.Services.MappingService
                 {
                     _logService.Error("{$Class}.{$Method}. " +
                     "Error Sapa article and color are empty." +
-                    "\nOrder: {$Order}, " +
+                    "\nOrder: {$OrderNumber}, " +
                     "\nWorksheet: {$Worksheet}, " +
                     "\nReference: {$Reference}, " +
                     "\nColor: {$Color}.",
@@ -2107,7 +2107,7 @@ namespace a2p.Infrastructure.Services.MappingService
 
                         _logService.Error("Mapper Sapa 2 Service: Warning." +
                            "Reference > 25 characters." +
-                           "\nOrder: {$Order}, " +
+                           "\nOrder: {$OrderNumber}, " +
                            "\nWorksheet: {$Worksheet}," +
                            "\nReference: {$Reference}," +
                            "\nColor: {$Color}," +
@@ -2150,7 +2150,7 @@ namespace a2p.Infrastructure.Services.MappingService
             catch (Exception ex)
             {
                 _logService.Error("Unhandled error {$Class}.{Method}." +
-                    "\nOrder {$Order}." +
+                    "\nOrder {$OrderNumber}." +
                     "\nException {$Exception}",
                    nameof(MapperTechDesign),
                     nameof(TransformReference),

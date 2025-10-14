@@ -1,7 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using a2p.Application.Services;
+using a2p.Application.Interfaces;
 using a2p.Domain.Models;
 
 using Microsoft.Extensions.Configuration;

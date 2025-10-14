@@ -3,14 +3,14 @@ using a2p.WinForm.Properties;
 using a2p.Application.Services;
 using a2p.Application.Abstractions;
 using a2p.Domain.Models;
-using a2p.Domain.Respoitories;
-using a2p.WinForm.Forms.ChildForms;
+using a2p.Domain.Entities;
+using a2p.WinForm.Forms;
 using System.Windows.Forms;
 using System.Windows;
 using System.Drawing;
 
 
-namespace a2p.WinForm
+namespace a2p.WinForm.Forms
     {
     partial class FormMain
     {

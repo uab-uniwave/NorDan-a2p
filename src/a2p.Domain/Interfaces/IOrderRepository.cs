@@ -4,13 +4,12 @@ namespace a2p.Domain.Interfaces
 {
     public interface IOrderRepository
     {
-
-        //============================================================================================================================
-
-
-        Task<ErrorEntity?> InsertOrderMaterialAsync(MaterialEntity material, int number, int version);
-        //============================================================================================================================
-        Task<ErrorEntity?> InsertOrderItemAsync(ItemEntity item, int number, int version, string idPos);
-
+        Task<OrderEntity?> GetOrderAsync(Guid id);
+        Task<OrderEntity?> GetOrderByNumberAsync(string orderNumber);
+        Task<IEnumerable<OrderEntity>?> GetOrdersAsync();
+        Task<OrderEntity> InsertOrderAsync(OrderEntity order);
+        Task<OrderEntity?> UpdateOrdrAsync(OrderEntity order);
+        Task<Guid> DeleteOrderAsync(Guid id);
     }
 }
+

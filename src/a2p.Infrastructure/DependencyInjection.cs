@@ -1,14 +1,12 @@
-using a2p.Application.Services;
-using a2p.Application.Services.MappingService;
+using a2p.Application.Interfaces;
+using a2p.Application.Interfaces.MappingService;
 using a2p.Domain.Interfaces;
 using a2p.Infrastructure.Data;
 using a2p.Infrastructure.Services;
-using a2p.Infrastructure.Services.ExcelServices;
 using a2p.Infrastructure.Services.Logger;
 using a2p.Infrastructure.Services.MappingService;
-using a2p.Infrastructure.Services.PrefSuiteServices;
+using a2p.Infrastructure.Services.PrefSuiteService;
 using a2p.Infrastructure.Services.SettingsService;
-using a2p.Infrastructure.Services.SQLService;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,7 +44,7 @@ namespace a2p.Infrastructure
             _ = services.AddSingleton<IExcelService, ExcelReaderService>();
             _ = services.AddSingleton<ISQLService, SQLService>();
             _ = services.AddSingleton<IPrefSuiteService, PrefSuiteService>();
-            _ = services.AddSingleton<IOrderRepository, OrderRepository>();
+            _ = services.AddSingleton<IMyRepository, MyRepository>();
             _ = services.AddSingleton<IPrefSuiteDataService, PrefSuiteDataService>();
             _ = services.AddSingleton<IFileService, FileService>();
             _ = services.AddSingleton<IMapperTechDesign, MapperTechDesign>();

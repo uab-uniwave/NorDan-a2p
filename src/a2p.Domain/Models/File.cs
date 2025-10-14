@@ -5,7 +5,7 @@ namespace a2p.Domain.Models
     public class File
     {
 
-        public string Order { get; set; } = string.Empty;
+        public string OrderNumber { get; set; } = string.Empty;
 
         public string Currency { get; set; } = string.Empty;
 

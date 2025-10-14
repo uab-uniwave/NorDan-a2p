@@ -1,7 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using a2p.Application.Services;
+using a2p.Application.Interfaces;
 using a2p.Domain.Models;
 
 using Microsoft.Extensions.Configuration;
@@ -118,7 +118,7 @@ namespace a2p.Infrastructure.Services.Logger
                                 Level = jsonNode["Level"]?.ToString() ?? string.Empty,
                                 Message = propertiesNode["RenderedMessage"]?.ToString() ?? string.Empty,
                                 Exception = propertiesNode["Exception"]?.ToString() ?? string.Empty,
-                                Order = propertiesNode["Order"]?.ToString() ?? string.Empty,
+                                Order = propertiesNode["OrderNumber"]?.ToString() ?? string.Empty,
                                 Worksheet = propertiesNode["Worksheet"]?.ToString() ?? string.Empty,
                                 Reference = propertiesNode["Reference"]?.ToString() ?? string.Empty,
                                 Color = propertiesNode["Color"]?.ToString() ?? string.Empty,

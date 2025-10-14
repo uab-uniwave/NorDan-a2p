@@ -4,12 +4,16 @@ using System.ComponentModel.DataAnnotations;
 
 namespace a2p.Application.DTO
 {
-    public class ItemDTO
+    public class ItemDto
     {
+        public Guid IdPos { get; set; } = Guid.NewGuid();
+
         public int SalesDocumentNumber { get; set; } = -1;
         public int SalesDocumentVersion { get; set; } = -1;
-        public string SalesDocumentIdPos { get; set; } = Guid.NewGuid().ToString();
+
         [MaxLength(50)] public string Order { get; set; } = string.Empty;
+
+        [MaxLength(50)] public string ItemName { get; set; } = string.Empty;
         [MaxLength(255)] public string Worksheet { get; set; } = string.Empty;
         public int Line { get; set; } = -1;
         public int Column { get; set; } = -1;

@@ -151,36 +151,27 @@ public class MaterialService : IMaterialService
 
     }
 
-    public async Task<Result<Guid?>> DeleteMaterialAsync(Guid rowId)
+    public async Task<Result<Guid>> DeleteMaterialAsync(Guid rowId)
     {
         try
         {
-
             var result = await _repo.DeleteMaterialAsync(rowId);
-            if (string.IsNullOrEmpty(result.ToString()))
-            {
-
-                return Result<Guid?>.Failure($"Failed to delete Material by with RowId '{rowId}'. Material not found!");
-            }
             if (result == Guid.Empty)
             {
-
-                return Result<Guid?>.Failure($"Failed to delete Material by with RowId '{rowId}'. Material not found!");
+                return Result<Guid>.Failure($"Failed to delete Material with RowId '{rowId}'. Material not found!");
             }
 
-            return Result<Guid?>.Success(result)!;
+            return Result<Guid>.Success(result);
         }
-
         catch (DomainException dex)
         {
             // domain rule violation - handled gracefully
-            return Result<Guid?>.Failure(dex.Message);
+            return Result<Guid>.Failure(dex.Message);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error delteing . Material rowId '{rowId}'!", ex.Message);
-            return Result<Guid?>.Failure($"Error delteing . Material rowId '{rowId}!");
+            _logger.LogError(ex, $"Error deleting Material with rowId '{rowId}'!", ex.Message);
+            return Result<Guid>.Failure($"Error deleting Material with rowId '{rowId}'!");
         }
-
     }
 }

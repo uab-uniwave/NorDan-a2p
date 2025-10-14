@@ -351,7 +351,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     {
                         //===================================================================================================
                         material.Line = line;
-                        material.WorksheetType = WorksheetType.Materials;
+                        //   material.WorksheetType = WorksheetType.Materials;
                         material.ItemName = string.Empty; // not used in profiles
                         material.SortOrder = -1; // not used in profiles
 
@@ -820,7 +820,7 @@ namespace a2p.Infrastructure.Services.MappingService
 
                         //===================================================================================================
                         material.Line = line;
-                        material.WorksheetType = WorksheetType.Materials;
+                        //  material.WorksheetType = WorksheetType.Materials;
                         material.ItemName = string.Empty; // not used 
                         material.SortOrder = -1; // not used           
 
@@ -1829,7 +1829,7 @@ namespace a2p.Infrastructure.Services.MappingService
 
                                                               material.SourceColor ?? string.Empty,
                                                               material.SourceColorDescription ?? string.Empty,
-                                                              material.WorksheetType);
+                                                           //   material.WorksheetType);
             });
         }
 

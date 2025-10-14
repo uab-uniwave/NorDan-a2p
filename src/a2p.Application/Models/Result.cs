@@ -25,3 +25,4 @@ namespace a2p.Application.Models
         public static Result<T> Success(T value) => new(value);
         public static Result<T> Failure(string error) => new(error);
     }
+}

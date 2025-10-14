@@ -80,7 +80,7 @@ namespace a2p.Infrastructure.Data
             }
         }
 
-        public async Task<IEnumerable<OrderEntity>> GetOrdersAsync()
+        public async Task<IEnumerable<OrderEntity>?> GetOrdersAsync()
         {
             try
             {
@@ -136,7 +136,7 @@ namespace a2p.Infrastructure.Data
             }
         }
 
-        public async Task UpdateOrdrAsync(OrderEntity order)
+        public async Task<OrderEntity?> UpdateOrdrAsync(OrderEntity order)
         {
             try
             {
@@ -159,6 +159,13 @@ namespace a2p.Infrastructure.Data
                     "WHERE [RowId] = @RowId";
 
                 var result = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
+                if (result == null)
+                    return null;
+
+                if (result.Rows.Count == 0)
+                    return null;
+                return MapDataRowToOrder(result.Rows[0]);
+
             }
             catch (Exception ex)
             {
@@ -167,28 +174,36 @@ namespace a2p.Infrastructure.Data
             }
         }
 
-        public async Task DeleteOrderAsync(Guid id)
+        public async Task<Guid> DeleteOrderAsync(Guid rowId)
         {
+
             try
             {
                 SqlCommand cmd = new()
                 {
-                    CommandText = "DELETE FROM [dbo].[Uniwave_a2p_Orders] WHERE [RowId] = @RowId",
+                    CommandText = "DELETE FROM [dbo].[Uniwave_a2p_Order] WHERE [RowId] = @RowId",
                     CommandType = CommandType.Text
                 };
-
                 var parameters = new SqlParameter[]
                 {
-                    new SqlParameter("@RowId", id)
+                    new SqlParameter("@RowId", rowId)
                 };
-
-                await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
+                int rowsAffected = await _sqlService.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
+                if (rowsAffected > 0)
+                    return rowId;
+                return Guid.Empty;
+            }
+            catch (SqlException sqlEx)
+            {
+                Console.WriteLine(sqlEx.Message);
+                return Guid.Empty;
             }
             catch (Exception ex)
             {
-                _logService.Error($"Error deleting order: {ex.Message}");
-                throw;
+                Console.WriteLine(ex.Message);
+                return Guid.Empty;
             }
+
         }
 
         private static SqlParameter[] CreateOrderParameters(OrderEntity order)

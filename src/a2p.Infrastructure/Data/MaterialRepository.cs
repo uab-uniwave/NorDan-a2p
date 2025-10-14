@@ -21,7 +21,7 @@ namespace a2p.Infrastructure.Data
             _sqlService = sqlService ?? throw new ArgumentNullException(nameof(sqlService));
         }
 
-        public async Task<MaterialEntity?> InsertMaterialAsync(MaterialEntity material)
+        public async Task<MaterialEntity> InsertMaterialAsync(MaterialEntity material)
         {
             try
             {
@@ -172,8 +172,6 @@ namespace a2p.Infrastructure.Data
                 {
                     CommandText = "UPDATE [dbo].[Uniwave_a2p_Materials] " +
                     "SET " +
-                    "[SalesDocumentNumber] = @SalesDocumentNumber, " +
-                    "[SalesDocumentVersion] = @SalesDocumentVersion, " +
                     "[OrderNumber] = @OrderNumber, " +
                     "[Worksheet] = @Worksheet, " +
                     "[Line] = @Line, " +
@@ -252,7 +250,7 @@ namespace a2p.Infrastructure.Data
             }
         }
 
-        public async Task<MaterialEntity?> GetMaterialAsync(Guid id)
+        public async Task<MaterialEntity?> GetMaterialAsync(Guid rowId)
         {
             try
             {
@@ -264,7 +262,7 @@ namespace a2p.Infrastructure.Data
 
                 var parameters = new SqlParameter[]
                 {
-                    new SqlParameter("@RowId", id)
+                    new SqlParameter("@RowId", rowId)
                 };
 
                 var result = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
@@ -286,7 +284,7 @@ namespace a2p.Infrastructure.Data
             }
         }
 
-        public async Task<IEnumerable<MaterialEntity>?> GetOrderMaterialsAsync(Guid orderId)
+        public async Task<IEnumerable<MaterialEntity>?> GetOrderMaterialsAsync(Guid rowId)
         {
             try
             {
@@ -298,7 +296,7 @@ namespace a2p.Infrastructure.Data
 
                 var parameters = new SqlParameter[]
                 {
-                    new SqlParameter("@OrderId", orderId)
+                    new SqlParameter("@OrderId", rowId)
                 };
 
                 var result = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
@@ -360,6 +358,36 @@ namespace a2p.Infrastructure.Data
             {
                 Console.WriteLine(ex.Message);
                 return Array.Empty<MaterialEntity>();
+            }
+        }
+
+        public async Task<Guid> DeleteMaterialAsync(Guid rowId)
+        {
+            try
+            {
+                SqlCommand cmd = new()
+                {
+                    CommandText = "DELETE FROM [dbo].[Uniwave_a2p_Materials] WHERE [RowId] = @RowId",
+                    CommandType = CommandType.Text
+                };
+                var parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@RowId", rowId)
+                };
+                int rowsAffected = await _sqlService.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
+                if (rowsAffected > 0)
+                    return rowId;
+                return Guid.Empty;
+            }
+            catch (SqlException sqlEx)
+            {
+                Console.WriteLine(sqlEx.Message);
+                return Guid.Empty;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Guid.Empty;
             }
         }
 

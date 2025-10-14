@@ -10,6 +10,6 @@ namespace a2p.Application.Services
         Task<Result<IEnumerable<MaterialEntity>?>> GetOrderMaterialsAsync(Guid orderId);
         Task<Result<IEnumerable<MaterialEntity>?>> GetMaterialsAsync();
         Task<Result<MaterialEntity?>> UpdateMaterialAsync(MaterialEntity material);
-        Task<Result<Guid?>> DeleteMaterialAsync(Guid id);
+        Task<Result<Guid>> DeleteMaterialAsync(Guid id);
     }
 }

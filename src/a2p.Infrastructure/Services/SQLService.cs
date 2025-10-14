@@ -62,7 +62,7 @@ namespace a2p.Infrastructure.Services
         /// <summary>
         /// Executes a SQL command and returns a DataTable (useful for SELECT queries).
         /// </summary>
-        public async Task<DataTable> ExecuteQueryAsync(string sqlCommand, CommandType commandType, params SqlParameter[] parameters)
+        public async Task<DataTable?> ExecuteQueryAsync(string sqlCommand, CommandType commandType, params SqlParameter[]? parameters)
         {
             try
             {
@@ -92,18 +92,22 @@ namespace a2p.Infrastructure.Services
                 DataTable dataTable = new();
                 dataTable.Load(reader);
 
+                if (dataTable.Rows.Count == 0)
+                {
+                    return null;
+                }
                 return dataTable;
             }
             catch (Exception ex)
             {
                 _logService.Error(ex.Message, "SQL Repository: Unhandled error Executing query {$sqlCommand}", sqlCommand);
-                return new DataTable();
+                return null;
             }
         }
         /// <summary>
         /// Executes a SQL command and returns two values (document OrderNumber,document version)
         /// </summary>
-        public async Task<(int, int)> ExecuteQueryTupleValuesAsync(string sqlCommand, CommandType commandType, params SqlParameter[] parameters)
+        public async Task<(int, int)?> ExecuteQueryTupleValuesAsync(string sqlCommand, CommandType commandType, params SqlParameter[]? parameters)
         {
             int value1;
             int value2;
@@ -137,7 +141,7 @@ namespace a2p.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                _logService.Verbose(
+                _logService.Error(
            "{$Class}.{$Method}. Unhandled error getting result from method. sException: {Exception}.",
            nameof(SQLService),
            nameof(ExecuteQueryTupleValuesAsync),
@@ -151,7 +155,7 @@ namespace a2p.Infrastructure.Services
         /// <summary>
         /// Executes a SQL command that does not return data (useful for INSERT, UPDATE, DELETE, etc.).
         /// </summary>
-        public async Task<int> ExecuteNonQueryAsync(string sqlCommand, CommandType commandType, params SqlParameter[] parameters)
+        public async Task<int> ExecuteNonQueryAsync(string sqlCommand, CommandType commandType, params SqlParameter[]? parameters)
         {
             try
             {
@@ -185,7 +189,7 @@ namespace a2p.Infrastructure.Services
             }
         }
         /// </summary>
-        public async Task<object?> ExecuteScalarAsync(string sqlCommand, CommandType commandType, params SqlParameter[] parameters)
+        public async Task<DataTable?> ExecuteScalarAsync(string sqlCommand, CommandType commandType, params SqlParameter[]? parameters)
         {
             try
             {
@@ -210,19 +214,27 @@ namespace a2p.Infrastructure.Services
                 }
 
                 await connection.OpenAsync();
-                object? result = await command.ExecuteScalarAsync();
-                return result ?? DBNull.Value;
+                using SqlDataReader reader = await command.ExecuteReaderAsync();
+
+                DataTable dataTable = new();
+                dataTable.Load(reader);
+
+                if (dataTable.Rows.Count == 0)
+                {
+                    return null;
+                }
+                return dataTable;
             }
             catch (Exception ex)
             {
                 _logService.Error(ex.Message, "SQL Repository: Unhandled error Executing scalar query {$sqlCommand}. Exception{$Exception}", sqlCommand, ex.Message);
-                return DBNull.Value;
+                return null;
             }
         }
         /// <summary>
         /// Executes a stored procedure and returns a DataTable (useful for SELECT queries).
         /// </summary>
-        public async Task<DataTable> ExecuteStoredProcedureAsync(string storedProcedureName, params SqlParameter[] parameters)
+        public async Task<DataTable> ExecuteStoredProcedureAsync(string storedProcedureName, params SqlParameter[]? parameters)
         {
             try
             {

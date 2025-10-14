@@ -1,7 +1,6 @@
-
 using a2p.Domain.Entities;
 
-namespace a2p.Domain.Respoitories
+namespace a2p.Domain.Interfaces
 {
     public interface IOrderRepository
     {

@@ -3,8 +3,8 @@ using a2p.Application.Services;
 using a2p.Application.Services.MappingService;
 using a2p.Domain.Entities;
 using a2p.Domain.Enums;
+using a2p.Domain.Interfaces;
 using a2p.Domain.Models;
-using a2p.Domain.Respoitories;
 
 using System.Text.RegularExpressions;
 namespace a2p.Infrastructure.Services.MappingService

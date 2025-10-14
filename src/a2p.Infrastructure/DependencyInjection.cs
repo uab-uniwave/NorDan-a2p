@@ -1,6 +1,6 @@
 using a2p.Application.Services;
 using a2p.Application.Services.MappingService;
-using a2p.Domain.Respoitories;
+using a2p.Domain.Interfaces;
 using a2p.Infrastructure.Data;
 using a2p.Infrastructure.Services;
 using a2p.Infrastructure.Services.ExcelServices;

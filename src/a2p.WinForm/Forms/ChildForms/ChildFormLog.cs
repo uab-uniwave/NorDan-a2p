@@ -5,7 +5,7 @@ using ClosedXML.Excel;
 
 using System.Data;
 using System.Text.Json.Nodes;
-namespace a2p.WinForm.Forms.ChildForms
+namespace a2p.WinForm.ChildForms
 {
     public partial class ChildFormLog : Form
     {

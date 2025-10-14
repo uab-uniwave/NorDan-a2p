@@ -1,4 +1,4 @@
-Ready# .NET 9.0 Upgrade Plan
+# .NET 9.0 Upgrade Plan
 
 ## Execution Steps
 

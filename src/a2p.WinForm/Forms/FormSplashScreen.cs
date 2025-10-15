@@ -1,10 +1,10 @@
-using System.Drawing.Drawing2D;
+﻿using System.Drawing.Drawing2D;
 
 namespace a2p.WinForm.Forms
 {
-    public partial class SplashScreenForm : Form
+    public partial class FormSplashScreen : Form
     {
-        public SplashScreenForm()
+        public FormSplashScreen()
         {
 
 

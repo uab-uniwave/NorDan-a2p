@@ -1,4 +1,5 @@
 using a2p.Application.Interfaces; // Added for async/await
+using a2p.Application.Models;
 using a2p.Domain.Models;
 
 using ClosedXML.Excel;

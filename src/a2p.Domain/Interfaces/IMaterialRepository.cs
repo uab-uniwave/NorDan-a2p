@@ -12,14 +12,14 @@ namespace a2p.Domain.Interfaces
         /// </summary>
         /// <param name="rowId">The unique identifier of the material to retrieve.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the material if found, or null if not found.</returns>
-        Task<MaterialEntity?> GetMaterialAsync(Guid rowId);
+        Task<MaterialEntity?> GetMaterialAsync(Guid id);
 
         /// <summary>
         /// Retrieves all materials associated with a specific order asynchronously.
         /// </summary>
         /// <param name="rowId">The unique identifier of the order.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains a collection of materials if found, or null if not found.</returns>
-        Task<IEnumerable<MaterialEntity>?> GetOrderMaterialsAsync(Guid rowId);
+        Task<IEnumerable<MaterialEntity>?> GetOrderMaterialsAsync(Guid id);
 
         /// <summary>
         /// Retrieves all materials in the system asynchronously.

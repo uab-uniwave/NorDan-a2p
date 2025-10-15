@@ -15,7 +15,6 @@ public class MaterialService : IMaterialService
     {
         _repo = repo;
         _logger = logger;
-
     }
 
     public async Task<Result<MaterialEntity>> InsertMaterialAsync(MaterialEntity material)
@@ -25,22 +24,22 @@ public class MaterialService : IMaterialService
 
             material.CreatedUTCDateTime = DateTime.UtcNow;
             var result = await _repo.InsertMaterialAsync(material);
-            if (result == null || result.RowId == Guid.Empty)
+            if (result == null || result.Id == Guid.Empty)
             {
-                return Result<MaterialEntity>.Failure($"Failed inserting material. Order '{material.OrderNumber}', material '{material.Reference}'!");
+                return Result.Failure<MaterialEntity>($"Failed inserting material. OrderNumber '{material.OrderNumber}', material '{material.Reference}'!");
             }
-            return Result<MaterialEntity>.Success(result);
+            return Result.Success<MaterialEntity>(result);
         }
 
         catch (DomainException dex)
         {
             // domain rule violation - handled gracefully
-            return Result<MaterialEntity>.Failure(dex.Message);
+            return Result.Failure<MaterialEntity>(dex.Message);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error inserting material '{material.Reference}' of order '{material.OrderNumber}'!");
-            return Result<MaterialEntity>.Failure($"Error inserting material '{material.Reference}' of order '{material.OrderNumber}' : {ex.Message.ToString()}");
+            return Result.Failure<MaterialEntity>($"Error inserting material '{material.Reference}' of order '{material.OrderNumber}': {ex.Message}");
         }
 
     }
@@ -51,22 +50,22 @@ public class MaterialService : IMaterialService
         {
 
             var result = await _repo.GetMaterialAsync(rowId);
-            if (result == null || result.RowId == Guid.Empty)
+            if (result == null || result.Id == Guid.Empty)
             {
-                return Result<MaterialEntity?>.Failure($"Failed to get material. Material with rowId '{rowId}' not found.");
+                return Result.Failure<MaterialEntity?>($"Failed to get material. Material with rowId '{rowId}' not found.");
             }
-            return Result<MaterialEntity>.Success(result)!;
+            return Result.Success<MaterialEntity?>(result);
         }
 
         catch (DomainException dex)
         {
             // domain rule violation - handled gracefully
-            return Result<MaterialEntity?>.Failure(dex.Message);
+            return Result.Failure<MaterialEntity?>(dex.Message);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error getting material by rowId '{rowId}'!", ex.Message);
-            return Result<MaterialEntity?>.Failure($"Error getting  by rowId '{rowId}!");
+            _logger.LogError(ex, $"Error getting material by rowId '{rowId}'!");
+            return Result.Failure<MaterialEntity?>($"Error getting material by rowId '{rowId}'!");
         }
 
     }
@@ -78,21 +77,21 @@ public class MaterialService : IMaterialService
             var result = await _repo.GetOrderMaterialsAsync(rowId);
             if (result == null || !result.Any())
             {
-                return Result<IEnumerable<MaterialEntity>?>.Failure($"Failed to get materials. Materials for order rowId '{rowId}' not found.");
+                return Result.Failure<IEnumerable<MaterialEntity>?>($"Failed to get materials. Materials for order rowId '{rowId}' not found.");
             }
-            return Result<IEnumerable<MaterialEntity>>.Success(result)!;
+            return Result.Success<IEnumerable<MaterialEntity>?>(result);
         }
 
         catch (DomainException dex)
         {
             // domain rule violation - handled gracefully
-            return Result<IEnumerable<MaterialEntity>?>.Failure(dex.Message);
+            return Result.Failure<IEnumerable<MaterialEntity>?>(dex.Message);
 
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error getting materials by order rowId '{rowId}'!", ex.Message);
-            return Result<IEnumerable<MaterialEntity>?>.Failure($"Error getting  by rowId '{rowId}!");
+            _logger.LogError(ex, $"Error getting materials by order rowId '{rowId}'!");
+            return Result.Failure<IEnumerable<MaterialEntity>?>($"Error getting materials by rowId '{rowId}'!");
         }
 
     }
@@ -106,20 +105,20 @@ public class MaterialService : IMaterialService
             var result = await _repo.GetMaterialsAsync();
             if (result == null || !result.Any())
             {
-                return Result<IEnumerable<MaterialEntity>?>.Failure($"Failed to get materials.Materials  not found.");
+                return Result.Failure<IEnumerable<MaterialEntity>?>($"Failed to get materials. Materials not found.");
             }
-            return Result<IEnumerable<MaterialEntity>>.Success(result)!;
+            return Result.Success<IEnumerable<MaterialEntity>?>(result);
         }
 
         catch (DomainException dex)
         {
             // domain rule violation - handled gracefully
-            return Result<IEnumerable<MaterialEntity>?>.Failure(dex.Message);
+            return Result.Failure<IEnumerable<MaterialEntity>?>(dex.Message);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error getting materials");
-            return Result<IEnumerable<MaterialEntity>?>.Failure($"Error getting materials !");
+            _logger.LogError(ex, $"Error getting materials!");
+            return Result.Failure<IEnumerable<MaterialEntity>?>($"Error getting materials!");
         }
 
     }
@@ -131,22 +130,22 @@ public class MaterialService : IMaterialService
 
             material.ModifiedUTCDateTime = DateTime.UtcNow;
             var result = await _repo.UpdateMaterialAsync(material);
-            if (result == null || result.RowId == Guid.Empty)
+            if (result == null || result.Id == Guid.Empty)
             {
-                return Result<MaterialEntity?>.Failure($"Failed to updating . Order '{material.OrderNumber}',  '{material.Reference}'!");
+                return Result.Failure<MaterialEntity?>($"Failed to update material. OrderNumber '{material.OrderNumber}', material '{material.Reference}'!");
             }
-            return Result<MaterialEntity>.Success(result)!;
+            return Result.Success<MaterialEntity?>(result);
         }
 
         catch (DomainException dex)
         {
             // domain rule violation - handled gracefully
-            return Result<MaterialEntity?>.Failure(dex.Message);
+            return Result.Failure<MaterialEntity?>(dex.Message);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error inserting order . Order '{material.OrderNumber}' ,  '{material.Reference}'!");
-            return Result<MaterialEntity?>.Failure($"Error inserting  '{material.Reference}' for order '{material.OrderNumber}': {ex.Message}");
+            _logger.LogError(ex, $"Error updating material '{material.Reference}' of order '{material.OrderNumber}'!");
+            return Result.Failure<MaterialEntity?>($"Error updating material '{material.Reference}' for order '{material.OrderNumber}': {ex.Message}");
         }
 
     }
@@ -158,20 +157,20 @@ public class MaterialService : IMaterialService
             var result = await _repo.DeleteMaterialAsync(rowId);
             if (result == Guid.Empty)
             {
-                return Result<Guid>.Failure($"Failed to delete Material with RowId '{rowId}'. Material not found!");
+                return Result.Failure<Guid>($"Failed to delete Material with Id '{rowId}'. Material not found!");
             }
 
-            return Result<Guid>.Success(result);
+            return Result.Success<Guid>(result);
         }
         catch (DomainException dex)
         {
             // domain rule violation - handled gracefully
-            return Result<Guid>.Failure(dex.Message);
+            return Result.Failure<Guid>(dex.Message);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error deleting Material with rowId '{rowId}'!", ex.Message);
-            return Result<Guid>.Failure($"Error deleting Material with rowId '{rowId}'!");
+            _logger.LogError(ex, $"Error deleting Material with rowId '{rowId}'!");
+            return Result.Failure<Guid>($"Error deleting Material with rowId '{rowId}'!");
         }
     }
 }

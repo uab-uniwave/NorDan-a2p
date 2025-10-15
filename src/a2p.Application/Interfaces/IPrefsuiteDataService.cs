@@ -6,28 +6,28 @@ namespace a2p.Application.Interfaces
     {
 
         //============================================================================================================================
-        Task<(int, int)> GetSalesDocumentAsync(string order);
+        Task<(int?, int?)> GetSalesDocumentAsync(string order);
         Task<int> GetSalesDocumentStateAsync(int number, int version);
         Task<string?> GetGlassReferenceAsync(string description);
         Task<int> GetPrefSuiteColorConfigurationAsync(string color);
         Task<string?> GetSapaColorAsync(string color);
         //============================================================================================================================
-        Task<ErrorEntity?> DeleteSalesDocumentDataAsync(int number, int version, bool DeleteExisting);
+        Task DeleteSalesDocumentDataAsync(int number, int version, bool DeleteExisting);
         //============================================================================================================================
-        Task<ErrorEntity?> InsertPrefSuiteColorAsync(MaterialEntity material);
-        Task<ErrorEntity?> InsertPrefSuiteColorConfigurationAsync(MaterialEntity material);
-        Task<ErrorEntity?> InsertPrefSuiteMaterialBaseAsync(MaterialEntity material);
-        Task<ErrorEntity?> InsertPrefSuiteMaterialAsync(MaterialEntity material);
+        Task InsertPrefSuiteColorAsync(MaterialEntity material);
+        Task InsertPrefSuiteColorConfigurationAsync(MaterialEntity material);
+        Task InsertPrefSuiteMaterialBaseAsync(MaterialEntity material);
+        Task InsertPrefSuiteMaterialAsync(MaterialEntity material);
         //============================================================================================================================
-        Task<ErrorEntity?> InsertPrefSuiteMaterialProfileAsync(MaterialEntity material);
-        Task<ErrorEntity?> InsertPrefSuiteMaterialMeterAsync(MaterialEntity material);
-        Task<ErrorEntity?> InsertPrefSuiteMaterialPieceAsync(MaterialEntity material);
-        Task<ErrorEntity?> InsertPrefSuiteMaterialSurfaceAsync(MaterialEntity material);
-        Task<ErrorEntity?> UpdateBCMapping(MaterialEntity material);
-        Task<ErrorEntity?> InsertPrefSuiteMaterialPurchaseDataAsync(MaterialEntity material);
+        Task InsertPrefSuiteMaterialProfileAsync(MaterialEntity material);
+        Task InsertPrefSuiteMaterialMeterAsync(MaterialEntity material);
+        Task InsertPrefSuiteMaterialPieceAsync(MaterialEntity material);
+        Task InsertPrefSuiteMaterialSurfaceAsync(MaterialEntity material);
+        Task UpdateBCMapping(MaterialEntity material);
+        Task InsertPrefSuiteMaterialPurchaseDataAsync(MaterialEntity material);
         //============================================================================================================================
-        Task<ErrorEntity?> InsertPrefSuiteMaterialNeedsMasterAsync(string order, int number, int version);
-        Task<ErrorEntity?> InsertPrefSuiteMaterialNeedsAsync(string order, int number, int version);
+        Task InsertPrefSuiteMaterialNeedsMasterAsync(string order, int number, int version);
+        Task InsertPrefSuiteMaterialNeedsAsync(string order, int number, int version);
 
     }
 }

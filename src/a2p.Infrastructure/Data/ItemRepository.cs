@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using a2p.Application.Interfaces;
+using a2p.Application.Models;
 using a2p.Domain.Entities;
 using a2p.Domain.Enums;
 using a2p.Domain.Interfaces;
@@ -19,11 +20,11 @@ namespace a2p.Infrastructure.Data
 
         public ItemRepository(ISQLService sqlService, ILogService logService)
         {
-            _sqlService = sqlService ?? throw new ArgumentNullException(nameof(sqlService));
-            _logService = logService ?? throw new ArgumentNullException(nameof(logService));
+            _sqlService = sqlService ?? throw new ArgumentNullException("ItemRepository, sqlService is null!");
+            _logService = logService ?? throw new ArgumentNullException("ItemRepository, logService is null!");
         }
 
-        public async Task<ItemEntity> InsertItemAsync(ItemEntity item)
+        public async Task<Result<ItemEntity>> InsertItemAsync(ItemEntity item)
         {
             try
             {
@@ -31,12 +32,12 @@ namespace a2p.Infrastructure.Data
                 {
                     CommandText = "INSERT INTO [dbo].[Uniwave_a2p_Items] " +
                     "(" +
-                    "[RowId]," +
+                    "[Id]," +
                     "[OrderNumber]," +
                     "[Worksheet]," +
                     "[Line]," +
                     "[Column]," +
-                    "[Item]," +
+                    "[ItemName]," +
                     "[SortOrder]," +
                     "[Description]," +
                     "[Quantity]," +
@@ -76,12 +77,12 @@ namespace a2p.Infrastructure.Data
                     ") " +
                     "VALUES " +
                     "(" +
-                    "@RowId," +
+                    "@Id," +
                     "@OrderNumber," +
                     "@Worksheet," +
                     "@Line," +
                     "@Column," +
-                    "@Item," +
+                    "@ItemName," +
                     "@SortOrder," +
                     "@Description," +
                     "@Quantity," +
@@ -127,31 +128,31 @@ namespace a2p.Infrastructure.Data
                 await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
 
                 // Query to get the inserted item
-                cmd.CommandText = "SELECT TOP 1 * FROM [dbo].[Uniwave_a2p_Items] WHERE [RowId] = @RowId";
+                cmd.CommandText = "SELECT TOP 1 * FROM [dbo].[Uniwave_a2p_Items] WHERE [Id] = @Id";
                 var queryParams = new SqlParameter[]
                 {
-                    new SqlParameter("@RowId", item.RowId)
+                    new SqlParameter("@Id", item.Id)
                 };
 
                 var result = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, queryParams);
                 if (result == null || result.Rows.Count == 0)
-                    throw new InvalidOperationException($"Item with ID {item.RowId} was not found after insert.");
+                    return Result<ItemEntity>.Failure($"ItemName with ID {item.Id} was not found after insert.");
 
-                return MapDataRowToItem(result.Rows[0]);
+                return Result<ItemEntity>.Success(MapDataRowToItem(result.Rows[0]));
             }
             catch (SqlException sqlEx)
             {
-                _logService.Error("SQL Error Inserting Item {0} in Order {1}. {2}", item.ItemName, item.OrderNumber, sqlEx.Message);
-                throw;
+                _logService.Error("SQL Error Inserting ItemName {0} in OrderNumber {1}. {2}", item.ItemName, item.OrderNumber, sqlEx.Message);
+                return Result<ItemEntity>.Failure(sqlEx.Message);
             }
             catch (Exception ex)
             {
-                _logService.Error("Error Inserting Item {0} in Order {1}. {2}", item.ItemName, item.OrderNumber, ex.Message);
-                throw;
+                _logService.Error("Error Inserting ItemName {0} in OrderNumber {1}. {2}", item.ItemName, item.OrderNumber, ex.Message);
+                return Result<ItemEntity>.Failure(ex.Message);
             }
         }
 
-        public async Task<ItemEntity?> UpdateItemAsync(ItemEntity item)
+        public async Task<Result<ItemEntity>> UpdateItemAsync(ItemEntity item)
         {
             try
             {
@@ -163,7 +164,7 @@ namespace a2p.Infrastructure.Data
                     "[Worksheet] = @Worksheet, " +
                     "[Line] = @Line, " +
                     "[Column] = @Column, " +
-                    "[Item] = @Item, " +
+                    "[ItemName] = @ItemName, " +
                     "[SortOrder] = @SortOrder, " +
                     "[Description] = @Description, " +
                     "[Quantity] = @Quantity, " +
@@ -199,7 +200,7 @@ namespace a2p.Infrastructure.Data
                     "[TotalPriceEUR] = @TotalPriceEUR, " +
                     "[WorksheetType] = @WorksheetType, " +
                     "[ModifiedUTCDateTime] = @ModifiedUTCDateTime " +
-                    "WHERE [RowId] = @RowId",
+                    "WHERE [Id] = @Id",
                     CommandType = CommandType.Text
                 };
 
@@ -208,65 +209,65 @@ namespace a2p.Infrastructure.Data
                 await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
 
                 // Query to get the updated item
-                cmd.CommandText = "SELECT TOP 1 * FROM [dbo].[Uniwave_a2p_Items] WHERE [RowId] = @RowId";
+                cmd.CommandText = "SELECT TOP 1 * FROM [dbo].[Uniwave_a2p_Items] WHERE [Id] = @Id";
                 var queryParams = new SqlParameter[]
                 {
-                    new SqlParameter("@RowId", item.RowId)
+                    new SqlParameter("@Id", item.Id)
                 };
 
                 var result = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, queryParams);
                 if (result == null || result.Rows.Count == 0)
-                    return null;
+                    return Result<ItemEntity>.Failure("NotFound");
 
-                return MapDataRowToItem(result.Rows[0]);
+                return Result<ItemEntity>.Success(MapDataRowToItem(result.Rows[0]));
             }
             catch (SqlException sqlEx)
             {
-                _logService.Error("SQL Error Updating Item {0} in Order {1}. {2}", item.ItemName, item.OrderNumber, sqlEx.Message);
-                return null;
+                _logService.Error("SQL Error Updating ItemName {0} in OrderNumber {1}. {2}", item.ItemName, item.OrderNumber, sqlEx.Message);
+                return Result<ItemEntity>.Failure(sqlEx.Message);
             }
             catch (Exception ex)
             {
-                _logService.Error("Error Updating Item {0} in Order {1}. {2}", item.ItemName, item.OrderNumber, ex.Message);
-                return null;
+                _logService.Error("Error Updating ItemName {0} in OrderNumber {1}. {2}", item.ItemName, item.OrderNumber, ex.Message);
+                return Result<ItemEntity>.Failure(ex.Message);
             }
         }
 
-        public async Task<ItemEntity?> GetItemAsync(Guid rowId)
+        public async Task<Result<ItemEntity>> GetItemAsync(Guid rowId)
         {
             try
             {
                 SqlCommand cmd = new()
                 {
-                    CommandText = "SELECT TOP 1 * FROM [dbo].[Uniwave_a2p_Items] WHERE [RowId] = @RowId",
+                    CommandText = "SELECT TOP 1 * FROM [dbo].[Uniwave_a2p_Items] WHERE [Id] = @Id",
                     CommandType = CommandType.Text
                 };
 
                 var parameters = new SqlParameter[]
                 {
-                    new SqlParameter("@RowId", rowId)
+                    new SqlParameter("@Id", rowId)
                 };
 
                 var result = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
 
                 if (result == null || result.Rows.Count == 0)
-                    return null;
+                    return Result<ItemEntity>.Failure("NotFound");
 
-                return MapDataRowToItem(result.Rows[0]);
+                return Result<ItemEntity>.Success(MapDataRowToItem(result.Rows[0]));
             }
             catch (SqlException sqlEx)
             {
-                _logService.Error("SQL Error Getting Item {0}. {1}", rowId, sqlEx.Message);
-                return null;
+                _logService.Error("SQL Error Getting ItemName {0}. {1}", rowId, sqlEx.Message);
+                return Result<ItemEntity>.Failure(sqlEx.Message);
             }
             catch (Exception ex)
             {
-                _logService.Error("Error Getting Item {0}. {1}", rowId, ex.Message);
-                return null;
+                _logService.Error("Error Getting ItemName {0}. {1}", rowId, ex.Message);
+                return Result<ItemEntity>.Failure(ex.Message);
             }
         }
 
-        public async Task<IEnumerable<ItemEntity>?> GetOrderItemsAsync(Guid rowId)
+        public async Task<Result<IEnumerable<ItemEntity>>> GetOrderItemsAsync(Guid rowId)
         {
             try
             {
@@ -284,7 +285,7 @@ namespace a2p.Infrastructure.Data
                 var result = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
 
                 if (result == null || result.Rows.Count == 0)
-                    return Array.Empty<ItemEntity>();
+                    return Result<IEnumerable<ItemEntity>>.Success(Array.Empty<ItemEntity>());
 
                 List<ItemEntity> items = new();
                 foreach (DataRow row in result.Rows)
@@ -294,21 +295,21 @@ namespace a2p.Infrastructure.Data
                         items.Add(item);
                 }
 
-                return items;
+                return Result<IEnumerable<ItemEntity>>.Success(items);
             }
             catch (SqlException sqlEx)
             {
-                _logService.Error("SQL Error Getting Order Items for Order {0}. {1}", rowId, sqlEx.Message);
-                return Array.Empty<ItemEntity>();
+                _logService.Error("SQL Error Getting OrderNumber ItemsDto for OrderNumber {0}. {1}", rowId, sqlEx.Message);
+                return Result<IEnumerable<ItemEntity>>.Failure(sqlEx.Message);
             }
             catch (Exception ex)
             {
-                _logService.Error("Error Getting Order Items for Order {0}. {1}", rowId, ex.Message);
-                return Array.Empty<ItemEntity>();
+                _logService.Error("Error Getting OrderNumber ItemsDto for OrderNumber {0}. {1}", rowId, ex.Message);
+                return Result<IEnumerable<ItemEntity>>.Failure(ex.Message);
             }
         }
 
-        public async Task<IEnumerable<ItemEntity>?> GetItemsAsync()
+        public async Task<Result<IEnumerable<ItemEntity>>> GetItemsAsync()
         {
             try
             {
@@ -320,7 +321,7 @@ namespace a2p.Infrastructure.Data
                 var result = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType);
 
                 if (result == null || result.Rows.Count == 0)
-                    return Array.Empty<ItemEntity>();
+                    return Result<IEnumerable<ItemEntity>>.Success(Array.Empty<ItemEntity>());
 
                 List<ItemEntity> items = new();
                 foreach (DataRow row in result.Rows)
@@ -329,51 +330,46 @@ namespace a2p.Infrastructure.Data
                     if (item != null)
                         items.Add(item);
                 }
-                return items;
+                return Result<IEnumerable<ItemEntity>>.Success(items);
             }
             catch (SqlException sqlEx)
             {
-                _logService.Error("SQL Error Getting All Items. {0}", sqlEx.Message);
-                return Array.Empty<ItemEntity>();
+                _logService.Error("SQL Error Getting All ItemsDto. {0}", sqlEx.Message);
+                return Result<IEnumerable<ItemEntity>>.Failure(sqlEx.Message);
             }
             catch (Exception ex)
             {
-                _logService.Error("Error Getting All Items. {0}", ex.Message);
-                return Array.Empty<ItemEntity>();
+                _logService.Error("Error Getting All ItemsDto. {0}", ex.Message);
+                return Result<IEnumerable<ItemEntity>>.Failure(ex.Message);
             }
         }
 
-        public async Task<Guid> DeleteItemAsync(Guid rowId)
+        public async Task<Result<Guid>> DeleteItemAsync(Guid rowId)
         {
-
             try
             {
                 SqlCommand cmd = new()
                 {
-                    CommandText = "DELETE FROM [dbo].[Uniwave_a2p_Items] WHERE [RowId] = @RowId",
+                    CommandText = "DELETE FROM [dbo].[Uniwave_a2p_Items] WHERE [Id] = @Id",
                     CommandType = CommandType.Text
                 };
                 var parameters = new SqlParameter[]
                 {
-                    new SqlParameter("@RowId", rowId)
+                    new SqlParameter("@Id", rowId)
                 };
                 int rowsAffected = await _sqlService.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
                 if (rowsAffected > 0)
-                    return rowId;
-                return Guid.Empty;
+                    return Result<Guid>.Success(rowId);
+                return Result<Guid>.Failure("NotFound");
             }
             catch (SqlException sqlEx)
             {
-                Console.WriteLine(sqlEx.Message);
-                return Guid.Empty;
+                return Result<Guid>.Failure(sqlEx.Message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return Guid.Empty;
+                return Result<Guid>.Failure(ex.Message);
             }
-
-
         }
         private static ItemEntity MapDataRowToItem(DataRow row)
         {
@@ -385,16 +381,16 @@ namespace a2p.Infrastructure.Data
                 return new ItemEntity
                 {
                     // Base entity properties
-                    RowId = row.Field<Guid>("RowId"),
+                    Id = row.Field<Guid>("Id"),
 
-                    // Order related properties
+                    // OrderNumber related properties
                     OrderNumber = row.Field<string>("OrderNumber") ?? string.Empty,
                     Worksheet = row.Field<string>("Worksheet") ?? string.Empty,
                     Line = row.Field<int>("Line"),
                     Column = row.Field<int>("Column"),
 
-                    // Item identification
-                    ItemName = row.Field<string>("Item") ?? string.Empty,
+                    // ItemName identification
+                    ItemName = row.Field<string>("ItemName") ?? string.Empty,
                     SortOrder = row.Field<int>("SortOrder"),
                     Description = row.Field<string>("Description"),
 
@@ -468,12 +464,12 @@ namespace a2p.Infrastructure.Data
         {
             return new SqlParameter[]
             {
-                new SqlParameter("@RowId", item.RowId),
+                new SqlParameter("@Id", item.Id),
                 new SqlParameter("@OrderNumber", item.OrderNumber ?? string.Empty),
                 new SqlParameter("@Worksheet", item.Worksheet ?? string.Empty),
                 new SqlParameter("@Line", item.Line),
                 new SqlParameter("@Column", item.Column),
-                new SqlParameter("@Item", item.ItemName ?? (object)DBNull.Value),
+                new SqlParameter("@ItemName", item.ItemName ?? (object)DBNull.Value),
                 new SqlParameter("@SortOrder", item.SortOrder),
                 new SqlParameter("@Description", item.Description ?? (object)DBNull.Value),
                 new SqlParameter("@Quantity", item.Quantity),

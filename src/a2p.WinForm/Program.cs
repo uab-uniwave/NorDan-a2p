@@ -1,15 +1,6 @@
 using a2p.Application.Interfaces;
-using a2p.Application.Interfaces.MappingService;
-using a2p.Domain.Interfaces;
-using a2p.Infrastructure.Data;
-using a2p.Infrastructure.Services;
-using a2p.Infrastructure.Services.Logger;
-using a2p.Infrastructure.Services.MappingService;
-using a2p.Infrastructure.Services.PrefSuiteService;
-using a2p.Infrastructure.Services.SettingsService;
 using a2p.WinForm.Forms;
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using System.Diagnostics;
@@ -44,18 +35,17 @@ namespace a2p.WinForm
             var settingsService = _services.GetRequiredService<ISettingsService>();
             var excelService = _services.GetRequiredService<IExcelService>();
             var readService = _services.GetRequiredService<IReadService>();
-            var fileService = _services.GetRequiredService<IFileService>();
+            var fileService = _services.GetRequiredService<IExcelService>();
             var writeService = _services.GetRequiredService<IWriteService>();
-            var orderRepository = _services.GetRequiredService<IMyRepository>();
 
             logService.Information("Application started.");
 
-            using var splashScreen = new SplashScreenForm();
+            using var splashScreen = new FormSplashScreen();
             splashScreen.Show();
             splashScreen.FadeIn();
             Task.Delay(2000).Wait();
 
-            var mainForm = new FormMain(readService, excelService, orderRepository, logService, fileService, settingsService, writeService);
+            var mainForm = new FormMain(readService, excelService, logService, fileService, settingsService, writeService);
 
             splashScreen.FadeOut();
             splashScreen.Close();
@@ -65,33 +55,8 @@ namespace a2p.WinForm
 
         private static IServiceProvider ConfigureServices()
         {
-            var services = new ServiceCollection();
-
-            // Configuration
-            IConfiguration configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .Build();
-
-            services.AddSingleton<IConfiguration>(configuration);
-
-            // Register services
-            services.AddSingleton<ILogService, LogService>();
-            services.AddSingleton<IFileService, FileService>();
-            services.AddSingleton<IExcelService, ExcelReaderService>();
-            services.AddSingleton<IReadService, ReadService>();
-            services.AddSingleton<IWriteService, WriteService>();
-            services.AddSingleton<IPrefSuiteService, PrefSuiteService>();
-            services.AddSingleton<ISettingsService, SettingsService>();
-            services.AddSingleton<IMyRepository, MyRepository>();
-            services.AddSingleton<ISQLService, SQLService>();
-            services.AddSingleton<SettingsManager>();
-
-            // Register mappers
-            services.AddSingleton<IMapperTechDesign, MapperTechDesign>();
-            services.AddSingleton<IMapperSchuco, MapperSchuco>();
-
-            return services.BuildServiceProvider();
+            // Use the centralized DI from Infrastructure
+            return a2p.Infrastructure.DependencyInjection.ConfigureServices();
         }
     }
 

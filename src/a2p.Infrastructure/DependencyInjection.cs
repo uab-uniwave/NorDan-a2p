@@ -1,5 +1,5 @@
 using a2p.Application.Interfaces;
-using a2p.Application.Interfaces.MappingService;
+using a2p.Application.Services;
 using a2p.Domain.Interfaces;
 using a2p.Infrastructure.Data;
 using a2p.Infrastructure.Services;
@@ -17,9 +17,7 @@ namespace a2p.Infrastructure
 {
     public static class DependencyInjection
     {
-
         // Get the current culture of the PC
-
         public static IServiceProvider ConfigureServices()
         {
             // Load configuration
@@ -41,15 +39,44 @@ namespace a2p.Infrastructure
             _ = services.AddSingleton<ILogService, LogService>();
             _ = services.AddSingleton<ISettingsService, SettingsService>();
             _ = services.AddSingleton<SettingsManager>();
-            _ = services.AddSingleton<IExcelService, ExcelReaderService>();
+            // _ = services.AddSingleton<IExcelService, Services.ExcelService>();
             _ = services.AddSingleton<ISQLService, SQLService>();
             _ = services.AddSingleton<IPrefSuiteService, PrefSuiteService>();
-            _ = services.AddSingleton<IMyRepository, MyRepository>();
             _ = services.AddSingleton<IPrefSuiteDataService, PrefSuiteDataService>();
             _ = services.AddSingleton<IFileService, FileService>();
-            _ = services.AddSingleton<IMapperTechDesign, MapperTechDesign>();
-            _ = services.AddSingleton<IMapperSchuco, MapperSchuco>();
 
+            // Application services
+            _ = services.AddSingleton<IReadService, ReadService>();
+            _ = services.AddSingleton<IWriteService, WriteService>();
+            _ = services.AddSingleton<IOrderService, OrderService>();
+            _ = services.AddSingleton<IMaterialService, MaterialService>();
+            _ = services.AddSingleton<IItemService, ItemService>();
+
+            // Get connection string from configuration
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new InvalidOperationException("Connection string 'DefaultConnection' not found in configuration");
+            }
+
+            // Register DapperService as singleton with connection string from configuration
+            _ = services.AddSingleton<DapperService>(provider => new DapperService(connectionString));
+
+            // Repositories
+            _ = services.AddSingleton<IMaterialRepository, MaterialRepository>();
+            _ = services.AddSingleton<IItemRepository, ItemRepository>();
+            
+            // Register OrderQueueRepository with its dependencies
+            _ = services.AddSingleton<IOrderQueueRepository>(provider =>
+            {
+                var logService = provider.GetRequiredService<ILogService>();
+                return new OrderQueueRepository(connectionString, logService);
+            });
+
+            // Mappers
+            _ = services.AddSingleton<IExcelParserTechDesign, ExcelParserTechDesign>();
+            _ = services.AddSingleton<IExcelParserSchuco, ExcelParserSchuco>();
+            // TODO: If you have MapperSapa, register it here as well
 
             return services.BuildServiceProvider();
         }

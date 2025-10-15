@@ -288,7 +288,7 @@ namespace a2p.WinForm.Forms
             lbInfoItems.Name = "lbInfoItems";
             lbInfoItems.Size = new Size(153, 44);
             lbInfoItems.TabIndex = 12;
-            lbInfoItems.Text = "Items:";
+            lbInfoItems.Text = "ItemsDto:";
             lbInfoItems.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // lbInfoItemsCount
@@ -404,7 +404,7 @@ namespace a2p.WinForm.Forms
             lbInfoRows.Name = "lbInfoRows";
             lbInfoRows.Size = new Size(153, 44);
             lbInfoRows.TabIndex = 0;
-            lbInfoRows.Text = "Items:";
+            lbInfoRows.Text = "ItemsDto:";
             lbInfoRows.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // imageList1

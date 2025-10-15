@@ -2,7 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using a2p.Application.Interfaces;
-using a2p.Domain.Models;
+using a2p.Application.Models;
 
 using System.Data;
 
@@ -89,10 +89,10 @@ namespace a2p.Infrastructure.Services
             }
         }
 
-        public List<Domain.Models.File> GetOrderFiles(string order)
+        public List<a2p.Application.Models.File> GetOrderFiles(string order)
         {
 
-            List<Domain.Models.File> files = [];
+            List<Application.Models.File> files = [];
             try
             {
 
@@ -103,7 +103,7 @@ namespace a2p.Infrastructure.Services
                 for (int i = 0; i < orderFiles.Count; i++)
                 {
 
-                    Domain.Models.File a2pFile = new()
+                    Application.Models.File a2pFile = new()
                     {
 
                         FullName = orderFiles[i],

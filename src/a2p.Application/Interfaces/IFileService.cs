@@ -3,7 +3,7 @@ namespace a2p.Application.Interfaces
 
     public interface IFileService
     {
-        //Task<List<OrderEntry>> GetSingleOrderFilesAsync(IProgress<ProgressValue>? progress = null, CancellationToken cancellationToken = default);
+        //Task<List<ExcelOrderDto>> GetSingleOrderFilesAsync(IProgress<ProgressValue>? progress = null, CancellationToken cancellationToken = default);
 
         string GetRootFolder();
 
@@ -15,7 +15,7 @@ namespace a2p.Application.Interfaces
 
         List<string>? GetFiles();
 
-        List<Domain.Models.File> GetOrderFiles(string order);
+        List<Models.File> GetOrderFiles(string order);
 
         bool IsLocked(string filePath);
 

@@ -1,7 +1,6 @@
 using a2p.WinForm;
 using a2p.WinForm.Properties;
 using a2p.Application.Services;
-using a2p.Application.Abstractions;
 using a2p.Domain.Models;
 using a2p.Domain.Entities;
 using a2p.WinForm.Forms;
@@ -64,6 +63,7 @@ namespace a2p.WinForm.Forms
             tplHeader.SuspendLayout();
             statusStrip.SuspendLayout();
             plSideBarMain.SuspendLayout();
+            SuspendLayout();
             // 
             // tplHeader
             // 
@@ -84,9 +84,9 @@ namespace a2p.WinForm.Forms
             tplHeader.Controls.Add(lbHeader4, 4, 0);
             tplHeader.Dock = DockStyle.Top;
             tplHeader.Location = new Point(0, 0);
-            tplHeader.Margin = new Padding(2, 2, 2, 2);
+            tplHeader.Margin = new Padding(2);
             tplHeader.Name = "tplHeader";
-            tplHeader.Padding = new Padding(2, 2, 2, 2);
+            tplHeader.Padding = new Padding(2);
             tplHeader.RowCount = 1;
             tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 28F));
             tplHeader.RowStyles.Add(new RowStyle(SizeType.Absolute, 21F));
@@ -96,7 +96,7 @@ namespace a2p.WinForm.Forms
             // 
             // plNordanHeaderLogo
             // 
-            plNordanHeaderLogo.BackgroundImage = Resources.NordanLogoInversed;
+            plNordanHeaderLogo.BackgroundImage = (Image)resources.GetObject("plNordanHeaderLogo.BackgroundImage");
             plNordanHeaderLogo.BackgroundImageLayout = ImageLayout.Zoom;
             plNordanHeaderLogo.Dock = DockStyle.Fill;
             plNordanHeaderLogo.Location = new Point(718, 2);
@@ -105,6 +105,7 @@ namespace a2p.WinForm.Forms
             tplHeader.SetRowSpan(plNordanHeaderLogo, 3);
             plNordanHeaderLogo.Size = new Size(250, 60);
             plNordanHeaderLogo.TabIndex = 11;
+            plNordanHeaderLogo.Paint += plNordanHeaderLogo_Paint;
             // 
             // lbHeader1
             // 
@@ -115,7 +116,7 @@ namespace a2p.WinForm.Forms
             lbHeader1.ForeColor = Color.FromArgb(248, 248, 249);
             lbHeader1.ImageAlign = ContentAlignment.TopRight;
             lbHeader1.Location = new Point(5, 5);
-            lbHeader1.Margin = new Padding(3, 3, 3, 3);
+            lbHeader1.Margin = new Padding(3);
             lbHeader1.Name = "lbHeader1";
             tplHeader.SetRowSpan(lbHeader1, 2);
             lbHeader1.Size = new Size(134, 43);
@@ -132,7 +133,7 @@ namespace a2p.WinForm.Forms
             lbHeader2.Font = new Font("Segoe UI Black", 30F, FontStyle.Bold);
             lbHeader2.ForeColor = Color.FromArgb(248, 248, 249);
             lbHeader2.Location = new Point(145, 5);
-            lbHeader2.Margin = new Padding(3, 3, 3, 3);
+            lbHeader2.Margin = new Padding(3);
             lbHeader2.Name = "lbHeader2";
             tplHeader.SetRowSpan(lbHeader2, 2);
             lbHeader2.Size = new Size(24, 43);
@@ -150,7 +151,7 @@ namespace a2p.WinForm.Forms
             lbHeader3.ForeColor = Color.FromArgb(248, 248, 249);
             lbHeader3.ImageAlign = ContentAlignment.TopLeft;
             lbHeader3.Location = new Point(175, 24);
-            lbHeader3.Margin = new Padding(3, 3, 3, 3);
+            lbHeader3.Margin = new Padding(3);
             lbHeader3.Name = "lbHeader3";
             tplHeader.SetRowSpan(lbHeader3, 3);
             lbHeader3.Size = new Size(103, 35);
@@ -167,7 +168,7 @@ namespace a2p.WinForm.Forms
             lbHeader4.ForeColor = Color.Transparent;
             lbHeader4.ImageAlign = ContentAlignment.TopLeft;
             lbHeader4.Location = new Point(284, 5);
-            lbHeader4.Margin = new Padding(3, 3, 3, 3);
+            lbHeader4.Margin = new Padding(3);
             lbHeader4.Name = "lbHeader4";
             lbHeader4.Size = new Size(32, 22);
             lbHeader4.TabIndex = 5;
@@ -283,6 +284,7 @@ namespace a2p.WinForm.Forms
             btnProperties.FlatStyle = FlatStyle.Flat;
             btnProperties.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
             btnProperties.ForeColor = Color.LightGray;
+            btnProperties.Image = Resources.btnProperties;
             btnProperties.ImageAlign = ContentAlignment.MiddleLeft;
             btnProperties.Location = new Point(0, 120);
             btnProperties.Name = "btnProperties";
@@ -302,6 +304,7 @@ namespace a2p.WinForm.Forms
             btnExit.FlatStyle = FlatStyle.Flat;
             btnExit.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
             btnExit.ForeColor = Color.LightGray;
+            btnExit.Image = Resources.btnExit;
             btnExit.ImageAlign = ContentAlignment.MiddleLeft;
             btnExit.Location = new Point(0, 419);
             btnExit.Name = "btnExit";
@@ -322,6 +325,7 @@ namespace a2p.WinForm.Forms
             btnLog.FlatStyle = FlatStyle.Flat;
             btnLog.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
             btnLog.ForeColor = Color.LightGray;
+            btnLog.Image = Resources.btnLog;
             btnLog.ImageAlign = ContentAlignment.MiddleLeft;
             btnLog.Location = new Point(0, 80);
             btnLog.Name = "btnLog";
@@ -342,6 +346,7 @@ namespace a2p.WinForm.Forms
             btnImport.FlatStyle = FlatStyle.Flat;
             btnImport.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
             btnImport.ForeColor = Color.LightGray;
+            btnImport.Image = Resources.btnImport;
             btnImport.ImageAlign = ContentAlignment.MiddleLeft;
             btnImport.Location = new Point(0, 40);
             btnImport.Name = "btnImport";
@@ -361,6 +366,7 @@ namespace a2p.WinForm.Forms
             btnLoad.FlatStyle = FlatStyle.Flat;
             btnLoad.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
             btnLoad.ForeColor = Color.LightGray;
+            btnLoad.Image = (Image)resources.GetObject("btnLoad.Image");
             btnLoad.ImageAlign = ContentAlignment.MiddleLeft;
             btnLoad.Location = new Point(0, 0);
             btnLoad.Name = "btnLoad";
@@ -384,7 +390,7 @@ namespace a2p.WinForm.Forms
             plFormContainer.Size = new Size(843, 459);
             plFormContainer.TabIndex = 64;
             // 
-            // MainForm
+            // FormMain
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
@@ -402,7 +408,7 @@ namespace a2p.WinForm.Forms
             Margin = new Padding(2, 1, 2, 1);
             MdiChildrenMinimizedAnchorBottom = false;
             MinimumSize = new Size(318, 394);
-            Name = "MainForm";
+            Name = "FormMain";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "A2P v1.0.0.21";
             WindowState = FormWindowState.Maximized;

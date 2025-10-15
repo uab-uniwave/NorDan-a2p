@@ -1,5 +1,5 @@
 using a2p.Application.Interfaces;
-using a2p.Domain.Models;
+using a2p.Application.Models;
 
 using Microsoft.Data.SqlClient;
 
@@ -107,7 +107,7 @@ namespace a2p.Infrastructure.Services
         /// <summary>
         /// Executes a SQL command and returns two values (document OrderNumber,document version)
         /// </summary>
-        public async Task<(int, int)?> ExecuteQueryTupleValuesAsync(string sqlCommand, CommandType commandType, params SqlParameter[]? parameters)
+        public async Task<(int, int)> ExecuteQueryTupleValuesAsync(string sqlCommand, CommandType commandType, params SqlParameter[]? parameters)
         {
             int value1;
             int value2;

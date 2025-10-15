@@ -2,7 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using a2p.Application.Interfaces;
-using a2p.Domain.Models;
+using a2p.Application.Models;
 
 using Microsoft.Extensions.Configuration;
 

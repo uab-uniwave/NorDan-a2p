@@ -1,4 +1,4 @@
-using a2p.Domain.Models;
+using a2p.Application.Models;
 
 namespace a2p.Application.Interfaces
 {

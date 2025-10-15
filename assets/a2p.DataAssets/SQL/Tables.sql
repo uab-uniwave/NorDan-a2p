@@ -1,23 +1,29 @@
 ﻿
 
-/****** Object:  Table [dbo].[Uniwave_a2p_Materials]    Script Date: 2025-06-26 22:28:59 ******/
+
+/*
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Uniwave_a2p_Materials]') AND type in (N'U'))
 DROP TABLE [dbo].[Uniwave_a2p_Materials]
 GO
 
-/****** Object:  Table [dbo].[Uniwave_a2p_Items]    Script Date: 2025-06-26 22:28:59 ******/
+
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Uniwave_a2p_Items]') AND type in (N'U'))
 DROP TABLE [dbo].[Uniwave_a2p_Items]
 GO
 
-/****** Object:  Table [dbo].[NorDan_a2p_IntrastatData]    Script Date: 2025-06-26 22:28:59 ******/
 
-/****** Object:  Table [dbo].[NorDan_a2p_ColorMapping]    Script Date: 2025-06-26 22:28:59 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[NorDan_a2p_ColorMapping]') AND type in (N'U'))
 DROP TABLE [dbo].[NorDan_a2p_ColorMapping]
 GO
 
-/****** Object:  Table [dbo].[NorDan_a2p_ColorMapping]    Script Date: 2025-06-26 22:28:59 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[NorDan_a2p_Order]') AND type in (N'U'))
+DROP TABLE [dbo].[NorDan_a2p_ColorMapping]
+GO
+*/
+
+
+/* 
+
 SET ANSI_NULLS ON
 GO
 
@@ -113,7 +119,6 @@ PRIMARY KEY CLUSTERED
 GO
 
 CREATE TABLE [dbo].[Uniwave_a2p_Materials](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[RowId] [uniqeidentifier] IDENTITY(1,1) NOT NULL,
 	[SalesDocumentNumber] [int] NOT NULL,
 	[SalesDocumentVersion] [int] NOT NULL,
@@ -184,3 +189,74 @@ CREATE TABLE [dbo].[Uniwave_a2p_ReferenceMappingLog](
 GO
 
 
+GO
+
+
+CREATE TABLE [dbo].[Uniwave_a2p_Order]
+(
+    -- Primary Key
+    [RowId]                    UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
+
+    -- Core Order Information
+    [OrderNumber]              NVARCHAR(50)     NOT NULL,
+    [OrderDate]                DATETIME2(0)     NOT NULL,
+    [CustomerTitle]            NVARCHAR(200)    NULL,
+    [CustomerNumber]           NVARCHAR(50)     NULL,
+    [ProjectNumber]            NVARCHAR(50)     NULL,
+    [DeliveryAddress]          NVARCHAR(500)    NULL,
+    [CorrectionAvailableUntil] DATETIME2(0)     NULL,
+    [ResponsibleManager]       NVARCHAR(150)    NULL,
+
+    [SalesDocumentNumber]      INT              NULL,
+    [SalesDocumentVersion]     INT              NULL,
+
+    -- Calculated / Aggregate Values
+    [ItemCount]                INT              NOT NULL DEFAULT 0,
+    [TotalQuantity]            DECIMAL(18,3)    NOT NULL DEFAULT 0,
+    [TotalWeight]              DECIMAL(18,3)    NOT NULL DEFAULT 0,
+    [TotalWeightWithoutGlass]  DECIMAL(18,3)    NOT NULL DEFAULT 0,
+    [TotalWeightGlass]         DECIMAL(18,3)    NOT NULL DEFAULT 0,
+    [TotalArea]                DECIMAL(18,3)    NOT NULL DEFAULT 0,
+    [TotalHours]               DECIMAL(18,2)    NOT NULL DEFAULT 0,
+    [TotalMaterialCost]        DECIMAL(18,2)    NOT NULL DEFAULT 0,
+    [TotalLaborCost]           DECIMAL(18,2)    NOT NULL DEFAULT 0,
+    [TotalCost]                DECIMAL(18,2)    NOT NULL DEFAULT 0,
+    [TotalPrice]               DECIMAL(18,2)    NOT NULL DEFAULT 0,
+    [CurrencyCode]             CHAR(3)          NOT NULL DEFAULT 'EUR',
+    [ExchangeRate]             DECIMAL(18,6)    NULL,
+    [ExchangeRateDate]         DATE             NULL,
+
+    -- Audit Columns (UTC and User Tracking)
+    [CreatedUTCDateTime]       DATETIME2(3)     NOT NULL DEFAULT SYSUTCDATETIME(),
+    [ModifiedUTCDateTime]      DATETIME2(3)     NOT NULL DEFAULT SYSUTCDATETIME(),
+    [CreatedBy]                NVARCHAR(100)    NULL,
+    [ModifiedBy]               NVARCHAR(100)    NULL,
+
+    CONSTRAINT [PK_Uniwave_a2p_Order] 
+        PRIMARY KEY CLUSTERED ([RowId]),
+
+    CONSTRAINT [UQ_Uniwave_a2p_Order_SalesDocNumber_Version] 
+        UNIQUE ([SalesDocumentNumber], [SalesDocumentVersion])
+);
+GO
+
+-- Automatically update ModifiedUTCDateTime on updates
+CREATE TRIGGER [dbo].[TR_Uniwave_a2p_Order_UpdateModifiedUTC]
+ON [dbo].[Uniwave_a2p_Order]
+AFTER UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE o
+    SET 
+        o.[ModifiedUTCDateTime] = SYSUTCDATETIME(),
+        o.[ModifiedBy] = COALESCE(i.[ModifiedBy], o.[ModifiedBy])
+    FROM [dbo].[Uniwave_a2p_Order] o
+    INNER JOIN inserted i ON o.[RowId] = i.[RowId];
+END;
+GO
+CREATE INDEX IX_Uniwave_a2p_Order_OrderNumber ON [dbo].[Uniwave_a2p_Order]([OrderNumber]);
+CREATE INDEX IX_Uniwave_a2p_Order_CustomerNumber ON [dbo].[Uniwave_a2p_Order]([CustomerNumber]);
+CREATE INDEX IX_Uniwave_a2p_Order_ProjectNumber ON [dbo].[Uniwave_a2p_Order]([ProjectNumber]);
+CREATE INDEX IX_Uniwave_a2p_Order_OrderDate ON [dbo].[Uniwave_a2p_Order]([OrderDate]);

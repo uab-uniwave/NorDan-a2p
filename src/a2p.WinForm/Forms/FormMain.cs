@@ -1,6 +1,5 @@
 using a2p.Application.Interfaces;
-using a2p.Domain.Interfaces;
-using a2p.Domain.Models;
+using a2p.Application.Models;
 
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
@@ -17,7 +16,6 @@ namespace a2p.WinForm.Forms
         private readonly IReadService _readService;
         private readonly IWriteService _writeService;
         private readonly IExcelService _excelService;
-        private readonly IMyRepository _orderRepository;
         private readonly ISettingsService _settingsService;
         private readonly ILogService _logService;
         private readonly IFileService _fileService;
@@ -55,7 +53,6 @@ namespace a2p.WinForm.Forms
 
         public FormMain(IReadService readService,
                        IExcelService excelService,
-                       IMyRepository orderRepository,
                        ILogService logService,
                        IFileService fileService,
                        ISettingsService settingsService,
@@ -64,7 +61,6 @@ namespace a2p.WinForm.Forms
             _readService = readService ?? throw new ArgumentNullException(nameof(readService));
             _writeService = writeService ?? throw new ArgumentNullException(nameof(writeService));
             _excelService = excelService ?? throw new ArgumentNullException(nameof(excelService));
-            _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
             _logService = logService ?? throw new ArgumentNullException(nameof(logService));
             _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
             _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
@@ -73,7 +69,7 @@ namespace a2p.WinForm.Forms
             _settingsContainer = _settingsService.LoadAllSettings();
             _progress = new Progress<ProgressValue>();
 
-            _orderForm = new ChildFormOrders(_settingsService, _logService, _fileService, _excelService, _orderRepository, _readService, _writeService);
+            _orderForm = new ChildFormOrders(_settingsService, _logService, _fileService, _excelService, _readService, _writeService);
             _logForm = new ChildFormLog(_settingsService, _logService);
             _settingForm = new ChildFormSetting(_logService, _settingsService);
 
@@ -133,7 +129,7 @@ namespace a2p.WinForm.Forms
             try
             {
                 await ShowFormAsync(_orderForm,
-                    () => new ChildFormOrders(_settingsService, _logService, _fileService, _excelService, _orderRepository, _readService, _writeService));
+                    () => new ChildFormOrders(_settingsService, _logService, _fileService, _excelService, _readService, _writeService));
 
                 if (_appSettings.RefreshFilesOnStartup)
                 {
@@ -243,26 +239,42 @@ namespace a2p.WinForm.Forms
 
         private Image? LoadImage(string imageName, int width, int height)
         {
-            if (GetImageByName(imageName) is Image originalImage)
+            var originalImage = GetImageByName(imageName);
+            if (originalImage == null)
             {
-                using var resizedBitmap = new Bitmap(width, height);
-                using var g = Graphics.FromImage(resizedBitmap);
-                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                g.DrawImage(originalImage, new Rectangle(0, 0, width, height));
+                _logService?.Warning($"Image resource '{imageName}' not found or invalid.");
+                return null;
+            }
+            try
+            {
+                var resizedBitmap = new Bitmap(width, height);
+                using (var g = Graphics.FromImage(resizedBitmap))
+                {
+                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    g.DrawImage(originalImage, new Rectangle(0, 0, width, height));
+                }
                 return resizedBitmap;
             }
-            return null;
+            catch (ArgumentException ex)
+            {
+                _logService?.Error($"Failed to load or resize image '{imageName}': {ex.Message}");
+                return null;
+            }
         }
 
         private Image? GetImageByName(string imageName)
         {
             try
             {
-                return Properties.Resources.ResourceManager.GetObject(imageName) as Image;
+                var obj = Properties.Resources.ResourceManager.GetObject(imageName);
+                if (obj is Image img)
+                    return img;
+                _logService?.Warning($"Resource '{imageName}' is not a valid image.");
+                return null;
             }
             catch (Exception ex)
             {
-                _logService.Debug($"Error loading image {imageName}: {ex.Message}");
+                _logService?.Error($"Error loading image resource '{imageName}': {ex.Message}");
                 return null;
             }
         }
@@ -293,7 +305,7 @@ namespace a2p.WinForm.Forms
             try
             {
                 await ShowFormAsync(_orderForm,
-                    () => new ChildFormOrders(_settingsService, _logService, _fileService, _excelService, _orderRepository, _readService, _writeService));
+                    () => new ChildFormOrders(_settingsService, _logService, _fileService, _excelService, _readService, _writeService));
 
                 await _orderForm.OrdersLoad();
             }
@@ -325,7 +337,7 @@ namespace a2p.WinForm.Forms
                 await Task.Run(DisableButtons);
 
                 await ShowFormAsync(_orderForm,
-                    () => new ChildFormOrders(_settingsService, _logService, _fileService, _excelService, _orderRepository, _readService, _writeService));
+                    () => new ChildFormOrders(_settingsService, _logService, _fileService, _excelService, _readService, _writeService));
                 await _orderForm.ImportAsync();
             }
             catch (Exception ex)
@@ -557,6 +569,11 @@ namespace a2p.WinForm.Forms
         private void MainForm_ResizeEnd(object sender, EventArgs e)
         {
             this.PerformLayout();
+        }
+
+        private void plNordanHeaderLogo_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

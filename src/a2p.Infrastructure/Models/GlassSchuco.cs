@@ -6,7 +6,7 @@ namespace a2p.Infrastructure.Models
         public string File { get; set; } = string.Empty; //Excel file name
         public string Worksheet { get; set; } = string.Empty; //Excel worksheet name
         public string Order { get; set; } = string.Empty;
-        public string Item { get; set; } = string.Empty;// Item (Column B)
+        public string Item { get; set; } = string.Empty;// ItemName (Column B)
         public string Quantity { get; set; } = "0";//Originaly in chico called OrderNumber (Column D)
         public string Width { get; set; } = "0"; // (Column E)
         public string Height { get; set; } = "0";// (Column F)

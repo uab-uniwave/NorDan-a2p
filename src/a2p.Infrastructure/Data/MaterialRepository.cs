@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using a2p.Application.Interfaces;
+using a2p.Application.Models;
 using a2p.Domain.Entities;
 using a2p.Domain.Enums;
 using a2p.Domain.Interfaces;
@@ -21,7 +22,7 @@ namespace a2p.Infrastructure.Data
             _sqlService = sqlService ?? throw new ArgumentNullException(nameof(sqlService));
         }
 
-        public async Task<MaterialEntity> InsertMaterialAsync(MaterialEntity material)
+        public async Task<Result<MaterialEntity>> InsertMaterialAsync(MaterialEntity material)
         {
             try
             {
@@ -29,14 +30,14 @@ namespace a2p.Infrastructure.Data
                 {
                     CommandText = "INSERT INTO [dbo].[Uniwave_a2p_Materials] " +
                     "(" +
-                    "[RowId]," + //required
-                    "[SalesDocumentNumber]," + //required
-                    "[SalesDocumentVersion]," + //required
+                    "[Id]," + //required
+                    "[Number]," + //required
+                    "[Version]," + //required
                     "[OrderNumber]," + //required
                     "[Worksheet]," + //required
                     "[Line]," + //required
                     "[Column]," + //required
-                    "[Item]," +
+                    "[ItemName]," +
                     "[SortOrder]," +
                     "[ReferenceBase]," +
                     "[Reference]," +
@@ -80,15 +81,15 @@ namespace a2p.Infrastructure.Data
                     ") " +
                     "VALUES " +
                     "(" +
-                    "@RowId," + //required
-                    "@SalesDocumentNumber," + //required
-                    "@SalesDocumentVersion," + //required
+                    "@Id," + //required
+                    "@Number," + //required
+                    "@Version," + //required
                     "@OrderNumber," + //required
                     "@Worksheet," + //required
 
                     "@Line," + //required
                     "@Column," + //required
-                    "@Item," +
+                    "@ItemName," +
                     "@SortOrder," +
                     "@ReferenceBase," +
                     "@Reference," +
@@ -139,32 +140,30 @@ namespace a2p.Infrastructure.Data
                 await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
 
                 // Query to get the inserted material
-                cmd.CommandText = "SELECT TOP 1 * FROM [dbo].[Uniwave_a2p_Materials] WHERE [RowId] = @RowId";
+                cmd.CommandText = "SELECT TOP 1 * FROM [dbo].[Uniwave_a2p_Materials] WHERE [Id] = @Id";
                 var queryParams = new SqlParameter[]
                 {
-                    new SqlParameter("@RowId", material.RowId)
+                    new SqlParameter("@Id", material.Id)
                 };
 
                 var result = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, queryParams);
-                if (result == null)
-                    return null;
-                return MapDataRowToMaterial(result.Rows[0]);
+                if (result == null || result.Rows.Count == 0)
+                    return Result<MaterialEntity>.Failure($"Material with ID {material.Id} was not found after insert.");
+                return Result<MaterialEntity>.Success(MapDataRowToMaterial(result.Rows[0]));
             }
             catch (SqlException sqlEx)
             {
-                Console.WriteLine(sqlEx.Message);
-                //_logService.Error(sqlEx, "SQL Error Inserting Material {0}-{1} in Order {2}.", material.Reference, material.Color, material.OrderNumber);
-                return null;
+                // _logService.Error(sqlEx, ...);
+                return Result<MaterialEntity>.Failure(sqlEx.Message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                //  _logService.Error(ex, "Error Inserting Material {0}-{1} in Order {2}.", material.Reference, material.Color, material.OrderNumber);
-                return null;
+                // _logService.Error(ex, ...);
+                return Result<MaterialEntity>.Failure(ex.Message);
             }
         }
 
-        public async Task<MaterialEntity?> UpdateMaterialAsync(MaterialEntity material)
+        public async Task<Result<MaterialEntity>> UpdateMaterialAsync(MaterialEntity material)
         {
             try
             {
@@ -176,7 +175,7 @@ namespace a2p.Infrastructure.Data
                     "[Worksheet] = @Worksheet, " +
                     "[Line] = @Line, " +
                     "[Column] = @Column, " +
-                    "[Item] = @Item, " +
+                    "[ItemName] = @ItemName, " +
                     "[SortOrder] = @SortOrder, " +
                     "[ReferenceBase] = @ReferenceBase, " +
                     "[Reference] = @Reference, " +
@@ -216,7 +215,7 @@ namespace a2p.Infrastructure.Data
                     "[SourceColor] = @SourceColor, " +
                     "[SourceColorDescription] = @SourceColorDescription, " +
                     "[ModifiedUTCDateTime] = @ModifiedUTCDateTime " +
-                    "WHERE [RowId] = @RowId",
+                    "WHERE [Id] = @Id",
                     CommandType = CommandType.Text
                 };
 
@@ -225,66 +224,58 @@ namespace a2p.Infrastructure.Data
                 await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
 
                 // Query to get the updated material
-                cmd.CommandText = "SELECT TOP 1 * FROM [dbo].[Uniwave_a2p_Materials] WHERE [RowId] = @RowId";
+                cmd.CommandText = "SELECT TOP 1 * FROM [dbo].[Uniwave_a2p_Materials] WHERE [Id] = @Id";
                 var queryParams = new SqlParameter[]
                 {
-                    new SqlParameter("@RowId", material.RowId)
+                    new SqlParameter("@Id", material.Id)
                 };
 
                 var result = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, queryParams);
-                if (result == null)
-                    return null;
-                return MapDataRowToMaterial(result.Rows[0]);
+                if (result == null || result.Rows.Count == 0)
+                    return Result<MaterialEntity>.Failure("NotFound");
+                return Result<MaterialEntity>.Success(MapDataRowToMaterial(result.Rows[0]));
             }
             catch (SqlException sqlEx)
             {
-                Console.WriteLine(sqlEx.Message);
-                // _logService.Error(sqlEx, "SQL Error Updating Material {0}-{1} in Order {2}.", material.Reference, material.Color, material.OrderNumber);
-                return null;
+                return Result<MaterialEntity>.Failure(sqlEx.Message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                // _logService.Error(ex, "Error Updating Material {0}-{1} in Order {2}.", material.Reference, material.Color, material.OrderNumber);
-                return null;
+                return Result<MaterialEntity>.Failure(ex.Message);
             }
         }
 
-        public async Task<MaterialEntity?> GetMaterialAsync(Guid rowId)
+        public async Task<Result<MaterialEntity>> GetMaterialAsync(Guid rowId)
         {
             try
             {
                 SqlCommand cmd = new()
                 {
-                    CommandText = "SELECT TOP 1 * FROM [dbo].[Uniwave_a2p_Materials] WHERE [RowId] = @RowId",
+                    CommandText = "SELECT TOP 1 * FROM [dbo].[Uniwave_a2p_Materials] WHERE [Id] = @Id",
                     CommandType = CommandType.Text
                 };
 
                 var parameters = new SqlParameter[]
                 {
-                    new SqlParameter("@RowId", rowId)
+                    new SqlParameter("@Id", rowId)
                 };
 
                 var result = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
-
                 if (result == null || result.Rows.Count == 0)
-                    return null;
-
-                return MapDataRowToMaterial(result.Rows[0]);
+                    return Result<MaterialEntity>.Failure("NotFound");
+                return Result<MaterialEntity>.Success(MapDataRowToMaterial(result.Rows[0]));
             }
             catch (SqlException sqlEx)
             {
-                Console.WriteLine(sqlEx.Message);
-                return null;
+                return Result<MaterialEntity>.Failure(sqlEx.Message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return null;
+                return Result<MaterialEntity>.Failure(ex.Message);
             }
         }
 
-        public async Task<IEnumerable<MaterialEntity>?> GetOrderMaterialsAsync(Guid rowId)
+        public async Task<Result<IEnumerable<MaterialEntity>>> GetOrderMaterialsAsync(Guid rowId)
         {
             try
             {
@@ -300,9 +291,8 @@ namespace a2p.Infrastructure.Data
                 };
 
                 var result = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
-
                 if (result == null || result.Rows.Count == 0)
-                    return Array.Empty<MaterialEntity>();
+                    return Result<IEnumerable<MaterialEntity>>.Success(Array.Empty<MaterialEntity>());
 
                 List<MaterialEntity> materials = new();
                 foreach (DataRow row in result.Rows)
@@ -312,21 +302,19 @@ namespace a2p.Infrastructure.Data
                         materials.Add(material);
                 }
 
-                return materials;
+                return Result<IEnumerable<MaterialEntity>>.Success(materials);
             }
             catch (SqlException sqlEx)
             {
-                Console.WriteLine(sqlEx.Message);
-                return Array.Empty<MaterialEntity>();
+                return Result<IEnumerable<MaterialEntity>>.Failure(sqlEx.Message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return Array.Empty<MaterialEntity>();
+                return Result<IEnumerable<MaterialEntity>>.Failure(ex.Message);
             }
         }
 
-        public async Task<IEnumerable<MaterialEntity>?> GetMaterialsAsync()
+        public async Task<Result<IEnumerable<MaterialEntity>>> GetMaterialsAsync()
         {
             try
             {
@@ -338,7 +326,7 @@ namespace a2p.Infrastructure.Data
                 var result = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType);
 
                 if (result == null || result.Rows.Count == 0)
-                    return Array.Empty<MaterialEntity>();
+                    return Result<IEnumerable<MaterialEntity>>.Success(Array.Empty<MaterialEntity>());
 
                 List<MaterialEntity> materials = new();
                 foreach (DataRow row in result.Rows)
@@ -347,47 +335,43 @@ namespace a2p.Infrastructure.Data
                     if (material != null)
                         materials.Add(material);
                 }
-                return materials;
+                return Result<IEnumerable<MaterialEntity>>.Success(materials);
             }
             catch (SqlException sqlEx)
             {
-                Console.WriteLine(sqlEx.Message);
-                return Array.Empty<MaterialEntity>();
+                return Result<IEnumerable<MaterialEntity>>.Failure(sqlEx.Message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return Array.Empty<MaterialEntity>();
+                return Result<IEnumerable<MaterialEntity>>.Failure(ex.Message);
             }
         }
 
-        public async Task<Guid> DeleteMaterialAsync(Guid rowId)
+        public async Task<Result<Guid>> DeleteMaterialAsync(Guid rowId)
         {
             try
             {
                 SqlCommand cmd = new()
                 {
-                    CommandText = "DELETE FROM [dbo].[Uniwave_a2p_Materials] WHERE [RowId] = @RowId",
+                    CommandText = "DELETE FROM [dbo].[Uniwave_a2p_Materials] WHERE [Id] = @Id",
                     CommandType = CommandType.Text
                 };
                 var parameters = new SqlParameter[]
                 {
-                    new SqlParameter("@RowId", rowId)
+                    new SqlParameter("@Id", rowId)
                 };
                 int rowsAffected = await _sqlService.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
                 if (rowsAffected > 0)
-                    return rowId;
-                return Guid.Empty;
+                    return Result<Guid>.Success(rowId);
+                return Result<Guid>.Failure("NotFound");
             }
             catch (SqlException sqlEx)
             {
-                Console.WriteLine(sqlEx.Message);
-                return Guid.Empty;
+                return Result<Guid>.Failure(sqlEx.Message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return Guid.Empty;
+                return Result<Guid>.Failure(ex.Message);
             }
         }
 
@@ -401,17 +385,17 @@ namespace a2p.Infrastructure.Data
                 return new MaterialEntity
                 {
                     // Base entity properties
-                    RowId = row.Field<Guid>("RowId"),
+                    Id = row.Field<Guid>("Id"),
 
-                    // Order related properties
+                    // OrderNumber related properties
                     OrderId = row.Field<Guid>("OrderId"),
                     OrderNumber = row.Field<string>("OrderNumber") ?? string.Empty,
                     Worksheet = row.Field<string>("Worksheet") ?? string.Empty,
                     Line = row.Field<int>("Line"),
                     Column = row.Field<int>("Column"),
 
-                    // Item identification
-                    ItemName = row.Field<string>("Item"),
+                    // ItemName identification
+                    ItemName = row.Field<string>("ItemName"),
                     ItemId = row.Field<Guid?>("ItemId"),
                     SortOrder = row.Field<int>("SortOrder"),
 
@@ -488,13 +472,13 @@ namespace a2p.Infrastructure.Data
         {
             return new SqlParameter[]
             {
-                new SqlParameter("@RowId", material.RowId),
+                new SqlParameter("@Id", material.Id),
                 new SqlParameter("@OrderId", material.OrderId),
                 new SqlParameter("@OrderNumber", material.OrderNumber),
                 new SqlParameter("@Worksheet", material.Worksheet),
                 new SqlParameter("@Line", material.Line),
                 new SqlParameter("@Column", material.Column),
-                new SqlParameter("@Item", material.ItemName ?? (object)DBNull.Value),
+                new SqlParameter("@ItemName", material.ItemName ?? (object)DBNull.Value),
                 new SqlParameter("@ItemId", material.ItemId ?? (object)DBNull.Value),
                 new SqlParameter("@SortOrder", material.SortOrder),
                 new SqlParameter("@ReferenceBase", material.ReferenceBase),

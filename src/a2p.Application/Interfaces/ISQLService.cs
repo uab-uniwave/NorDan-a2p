@@ -12,7 +12,7 @@ namespace a2p.Application.Interfaces
         Task<int> ExecuteNonQueryAsync(string sqlCommand, CommandType commandType, params SqlParameter[]? parameters);
         Task<DataTable> ExecuteScalarAsync(string sqlCommand, CommandType commandType, params SqlParameter[]? parameters);
 
-        Task<(int, int)?> ExecuteQueryTupleValuesAsync(string sqlCommand, CommandType commandType, params SqlParameter[]? parameters);
+        Task<(int, int)> ExecuteQueryTupleValuesAsync(string sqlCommand, CommandType commandType, params SqlParameter[]? parameters);
 
 
     }

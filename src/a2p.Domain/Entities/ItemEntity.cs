@@ -15,7 +15,7 @@ namespace a2p.Domain.Entities
 
         public string ItemName { get; set; } = string.Empty;
         public int SortOrder { get; set; } = -1;
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
         //============================================================================================================================
         public int Quantity { get; set; } = 0;
         //============================================================================================================================

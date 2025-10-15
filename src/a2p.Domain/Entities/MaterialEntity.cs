@@ -9,6 +9,9 @@ namespace a2p.Domain.Entities
     {
         public Guid OrderId { get; set; } = Guid.Empty;
         public string OrderNumber { get; set; } = string.Empty;
+        public int SalesDocumentNumber { get; set; } = -1;
+
+        public int SalesDocumentVersion { get; set; } = -1;
         public string Worksheet { get; set; } = string.Empty;
         public int Line { get; set; } = -1;
         public int Column { get; set; } = -1;
@@ -64,10 +67,11 @@ namespace a2p.Domain.Entities
         public string? CustomField5 { get; set; } = null;
         //============================================================================================================================
         public MaterialType MaterialType { get; set; } = 0;
+        public WorksheetType WorksheetType { get; set; } = 0;
         //============================================================================================================================
-        public string SourceReference { get; set; } = string.Empty;
-        public string SourceDescription { get; set; } = string.Empty;
-        public string SourceColor { get; set; } = string.Empty;
+        public string? SourceReference { get; set; } = string.Empty;
+        public string? SourceDescription { get; set; } = string.Empty;
+        public string? SourceColor { get; set; } = string.Empty;
         public string? SourceColorDescription { get; set; } = string.Empty;
         //============================================================================================================================
         public int? CommodityCode { get; set; } = null;

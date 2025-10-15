@@ -1,9 +1,7 @@
 using a2p.Application.Interfaces;
-using a2p.Application.Interfaces.MappingService;
-using a2p.Domain.Entities;
-using a2p.Domain.Enums;
+using a2p.Application.Models;
 using a2p.Domain.Interfaces;
-using a2p.Domain.Models;
+using a2p.Infrastructure.Models.BaseModels;
 
 using System.Data;
 
@@ -14,33 +12,38 @@ namespace a2p.Infrastructure.Services
     {
         private readonly ILogService _logService;
         private readonly IFileService _fileService;
-        private readonly IExcelService _excelReaderService;
-        private readonly IMyRepository _orderRepository;
+        // private readonly IExcelService _excelService;
         private readonly IPrefSuiteDataService _prefSuiteDataService;
-        private readonly IMapperTechDesign _mapperSapaTechDesign;
+        private readonly IOrderRepository _orderRepository;
+        private readonly IMaterialRepository _materialRepository;
+        private readonly IItemRepository _itemRepository;
+        private readonly IExcelParserTechDesign _mapperTechDesign;
         private readonly IMapperSapa _mapperSapa;
-        private readonly IMapperSchuco _mapperSchuco;
-        private List<OrderEntity> _orders;
+        private readonly IExcelParserSchuco _mapperSchuco;
+        private List<ExcelOrderDto> _orders;
 
         private ProgressValue _progressValue;
         private IProgress<ProgressValue> _progress;
         public ReadService(ILogService logService,
                            IFileService fileService,
-                           IExcelService excelReadService,
-                           IMyRepository orderRepository,
-                            IMapperTechDesign mapperTechDesign,
-                            IMapperSapa mapperSapa,
-                            IMapperSchuco mapperSchuco, IPrefSuiteDataService prefSuiteDataService
+                           // IExcelService excelReadService,
+                           IPrefSuiteDataService prefSuiteDataService,
+                            IOrderRepository orderRepository,
+                           IMaterialRepository materialRepository,
+                           IItemRepository itemRepository,
+                            IExcelParserTechDesign mapperTechDesign,
+                           IExcelParserSchuco mapperSchuco
                    )
 
         {
 
             _logService = logService;
             _fileService = fileService;
-            _excelReaderService = excelReadService;
             _orderRepository = orderRepository;
-            _mapperSapaTechDesign = mapperTechDesign;
-            _mapperSapa = mapperSapa;
+            _materialRepository = materialRepository;
+            _itemRepository = itemRepository;
+            //  _excelService = excelReadService;
+            _mapperTechDesign = mapperTechDesign;
             _mapperSchuco = mapperSchuco;
             _prefSuiteDataService = prefSuiteDataService;
             _orders = [];
@@ -48,7 +51,7 @@ namespace a2p.Infrastructure.Services
             _progress = new Progress<ProgressValue>();
 
         }
-        public async Task<List<OrderEntity>> ReadAsync(ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
+        public async Task<List<ExcelOrderDto>> ReadAsync(ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
         {
             _orders = [];
             _progressValue = progressValue;
@@ -87,7 +90,7 @@ namespace a2p.Infrastructure.Services
                 {
                     _logService.Error("Unhandled error {$Class}.{Method}." +
                         " \n{$Exception}",
-                   nameof(ReadService),
+                         nameof(ReadService),
                         nameof(GetOrderSalesDocumentState),
                        ex.Message);
                 }
@@ -108,135 +111,135 @@ namespace a2p.Infrastructure.Services
                         _orders[i] = await GetOrderSalesDocumentAsync(_orders[i]);
                         _orders[i] = await GetOrderSalesDocumentState(_orders[i]);
                         _orders[i] = await GetOrderWorksheetsAsync(_orders[i]);
-                        for (int j = 0; j < _orders[i].Files.Count; j++)
-                        {
-                            _progressValue.Value++;
-                            _progress?.Report(_progressValue);
+                        //for (int j = 0; j < _orders[i].Files.Count; j++)
+                        //{
+                        //    _progressValue.Value++;
+                        //    _progress?.Report(_progressValue);
 
-                            for (int k = 0; k < _orders[i].Files[j].Worksheets.Count; k++)
-                            {
-                                _progressValue.ProgressTask2 = $"Worksheet #{_orders[i].Files[j].Worksheets[k].Name}";
+                        //    for (int k = 0; k < _orders[i].Files[j].Worksheets.Count; k++)
+                        //    {
+                        //        _progressValue.ProgressTask2 = $"Worksheet #{_orders[i].Files[j].Worksheets[k].Name}";
 
-                                WorksheetType type = _orders[i].Files[j].Worksheets[k].WorksheetType;
+                        //        WorksheetType type = _orders[i].Files[j].Worksheets[k].WorksheetType;
 
-                                //=======================================================================================
-                                //🔵 Unknown Worksheet
-                                //=======================================================================================
-                                if (type == WorksheetType.Unknown)
-                                {
-                                    continue;
-                                }
-                                //=======================================================================================
-                                //🔵 Items Worksheet
-                                //=======================================================================================
-                                if (type == WorksheetType.Items)
-                                {
-                                    //🔵 Unknown Items
-                                    //=======================================================================================
-                                    if (_orders[i].SourceAppType == SourceAppType.Unknown)
-                                    {
-                                        _logService.Error("{$Class}.{$Method}." +
-                                            "\nUnknown source of file (Sapa, TechnoDesign, Schuco).OrderNumber {$OrderNumber}.",
-                                            nameof(ReadService),
-                                            nameof(GetOrderSalesDocumentState),
-                                            _orders[i].OrderNumber ?? string.Empty);
-                                        continue;
-                                    }
+                        //        //=======================================================================================
+                        //        //🔵 Unknown Worksheet
+                        //        //=======================================================================================
+                        //        if (type == WorksheetType.Unknown)
+                        //        {
+                        //            continue;
+                        //        }
+                        //        //=======================================================================================
+                        //        //🔵 ItemsDto Worksheet
+                        //        //=======================================================================================
+                        //        if (type == WorksheetType.ItemsDto)
+                        //        {
+                        //            //🔵 Unknown ItemsDto
+                        //            //=======================================================================================
+                        //            if (_orders[i].SourceAppType == SourceAppType.Unknown)
+                        //            {
+                        //                //_logService.Error("{$Class}.{$Method}." +
+                        //                //    "\nUnknown source of file (Sapa, TechnoDesign, Schuco).OrderNumber {$OrderNumber}.",
+                        //                //    nameof(ReadService),
+                        //                //    nameof(GetOrderSalesDocumentState),
+                        //                //    _orders[i].OrderNumber ?? string.Empty);
+                        //                continue;
+                        //            }
 
-                                    //🔵 TechnoDesign Items
-                                    //=====================================================================================================
-                                    else if (_orders[i].SourceAppType == SourceAppType.TechDesign)
-                                    {
-                                        (List<ItemEntity>, List<ErrorEntity>) result = await _mapperSapaTechDesign.MapItemsAsync(_orders[i].Files[j].Worksheets[k], _progressValue, _progress);
+                        //            //🔵 TechnoDesign ItemsDto
+                        //            //=====================================================================================================
+                        //            else if (_orders[i].SourceAppType == SourceAppType.TechDesign)
+                        //            {
+                        //                (List<ItemEntity>, List<ErrorEntity>) result = await _mapperTechDesign.MapItemsAsync(_orders[i].Files[j].Worksheets[k], _progressValue, _progress);
 
-                                        if (result.Item1 != null && result.Item1.Count > 0)
-                                        {
-                                            _orders[i].Items.AddRange(result.Item1);
+                        //                if (result.Item1 != null && result.Item1.Count > 0)
+                        //                {
+                        //                    _orders[i].ItemsDto.AddRange(result.Item1);
 
-                                        }
-                                        if (result.Item2 != null && result.Item2.Count > 0)
-                                        {
-                                            _orders[i].Errors.AddRange(result.Item2);
-                                        }
+                        //                }
+                        //                if (result.Item2 != null && result.Item2.Count > 0)
+                        //                {
+                        //                    //_orders[i].Errors.AddRange(result.Item2);
+                        //                }
 
-                                    }
+                        //            }
 
-                                    //🔵 Sapa Items
-                                    //=====================================================================================================
-                                    else if (_orders[i].SourceAppType == SourceAppType.Sapa)
-                                    {
-                                        throw new NotImplementedException("Sapa Items not implemented yet.");
-                                    }
+                        //            //🔵 Sapa ItemsDto
+                        //            //=====================================================================================================
+                        //            else if (_orders[i].SourceAppType == SourceAppType.Sapa)
+                        //            {
+                        //                throw new NotImplementedException("Sapa ItemsDto not implemented yet.");
+                        //            }
 
-                                    //🔵 Schuco Items
-                                    //=====================================================================================================
-                                    else
-                                    {
-                                        throw new NotImplementedException("Schuco Items not implemented yet.");
-                                    }
-                                }
+                        //            //🔵 Schuco ItemsDto
+                        //            //=====================================================================================================
+                        //            else
+                        //            {
+                        //                throw new NotImplementedException("Schuco ItemsDto not implemented yet.");
+                        //            }
+                        //        }
 
-                                //=======================================================================================
-                                //🔵 Materials Worksheet
-                                //=======================================================================================
-                                else
-                                {
-                                    //🔵 Unknown Materials
-                                    //=======================================================================================
-                                    if (_orders[i].SourceAppType == SourceAppType.Unknown)
-                                    {
-                                        continue;
-                                    }
+                        //        //=======================================================================================
+                        //        //🔵 Materials Worksheet
+                        //        //=======================================================================================
+                        //        else
+                        //        {
+                        //            //🔵 Unknown Materials
+                        //            //=======================================================================================
+                        //            if (_orders[i].SourceAppType == SourceAppType.Unknown)
+                        //            {
+                        //                continue;
+                        //            }
 
-                                    //🔵TechnoDesign Materials
-                                    //=======================================================================================
-                                    else if (_orders[i].SourceAppType == SourceAppType.TechDesign)
-                                    {
+                        //            //🔵TechnoDesign Materials
+                        //            //=======================================================================================
+                        //            else if (_orders[i].SourceAppType == SourceAppType.TechDesign)
+                        //            {
 
-                                        (List<MaterialEntity>, List<ErrorEntity>) result = await _mapperSapaTechDesign.MapMaterialsAsync(_orders[i].Files[j].Worksheets[k], _progressValue, _progress);
+                        //                (List<MaterialEntity>, List<ErrorEntity>) result = await _mapperTechDesign.MapMaterialsAsync(_orders[i].Files[j].Worksheets[k], _progressValue, _progress);
 
-                                        if (result.Item1 != null && result.Item1.Count > 0)
-                                        {
-                                            _orders[i].Materials.AddRange(result.Item1);
-                                        }
-                                        if (result.Item2 != null && result.Item2.Count > 0)
-                                        {
-                                            _orders[i].Errors.AddRange(result.Item2);
-                                        }
+                        //                if (result.Item1 != null && result.Item1.Count > 0)
+                        //                {
+                        //                    _orders[i].Materials.AddRange(result.Item1);
+                        //                }
+                        //                if (result.Item2 != null && result.Item2.Count > 0)
+                        //                {
+                        //                    //_orders[i].Errors.AddRange(result.Item2);
+                        //                }
 
-                                    }
+                        //            }
 
-                                    //🔵 Sapa Materials
-                                    //=======================================================================================
-                                    else if (_orders[i].SourceAppType == SourceAppType.Sapa)
-                                    {
-                                        throw new NotImplementedException("Sapa Items not implemented yet.");
+                        //            //🔵 Sapa Materials
+                        //            //=======================================================================================
+                        //            else if (_orders[i].SourceAppType == SourceAppType.Sapa)
+                        //            {
+                        //                throw new NotImplementedException("Sapa ItemsDto not implemented yet.");
 
-                                    }
+                        //            }
 
-                                    //🔵 Schuco Materials
-                                    //=======================================================================================
-                                    else
-                                    {
+                        //            //🔵 Schuco Materials
+                        //            //=======================================================================================
+                        //            else
+                        //            {
 
-                                        throw new NotImplementedException("Schuco Items not implemented yet.");
-                                    }
+                        //                throw new NotImplementedException("Schuco ItemsDto not implemented yet.");
+                        //            }
 
-                                }
-                            }
-                        }
+                        //        }
+                        //    }
+                        //}
                         _orders[i] = SetSalesDocumentReadErrors(_orders[i]);
 
                     }
                     catch (Exception ex)
                     {
-                        _logService.Error("Unhandled error {$Class}.{Method}." +
-                            "\nOrder {$OrderNumber}." +
-                            " \n{$Exception}",
-                       nameof(ReadService),
-                            nameof(GetOrderSalesDocumentState),
-                            _orders[i].OrderNumber ?? string.Empty,
-                            ex.Message);
+                        // _logService.Error("Unhandled error {$Class}.{Method}." +
+                        //     "\nOrder {$OrderNumber}." +
+                        //     " \n{$Exception}",
+                        //nameof(ReadService),
+                        //     nameof(GetOrderSalesDocumentState),
+                        //     _orders[i].OrderNumber ?? string.Empty,
+                        //     ex.Message);
                         continue;
                     }
                 }
@@ -250,7 +253,7 @@ namespace a2p.Infrastructure.Services
 
         }
 
-        private async Task<List<OrderEntity>> GetOrders(List<string>? files)
+        private async Task<List<ExcelOrderDto>> GetOrders(List<string>? files)
         {
 
             if (files == null || files.Count == 0)
@@ -276,15 +279,15 @@ namespace a2p.Infrastructure.Services
                 foreach (string orderNumber in orderNumbers)
                 {
 
-                    OrderEntity order = new()
+                    ExcelOrderDto orderDto = new()
                     {
                         OrderNumber = orderNumber,
-                        Items = [],
-                        Materials = [],
-                        Errors = [],
+                        ItemsDto = [],
+                        MaterialsDto = [],
+                        //Errors = [],
                         SalesDocumentNumber = -1,
                         SalesDocumentVersion = -1,
-                        SalesDocumentState = -1,
+                        //SalesDocumentState = -1,
                         Currency = "Unknown",
                         ExchangeRate = 1
 
@@ -300,19 +303,19 @@ namespace a2p.Infrastructure.Services
 
             catch (Exception ex)
             {
-                _logService.Verbose(
-           "{$Class}.{$Method}. Unhandled error getting orders. Exception: {Exception}.",
-           nameof(IReadService),
-           nameof(GetOrders),
-            ex.Message
-          );
+                //     _logService.Verbose(
+                //"{$Class}.{$Method}. Unhandled error getting orders. Exception: {Exception}.",
+                //nameof(IReadService),
+                //nameof(GetOrders),
+                // ex.Message
+                //);
 
                 return await Task.Run(() => _orders);
 
             }
         }
 
-        private async Task<OrderEntity> GetOrderFilesAsync(OrderEntity order)
+        private async Task<ExcelOrderDto> GetOrderFilesAsync(ExcelOrderDto order)
         {
 
             try
@@ -330,7 +333,7 @@ namespace a2p.Infrastructure.Services
                     for (int i = 0; i < files.Count; i++)
                     {
 
-                        a2p.Domain.Models.File file = new()
+                        a2p.Application.Models.File file = new()
                         {
                             FullName = files[i],
                             OrderNumber = order.OrderNumber,
@@ -343,16 +346,16 @@ namespace a2p.Infrastructure.Services
                         if (file.IsLocked)
                         {
 
-                            order.Errors.Add(new ErrorEntity
-                            {
-                                OrderNumber = order.OrderNumber,
-                                Level = ErrorLevel.Fatal,
-                                Code = ErrorCode.FileSystemReadWrite,
-                                Message = $"OrderNumber {order.OrderNumber}. File ${file.FileName} is Locked."
+                            //order.Errors.Add(new ErrorEntity
+                            //{
+                            //    OrderNumber = order.OrderNumber,
+                            //    Level = ErrorLevel.Fatal,
+                            //    Code = ErrorCode.FileSystemReadWrite,
+                            //    Message = $"OrderNumber {order.OrderNumber}. File ${file.FileName} is Locked."
 
-                            });
+                            //});
                         }
-                        order.Files.Add(file);
+                        //order.Files.Add(file);
                     }
 
                 }));
@@ -365,22 +368,22 @@ namespace a2p.Infrastructure.Services
             }
         }
 
-        private async Task<OrderEntity> GetOrderWorksheetsAsync(OrderEntity order)
+        private async Task<ExcelOrderDto> GetOrderWorksheetsAsync(ExcelOrderDto order)
 
         {
             try
             {
-                for (int i = 0; i < order.Files.Count; i++)
-                {
+                //for (int i = 0; i < order.Files.Count; i++)
+                //{
 
-                    List<Worksheet> worksheets = await _excelReaderService.GetWorksheetsAsync(order.Files[i], _progressValue, _progress);
+                //    List<Worksheet> worksheets = await _excelService.GetWorksheetsAsync(order.Files[i], _progressValue, _progress);
 
-                    if (worksheets == null)
-                    {
-                        continue;
-                    }
-                    order.Files[i].Worksheets.AddRange(worksheets);
-                }
+                //    if (worksheets == null)
+                //    {
+                //        continue;
+                //    }
+                //    order.Files[i].Worksheets.AddRange(worksheets);
+                //}
 
                 return order;
 
@@ -392,32 +395,32 @@ namespace a2p.Infrastructure.Services
             }
         }
 
-        private async Task<OrderEntity> GetOrderSalesDocumentAsync(OrderEntity order)
+        private async Task<ExcelOrderDto> GetOrderSalesDocumentAsync(ExcelOrderDto order)
         {
 
             (int, int) salesDocument = (-1, -1);
             try
             {
 
-                (int, int) result = await _prefSuiteDataService.GetSalesDocumentAsync(order.OrderNumber);
+                (int?, int?) result = await _prefSuiteDataService.GetSalesDocumentAsync(order.OrderNumber);
                 if (result.Item1 < 1 || result.Item2 < 1)
                 {
                     salesDocument.Item1 = -1;
                     salesDocument.Item2 = -1;
 
-                    order.Errors.Add(new ErrorEntity
-                    {
-                        OrderNumber = order.OrderNumber,
-                        Level = ErrorLevel.Fatal,
-                        Code = ErrorCode.DatabaseRead_OrderReferenceNotFound,
-                        Message = $"OrderNumber# {order.OrderNumber} not exists in PrefSuite DB !"
-                    }
-                    );
+                    //order.Errors.Add(new ErrorEntity
+                    //{
+                    //    OrderNumber = order.OrderNumber,
+                    //    Level = ErrorLevel.Fatal,
+                    //    Code = ErrorCode.DatabaseRead_OrderReferenceNotFound,
+                    //    Message = $"OrderNumber# {order.OrderNumber} not exists in PrefSuite DB !"
+                    //}
+                    //);
                 }
                 else
                 {
-                    order.SalesDocumentNumber = result.Item1;
-                    order.SalesDocumentVersion = result.Item2;
+                    order.SalesDocumentNumber = result.Item1 ?? -1;
+                    order.SalesDocumentVersion = result.Item2 ?? -1;
                 }
 
                 return order;
@@ -435,116 +438,124 @@ namespace a2p.Infrastructure.Services
                 return order;
             }
         }
-        private async Task<OrderEntity> GetOrderSalesDocumentState(OrderEntity order)
+        private async Task<ExcelOrderDto> GetOrderSalesDocumentState(ExcelOrderDto order)
         {
             try
             {
 
-                order.SalesDocumentState = await _prefSuiteDataService.GetSalesDocumentStateAsync(order.SalesDocumentNumber, order.SalesDocumentVersion);
+                //order.SalesDocumentState = await _prefSuiteDataService.GetSalesDocumentStateAsync(order.Number, order.Version);
 
                 return order;
             }
             catch (Exception ex)
             {
-                _logService.Error("Unhandled error {$Class}.{Method}." +
-                    "\nOrder {$OrderNumber}." +
-                    " \n{$Exception}",
-               nameof(ReadService),
-                    nameof(GetOrderSalesDocumentAsync),
-                    order.OrderNumber ?? string.Empty,
-                    ex.Message);
+                // _logService.Error("Unhandled error {$Class}.{Method}." +
+                //     "\nOrder {$OrderNumber}." +
+                //     " \n{$Exception}",
+                //nameof(ReadService),
+                //     nameof(GetOrderSalesDocumentAsync),
+                //     order.OrderNumber ?? string.Empty,
+                //     ex.Message);
 
                 return order;
             }
 
         }
-        private OrderEntity SetSalesDocumentReadErrors(OrderEntity order)
+        private ExcelOrderDto SetSalesDocumentReadErrors(ExcelOrderDto order)
         {
             try
             {
-
-                OrderState orderState = (OrderState)order.SalesDocumentState;
-
-                if (orderState.HasFlag(OrderState.PurchaseOrdersExist))
+                SalesDocument salesDocument = new()
                 {
-                    order.Errors.Add(new ErrorEntity
-                    {
-                        OrderNumber = order.OrderNumber,
-                        Level = ErrorLevel.Fatal,
-                        Code = ErrorCode.DatabaseRead_OrderAlreadyImported,
-                        Message = $"OrderNumber {order.OrderNumber} - {order.SalesDocumentNumber}/{order.SalesDocumentVersion} contains purchase orders.\nPlease remove purchase orders and try load data again."
+                    SalesDocumentNumber = order.SalesDocumentNumber,
+                    SalesDocumentVersion = order.SalesDocumentVersion,
+                    //  SalesDocumentState = await GetOrderSalesDocumentState(order)
+                };
 
-                    });
-                    return order;
+                ///  OrderState orderState = (OrderState)order.SalesDocumentState;
 
-                }
+                // if (orderState.HasFlag(OrderState.PurchaseOrdersExist))
+                //{
+                //    //order.Errors.Add(new ErrorEntity
+                //    //{
+                //    //    OrderNumber = order.OrderNumber,
+                //    //    Level = ErrorLevel.Fatal,
+                //    //    Code = ErrorCode.DatabaseRead_OrderAlreadyImported,
+                //    //    Message = $"OrderNumber {order.OrderNumber} - {order.Number}/{order.Version} contains purchase orders.\nPlease remove purchase orders and try load data again."
 
-                if (orderState.HasFlag(OrderState.MaterialNeedsInserted))
-                {
-                    order.Errors.Add(new ErrorEntity
-                    {
-                        OrderNumber = order.OrderNumber,
-                        Level = ErrorLevel.Warning,
-                        Code = ErrorCode.DatabaseRead_OrderAlreadyImported,
-                        Message = $"OrderNumber {order.OrderNumber} - {order.SalesDocumentNumber}/{order.SalesDocumentVersion} contains calculated material needs!"
+                //    //});
+                //    return order;
 
-                    });
-                    return order;
+                //}
 
-                }
+                //  if (orderState.HasFlag(OrderState.MaterialNeedsInserted))
+                //    {
+                //order.Errors.Add(new ErrorEntity
+                //{
+                //    OrderNumber = order.OrderNumber,
+                //    Level = ErrorLevel.Warning,
+                //    Code = ErrorCode.DatabaseRead_OrderAlreadyImported,
+                //    Message = $"OrderNumber {order.OrderNumber} - {order.Number}/{order.Version} contains calculated material needs!"
 
-                if (orderState.HasFlag(OrderState.ItemsCreated))
-                {
-                    order.Errors.Add(new ErrorEntity
-                    {
-                        OrderNumber = order.OrderNumber,
-                        Level = ErrorLevel.Warning,
-                        Code = ErrorCode.DatabaseRead_OrderAlreadyImported,
-                        Message = $"OrderNumber {order.OrderNumber} - {order.SalesDocumentNumber}/{order.SalesDocumentVersion} contains PrefSuite items!"
-
-                    });
-                    return order;
-
-                }
-
-                if (orderState.HasFlag(OrderState.A2PItemsImported))
-                {
-                    order.Errors.Add(new ErrorEntity
-                    {
-                        OrderNumber = order.OrderNumber,
-                        Level = ErrorLevel.Warning,
-                        Code = ErrorCode.DatabaseRead_OrderAlreadyImported,
-                        Message = $"OrderNumber {order.OrderNumber} - {order.SalesDocumentNumber}/{order.SalesDocumentVersion} contains imported items worksheet!"
-
-                    });
-
-                }
-
-                if (orderState.HasFlag(OrderState.A2PMaterialsImported))
-                {
-                    order.Errors.Add(new ErrorEntity
-                    {
-                        OrderNumber = order.OrderNumber,
-                        Level = ErrorLevel.Warning,
-                        Code = ErrorCode.DatabaseRead_OrderAlreadyImported,
-                        Message = $"OrderNumber {order.OrderNumber} - {order.SalesDocumentNumber}/{order.SalesDocumentVersion} contains imported material worksheets!"
-
-                    });
-
-                }
-
+                //});
                 return order;
+
+                //     }
+                //
+                //if (orderState.HasFlag(OrderState.ItemsCreated))
+                //{
+                //    order.Errors.Add(new ErrorEntity
+                //    {
+                //        OrderNumber = order.OrderNumber,
+                //        Level = ErrorLevel.Warning,
+                //        Code = ErrorCode.DatabaseRead_OrderAlreadyImported,
+                //        Message = $"OrderNumber {order.OrderNumber} - {order.Number}/{order.Version} contains PrefSuite items!"
+
+                //    });
+                //    return order;
+
+                //}
+
+                //if (orderState.HasFlag(OrderState.A2PItemsImported))
+                //{
+                //    //order.Errors.Add(new ErrorEntity
+                //    //{
+                //    //    OrderNumber = order.OrderNumber,
+                //    //    Level = ErrorLevel.Warning,
+                //    //    Code = ErrorCode.DatabaseRead_OrderAlreadyImported,
+                //    //    Message = $"OrderNumber {order.OrderNumber} - {order.Number}/{order.Version} contains imported items worksheet!"
+
+                //    //});
+
+                //}
+
+                //if (orderState.HasFlag(OrderState.A2PMaterialsImported))
+                //{
+                //    //order.Errors.Add(new ErrorEntity
+                //    //{
+                //    //    OrderNumber = order.OrderNumber,
+                //    //    Level = ErrorLevel.Warning,
+                //    //    Code = ErrorCode.DatabaseRead_OrderAlreadyImported,
+                //    //    Message = $"OrderNumber {order.OrderNumber} - {order.Number}/{order.Version} contains imported material worksheets!"
+
+                //    //});
+
+                //}
+
+                //return order;
 
             }
             catch (Exception ex)
             {
-                _logService.Error("Unhandled error {$Class}.{Method}." +
-                    "\nOrder {$OrderNumber}." +
-                    " \n{$Exception}",
-               nameof(ReadService),
-                    nameof(GetOrderSalesDocumentAsync),
-                    order.OrderNumber ?? string.Empty,
-                    ex.Message);
+
+                Console.WriteLine(ex.Message);
+                //    _logService.Error("Unhandled error {$Class}.{Method}." +
+                //        "\nOrder {$OrderNumber}." +
+                //        " \n{$Exception}",
+                //   nameof(ReadService),
+                //        nameof(GetOrderSalesDocumentAsync),
+                //        order.OrderNumber ?? string.Empty,
+                //        ex.Message);
 
                 return order;
             }

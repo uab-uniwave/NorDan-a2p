@@ -5,9 +5,9 @@ namespace a2p.Infrastructure.Models.BaseModels
         public string File { get; set; } = string.Empty; // Excel file name
         public string Worksheet { get; set; } = string.Empty;// Worksheet name
         public string Order { get; set; } = string.Empty; // OrderNumber identifier
-        public string Description { get; set; } = string.Empty; // Item description
+        public string Description { get; set; } = string.Empty; // ItemName description
         public string SortOrder { get; set; } = "0";// Sorting or ordering index
-        public string Item { get; set; } = string.Empty; // Item identifier or name
+        public string Item { get; set; } = string.Empty; // ItemName identifier or name
         public string Quantity { get; set; } = "0";// Quantity of items
         public string Width { get; set; } = "0"; // Width of the item
         public string Height { get; set; } = "0"; // Height of the item

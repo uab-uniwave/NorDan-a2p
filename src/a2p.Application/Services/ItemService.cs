@@ -2,6 +2,7 @@ using a2p.Application.Interfaces;
 using a2p.Application.Services;
 using a2p.Domain.Entities;
 using a2p.Domain.Interfaces;
+using a2p.Domain.Models;
 
 using Dapper;
 
@@ -32,7 +33,7 @@ public class ItemService : IItemService
         try
         {
             if (string.IsNullOrWhiteSpace(item.ItemName))
-                return Result.Failure<int>("Item name is required", "VALIDATION_ERROR");
+                return Result<>.Failure<int>("Item name is required", "VALIDATION_ERROR");
 
             if (item.Price <= 0)
                 return Result.Failure<int>("Item price must be greater than zero", "VALIDATION_ERROR");
@@ -119,19 +120,19 @@ public class ItemService : IItemService
 
             var newId = await connection.QuerySingleAsync<int>(sql, item);
 
-            return Result.Success(newId);
+            return Result<ItemEntity>.Success(newId);
         }
         catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601) // Unique constraint violation
         {
-            return Result.Failure<int>("A product with this name already exists", "DUPLICATE_ERROR", ex);
+            return Result<int>.Failure("A product with this name already exists", "DUPLICATE_ERROR", ex);
         }
         catch (SqlException ex)
         {
-            return Result.Failure<int>($"Database error: {ex.Message}", "DB_ERROR", ex);
+            return Result<ItemEntity>.Failure<int>($"Database error: {ex.Message}", "DB_ERROR", ex);
         }
         catch (Exception ex)
         {
-            return Result.Failure<int>($"Unexpected error: {ex.Message}", "UNKNOWN_ERROR", ex);
+            return Result<ItemEntity>.Failure<int>($"Unexpected error: {ex.Message}", "UNKNOWN_ERROR", ex);
         }
     }
 

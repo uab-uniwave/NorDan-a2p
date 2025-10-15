@@ -1,3 +1,5 @@
+
+
 using a2p.Domain.Entities;
 
 namespace a2p.Domain.Interfaces
@@ -8,7 +10,7 @@ namespace a2p.Domain.Interfaces
         Task<OrderEntity?> GetOrderByNumberAsync(string orderNumber);
         Task<IEnumerable<OrderEntity>?> GetOrdersAsync();
         Task<OrderEntity> InsertOrderAsync(OrderEntity order);
-        Task<OrderEntity?> UpdateOrderAsync(OrderEntity order);
+        Task<OrderEntity?> UpdateOrdrAsync(OrderEntity order);
         Task<Guid> DeleteOrderAsync(Guid id);
     }
 }

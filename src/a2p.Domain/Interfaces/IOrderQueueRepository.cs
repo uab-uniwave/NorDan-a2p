@@ -1,18 +1,15 @@
 using a2p.Domain.Entities;
-using a2p.Domain.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace a2p.Domain.Interfaces
 {
     public interface IOrderQueueRepository
     {
-        Task<Result<OrderQueueEntity>> GetOrderAsync(Guid id);
-        Task<Result<OrderQueueEntity>> GetOrderByNumberAsync(string orderNumber);
-        Task<Result<IEnumerable<OrderQueueEntity>>> GetOrdersAsync();
-        Task<Result<OrderQueueEntity>> InsertOrderAsync(OrderQueueEntity order);
-        Task<Result<OrderQueueEntity>> UpdateOrderAsync(OrderQueueEntity order);
-        Task<Result<Guid>> DeleteOrderAsync(Guid id);
+        Task<a2p.Domain.Models.Result<OrderQueueEntity>> GetOrderAsync(Guid id);
+        Task<a2p.Domain.Models.Result<OrderQueueEntity>> GetOrderByNumberAsync(string orderNumber);
+        Task<a2p.Domain.Models.Result<IEnumerable<OrderQueueEntity>>> GetOrdersAsync();
+        Task<a2p.Domain.Models.Result<OrderQueueEntity>> InsertOrderAsync(OrderQueueEntity order);
+        Task<a2p.Domain.Models.Result<OrderQueueEntity>> UpdateOrderAsync(OrderQueueEntity order);
+        Task<a2p.Domain.Models.Result<Guid>> DeleteOrderAsync(Guid id);
     }
 }
 

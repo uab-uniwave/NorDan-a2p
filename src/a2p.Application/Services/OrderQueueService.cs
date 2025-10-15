@@ -3,7 +3,6 @@ using a2p.Application.Services;
 using a2p.Domain.Entities;
 using a2p.Domain.Exception;
 using a2p.Domain.Interfaces;
-
 using Microsoft.Extensions.Logging;
 
 public class OrderQueueService : IOrderQueueService
@@ -25,22 +24,22 @@ public class OrderQueueService : IOrderQueueService
 
             order.CreatedUTCDateTime = DateTime.UtcNow;
             var result = await _repo.InsertOrderAsync(order);
-            if (result.IsFailure)
+            if (!result.IsSuccess)
             {
-                return Result<OrderQueueEntity>.Failure($"Failed to insert order '{order.OrderNumber}'!");
+                return Result.Failure<OrderQueueEntity>($"Failed to insert order '{order.OrderNumber}'!");
             }
-            return Result<OrderQueueEntity>.Success(result.Value);
+            return Result.Success(result.Value!);
         }
 
         catch (DomainException dex)
         {
             // domain rule violation - handled gracefully
-            return Result<OrderQueueEntity>.Failure(dex.Message);
+            return Result.Failure<OrderQueueEntity>(dex.Message);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error inserting order '{order.OrderNumber}'!");
-            return Result<OrderQueueEntity>.Failure($"Error inserting order '{order.OrderNumber}': {ex.Message}");
+            return Result.Failure<OrderQueueEntity>($"Error inserting order '{order.OrderNumber}': {ex.Message}");
         }
 
     }
@@ -51,22 +50,22 @@ public class OrderQueueService : IOrderQueueService
         {
 
             var result = await _repo.GetOrderAsync(rowId);
-            if (result.IsFailure)
+            if (!result.IsSuccess)
             {
-                return Result<OrderQueueEntity>.Failure($"Failed to get order. Order with rowId '{rowId}' not found.");
+                return Result.Failure<OrderQueueEntity>($"Failed to get order. Order with rowId '{rowId}' not found.");
             }
-            return Result<OrderQueueEntity>.Success(result.Value);
+            return Result.Success(result.Value!);
         }
 
         catch (DomainException dex)
         {
             // domain rule violation - handled gracefully
-            return Result<OrderQueueEntity>.Failure(dex.Message);
+            return Result.Failure<OrderQueueEntity>(dex.Message);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error getting order rowId '{rowId}'!", ex.Message);
-            return Result<OrderQueueEntity>.Failure($"Error getting order rowId '{rowId}': {ex.Message}");
+            _logger.LogError(ex, $"Error getting order rowId '{rowId}'!");
+            return Result.Failure<OrderQueueEntity>($"Error getting order rowId '{rowId}': {ex.Message}");
         }
 
     }
@@ -78,22 +77,22 @@ public class OrderQueueService : IOrderQueueService
         {
 
             var result = await _repo.GetOrdersAsync();
-            if (result.IsFailure)
+            if (!result.IsSuccess)
             {
-                return Result<IEnumerable<OrderQueueEntity>>.Failure($"Failed to get orders. No orders found.");
+                return Result.Failure<IEnumerable<OrderQueueEntity>>($"Failed to get orders. No orders found.");
             }
-            return Result<IEnumerable<OrderQueueEntity>>.Success(result.Value);
+            return Result.Success(result.Value!);
         }
 
         catch (DomainException dex)
         {
             // domain rule violation - handled gracefully
-            return Result<IEnumerable<OrderQueueEntity>>.Failure(dex.Message);
+            return Result.Failure<IEnumerable<OrderQueueEntity>>(dex.Message);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting orders!");
-            return Result<IEnumerable<OrderQueueEntity>>.Failure($"Error getting orders: {ex.Message}");
+            return Result.Failure<IEnumerable<OrderQueueEntity>>($"Error getting orders: {ex.Message}");
         }
 
     }
@@ -105,22 +104,22 @@ public class OrderQueueService : IOrderQueueService
 
             order.ModifiedUTCDateTime = DateTime.UtcNow;
             var result = await _repo.UpdateOrderAsync(order);
-            if (result.IsFailure)
+            if (!result.IsSuccess)
             {
-                return Result<OrderQueueEntity>.Failure($"Failed to update order '{order.OrderNumber}'.");
+                return Result.Failure<OrderQueueEntity>($"Failed to update order '{order.OrderNumber}'.");
             }
-            return Result<OrderQueueEntity>.Success(result.Value);
+            return Result.Success(result.Value!);
         }
 
         catch (DomainException dex)
         {
             // domain rule violation - handled gracefully
-            return Result<OrderQueueEntity>.Failure(dex.Message);
+            return Result.Failure<OrderQueueEntity>(dex.Message);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error updating order '{order.OrderNumber}'!");
-            return Result<OrderQueueEntity>.Failure($"Error updating order '{order.OrderNumber}': {ex.Message}");
+            return Result.Failure<OrderQueueEntity>($"Error updating order '{order.OrderNumber}': {ex.Message}");
         }
 
     }
@@ -131,24 +130,24 @@ public class OrderQueueService : IOrderQueueService
         {
 
             var result = await _repo.DeleteOrderAsync(rowId);
-            if (result.IsFailure)
+            if (!result.IsSuccess || result.Value == Guid.Empty)
             {
 
-                return Result<Guid>.Failure($"Failed to delete order. Order rowId '{rowId}' not found!");
+                return Result.Failure<Guid>($"Failed to delete order. Order rowId '{rowId}' not found!");
             }
 
-            return Result<Guid>.Success(result.Value);
+            return Result.Success(result.Value);
         }
 
         catch (DomainException dex)
         {
             // domain rule violation - handled gracefully
-            return Result<Guid>.Failure(dex.Message);
+            return Result.Failure<Guid>(dex.Message);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error deleting order. Order rowId '{rowId}'!", ex.Message);
-            return Result<Guid>.Failure($"Error deleting order. Order rowId '{rowId}': {ex.Message}");
+            _logger.LogError(ex, $"Error deleting order. Order rowId '{rowId}'!");
+            return Result.Failure<Guid>($"Error deleting order. Order rowId '{rowId}': {ex.Message}");
         }
 
     }

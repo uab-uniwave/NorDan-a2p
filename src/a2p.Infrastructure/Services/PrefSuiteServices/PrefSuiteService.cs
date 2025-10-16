@@ -119,7 +119,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                             {
                                 OrderNumber = excelExcelOrderDto.ItemsDto[i].OrderNumber ?? string.Empty,
                                 Level = ErrorLevel.Error,
-                                Code = ErrorCode.DatabaseWrite_Material,
+                                Code = ErrorCode.SQL_Data_Write,
                                 Message = $"{nameof(PrefSuiteService)}.{nameof(InsertItemsAsync)}. Unhandled error." +
                                     $"\nOrder {excelExcelOrderDto.ItemsDto[i].OrderNumber ?? string.Empty}," +
                                     $"\nWorksheet {excelExcelOrderDto.ItemsDto[i].Worksheet ?? string.Empty}," +
@@ -155,7 +155,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                 {
                     OrderNumber = excelExcelOrderDto.OrderNumber ?? string.Empty,
                     Level = ErrorLevel.Error,
-                    Code = ErrorCode.DatabaseWrite_Material,
+                    Code = ErrorCode.SQL_Data_Write,
                     Message = $"{nameof(PrefSuiteService)}.{nameof(InsertItemsAsync)}. Unhandled error." +
                         $"\nOrder {excelExcelOrderDto.OrderNumber ?? string.Empty}," +
                         $"\nException: {ex.Message ?? string.Empty}"

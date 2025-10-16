@@ -4,12 +4,12 @@ namespace a2p.Domain.Interfaces
 {
     public interface IOrderQueueRepository
     {
-        Task<a2p.Domain.Models.Result<OrderQueueEntity>> GetOrderAsync(Guid id);
-        Task<a2p.Domain.Models.Result<OrderQueueEntity>> GetOrderByNumberAsync(string orderNumber);
-        Task<a2p.Domain.Models.Result<IEnumerable<OrderQueueEntity>>> GetOrdersAsync();
-        Task<a2p.Domain.Models.Result<OrderQueueEntity>> InsertOrderAsync(OrderQueueEntity order);
-        Task<a2p.Domain.Models.Result<OrderQueueEntity>> UpdateOrderAsync(OrderQueueEntity order);
-        Task<a2p.Domain.Models.Result<Guid>> DeleteOrderAsync(Guid id);
+        Task<OrderQueueEntity?> GetOrderAsync(Guid id);
+        Task<OrderQueueEntity?> GetOrderByNumberAsync(string orderNumber);
+        Task<IEnumerable<OrderQueueEntity>?> GetOrdersAsync();
+        Task<OrderQueueEntity> InsertOrderAsync(OrderQueueEntity order);
+        Task<OrderQueueEntity?> UpdateOrderAsync(OrderQueueEntity order);
+        Task<Guid> DeleteOrderAsync(Guid id);
     }
 }
 

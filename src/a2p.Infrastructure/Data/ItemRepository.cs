@@ -2,12 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using a2p.Application.Interfaces;
-using a2p.Application.Models;
 using a2p.Domain.Entities;
 using a2p.Domain.Enums;
 using a2p.Domain.Interfaces;
 
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Logging;
 
 using System.Data;
 
@@ -15,16 +15,17 @@ namespace a2p.Infrastructure.Data
 {
     public class ItemRepository : IItemRepository
     {
-        private readonly ILogService _logService;
+        private readonly ILogger<ItemRepository> _logger;
         private readonly ISQLService _sqlService;
 
-        public ItemRepository(ISQLService sqlService, ILogService logService)
+        public ItemRepository(ISQLService sqlService, ILogger<ItemRepository> logger)
         {
             _sqlService = sqlService ?? throw new ArgumentNullException("ItemRepository, sqlService is null!");
-            _logService = logService ?? throw new ArgumentNullException("ItemRepository, logService is null!");
+            _logger = logger ?? throw new ArgumentNullException("ItemRepository, logService is null!");
         }
 
-        public async Task<Result<ItemEntity>> InsertItemAsync(ItemEntity item)
+        public async Task<ItemEntity?> CreateItemAsync(ItemEntity item)
+
         {
             try
             {
@@ -37,6 +38,8 @@ namespace a2p.Infrastructure.Data
                     "[Worksheet]," +
                     "[Line]," +
                     "[Column]," +
+                    "[SalesDocumentNumber]," +
+                    "[SalesDocumentVersion]," +
                     "[ItemName]," +
                     "[SortOrder]," +
                     "[Description]," +
@@ -82,6 +85,8 @@ namespace a2p.Infrastructure.Data
                     "@Worksheet," +
                     "@Line," +
                     "@Column," +
+                    "@SalesDocumentNumber," +
+                    "@SalesDocumentVersion," +
                     "@ItemName," +
                     "@SortOrder," +
                     "@Description," +
@@ -125,7 +130,7 @@ namespace a2p.Infrastructure.Data
 
                 // Create parameters for the insert
                 var parameters = CreateItemParameters(item);
-                await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
+                await _sqlService.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
 
                 // Query to get the inserted item
                 cmd.CommandText = "SELECT TOP 1 * FROM [dbo].[Uniwave_a2p_Items] WHERE [Id] = @Id";
@@ -135,24 +140,29 @@ namespace a2p.Infrastructure.Data
                 };
 
                 var result = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, queryParams);
-                if (result == null || result.Rows.Count == 0)
-                    return Result<ItemEntity>.Failure($"ItemName with ID {item.Id} was not found after insert.");
 
-                return Result<ItemEntity>.Success(MapDataRowToItem(result.Rows[0]));
+
+
+                if (result == null || result.Rows.Count == 0)
+                    return null;
+                return MapDataRowToItem(result.Rows[0]);
+
+
+
             }
             catch (SqlException sqlEx)
             {
-                _logService.Error("SQL Error Inserting ItemName {0} in OrderNumber {1}. {2}", item.ItemName, item.OrderNumber, sqlEx.Message);
-                return Result<ItemEntity>.Failure(sqlEx.Message);
+                _logger.LogError(sqlEx, "SQL Error Inserting ItemName {ItemName} in OrderNumber {OrderNumber}", item.ItemName, item.OrderNumber);
+                return null;
             }
             catch (Exception ex)
             {
-                _logService.Error("Error Inserting ItemName {0} in OrderNumber {1}. {2}", item.ItemName, item.OrderNumber, ex.Message);
-                return Result<ItemEntity>.Failure(ex.Message);
+                _logger.LogError(ex, "Error Inserting ItemName {ItemName} in OrderNumber {OrderNumber}", item.ItemName, item.OrderNumber);
+                return null;
             }
         }
 
-        public async Task<Result<ItemEntity>> UpdateItemAsync(ItemEntity item)
+        public async Task<ItemEntity?> UpdateItemAsync(ItemEntity item)
         {
             try
             {
@@ -164,6 +174,8 @@ namespace a2p.Infrastructure.Data
                     "[Worksheet] = @Worksheet, " +
                     "[Line] = @Line, " +
                     "[Column] = @Column, " +
+                    "[SalesDocumentNumber] = @SalesDocumentNumber, " +
+                    "[SalesDocumentVersion] = @SalesDocumentVersion, " +
                     "[ItemName] = @ItemName, " +
                     "[SortOrder] = @SortOrder, " +
                     "[Description] = @Description, " +
@@ -206,7 +218,7 @@ namespace a2p.Infrastructure.Data
 
                 // Create parameters for the update
                 var parameters = CreateItemParameters(item);
-                await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
+                await _sqlService.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
 
                 // Query to get the updated item
                 cmd.CommandText = "SELECT TOP 1 * FROM [dbo].[Uniwave_a2p_Items] WHERE [Id] = @Id";
@@ -217,23 +229,25 @@ namespace a2p.Infrastructure.Data
 
                 var result = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, queryParams);
                 if (result == null || result.Rows.Count == 0)
-                    return Result<ItemEntity>.Failure("NotFound");
+                    return null;
 
-                return Result<ItemEntity>.Success(MapDataRowToItem(result.Rows[0]));
+
+                return MapDataRowToItem(result.Rows[0]);
             }
             catch (SqlException sqlEx)
             {
-                _logService.Error("SQL Error Updating ItemName {0} in OrderNumber {1}. {2}", item.ItemName, item.OrderNumber, sqlEx.Message);
-                return Result<ItemEntity>.Failure(sqlEx.Message);
+                _logger.LogError(sqlEx, "SQL Error Updating ItemName {ItemName} in OrderNumber {OrderNumber}", item.ItemName, item.OrderNumber);
+                return null;
             }
             catch (Exception ex)
             {
-                _logService.Error("Error Updating ItemName {0} in OrderNumber {1}. {2}", item.ItemName, item.OrderNumber, ex.Message);
-                return Result<ItemEntity>.Failure(ex.Message);
+                _logger.LogError(ex, "Error Updating ItemName {ItemName} in OrderNumber {OrderNumber}", item.ItemName, item.OrderNumber);
+                return null;
+
             }
         }
 
-        public async Task<Result<ItemEntity>> GetItemAsync(Guid rowId)
+        public async Task<ItemEntity?> GetItemAsync(Guid rowId)
         {
             try
             {
@@ -251,23 +265,26 @@ namespace a2p.Infrastructure.Data
                 var result = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
 
                 if (result == null || result.Rows.Count == 0)
-                    return Result<ItemEntity>.Failure("NotFound");
+                    return null;
 
-                return Result<ItemEntity>.Success(MapDataRowToItem(result.Rows[0]));
+
+                return MapDataRowToItem(result.Rows[0]);
+
             }
             catch (SqlException sqlEx)
             {
-                _logService.Error("SQL Error Getting ItemName {0}. {1}", rowId, sqlEx.Message);
-                return Result<ItemEntity>.Failure(sqlEx.Message);
+                _logger.LogError(sqlEx, "SQL Error Getting Item with id {Id}", rowId);
+                return null;
             }
+
             catch (Exception ex)
             {
-                _logService.Error("Error Getting ItemName {0}. {1}", rowId, ex.Message);
-                return Result<ItemEntity>.Failure(ex.Message);
+                _logger.LogError(ex, "Error Getting Item with id {Id}", rowId);
+                return null;
             }
         }
 
-        public async Task<Result<IEnumerable<ItemEntity>>> GetOrderItemsAsync(Guid rowId)
+        public async Task<IEnumerable<ItemEntity>?> GetOrderItemsAsync(Guid orderId)
         {
             try
             {
@@ -279,13 +296,14 @@ namespace a2p.Infrastructure.Data
 
                 var parameters = new SqlParameter[]
                 {
-                    new SqlParameter("@OrderId", rowId)
+                    new SqlParameter("@OrderId", orderId)
                 };
 
                 var result = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
 
                 if (result == null || result.Rows.Count == 0)
-                    return Result<IEnumerable<ItemEntity>>.Success(Array.Empty<ItemEntity>());
+                    return Enumerable.Empty<ItemEntity>();
+
 
                 List<ItemEntity> items = new();
                 foreach (DataRow row in result.Rows)
@@ -295,21 +313,22 @@ namespace a2p.Infrastructure.Data
                         items.Add(item);
                 }
 
-                return Result<IEnumerable<ItemEntity>>.Success(items);
+
+                return items;
             }
             catch (SqlException sqlEx)
             {
-                _logService.Error("SQL Error Getting OrderNumber ItemsDto for OrderNumber {0}. {1}", rowId, sqlEx.Message);
-                return Result<IEnumerable<ItemEntity>>.Failure(sqlEx.Message);
+                _logger.LogError(sqlEx, "SQL Error Getting Items for OrderId {OrderId}", orderId);
+                return null;
             }
             catch (Exception ex)
             {
-                _logService.Error("Error Getting OrderNumber ItemsDto for OrderNumber {0}. {1}", rowId, ex.Message);
-                return Result<IEnumerable<ItemEntity>>.Failure(ex.Message);
+                _logger.LogError(ex, "Error Getting Items for OrderId {OrderId}", orderId);
+                return null;
             }
         }
 
-        public async Task<Result<IEnumerable<ItemEntity>>> GetItemsAsync()
+        public async Task<IEnumerable<ItemEntity>?> GetItemsAsync()
         {
             try
             {
@@ -321,7 +340,7 @@ namespace a2p.Infrastructure.Data
                 var result = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType);
 
                 if (result == null || result.Rows.Count == 0)
-                    return Result<IEnumerable<ItemEntity>>.Success(Array.Empty<ItemEntity>());
+                    return Enumerable.Empty<ItemEntity>();
 
                 List<ItemEntity> items = new();
                 foreach (DataRow row in result.Rows)
@@ -330,21 +349,23 @@ namespace a2p.Infrastructure.Data
                     if (item != null)
                         items.Add(item);
                 }
-                return Result<IEnumerable<ItemEntity>>.Success(items);
+                return items;
             }
             catch (SqlException sqlEx)
             {
-                _logService.Error("SQL Error Getting All ItemsDto. {0}", sqlEx.Message);
-                return Result<IEnumerable<ItemEntity>>.Failure(sqlEx.Message);
+
+                _logger.LogError(sqlEx, "SQL Error Getting All Items");
+                return null;
+
             }
             catch (Exception ex)
             {
-                _logService.Error("Error Getting All ItemsDto. {0}", ex.Message);
-                return Result<IEnumerable<ItemEntity>>.Failure(ex.Message);
+                _logger.LogError(ex, "Error Getting All Items");
+                return null;
             }
         }
 
-        public async Task<Result<Guid>> DeleteItemAsync(Guid rowId)
+        public async Task<Guid> DeleteItemAsync(Guid Id)
         {
             try
             {
@@ -355,23 +376,26 @@ namespace a2p.Infrastructure.Data
                 };
                 var parameters = new SqlParameter[]
                 {
-                    new SqlParameter("@Id", rowId)
+                    new SqlParameter("@Id", Id)
                 };
                 int rowsAffected = await _sqlService.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
-                if (rowsAffected > 0)
-                    return Result<Guid>.Success(rowId);
-                return Result<Guid>.Failure("NotFound");
+
+                return rowsAffected > 0 ? Id : Guid.Empty;
             }
             catch (SqlException sqlEx)
             {
-                return Result<Guid>.Failure(sqlEx.Message);
+                _logger.LogError(sqlEx, "SQL Error Deleting Item with id {Id}", Id);
+                return Guid.Empty;
             }
             catch (Exception ex)
             {
-                return Result<Guid>.Failure(ex.Message);
+
+                _logger.LogError(ex, "Error Deleting Item with id {Id}", Id);
+                return Guid.Empty;
+
             }
         }
-        private static ItemEntity MapDataRowToItem(DataRow row)
+        private static ItemEntity? MapDataRowToItem(DataRow row)
         {
             try
             {
@@ -382,12 +406,16 @@ namespace a2p.Infrastructure.Data
                 {
                     // Base entity properties
                     Id = row.Field<Guid>("Id"),
+                    CreatedUTCDateTime = row.Field<DateTime>("CreatedUTCDateTime"),
+                    ModifiedUTCDateTime = row.Field<DateTime?>("ModifiedUTCDateTime"),
 
                     // OrderNumber related properties
                     OrderNumber = row.Field<string>("OrderNumber") ?? string.Empty,
                     Worksheet = row.Field<string>("Worksheet") ?? string.Empty,
                     Line = row.Field<int>("Line"),
                     Column = row.Field<int>("Column"),
+                    SalesDocumentNumber = row.Field<int>("SalesDocumentNumber"),
+                    SalesDocumentVersion = row.Field<int>("SalesDocumentVersion"),
 
                     // ItemName identification
                     ItemName = row.Field<string>("ItemName") ?? string.Empty,
@@ -447,10 +475,6 @@ namespace a2p.Infrastructure.Data
 
                     // Type information
                     WorksheetType = (WorksheetType)row.Field<int>("WorksheetType"),
-
-                    // Audit fields from base entity
-                    CreatedUTCDateTime = row.Field<DateTime>("CreatedUTCDateTime"),
-                    ModifiedUTCDateTime = row.Field<DateTime>("ModifiedUTCDateTime")
                 };
             }
             catch (Exception ex)
@@ -469,6 +493,8 @@ namespace a2p.Infrastructure.Data
                 new SqlParameter("@Worksheet", item.Worksheet ?? string.Empty),
                 new SqlParameter("@Line", item.Line),
                 new SqlParameter("@Column", item.Column),
+                new SqlParameter("@SalesDocumentNumber", item.SalesDocumentNumber),
+                new SqlParameter("@SalesDocumentVersion", item.SalesDocumentVersion),
                 new SqlParameter("@ItemName", item.ItemName ?? (object)DBNull.Value),
                 new SqlParameter("@SortOrder", item.SortOrder),
                 new SqlParameter("@Description", item.Description ?? (object)DBNull.Value),
@@ -505,7 +531,7 @@ namespace a2p.Infrastructure.Data
                 new SqlParameter("@TotalPriceEUR", item.TotalPriceEUR),
                 new SqlParameter("@WorksheetType", (int)item.WorksheetType),
                 new SqlParameter("@CreatedUTCDateTime", item.CreatedUTCDateTime),
-                new SqlParameter("@ModifiedUTCDateTime", item.ModifiedUTCDateTime ?? DateTime.UtcNow)
+                new SqlParameter("@ModifiedUTCDateTime", (object)item.ModifiedUTCDateTime ?? DBNull.Value)
             };
         }
     }

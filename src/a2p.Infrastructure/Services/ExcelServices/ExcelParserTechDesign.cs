@@ -18,24 +18,26 @@ namespace a2p.Infrastructure.Services.MappingService
         public ExcelParserTechDesign(ILogService logService, IPrefSuiteDataService prefSuiteDataService)
         {
             _logService = logService;
+            _prefSuiteDataService = prefSuiteDataService;
             _progressValue = new ProgressValue();
         }
 
-        public async Task<(List<ExcelItemDto>, List<ErrorEntity>)> MapItemsAsync(Worksheet worksheet, ProgressValue? progressValue, IProgress<ProgressValue>? progress = null)
+        public async Task<List<ExcelItemDto>> MapItemsAsync(Worksheet worksheet, ProgressValue? progressValue, IProgress<ProgressValue>? progress = null)
         {
-            _progressValue = progressValue;
+            _progressValue = progressValue ?? new ProgressValue();
             _progress = progress;
 
             List<ItemEntity> items = [];
             List<ErrorEntity> errors = [];
+            List<ExcelItemDto> result = [];
+
             if (worksheet == null || !worksheet.WorksheetData.Any())
             {
-                return (items, errors);
+                return result;
             }
 
             try
             {
-
                 int rowCounter = 0;
                 int sortOrder = -1;
 
@@ -45,7 +47,6 @@ namespace a2p.Infrastructure.Services.MappingService
                 if (totalSellingPrice != 0)
                 {
                     discountCoeficient = totalQuotePrice / totalSellingPrice;
-
                 }
 
                 for (int i = 1; i < worksheet.RowCount; i++)
@@ -53,7 +54,6 @@ namespace a2p.Infrastructure.Services.MappingService
                     ItemEntity item = new();
                     try
                     {
-
                         sortOrder++;
                         rowCounter++;
 
@@ -93,8 +93,8 @@ namespace a2p.Infrastructure.Services.MappingService
                            item.Line,
                            worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty);
                             continue;
-
                         }
+
                         _progressValue.ProgressTask3 = $"ItemName {sortOrder} of {worksheet.RowCount - 2} - ItemName # \"{item.ItemName}\"";
                         _progress?.Report(_progressValue);
 
@@ -124,7 +124,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         item.TotalCost = Math.Round(item.Cost * item.Quantity, 4);
 
                         item.TotalPrice = Math.Round(item.TotalPrice / discountCoeficient, 0);
-                        item.Price = Math.Round(item.TotalPrice / item.Quantity, 4);
+                        item.Price = item.Quantity == 0 ? 0 : Math.Round(item.TotalPrice / item.Quantity, 4);
 
                         item.ExchangeRateEUR = 1; //TODO': Exchange Rate 
 
@@ -136,11 +136,16 @@ namespace a2p.Infrastructure.Services.MappingService
                         item.PriceEUR = Math.Round(item.Price * item.ExchangeRateEUR, 4);
                         item.TotalPriceEUR = Math.Round(item.TotalPrice * item.ExchangeRateEUR, 4);
 
-                        // item.WorksheetType = WorksheetType.ItemsDto;
                         items.Add(item);
 
-                        await LogMappedItemEntityAsync(item);
+                        // Convert to ExcelItemDto
+                        result.Add(new ExcelItemDto
+                        {
+                            // Map necessary fields from item to ExcelItemDto
+                            // Add proper mapping based on ExcelItemDto structure
+                        });
 
+                        await LogMappedItemEntityAsync(item);
                     }
                     catch (Exception ex)
                     {
@@ -166,7 +171,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         {
                             OrderNumber = worksheet.Order ?? string.Empty,
                             Level = ErrorLevel.Error,
-                            Code = ErrorCode.MappingService_MapMaterial,
+                            Code = ErrorCode.Excel_Material_Parsing,
                             Message = $"Unhandled Error {nameof(ExcelParserTechDesign)}.{nameof(MapItemsAsync)}, " +
                           $"\nOrder: {worksheet.Order ?? string.Empty}," +
                           $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
@@ -181,9 +186,8 @@ namespace a2p.Infrastructure.Services.MappingService
                     }
                 }
 
-                return (items, errors);
+                return result;
             }
-
             catch (Exception ex)
             {
                 _logService.Error("Unhandled error {$Class}.{Method}." +
@@ -194,147 +198,98 @@ namespace a2p.Infrastructure.Services.MappingService
                     worksheet.Order ?? string.Empty,
                     ex.Message);
 
-                return (items, errors);
-                ;
+                return result;
             }
-
         }
 
-        public async Task<(List<MaterialEntity>, List<ErrorEntity>)> MapMaterialsAsync(Worksheet worksheet, ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
+        public async Task<List<ExcelMaterialDto>> MapMaterialsAsync(Worksheet worksheet, ProgressValue? progressValue, IProgress<ProgressValue>? progress = null)
         {
-            _progressValue = progressValue;
+            _progressValue = progressValue ?? new ProgressValue();
             _progress = progress;
 
-            List<MaterialEntity> materials = [];
+            List<ExcelMaterialDto> materials = [];
             List<ErrorEntity> errors = [];
+            List<ExcelMaterialDto> result = [];
+
             if (worksheet == null || !worksheet.WorksheetData.Any())
             {
-                return (materials, errors);
+                return result;
             }
 
             try
             {
-
-                //=============================================================================================================
                 // Iterate Files
-                // =============================================================================================================
-
                 if (worksheet.Name == "ND_Profiles")
                 {
-                    (List<MaterialEntity>, List<ErrorEntity>) result = await MapProfilesAsync(worksheet);
-                    if (result.Item1 != null)
-                    {
-                        materials.AddRange(result.Item1);
-                    }
-                    if (result.Item2 != null)
-                    {
-                        errors.AddRange(result.Item2);
-                    }
+
+
+                    materials.AddRange(await MapProfilesAsync(worksheet));
 
                 }
                 else if (worksheet.Name == "ND_Gaskets")
                 {
-                    (List<MaterialEntity>, List<ErrorEntity>) result = await MapGasketsAsync(worksheet);
-                    if (result.Item1 != null)
-                    {
-                        materials.AddRange(result.Item1);
-                    }
-                    if (result.Item2 != null)
-                    {
-                        errors.AddRange(result.Item2);
-                    }
-
+                    materials.AddRange(await MapGasketsAsync(worksheet));
                 }
 
                 else if (worksheet.Name == "ND_Accessories")
                 {
-                    (List<MaterialEntity>, List<ErrorEntity>) result = await MapAccessoriesAsync(worksheet);
-                    if (result.Item1 != null)
-                    {
-                        materials.AddRange(result.Item1);
-                    }
-                    if (result.Item2 != null)
-                    {
-                        errors.AddRange(result.Item2);
-                    }
-                }
 
+
+                    materials.AddRange(await MapAccessoriesAsync(worksheet));
+
+
+                }
                 else if (worksheet.Name == "ND_Panels")
                 {
-                    (List<MaterialEntity>, List<ErrorEntity>) result = await MapPanelsAsync(worksheet);
-                    if (result.Item1 != null)
-                    {
-                        materials.AddRange(result.Item1);
-                    }
-                    if (result.Item2 != null)
-                    {
-                        errors.AddRange(result.Item2);
-                    }
+
+
+                    materials.AddRange(await MapPanelsAsync(worksheet));
+
 
                 }
                 else if (worksheet.Name == "ND_Glasses")
                 {
-                    (List<MaterialEntity>, List<ErrorEntity>) result = await MapGlassesAsync(worksheet);
-                    if (result.Item1 != null)
-                    {
-                        materials.AddRange(result.Item1);
-                    }
-                    if (result.Item2 != null)
-                    {
-                        errors.AddRange(result.Item2);
-                    }
+
+                    materials.AddRange(await MapGlassesAsync(worksheet));
+
+
                 }
                 else if (worksheet.Name == "ND_Others")
                 {
-                    (List<MaterialEntity>, List<ErrorEntity>) result = await MapOthersAsync(worksheet);
-                    if (result.Item1 != null)
-                    {
-                        materials.AddRange(result.Item1);
-                    }
-                    if (result.Item2 != null)
-                    {
-                        errors.AddRange(result.Item2);
-                    }
+
+
+
+                    materials.AddRange(await MapOthersAsync(worksheet));
+
                 }
 
-                return (materials, errors);
+                // Convert materials to ExcelMaterialDto
+                foreach (var material in materials)
+                {
+                    result.Add(new ExcelMaterialDto
+                    {
+                        // Map necessary fields from material to ExcelMaterialDto
+                        // Add proper mapping based on ExcelMaterialDto structure
+                    });
+                }
+
+                return result;
             }
             catch (Exception ex)
             {
-                _logService.Error("Unhandled error {$Class}.{Method}." +
-                    "\nOrder {$OrderNumber}." +
-                    "\nWorksheet {$Worksheet}." +
-                    "\n{$Exception}",
-               nameof(ExcelParserTechDesign),
-                    nameof(MapMaterialsAsync),
-                    worksheet.Order ?? string.Empty,
-                    worksheet.Name ?? string.Empty,
-                    ex.Message);
 
-                errors.Add(new ErrorEntity()
-                {
-                    OrderNumber = worksheet.Order ?? string.Empty,
-                    Level = ErrorLevel.Error,
-                    Code = ErrorCode.MappingService_MapMaterial,
-                    Message = $"Unhandled Error {nameof(ExcelParserTechDesign)}.{nameof(MapMaterialsAsync)}, " +
-                       $"\nOrder: {worksheet.Order ?? string.Empty}," +
-                       $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
-                       $"\nException: {ex.Message ?? string.Empty}."
-                });
 
-                return (materials, errors);
+                return result;
             }
-
         }
 
-        private async Task<(List<ExcelMaterialDto>, List<ErrorEntity>)> MapProfilesAsync(Worksheet worksheet)
+        private async Task<List<ExcelMaterialDto>> MapProfilesAsync(Worksheet worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
 
-            List<a2p.Application.DTOs.ExcelMaterialDto> materials = [];
-            List<ErrorEntity> ErrorEntitys = [];
+            List<ExcelMaterialDto> materials = []; List<ErrorEntity> ErrorEntitys = [];
             try
             {
 
@@ -342,7 +297,7 @@ namespace a2p.Infrastructure.Services.MappingService
                 {
                     sortOrder++;
                     line = i + 1;
-                    MaterialEntity material = new();
+                    ExcelMaterialDto material = new();
                     try
                     {
                         //===================================================================================================
@@ -406,7 +361,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         material.Waste = material.RequiredWeight != 0
                             ? worksheet.WorksheetData[i][9] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][9].ToString(), out decimal lostWeight) ? lostWeight : 0 / material.RequiredWeight * 100
                             : 0;
-                        //===================================================================================================                                                        
+                        //===================================================================================================                                                         
                         material.Price = decimal.TryParse(worksheet.WorksheetData[i][12].ToString(), out decimal price) ? price : 0;
                         material.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][13].ToString(), out decimal totalPrice) ? totalPrice : 0;
                         material.RequiredPrice = Math.Round(material.Price * (decimal)material.RequiredQuantity, 6);
@@ -458,46 +413,12 @@ namespace a2p.Infrastructure.Services.MappingService
                         materials.Add(material);
 
                         //===================================================================================================
-                        await LogMappedMaterialEntityAsync(material);
+
 
                     }
                     catch (Exception ex)
                     {
-                        _logService.Error("Unhandled error {$Class}.{Method}." +
-                            "\nOrder {$OrderNumber}, " +
-                            "\nWorksheet: {$Worksheet}, " +
-                            "\nReference: {$Reference }, " +
-                            "\nColor: {$Color }, " +
-                            "\nPrefSuite Reference Base {$ReferenceBase}, " +
-                            "\nPrefSuite Reference {$Reference}," +
-                            "\nDescription {$Description}," +
-                            "\nException  {$Exception}",
-                            nameof(ExcelParserTechDesign),
-                            nameof(MapProfilesAsync),
-                            worksheet.Order ?? string.Empty,
-                            worksheet.Name ?? string.Empty,
-                            material.SourceReference ?? string.Empty,
-                            material.SourceColor ?? string.Empty,
-                            material.ReferenceBase ?? string.Empty,
-                            material.Reference ?? string.Empty,
-                            material.Description ?? string.Empty,
-                            ex.Message ?? string.Empty);
 
-
-                        ErrorEntitys.Add(new ErrorEntity()
-                        {
-                            OrderNumber = worksheet.Order ?? string.Empty,
-                            Level = ErrorLevel.Error,
-                            Code = ErrorCode.MappingService_MapMaterial,
-                            Message = $"Unhandled Error {nameof(ExcelParserTechDesign)}.{nameof(MapProfilesAsync)}, " +
-                           $"\nOrder: {worksheet.Order ?? string.Empty}," +
-                           $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
-                           $"\nLine {material.Line}," +
-                           $"\nItem: {material.ItemName ?? string.Empty}," +
-                           $"\nDescription: {material.Description ?? string.Empty}," +
-                           $"\nData: {worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}," +
-                           $"\nException: {ex.Message ?? string.Empty}."
-                        });
                         continue;
                     }
 
@@ -505,31 +426,21 @@ namespace a2p.Infrastructure.Services.MappingService
 
                 _progressValue.ProgressTask3 = string.Empty;
                 _progress?.Report(_progressValue);
-                return (materials, ErrorEntitys);
+                return materials;
             }
             catch (Exception ex)
             {
-                _logService.Error("Unhandled error {$Class}.{Method}." +
-                    "\nOrder {$OrderNumber}." +
-                    "\nWorksheet {$Worksheet}." +
-                    "\n{$Exception}",
-               nameof(ExcelParserTechDesign),
-                    nameof(MapProfilesAsync),
-                    worksheet.Order ?? string.Empty,
-                    worksheet.Name ?? string.Empty,
-                    ex.Message);
-
-                return (materials, ErrorEntitys);
+                return materials;
             }
 
         }
 
-        private async Task<(List<MaterialEntity>, List<ErrorEntity>)> MapGasketsAsync(Worksheet worksheet)
+        private async Task<List<ExcelMaterialDto>> MapGasketsAsync(Worksheet worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
-            List<MaterialEntity> materials = [];
+            List<ExcelMaterialDto> materials = [];
             List<ErrorEntity> ErrorEntitys = [];
 
             try
@@ -539,7 +450,7 @@ namespace a2p.Infrastructure.Services.MappingService
 
                 for (int i = 4; i < worksheet.RowCount; i++)
                 {
-                    MaterialEntity material = new();
+                    ExcelMaterialDto material = new();
                     sortOrder++;
                     line = i + 1;
                     try
@@ -578,7 +489,7 @@ namespace a2p.Infrastructure.Services.MappingService
                             {
                                 OrderNumber = worksheet.Order ?? string.Empty,
                                 Level = ErrorLevel.Error,
-                                Code = ErrorCode.MappingService_MapMaterial,
+                                Code = ErrorCode.Excel_Material_Parsing,
                                 Message = $"Sapa article and color are missing. Line will be skipped." +
                                $"\nOrder: {worksheet.Order ?? string.Empty}," +
                                $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
@@ -718,7 +629,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         materials.Add(material);
 
                         //================================================================================================================
-                        await LogMappedMaterialEntityAsync(material);
+
                     }
                     catch (Exception ex)
                     {
@@ -745,7 +656,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         {
                             OrderNumber = worksheet.Order ?? string.Empty,
                             Level = ErrorLevel.Error,
-                            Code = ErrorCode.MappingService_MapMaterial,
+                            Code = ErrorCode.Excel_Material_Parsing,
                             Message = $"Unhandled Error {nameof(ExcelParserTechDesign)}.{nameof(MapGasketsAsync)}, " +
                            $"\nOrder: {worksheet.Order ?? string.Empty}," +
                            $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
@@ -763,7 +674,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     _progressValue.ProgressTask3 = string.Empty;
                     _progress?.Report(_progressValue);
                 }
-                return (materials, ErrorEntitys);
+                return materials;
             }
             catch (Exception ex)
             {
@@ -777,19 +688,19 @@ namespace a2p.Infrastructure.Services.MappingService
                     worksheet.Name ?? string.Empty,
                     ex.Message);
 
-                return (materials, ErrorEntitys);
+                return materials;
             }
 
         }
 
-        private async Task<(List<MaterialEntity>, List<ErrorEntity>)> MapAccessoriesAsync(Worksheet worksheet)
+        private async Task<List<ExcelMaterialDto>> MapAccessoriesAsync(Worksheet worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
 
             List<ErrorEntity> ErrorEntitys = [];
-            List<MaterialEntity> materials = [];
+            List<ExcelMaterialDto> materials = [];
             try
             {
 
@@ -797,7 +708,7 @@ namespace a2p.Infrastructure.Services.MappingService
 
                 for (int i = 4; i < worksheet.RowCount; i++)
                 {
-                    MaterialEntity material = new();
+                    ExcelMaterialDto material = new();
                     sortOrder++;
 
                     line = i + 1;
@@ -933,7 +844,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         materials.Add(material);
 
                         //===================================================================================================
-                        await LogMappedMaterialEntityAsync(material);
+
                     }
                     catch (Exception ex)
                     {
@@ -961,7 +872,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         {
                             OrderNumber = worksheet.Order ?? string.Empty,
                             Level = ErrorLevel.Error,
-                            Code = ErrorCode.MappingService_MapMaterial,
+                            Code = ErrorCode.Excel_Material_Parsing,
                             Message = $"Unhandled Error {nameof(ExcelParserTechDesign)}.{nameof(MapAccessoriesAsync)}, " +
                            $"\nOrder: {worksheet.Order ?? string.Empty}," +
                            $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
@@ -980,7 +891,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     _progress?.Report(_progressValue);
                 }
 
-                return (materials, ErrorEntitys);
+                return materials;
             }
             catch (Exception ex)
             {
@@ -994,17 +905,17 @@ namespace a2p.Infrastructure.Services.MappingService
                     worksheet.Name ?? string.Empty,
                     ex.Message);
 
-                return (materials, ErrorEntitys);
+                return materials;
             }
 
         }
 
-        private async Task<(List<MaterialEntity>, List<ErrorEntity>)> MapPanelsAsync(Worksheet worksheet)
+        private async Task<List<ExcelMaterialDto>> MapPanelsAsync(Worksheet worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
-            List<MaterialEntity> materials = [];
+            List<ExcelMaterialDto> materials = [];
             List<ErrorEntity> ErrorEntitys = [];
 
             try
@@ -1015,7 +926,7 @@ namespace a2p.Infrastructure.Services.MappingService
 
                 for (int i = 4; i < worksheet.RowCount; i++)
                 {
-                    MaterialEntity material = new();
+                    ExcelMaterialDto material = new();
 
                     sortOrder++;
 
@@ -1237,7 +1148,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         materials.Add(material);
 
                         //===================================================================================================
-                        await LogMappedMaterialEntityAsync(material);
+
 
                     }
                     catch (Exception ex)
@@ -1266,7 +1177,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         {
                             OrderNumber = worksheet.Order ?? string.Empty,
                             Level = ErrorLevel.Error,
-                            Code = ErrorCode.MappingService_MapMaterial,
+                            Code = ErrorCode.Excel_Material_Parsing,
                             Message = $"Unhandled Error {nameof(ExcelParserTechDesign)}.{nameof(MapPanelsAsync)}, " +
                         $"\nOrder: {worksheet.Order ?? string.Empty}," +
                         $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
@@ -1285,7 +1196,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     _progress?.Report(_progressValue);
                 }
 
-                return (materials, ErrorEntitys);
+                return materials;
 
             }
             catch (Exception ex)
@@ -1300,17 +1211,17 @@ namespace a2p.Infrastructure.Services.MappingService
                     worksheet.Name ?? string.Empty,
                     ex.Message);
 
-                return (materials, ErrorEntitys);
+                return materials;
             }
 
         }
 
-        private async Task<(List<MaterialEntity>, List<ErrorEntity>)> MapGlassesAsync(Worksheet worksheet)
+        private async Task<List<ExcelMaterialDto>> MapGlassesAsync(Worksheet worksheet)
         {
             int sortOrder = -1;
             int line = -1;
 
-            List<MaterialEntity> materials = [];
+            List<ExcelMaterialDto> materials = [];
             List<ErrorEntity> ErrorEntitys = [];
 
             try
@@ -1321,7 +1232,7 @@ namespace a2p.Infrastructure.Services.MappingService
 
                 for (int i = 4; i < worksheet.RowCount; i++)
                 {
-                    MaterialEntity material = new();
+                    ExcelMaterialDto material = new();
                     sortOrder++;
                     line = i + 1;
                     try
@@ -1368,7 +1279,7 @@ namespace a2p.Infrastructure.Services.MappingService
                             {
                                 OrderNumber = worksheet.Order!,
                                 Level = ErrorLevel.Error,
-                                Code = ErrorCode.MappingService_MapMaterial,
+                                Code = ErrorCode.Excel_Material_Parsing,
                                 Message = $"Glass description is missing." +
                                 $"\nOrder: {worksheet.Order}, " +
                                 $"\nWorksheet: {worksheet.Name}, " +
@@ -1407,7 +1318,7 @@ namespace a2p.Infrastructure.Services.MappingService
                             {
                                 OrderNumber = worksheet.Order!,
                                 Level = ErrorLevel.Error,
-                                Code = ErrorCode.MappingService_MapMaterial,
+                                Code = ErrorCode.Excel_Material_Parsing,
                                 Message = $"Glass not exists in PrefSuite DB." +
                                 $"\nOrder: {worksheet.Order}," +
                                 $"\nWorksheet: {worksheet.Name}." +
@@ -1477,7 +1388,7 @@ namespace a2p.Infrastructure.Services.MappingService
 
                         materials.Add(material);
 
-                        await LogMappedMaterialEntityAsync(material);
+
 
                     }
                     catch (Exception ex)
@@ -1505,7 +1416,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         {
                             OrderNumber = worksheet.Order ?? string.Empty,
                             Level = ErrorLevel.Error,
-                            Code = ErrorCode.MappingService_MapMaterial,
+                            Code = ErrorCode.Excel_Material_Parsing,
                             Message = $"Unhandled Error {nameof(ExcelParserTechDesign)}.{nameof(MapGlassesAsync)}, " +
                      $"\nOrder: {worksheet.Order ?? string.Empty}," +
                      $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
@@ -1523,7 +1434,7 @@ namespace a2p.Infrastructure.Services.MappingService
                 _progressValue.ProgressTask3 = string.Empty;
                 _progress?.Report(_progressValue);
 
-                return (materials, ErrorEntitys);
+                return materials;
 
             }
             catch (Exception ex)
@@ -1538,18 +1449,18 @@ namespace a2p.Infrastructure.Services.MappingService
                     worksheet.Name ?? string.Empty,
                     ex.Message);
 
-                return (materials, ErrorEntitys);
+                return materials;
             }
 
         }
 
-        private async Task<(List<MaterialEntity>, List<ErrorEntity>)> MapOthersAsync(Worksheet worksheet)
+        private async Task<List<ExcelMaterialDto>> MapOthersAsync(Worksheet worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
 
-            List<MaterialEntity> materials = [];
+            List<ExcelMaterialDto> materials = [];
             List<ErrorEntity> ErrorEntitys = [];
 
             try
@@ -1561,7 +1472,7 @@ namespace a2p.Infrastructure.Services.MappingService
 
                 for (int i = 4; i < worksheet.RowCount; i++)
                 {
-                    MaterialEntity material = new();
+                    ExcelMaterialDto material = new();
                     sortOrder++;
 
                     line = i + 1;
@@ -1615,6 +1526,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         material.TotalQuantity = worksheet.WorksheetData[i][7] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][7].ToString(), out decimal totalQuantity) ? totalQuantity : 0;
                         material.RequiredQuantity = worksheet.WorksheetData[i][8] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][8].ToString(), out decimal requiredQuantity) ? requiredQuantity : 0;
                         material.LeftOverQuantity = Math.Round(material.TotalQuantity - material.RequiredQuantity, 6) < 0 ? 0 : Math.Round(material.TotalQuantity - material.RequiredQuantity, 6);
+
                         //===================================================================================================
                         material.Width = 0; // not used in others
                         material.Height = 0; // not used in others
@@ -1630,7 +1542,8 @@ namespace a2p.Infrastructure.Services.MappingService
                         material.LeftOverArea = 0; // not used in others
                                                    //================================================================================================================
                         material.Waste = 0; // not used in others
-                                            //=================================================================================================                                
+
+                        //=================================================================================================
                         material.Price = decimal.TryParse(worksheet.WorksheetData[i][9].ToString(), out decimal price) ? price : 0;
                         material.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][10].ToString(), out decimal totalPrice) ? totalPrice : 0;
                         material.RequiredPrice = Math.Round(material.Price * (decimal)material.RequiredQuantity, 6);
@@ -1663,11 +1576,11 @@ namespace a2p.Infrastructure.Services.MappingService
                             material.CustomField1 = null; // not used
                             material.CustomField2 = null; // not used
                         }
-                        material.CustomField3 = null; // not used in others
-                                                      //================================================================================================================
-                        material.CustomField4 = null; // not used in others
-                        material.CustomField5 = null; // not used in others
-                                                      //================================================================================================================
+                        material.CustomField3 = null; // not used 
+                        material.CustomField4 = null; // not used 
+                        material.CustomField5 = null; // not used 
+
+                        //================================================================================================================
                         material.MaterialType = MaterialType.Piece;
                         //===================================================================================================
                         _progressValue.ProgressTask3 = $"Other materials {sortOrder} of {worksheet.RowCount - 5} -  {material.ReferenceBase}_{material.Color}";
@@ -1675,7 +1588,7 @@ namespace a2p.Infrastructure.Services.MappingService
 
                         materials.Add(material);
 
-                        await LogMappedMaterialEntityAsync(material);
+
 
                     }
                     catch (Exception ex)
@@ -1702,7 +1615,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         {
                             OrderNumber = worksheet.Order ?? string.Empty,
                             Level = ErrorLevel.Error,
-                            Code = ErrorCode.MappingService_MapMaterial,
+                            Code = ErrorCode.Excel_Material_Parsing,
                             Message = $"Unhandled Error {nameof(ExcelParserTechDesign)}.{nameof(MapOthersAsync)}, " +
                              $"\nOrder: {worksheet.Order ?? string.Empty}," +
                              $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
@@ -1720,7 +1633,7 @@ namespace a2p.Infrastructure.Services.MappingService
                 }
                 _progressValue.ProgressTask3 = string.Empty;
                 _progress?.Report(_progressValue);
-                return (materials, ErrorEntitys);
+                return materials;
             }
             catch (Exception ex)
             {
@@ -1734,7 +1647,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     worksheet.Name ?? string.Empty,
                     ex.Message);
 
-                return (materials, ErrorEntitys);
+                return materials;
             }
 
         }
@@ -2023,7 +1936,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     {
                         OrderNumber = worksheet.Order ?? string.Empty,
                         Level = ErrorLevel.Error,
-                        Code = ErrorCode.MappingService_MapMaterial,
+                        Code = ErrorCode.Excel_Material_Parsing,
                         Message = $"Error Sapa article and color are empty" +
                        $"\nLine will be skipped." +
                        $"\nOrder: {worksheet.Order ?? string.Empty}, " +
@@ -2123,7 +2036,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         {
                             OrderNumber = worksheet.Order ?? string.Empty,
                             Level = ErrorLevel.Error,
-                            Code = ErrorCode.MappingService_MapMaterial,
+                            Code = ErrorCode.Excel_Material_Parsing,
                             Message = $"Mapper Sapa 2: Generated material Reference is > 25 characters!" +
                            $"\nLine will be skipped." +
                            $"\nOrder: {worksheet.Order ?? string.Empty}," +
@@ -2157,7 +2070,7 @@ namespace a2p.Infrastructure.Services.MappingService
                 {
                     OrderNumber = worksheet.Order ?? string.Empty,
                     Level = ErrorLevel.Error,
-                    Code = ErrorCode.MappingService_MapMaterial,
+                    Code = ErrorCode.Excel_Material_Parsing,
                     Message = $"Unhandled Error {nameof(ExcelParserTechDesign)}.{nameof(TransformReference)}, " +
 
                    $"\nOrder: {worksheet.Order ?? string.Empty}," +

@@ -337,7 +337,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                 //{
                 //    OrderNumber = string.Empty,
                 //    Level = ErrorLevel.Error,
-                //    Code = ErrorCode.DatabaseWrite_Material,
+                //    Code = ErrorCode.SQL_Data_Write,
                 //    Message = $"Error {nameof(PrefSuiteDataService)}.{nameof(DeleteSalesDocumentDataAsync)}.  "
                 //};
             }
@@ -374,7 +374,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                 //{
                 //    OrderNumber = string.Empty,
                 //    Level = ErrorLevel.Error,
-                //    Code = ErrorCode.DatabaseWrite_Material,
+                //    Code = ErrorCode.SQL_Data_Write,
                 //    Message = $"Error {nameof(PrefSuiteDataService)}.{nameof(DeleteSalesDocumentDataAsync)}." +
                 //    $"\nError deleting sales document data for sales document {number}/{version}." +
                 //    $"\n{ex.Message}.  "
@@ -442,7 +442,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                 {
                     // OrderNumber = material.OrderNumber ?? string.Empty,
                     // Level = ErrorLevel.Error,
-                    // Code = ErrorCode.DatabaseWrite_Material,
+                    // Code = ErrorCode.SQL_Data_Write,
                     // Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteColorAsync)}. Unhandled error." +
                     //$"\nOrder {material.OrderNumber ?? string.Empty}," +
                     //$"\nWorksheet {material.Worksheet ?? string.Empty}," +
@@ -519,7 +519,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                 //{
                 //    OrderNumber = material.OrderNumber ?? string.Empty,
                 //    Level = ErrorLevel.Error,
-                //    Code = ErrorCode.DatabaseWrite_Material,
+                //    Code = ErrorCode.SQL_Data_Write,
                 //    Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteColorConfigurationAsync)}. Unhandled error." +
                 //   $"\nOrder {material.OrderNumber ?? string.Empty}," +
                 //   $"\nWorksheet {material.Worksheet ?? string.Empty}," +
@@ -608,7 +608,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                 //{
                 //    OrderNumber = material.OrderNumber ?? string.Empty,
                 //    Level = ErrorLevel.Error,
-                //    Code = ErrorCode.DatabaseWrite_Material,
+                //    Code = ErrorCode.SQL_Data_Write,
                 //    Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteMaterialBaseAsync)}. Unhandled error." +
                 //   $"\nOrder {material.OrderNumber ?? string.Empty}," +
                 //   $"\nWorksheet {material.Worksheet ?? string.Empty}," +
@@ -694,7 +694,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                 // {
                 //     OrderNumber = material.OrderNumber ?? string.Empty,
                 //     Level = ErrorLevel.Error,
-                //     Code = ErrorCode.DatabaseWrite_Material,
+                //     Code = ErrorCode.SQL_Data_Write,
                 //     Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteMaterialAsync)}. Unhandled error." +
                 //    $"\nOrder {material.OrderNumber ?? string.Empty}," +
                 //    $"\nWorksheet {material.Worksheet ?? string.Empty}," +
@@ -787,7 +787,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                 //    {
                 //        OrderNumber = material.OrderNumber ?? string.Empty,
                 //        Level = ErrorLevel.Error,
-                //        Code = ErrorCode.DatabaseWrite_Material,
+                //        Code = ErrorCode.SQL_Data_Write,
                 //        Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteMaterialProfileAsync)}. Unhandled error." +
                 //       $"\nOrder {material.OrderNumber ?? string.Empty}," +
                 //       $"\nWorksheet {material.Worksheet ?? string.Empty}," +
@@ -882,7 +882,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                 // {
                 //     OrderNumber = material.OrderNumber ?? string.Empty,
                 //     Level = ErrorLevel.Error,
-                //     Code = ErrorCode.DatabaseWrite_Material,
+                //     Code = ErrorCode.SQL_Data_Write,
                 //     Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteMaterialMeterAsync)}. Unhandled error." +
                 //    $"\nOrder {material.OrderNumber ?? string.Empty}," +
                 //    $"\nWorksheet {material.Worksheet ?? string.Empty}," +
@@ -971,7 +971,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                 // {
                 //     OrderNumber = material.OrderNumber ?? string.Empty,
                 //     Level = ErrorLevel.Error,
-                //     Code = ErrorCode.DatabaseWrite_Material,
+                //     Code = ErrorCode.SQL_Data_Write,
                 //     Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteMaterialPieceAsync)}. Unhandled error." +
                 //    $"\nOrder {material.OrderNumber ?? string.Empty}," +
                 //    $"\nWorksheet {material.Worksheet ?? string.Empty}," +
@@ -1063,7 +1063,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                 //    {
                 //        OrderNumber = material.OrderNumber ?? string.Empty,
                 //        Level = ErrorLevel.Error,
-                //        Code = ErrorCode.DatabaseWrite_Material,
+                //        Code = ErrorCode.SQL_Data_Write,
                 //        Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteMaterialSurfaceAsync)}. Unhandled error." +
                 //       $"\nOrder {material.OrderNumber ?? string.Empty}," +
                 //       $"\nWorksheet {material.Worksheet ?? string.Empty}," +
@@ -1159,7 +1159,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                 //    {
                 //        OrderNumber = material.OrderNumber ?? string.Empty,
                 //        Level = ErrorLevel.Error,
-                //        Code = ErrorCode.DatabaseWrite_Material,
+                //        Code = ErrorCode.SQL_Data_Write,
                 //        Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteMaterialPurchaseDataAsync)}. Unhandled error." +
                 //       $"\nOrder {material.OrderNumber ?? string.Empty}," +
                 //       $"\nWorksheet {material.Worksheet ?? string.Empty}," +
@@ -1253,7 +1253,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                 //    {
                 //        OrderNumber = material.OrderNumber ?? string.Empty,
                 //        Level = ErrorLevel.Error,
-                //        Code = ErrorCode.DatabaseWrite_Material,
+                //        Code = ErrorCode.SQL_Data_Write,
                 //        Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteMaterialSurfaceAsync)}. Unhandled error." +
                 //       $"\nOrder {material.OrderNumber ?? string.Empty}," +
                 //       $"\nWorksheet {material.Worksheet ?? string.Empty}," +
@@ -1309,7 +1309,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                 //    {
                 //        OrderNumber = order ?? string.Empty,
                 //        Level = ErrorLevel.Error,
-                //        Code = ErrorCode.DatabaseWrite_Material,
+                //        Code = ErrorCode.SQL_Data_Write,
                 //        Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteMaterialNeedsMasterAsync)}. Unhandled error." +
                 //        $"\nOrder {order ?? string.Empty}," +
                 //        $"\nSalesDocument {number}/{version}." +
@@ -1357,7 +1357,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                 //    {
                 //        OrderNumber = order ?? string.Empty,
                 //        Level = ErrorLevel.Error,
-                //        Code = ErrorCode.DatabaseWrite_Material,
+                //        Code = ErrorCode.SQL_Data_Write,
                 //        Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteMaterialNeedsAsync)}. Unhandled error." +
                 //        $"\nOrder {order ?? string.Empty}," +
                 //        $"\nSalesDocument {number}/{version}." +

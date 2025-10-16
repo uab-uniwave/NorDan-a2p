@@ -23,7 +23,7 @@ public class MaterialService : IMaterialService
         {
 
             material.CreatedUTCDateTime = DateTime.UtcNow;
-            var result = await _repo.InsertMaterialAsync(material);
+            var result = await _repo.CreateMaterialAsync(material);
             if (result == null || result.Id == Guid.Empty)
             {
                 return Result.Failure<MaterialEntity>($"Failed inserting material. OrderNumber '{material.OrderNumber}', material '{material.Reference}'!");

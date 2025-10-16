@@ -22,7 +22,7 @@ namespace a2p.Infrastructure.Data
             _logService = logService ?? throw new ArgumentNullException(nameof(logService));
         }
 
-        public async Task<Result<OrderQueueEntity>> GetOrderAsync(Guid id)
+        public async Task<OrderQueueEntity?> GetOrderAsync(Guid id)
         {
             try
             {
@@ -30,18 +30,18 @@ namespace a2p.Infrastructure.Data
                 using var connection = new SqlConnection(_connectionString);
                 var order = await connection.QueryFirstOrDefaultAsync<OrderQueueEntity>(sql, new { Id = id });
                 if (order == null)
-                    return Result<OrderQueueEntity>.Failure("NotFound");
+                    return null;
                 order.ProjectNumber ??= string.Empty;
-                return Result<OrderQueueEntity>.Success(order);
+                return order;
             }
             catch (Exception ex)
             {
                 _logService.Error($"Error getting order by id: {ex.Message}");
-                return Result<OrderQueueEntity>.Failure(ex.Message);
+                return null;
             }
         }
 
-        public async Task<Result<OrderQueueEntity>> GetOrderByNumberAsync(string orderNumber)
+        public async Task<OrderQueueEntity?> GetOrderByNumberAsync(string orderNumber)
         {
             try
             {
@@ -49,18 +49,18 @@ namespace a2p.Infrastructure.Data
                 using var connection = new SqlConnection(_connectionString);
                 var order = await connection.QueryFirstOrDefaultAsync<OrderQueueEntity>(sql, new { OrderNumber = orderNumber });
                 if (order == null)
-                    return Result<OrderQueueEntity>.Failure("NotFound");
+                    return null;
                 order.ProjectNumber ??= string.Empty;
-                return Result<OrderQueueEntity>.Success(order);
+                return order;
             }
             catch (Exception ex)
             {
                 _logService.Error($"Error getting order by number: {ex.Message}");
-                return Result<OrderQueueEntity>.Failure(ex.Message);
+                return null;
             }
         }
 
-        public async Task<Result<IEnumerable<OrderQueueEntity>>> GetOrdersAsync()
+        public async Task<IEnumerable<OrderQueueEntity>?> GetOrdersAsync()
         {
             try
             {
@@ -71,16 +71,16 @@ namespace a2p.Infrastructure.Data
                 {
                     o.ProjectNumber ??= string.Empty;
                 }
-                return Result<IEnumerable<OrderQueueEntity>>.Success(orders);
+                return orders;
             }
             catch (Exception ex)
             {
                 _logService.Error($"Error getting all orders: {ex.Message}");
-                return Result<IEnumerable<OrderQueueEntity>>.Failure(ex.Message);
+                return Enumerable.Empty<OrderQueueEntity>();
             }
         }
 
-        public async Task<Result<OrderQueueEntity>> InsertOrderAsync(OrderQueueEntity order)
+        public async Task<OrderQueueEntity> InsertOrderAsync(OrderQueueEntity order)
         {
             try
             {
@@ -95,16 +95,16 @@ namespace a2p.Infrastructure.Data
                 if (string.IsNullOrEmpty(order.ProjectNumber))
                     parameters.Add("@ProjectNumber", DBNull.Value);
                 await connection.ExecuteAsync(sql, parameters);
-                return Result<OrderQueueEntity>.Success(order);
+                return order;
             }
             catch (Exception ex)
             {
                 _logService.Error($"Error inserting order: {ex.Message}");
-                return Result<OrderQueueEntity>.Failure(ex.Message);
+                throw;
             }
         }
 
-        public async Task<Result<OrderQueueEntity>> UpdateOrderAsync(OrderQueueEntity order)
+        public async Task<OrderQueueEntity?> UpdateOrderAsync(OrderQueueEntity order)
         {
             try
             {
@@ -123,18 +123,18 @@ namespace a2p.Infrastructure.Data
                 var selectSql = "SELECT * FROM [dbo].[Uniwave_a2p_OrderQueue] WHERE [Id] = @Id";
                 var updated = await connection.QueryFirstOrDefaultAsync<OrderQueueEntity>(selectSql, new { Id = order.Id });
                 if (updated == null)
-                    return Result<OrderQueueEntity>.Failure("Failed to map updated order data");
+                    return null;
                 updated.ProjectNumber ??= string.Empty;
-                return Result<OrderQueueEntity>.Success(updated);
+                return updated;
             }
             catch (Exception ex)
             {
                 _logService.Error($"Error updating order: {ex.Message}");
-                return Result<OrderQueueEntity>.Failure(ex.Message);
+                return null;
             }
         }
 
-        public async Task<Result<Guid>> DeleteOrderAsync(Guid id)
+        public async Task<Guid> DeleteOrderAsync(Guid id)
         {
             try
             {
@@ -142,18 +142,18 @@ namespace a2p.Infrastructure.Data
                 using var connection = new SqlConnection(_connectionString);
                 var rowsAffected = await connection.ExecuteAsync(sql, new { Id = id });
                 if (rowsAffected > 0)
-                    return Result<Guid>.Success(id);
-                return Result<Guid>.Failure("NotFound");
+                    return id;
+                return Guid.Empty;
             }
             catch (SqlException sqlEx)
             {
                 _logService.Error(sqlEx.Message);
-                return Result<Guid>.Failure(sqlEx.Message);
+                return Guid.Empty;
             }
             catch (Exception ex)
             {
                 _logService.Error(ex.Message);
-                return Result<Guid>.Failure(ex.Message);
+                return Guid.Empty;
             }
         }
     }

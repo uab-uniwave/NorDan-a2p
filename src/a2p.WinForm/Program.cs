@@ -35,7 +35,7 @@ namespace a2p.WinForm
             var settingsService = _services.GetRequiredService<ISettingsService>();
             var excelService = _services.GetRequiredService<IExcelService>();
             var readService = _services.GetRequiredService<IReadService>();
-            var fileService = _services.GetRequiredService<IExcelService>();
+            var fileService = _services.GetRequiredService<IFileService>();
             var writeService = _services.GetRequiredService<IWriteService>();
 
             logService.Information("Application started.");

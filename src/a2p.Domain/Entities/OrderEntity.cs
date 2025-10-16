@@ -24,7 +24,7 @@ namespace a2p.Domain.Entities
         public string ResponsibleManager { get; set; } = string.Empty;
 
         //===================================================================================
-        public SourceAppType SourceAppType { get; set; } = Enums.SourceAppType.Unknown;
+        public Wo SourceAppType { get; set; } = Enums.Wo.Unknown;
         //===================================================================================
 
         public int ItemCount { get; set; } = 0;

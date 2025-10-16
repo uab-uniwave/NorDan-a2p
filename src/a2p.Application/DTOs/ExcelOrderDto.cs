@@ -8,7 +8,7 @@ namespace a2p.Application.DTOs
         public Guid id { get; set; } = Guid.NewGuid();
         public string OrderNumber { get; set; } = string.Empty;
         public string? ProjectNumber { get; set; }
-        public PrefExcelExcelOrderDto SalesDocument { get; set; } = new PrefExcelExcelOrderDto();
+        public PrefOrderDto SalesDocument { get; set; } = new PrefOrderDto();
         public int SalesDocumentState { get; set; } = -1;
 
         public List<Models.File> Files { get; set; } = [];
@@ -47,9 +47,8 @@ namespace a2p.Application.DTOs
         public double ExchangeRate { get; set; }
         public DateOnly ExchangeRateDate { get; set; }
 
-
         public bool DeleteExistsing { get; set; } = false;
-        public SourceAppType SourceAppType { get; set; } = SourceAppType.Unknown;
+        public Wo SourceAppType { get; set; } = Wo.Unknown;
 
 
 

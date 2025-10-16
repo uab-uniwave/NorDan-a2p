@@ -2,12 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using a2p.Application.Interfaces;
-using a2p.Application.Models;
 using a2p.Domain.Entities;
 using a2p.Domain.Enums;
 using a2p.Domain.Interfaces;
 
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Logging;
 
 using System.Data;
 
@@ -16,14 +16,26 @@ namespace a2p.Infrastructure.Data
     public class MaterialRepository : IMaterialRepository
     {
         private readonly ISQLService _sqlService;
+        private readonly ILogger<MaterialRepository> _logger;
 
-        public MaterialRepository(ISQLService sqlService)
+        public MaterialRepository(ISQLService sqlService, ILogger<MaterialRepository> logger)
         {
             _sqlService = sqlService ?? throw new ArgumentNullException(nameof(sqlService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<Result<MaterialEntity>> InsertMaterialAsync(MaterialEntity material)
+        public async Task<MaterialEntity?> CreateMaterialAsync(MaterialEntity material)
         {
+            if (material == null)
+            {
+                _logger.LogWarning("{$Class}, {$Method}. Input material is null", nameof(MaterialRepository), nameof(CreateMaterialAsync));
+
+                return null;
+
+            }
+
+
+
             try
             {
                 SqlCommand cmd = new()
@@ -130,14 +142,20 @@ namespace a2p.Infrastructure.Data
                     "@SourceColorDescription," +
                     "@CreatedUTCDateTime," +
                     "@ModifiedUTCDateTime" +
-                    ")"
-                  ,
+                    ")",
                     CommandType = CommandType.Text
                 };
 
                 // Create parameters for the insert
                 var parameters = CreateMaterialParameters(material);
-                await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
+                var creationResult = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
+
+                if (creationResult == null)
+                {
+                    _logger.LogWarning("{$Class}, {$Method}. Creation failed, SQL Server return null. Source Reference '{$SourceReference}'.", nameof(MaterialRepository), nameof(CreateMaterialAsync), material.SourceReference);
+                    return null;
+                }
+
 
                 // Query to get the inserted material
                 cmd.CommandText = "SELECT TOP 1 * FROM [dbo].[Uniwave_a2p_Materials] WHERE [Id] = @Id";
@@ -148,25 +166,38 @@ namespace a2p.Infrastructure.Data
 
                 var result = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, queryParams);
                 if (result == null || result.Rows.Count == 0)
-                    return Result<MaterialEntity>.Failure($"Material with ID {material.Id} was not found after insert.");
-                return Result<MaterialEntity>.Success(MapDataRowToMaterial(result.Rows[0]));
+                {
+                    _logger.LogWarning("{$Class}, {$Method}. Cant get jsut inserted material failed.  Source Reference ' '{$SourceReference}'.", nameof(MaterialRepository), nameof(CreateMaterialAsync), material.SourceReference);
+                    return null;
+                }
+
+                return MapDataRowToMaterial(result.Rows[0]);
+
+
             }
             catch (SqlException sqlEx)
             {
-                // _logService.Error(sqlEx, ...);
-                return Result<MaterialEntity>.Failure(sqlEx.Message);
+                _logger.LogError(sqlEx, "{$Class}, {$Method}. SQL Exception: {$Message}. Source Reference '{$SourceReference}'.", nameof(MaterialRepository), nameof(CreateMaterialAsync), sqlEx.Message, material.SourceReference);
+                return null;
             }
             catch (Exception ex)
             {
                 // _logService.Error(ex, ...);
-                return Result<MaterialEntity>.Failure(ex.Message);
+                _logger.LogError(ex, "{$Class}, {$Method}. SQL Exception: {$Message}. Source Reference '{$SourceReference}'.", nameof(MaterialRepository), nameof(CreateMaterialAsync), ex.Message, material.SourceReference);
+                return null;
             }
         }
 
-        public async Task<Result<MaterialEntity>> UpdateMaterialAsync(MaterialEntity material)
+        public async Task<MaterialEntity?> UpdateMaterialAsync(MaterialEntity material)
         {
             try
             {
+                if (material == null)
+                {
+                    _logger.LogWarning("{$Class}, {$Method}. Input material is null", nameof(MaterialRepository), nameof(UpdateMaterialAsync));
+                    return null;
+                }
+
                 SqlCommand cmd = new()
                 {
                     CommandText = "UPDATE [dbo].[Uniwave_a2p_Materials] " +
@@ -221,9 +252,13 @@ namespace a2p.Infrastructure.Data
 
                 // Create parameters for the update
                 var parameters = CreateMaterialParameters(material);
-                await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
+                var res = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
 
-                // Query to get the updated material
+                if (res == null)
+                    _logger.LogWarning("{$Class}, {$Method}. Update failed, SQL Server return null. Source Reference '{$SourceReference}'.", nameof(MaterialRepository), nameof(UpdateMaterialAsync), material.SourceReference);
+                {
+                    return null;
+                }
                 cmd.CommandText = "SELECT TOP 1 * FROM [dbo].[Uniwave_a2p_Materials] WHERE [Id] = @Id";
                 var queryParams = new SqlParameter[]
                 {
@@ -232,23 +267,35 @@ namespace a2p.Infrastructure.Data
 
                 var result = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, queryParams);
                 if (result == null || result.Rows.Count == 0)
-                    return Result<MaterialEntity>.Failure("NotFound");
-                return Result<MaterialEntity>.Success(MapDataRowToMaterial(result.Rows[0]));
+                {
+
+                    _logger.LogWarning("{$Class}, {$Method}. Cant get updated material failed.  Source Reference ' '{$SourceReference}'.", nameof(MaterialRepository), nameof(UpdateMaterialAsync), material.SourceReference);
+                    return null;
+                }
+                return MapDataRowToMaterial(result.Rows[0]);
             }
             catch (SqlException sqlEx)
             {
-                return Result<MaterialEntity>.Failure(sqlEx.Message);
+                _logger.LogError(sqlEx, "{$Class}, {$Method}. SQL Exception: {$Message}. Source Reference '{$SourceReference}'.", nameof(MaterialRepository), nameof(UpdateMaterialAsync), sqlEx.Message, material.SourceReference);
+                return null;
+
             }
             catch (Exception ex)
             {
-                return Result<MaterialEntity>.Failure(ex.Message);
+                _logger.LogError(ex, "{$Class}, {$Method}. SQL Exception: {$Message}. Source Reference '{$SourceReference}'.", nameof(MaterialRepository), nameof(UpdateMaterialAsync), ex.Message, material.SourceReference);
+                return null;
             }
         }
 
-        public async Task<Result<MaterialEntity>> GetMaterialAsync(Guid rowId)
+        public async Task<MaterialEntity?> GetMaterialAsync(Guid rowId)
         {
             try
             {
+                if (rowId == Guid.Empty)
+                {
+                    _logger.LogWarning("{$Class}, {$Method}. Input Row Id is empty Guid.", nameof(MaterialRepository), nameof(GetMaterialAsync));
+                    return null;
+                }
                 SqlCommand cmd = new()
                 {
                     CommandText = "SELECT TOP 1 * FROM [dbo].[Uniwave_a2p_Materials] WHERE [Id] = @Id",
@@ -262,23 +309,39 @@ namespace a2p.Infrastructure.Data
 
                 var result = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
                 if (result == null || result.Rows.Count == 0)
-                    return Result<MaterialEntity>.Failure("NotFound");
-                return Result<MaterialEntity>.Success(MapDataRowToMaterial(result.Rows[0]));
+                {
+                    _logger.LogWarning("{$Class}, {$Method}. Material with Id '{RowId}' not found.", nameof(MaterialRepository), nameof(GetMaterialAsync), rowId);
+                    return null;
+                }
+                return MapDataRowToMaterial(result.Rows[0]);
+
             }
             catch (SqlException sqlEx)
             {
-                return Result<MaterialEntity>.Failure(sqlEx.Message);
+
+                _logger.LogError(sqlEx, "{$Class}, {$Method}. SQL Exception: {$Message}. RowId '{RowId}'.", nameof(MaterialRepository), nameof(GetMaterialAsync), sqlEx.Message, rowId);
+                return null;
             }
             catch (Exception ex)
             {
-                return Result<MaterialEntity>.Failure(ex.Message);
+                _logger.LogError(ex, "{$Class}, {$Method}. SQL Exception: {$Message}. RowId '{RowId}'.", nameof(MaterialRepository), nameof(GetMaterialAsync), ex.Message, rowId);
+                return null;
             }
         }
 
-        public async Task<Result<IEnumerable<MaterialEntity>>> GetOrderMaterialsAsync(Guid rowId)
+        public async Task<IEnumerable<MaterialEntity>?> GetOrderMaterialsAsync(Guid Id)
         {
             try
             {
+
+
+                if (Id == Guid.Empty)
+                {
+                    _logger.LogWarning("{$Class}, {$Method}. Input Order Id is empty Guid.", nameof(MaterialRepository), nameof(GetOrderMaterialsAsync));
+                    return null;
+                }
+
+
                 SqlCommand cmd = new()
                 {
                     CommandText = "SELECT * FROM [dbo].[Uniwave_a2p_Materials] WHERE [OrderId] = @OrderId",
@@ -287,34 +350,49 @@ namespace a2p.Infrastructure.Data
 
                 var parameters = new SqlParameter[]
                 {
-                    new SqlParameter("@OrderId", rowId)
+                    new SqlParameter("@OrderId", Id)
                 };
 
                 var result = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
                 if (result == null || result.Rows.Count == 0)
-                    return Result<IEnumerable<MaterialEntity>>.Success(Array.Empty<MaterialEntity>());
+                {
+                    _logger.LogInformation("{$Class}, {$Method}. No materials found for Order Id '{OrderId}'.", nameof(MaterialRepository), nameof(GetOrderMaterialsAsync), Id);
+                    return null;
+                }
 
+                if (result == null || result.Rows.Count == 0)
+                {
+                    _logger.LogInformation("{$Class}, {$Method}. No materials found for Order Id '{OrderId}'.", nameof(MaterialRepository), nameof(GetOrderMaterialsAsync), Id);
+                    return null;
+                }
                 List<MaterialEntity> materials = new();
                 foreach (DataRow row in result.Rows)
                 {
                     var material = MapDataRowToMaterial(row);
-                    if (material != null)
-                        materials.Add(material);
+                    if (material == null)
+                    {
+                        _logger.LogWarning("{$Class}, {$Method}. Failed to map DataRow to MaterialEntity for Order Id '{OrderId}'.", nameof(MaterialRepository), nameof(GetOrderMaterialsAsync), Id);
+                        return null;
+                    }
+                    materials.Add(material);
                 }
+                return materials;
 
-                return Result<IEnumerable<MaterialEntity>>.Success(materials);
-            }
-            catch (SqlException sqlEx)
-            {
-                return Result<IEnumerable<MaterialEntity>>.Failure(sqlEx.Message);
+
             }
             catch (Exception ex)
             {
-                return Result<IEnumerable<MaterialEntity>>.Failure(ex.Message);
+
+                _logger.LogError(ex, "{$Class}, {$Method}. Exception: {$Message}. OrderId '{OrderId}'.", nameof(MaterialRepository), nameof(GetOrderMaterialsAsync), ex.Message, Id);
+                return null;
+
             }
         }
 
-        public async Task<Result<IEnumerable<MaterialEntity>>> GetMaterialsAsync()
+
+
+
+        public async Task<IEnumerable<MaterialEntity>?> GetMaterialsAsync()
         {
             try
             {
@@ -326,7 +404,12 @@ namespace a2p.Infrastructure.Data
                 var result = await _sqlService.ExecuteQueryAsync(cmd.CommandText, cmd.CommandType);
 
                 if (result == null || result.Rows.Count == 0)
-                    return Result<IEnumerable<MaterialEntity>>.Success(Array.Empty<MaterialEntity>());
+                {
+                    _logger.LogInformation("{$Class}, {$Method}. No materials found in the database.", nameof(MaterialRepository), nameof(GetMaterialsAsync));
+                    return null;
+                }
+
+
 
                 List<MaterialEntity> materials = new();
                 foreach (DataRow row in result.Rows)
@@ -335,22 +418,30 @@ namespace a2p.Infrastructure.Data
                     if (material != null)
                         materials.Add(material);
                 }
-                return Result<IEnumerable<MaterialEntity>>.Success(materials);
+                return materials;
             }
             catch (SqlException sqlEx)
             {
-                return Result<IEnumerable<MaterialEntity>>.Failure(sqlEx.Message);
+                _logger.LogError(sqlEx, "{$Class}, {$Method}. SQL Exception: {$Message}.", nameof(MaterialRepository), nameof(GetMaterialsAsync), sqlEx.Message);
+                return null;
             }
             catch (Exception ex)
             {
-                return Result<IEnumerable<MaterialEntity>>.Failure(ex.Message);
+                _logger.LogError(ex, "{$Class}, {$Method}. SQL Exception: {$Message}.", nameof(MaterialRepository), nameof(GetMaterialsAsync), ex.Message);
+                return null;
+
             }
         }
 
-        public async Task<Result<Guid>> DeleteMaterialAsync(Guid rowId)
+        public async Task<Guid> DeleteMaterialAsync(Guid rowId)
         {
             try
             {
+                if (rowId == Guid.Empty)
+                {
+                    _logger.LogWarning("{$Class}, {$Method}. Input Row Id is empty Guid.", nameof(MaterialRepository), nameof(DeleteMaterialAsync));
+                    return Guid.Empty;
+                }
                 SqlCommand cmd = new()
                 {
                     CommandText = "DELETE FROM [dbo].[Uniwave_a2p_Materials] WHERE [Id] = @Id",
@@ -361,17 +452,28 @@ namespace a2p.Infrastructure.Data
                     new SqlParameter("@Id", rowId)
                 };
                 int rowsAffected = await _sqlService.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, parameters);
-                if (rowsAffected > 0)
-                    return Result<Guid>.Success(rowId);
-                return Result<Guid>.Failure("NotFound");
+                if (rowsAffected == 0)
+                {
+
+                    _logger.LogWarning("{$Class}, {$Method}. No material found to delete with Id '{RowId}'.", nameof(MaterialRepository), nameof(DeleteMaterialAsync), rowId);
+                    return Guid.Empty;
+                }
+
+
+                return rowId;
+
             }
             catch (SqlException sqlEx)
             {
-                return Result<Guid>.Failure(sqlEx.Message);
+                _logger.LogError(sqlEx, "{$Class}, {$Method}. SQL Exception: {$Message}. RowId '{RowId}'.", nameof(MaterialRepository), nameof(DeleteMaterialAsync), sqlEx.Message, rowId);
+                return Guid.Empty;
+
             }
             catch (Exception ex)
             {
-                return Result<Guid>.Failure(ex.Message);
+                _logger.LogError(ex, "{$Class}, {$Method}. SQL Exception: {$Message}. RowId '{RowId}'.", nameof(MaterialRepository), nameof(DeleteMaterialAsync), ex.Message, rowId);
+                return Guid.Empty;
+
             }
         }
 

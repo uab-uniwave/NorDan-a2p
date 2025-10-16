@@ -16,16 +16,16 @@ namespace a2p.Infrastructure.Services
     {
 
         private readonly ILogService _logService;
-        private readonly IExcelService _excelService;
+        private readonly IFileService _fileService;
         private IProgress<ProgressValue>? _progress;
         private ProgressValue _progressValue;
         private string _currency = string.Empty;
 
-        public ExcelService(ILogService logService, IExcelService excelService)
+        public ExcelService(ILogService logService, IFileService fileService)
         {
 
             _logService = logService;
-            _excelService = excelService;
+            _fileService = fileService;
             _progressValue = new ProgressValue();
             _progress = new Progress<ProgressValue>();
 
@@ -287,10 +287,7 @@ namespace a2p.Infrastructure.Services
                     {
                         _ = dataTable.Rows.Add(error.OrderNumber, error.Level.ToString(), error.Code.ToString(), error.Message);
 
-                        _logService.Information("{Class}.{Method}.Log saved successfully to \"{FileName}\"",
-                    typeof(ExcelService).Name,
-                    typeof(WriteExcelErrorLog),
-                    file);
+                        _logService.Information(",.Log saved successfully to {FileName}", file);
                     }
 
                     _ = workbook.Worksheets.Add(dataTable, "LogRecords");

@@ -1,7 +1,11 @@
+using a2p.Application.DTOs;
 using a2p.Application.Interfaces;
 using a2p.Application.Models;
+using a2p.Domain.Enums;
 using a2p.Domain.Interfaces;
 using a2p.Infrastructure.Models.BaseModels;
+
+using Microsoft.Extensions.Logging;
 
 using System.Data;
 
@@ -10,50 +14,49 @@ namespace a2p.Infrastructure.Services
 {
     public class ReadService : IReadService
     {
-        private readonly ILogService _logService;
+        private readonly ILogger<ReadService> _logger;
         private readonly IFileService _fileService;
-        // private readonly IExcelService _excelService;
+        private readonly IExcelService _excelService;
         private readonly IPrefSuiteDataService _prefSuiteDataService;
         private readonly IOrderRepository _orderRepository;
         private readonly IMaterialRepository _materialRepository;
         private readonly IItemRepository _itemRepository;
-        private readonly IExcelParserTechDesign _mapperTechDesign;
-        private readonly IMapperSapa _mapperSapa;
-        private readonly IExcelParserSchuco _mapperSchuco;
-        private List<ExcelOrderDto> _orders;
+        private readonly IExcelParserSchuco _excelParserSchuco;
+        private readonly IExcelParserTechDesign _excelParserTechDesign;
+        private List<ExcelOrderDto> _excelOrdersDto;
 
         private ProgressValue _progressValue;
         private IProgress<ProgressValue> _progress;
-        public ReadService(ILogService logService,
+        public ReadService(ILogger<ReadService> logger,
                            IFileService fileService,
-                           // IExcelService excelReadService,
+                           IExcelService excelService,
                            IPrefSuiteDataService prefSuiteDataService,
-                            IOrderRepository orderRepository,
+                           IOrderRepository orderRepository,
                            IMaterialRepository materialRepository,
                            IItemRepository itemRepository,
-                            IExcelParserTechDesign mapperTechDesign,
-                           IExcelParserSchuco mapperSchuco
+                           IExcelParserTechDesign excelparserTechesign,
+                           IExcelParserSchuco excelParserSchuco
                    )
-
         {
 
-            _logService = logService;
+            _logger = logger;
             _fileService = fileService;
             _orderRepository = orderRepository;
             _materialRepository = materialRepository;
             _itemRepository = itemRepository;
-            //  _excelService = excelReadService;
-            _mapperTechDesign = mapperTechDesign;
-            _mapperSchuco = mapperSchuco;
+            _excelService = excelService;
+            _excelParserTechDesign = excelparserTechesign;
+            _excelParserSchuco = excelParserSchuco;
             _prefSuiteDataService = prefSuiteDataService;
-            _orders = [];
+            _excelOrdersDto = [];
             _progressValue = new ProgressValue();
             _progress = new Progress<ProgressValue>();
 
         }
-        public async Task<List<ExcelOrderDto>> ReadAsync(ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
+
+        public async Task<List<ExcelOrderDto>?> ReadAsync(ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
         {
-            _orders = [];
+            _excelOrdersDto = [];
             _progressValue = progressValue;
             _progress = progress ?? new Progress<ProgressValue>();
 
@@ -66,199 +69,173 @@ namespace a2p.Infrastructure.Services
                 if (allFiles == null || allFiles.Count == 0)
                 {
 
-                    return _orders;
+                    return null;
 
                 }
 
                 //==================================================================================================================================
                 //🔵 Get Files
                 //==================================================================================================================================
-                _orders = await GetOrders(allFiles);
-                try
+                _excelOrdersDto = await GetOrders(allFiles);
+                if (_excelOrdersDto == null || _excelOrdersDto.Count == 0)
                 {
-                    if (_orders == null || _orders.Count == 0)
-                    {
-                        return _orders ?? [];
-                    }
-
-                    _progressValue.MaxValue = _orders.Count * 5;
-                    _progressValue.ProgressTask1 = $"Found {_orders.Count} orders!";
-                    _progress?.Report(_progressValue);
-
+                    return null;
                 }
-                catch (Exception ex)
-                {
-                    _logService.Error("Unhandled error {$Class}.{Method}." +
-                        " \n{$Exception}",
-                         nameof(ReadService),
-                        nameof(GetOrderSalesDocumentState),
-                       ex.Message);
-                }
+
+                _progressValue.MaxValue = _excelOrdersDto.Count * 5;
+                _progressValue.ProgressTask1 = $"Found {_excelOrdersDto.Count} orders!";
+                _progress?.Report(_progressValue);
+
+
+
                 //==================================================================================================================================
                 //🔵 Get OrderNumber Files Progress Bar 1
                 //==================================================================================================================================
 
-                for (int i = 0; i < _orders.Count; i++)
+                for (int i = 0; i < _excelOrdersDto.Count; i++)
                 {
                     _progressValue.Value++;
                     _progressValue.ProgressTask1 = string.Empty;
-                    _progressValue.ProgressTask2 = $"Searching Orders Files {i + 1} of {_orders.Count} - OrderNumber #{_orders[i].OrderNumber}";
+                    _progressValue.ProgressTask2 = $"Searching Orders Files {i + 1} of {_excelOrdersDto.Count} - OrderNumber #{_excelOrdersDto[i].OrderNumber}";
                     _progress?.Report(_progressValue);
-                    try
+
+                    _excelOrdersDto[i] = await GetOrderFilesAsync(_excelOrdersDto[i]);
+                    _excelOrdersDto[i] = await GetOrderSalesDocumentAsync(_excelOrdersDto[i]);
+                    _excelOrdersDto[i] = await GetOrderSalesDocumentState(_excelOrdersDto[i]);
+                    _excelOrdersDto[i] = await GetOrderWorksheetsAsync(_excelOrdersDto[i]);
+
+                    for (int j = 0; j < _excelOrdersDto[i].Files.Count; j++)
                     {
+                        _progressValue.Value++;
+                        _progress?.Report(_progressValue);
 
-                        _orders[i] = await GetOrderFilesAsync(_orders[i]);
-                        _orders[i] = await GetOrderSalesDocumentAsync(_orders[i]);
-                        _orders[i] = await GetOrderSalesDocumentState(_orders[i]);
-                        _orders[i] = await GetOrderWorksheetsAsync(_orders[i]);
-                        //for (int j = 0; j < _orders[i].Files.Count; j++)
-                        //{
-                        //    _progressValue.Value++;
-                        //    _progress?.Report(_progressValue);
+                        for (int k = 0; k < _excelOrdersDto[i].Files[j].Worksheets.Count; k++)
+                        {
+                            _progressValue.ProgressTask2 = $"Worksheet #{_excelOrdersDto[i].Files[j].Worksheets[k].Name}";
 
-                        //    for (int k = 0; k < _orders[i].Files[j].Worksheets.Count; k++)
-                        //    {
-                        //        _progressValue.ProgressTask2 = $"Worksheet #{_orders[i].Files[j].Worksheets[k].Name}";
 
-                        //        WorksheetType type = _orders[i].Files[j].Worksheets[k].WorksheetType;
 
-                        //        //=======================================================================================
-                        //        //🔵 Unknown Worksheet
-                        //        //=======================================================================================
-                        //        if (type == WorksheetType.Unknown)
-                        //        {
-                        //            continue;
-                        //        }
-                        //        //=======================================================================================
-                        //        //🔵 ItemsDto Worksheet
-                        //        //=======================================================================================
-                        //        if (type == WorksheetType.ItemsDto)
-                        //        {
-                        //            //🔵 Unknown ItemsDto
-                        //            //=======================================================================================
-                        //            if (_orders[i].SourceAppType == SourceAppType.Unknown)
-                        //            {
-                        //                //_logService.Error("{$Class}.{$Method}." +
-                        //                //    "\nUnknown source of file (Sapa, TechnoDesign, Schuco).OrderNumber {$OrderNumber}.",
-                        //                //    nameof(ReadService),
-                        //                //    nameof(GetOrderSalesDocumentState),
-                        //                //    _orders[i].OrderNumber ?? string.Empty);
-                        //                continue;
-                        //            }
+                            Wo sourceAppType = _excelOrdersDto[i].SourceAppType;
+                            WorksheetType worksheetType = _excelOrdersDto[i].Files[j].Worksheets[k].WorksheetType;
 
-                        //            //🔵 TechnoDesign ItemsDto
-                        //            //=====================================================================================================
-                        //            else if (_orders[i].SourceAppType == SourceAppType.TechDesign)
-                        //            {
-                        //                (List<ItemEntity>, List<ErrorEntity>) result = await _mapperTechDesign.MapItemsAsync(_orders[i].Files[j].Worksheets[k], _progressValue, _progress);
+                            if (sourceAppType == Wo.Unknown)
+                            {
+                                _logger.LogError("Excel files format not recognized. Source application is Unknown. File {$Filename}."
+                                , _excelOrdersDto[i].Files[j].FileName);
+                                continue;
+                            }
 
-                        //                if (result.Item1 != null && result.Item1.Count > 0)
-                        //                {
-                        //                    _orders[i].ItemsDto.AddRange(result.Item1);
 
-                        //                }
-                        //                if (result.Item2 != null && result.Item2.Count > 0)
-                        //                {
-                        //                    //_orders[i].Errors.AddRange(result.Item2);
-                        //                }
+                            if (worksheetType == WorksheetType.Unknown)
+                            {
+                                _logger.LogError(" Excel files format not recognized. Worksheet type  is Unknown. File {$Filename}.",
+                                  _excelOrdersDto[i].Files[j].FileName);
+                                _excelOrdersDto[i].ErrorsDto.Add(new ErrorEntity
+                                {
+                                    OrderNumber = _excelOrdersDto[i].OrderNumber,
+                                    Level = ErrorLevel.Fatal,
+                                    Code = ErrorCode.Excel_Read_Workbook_Source_Application_Format_Unknown,
+                                    Message = $"OrderNumber {_excelOrdersDto[i].OrderNumber}. File ${_excelOrdersDto[i].Files[j].FileName} contains worksheet with unknown type."
+                                });
+                                continue;
+                            }
 
-                        //            }
+                            //=====================================================================================================`
+                            //🔵 TechnoDesign Items
+                            //=====================================================================================================
+                            if (sourceAppType == Wo.TechDesign || worksheetType == WorksheetType.Items)
+                            {
+                                var result = await _excelParserTechDesign.MapItemsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
+                                _excelOrdersDto[i].ItemsDto.AddRange(result);
+                            }
 
-                        //            //🔵 Sapa ItemsDto
-                        //            //=====================================================================================================
-                        //            else if (_orders[i].SourceAppType == SourceAppType.Sapa)
-                        //            {
-                        //                throw new NotImplementedException("Sapa ItemsDto not implemented yet.");
-                        //            }
 
-                        //            //🔵 Schuco ItemsDto
-                        //            //=====================================================================================================
-                        //            else
-                        //            {
-                        //                throw new NotImplementedException("Schuco ItemsDto not implemented yet.");
-                        //            }
-                        //        }
+                            //=====================================================================================================`
+                            //🔵 Schuco Items
+                            //=================================`====================================================================
+                            else if (sourceAppType == Wo.Schuco || worksheetType == WorksheetType.Items)
+                            {
+                                var result = await _excelParserSchuco.MapItemsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
+                                _excelOrdersDto[i].ItemsDto.AddRange(result);
+                            }
 
-                        //        //=======================================================================================
-                        //        //🔵 Materials Worksheet
-                        //        //=======================================================================================
-                        //        else
-                        //        {
-                        //            //🔵 Unknown Materials
-                        //            //=======================================================================================
-                        //            if (_orders[i].SourceAppType == SourceAppType.Unknown)
-                        //            {
-                        //                continue;
-                        //            }
 
-                        //            //🔵TechnoDesign Materials
-                        //            //=======================================================================================
-                        //            else if (_orders[i].SourceAppType == SourceAppType.TechDesign)
-                        //            {
+                            //=====================================================================================================`
+                            //🔵 TechnoDesign Materals
+                            //=====================================================================================================
+                            else if (sourceAppType == Wo.TechDesign || worksheetType == WorksheetType.Materials)
+                            {
+                                var result = await _excelParserTechDesign.MapMaterialsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
+                                _excelOrdersDto[i].MaterialDto.AddRange(result);
+                            }
+                            //=====================================================================================================`
+                            //🔵 TechnoDesign Materals
+                            //=====================================================================================================
+                            else if (sourceAppType == Wo.Schuco || worksheetType == WorksheetType.Materials)
+                            {
+                                var result = await _excelParserSchuco.MapItemsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
+                                _excelOrdersDto[i].ItemsDto.AddRange(result);
+                            }
 
-                        //                (List<MaterialEntity>, List<ErrorEntity>) result = await _mapperTechDesign.MapMaterialsAsync(_orders[i].Files[j].Worksheets[k], _progressValue, _progress);
 
-                        //                if (result.Item1 != null && result.Item1.Count > 0)
-                        //                {
-                        //                    _orders[i].Materials.AddRange(result.Item1);
-                        //                }
-                        //                if (result.Item2 != null && result.Item2.Count > 0)
-                        //                {
-                        //                    //_orders[i].Errors.AddRange(result.Item2);
-                        //                }
+                            //=======================================================================================
+                            //🔵 Materials Worksheet
+                            //=======================================================================================
+                            else
+                            {
+                                //=======================================================================================
+                                //🔵 Unknown Materials
+                                //=======================================================================================
+                                //🔵TechnoDesign Materials
+                                //=======================================================================================
+                                //🔵 Schuco Materials
+                                //=======================================================================================
 
-                        //            }
+                                if (_excelOrdersDto[i].SourceAppType == Wo.Unknown)
+                                {
+                                    continue;
+                                }
+                                else if (_excelOrdersDto[i].SourceAppType == Wo.TechDesign)
+                                {
+                                    var result = await _excelParserTechDesign.MapMaterialsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
+                                    _excelOrdersDto[i].MaterialDto.AddRange(result);
 
-                        //            //🔵 Sapa Materials
-                        //            //=======================================================================================
-                        //            else if (_orders[i].SourceAppType == SourceAppType.Sapa)
-                        //            {
-                        //                throw new NotImplementedException("Sapa ItemsDto not implemented yet.");
+                                }
+                                else if (_excelOrdersDto[i].SourceAppType == Wo.Schuco)
+                                {
+                                    var result = await _excelParserSchuco.MapMaterialsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
+                                    _excelOrdersDto[i].MaterialDto.AddRange(result);
+                                }
+                                else
+                                {
+                                    _logger.LogError("Excel files format not recognized. Source application is Unknown. File {$Filename}.", _excelOrdersDto[i].Files[j].FileName);
+                                    continue;
+                                }
 
-                        //            }
+                            }
 
-                        //            //🔵 Schuco Materials
-                        //            //=======================================================================================
-                        //            else
-                        //            {
 
-                        //                throw new NotImplementedException("Schuco ItemsDto not implemented yet.");
-                        //            }
-
-                        //        }
-                        //    }
-                        //}
-                        _orders[i] = SetSalesDocumentReadErrors(_orders[i]);
-
-                    }
-                    catch (Exception ex)
-                    {
-                        // _logService.Error("Unhandled error {$Class}.{Method}." +
-                        //     "\nOrder {$OrderNumber}." +
-                        //     " \n{$Exception}",
-                        //nameof(ReadService),
-                        //     nameof(GetOrderSalesDocumentState),
-                        //     _orders[i].OrderNumber ?? string.Empty,
-                        //     ex.Message);
-                        continue;
+                        }
                     }
                 }
-                return _orders;
+                return await Task.Run(() => _excelOrdersDto);
             }
             catch (Exception ex)
             {
-                _logService.Error("PrefSuite Service: Unhandled error reading orders. Exception {$Exception}", ex.Message);
-                return _orders;
+
+
+                _logger.LogError("PrefSuite Service: Unhandled error reading orders. Exception {$Exception}", ex.Message);
+                return _excelOrdersDto;
             }
 
         }
 
-        private async Task<List<ExcelOrderDto>> GetOrders(List<string>? files)
+        private async Task<List<ExcelOrderDto>?> GetOrders(List<string>? files)
         {
 
             if (files == null || files.Count == 0)
             {
-                return await Task.Run(() => _orders);
+                return await Task.Run(() => _excelOrdersDto);
             }
 
             try
@@ -268,7 +245,7 @@ namespace a2p.Infrastructure.Services
 
                 if (workingFiles == null || workingFiles.Count == 0)
                 {
-                    return await Task.Run(() => _orders);
+                    return await Task.Run(() => _excelOrdersDto);
                 }
 
                 List<string> orderNumbers = workingFiles.Select(f => Path.GetFileName(f)!.Split(new[] { '_', ' ' }, StringSplitOptions.RemoveEmptyEntries)[0])
@@ -283,34 +260,25 @@ namespace a2p.Infrastructure.Services
                     {
                         OrderNumber = orderNumber,
                         ItemsDto = [],
-                        MaterialsDto = [],
-                        //Errors = [],
-                        SalesDocumentNumber = -1,
-                        SalesDocumentVersion = -1,
-                        //SalesDocumentState = -1,
+                        MaterialDto = [],
+                        ErrorsDto = [],
                         Currency = "Unknown",
                         ExchangeRate = 1
 
                     };
 
-                    _orders.Add(order);
+                    _excelOrdersDto.Add(orderDto);
 
                 }
 
-                return await Task.Run(() => _orders);
+                return await Task.Run(() => _excelOrdersDto);
 
             }
 
             catch (Exception ex)
             {
-                //     _logService.Verbose(
-                //"{$Class}.{$Method}. Unhandled error getting orders. Exception: {Exception}.",
-                //nameof(IReadService),
-                //nameof(GetOrders),
-                // ex.Message
-                //);
-
-                return await Task.Run(() => _orders);
+                _logger.LogError($"Error in GetOrders: {ex.Message}");
+                return await Task.Run(() => _excelOrdersDto);
 
             }
         }
@@ -323,12 +291,8 @@ namespace a2p.Infrastructure.Services
                 await Task.Run((Action)(() =>
                 {
 
-                    List<string> files = _fileService.GetFiles()!
-                       .Select(f => f)
-                       .Where(f => f
-                       .EndsWith(".xlsx") && !f
-                       .Contains("~$") && f
-                       .Contains(order.OrderNumber)).ToList();
+                    List<string> files = _fileService.GetFiles().Select(f => f)
+                        .Where(f => !f.Contains("~$") && f.EndsWith(".xlsx") && Path.GetFileName(f)!.StartsWith(order.OrderNumber)).ToList();
 
                     for (int i = 0; i < files.Count; i++)
                     {
@@ -338,7 +302,7 @@ namespace a2p.Infrastructure.Services
                             FullName = files[i],
                             OrderNumber = order.OrderNumber,
                             FileName = System.IO.Path.GetFileName(files[i]),
-                            IsLocked = _fileService.IsLocked(files[i]),
+                            // IsLocked = _fileService.IsLocked(files[i]),
                             FilePath = System.IO.Path.GetFullPath(files[i]),
                             Worksheets = []
                         };
@@ -363,34 +327,33 @@ namespace a2p.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                _logService.Error($"Error in GetOrderFiles: {ex.Message}");
+                _logger.LogError($"Error in GetOrderFiles: {ex.Message}");
                 return order;
             }
         }
 
         private async Task<ExcelOrderDto> GetOrderWorksheetsAsync(ExcelOrderDto order)
-
         {
             try
             {
-                //for (int i = 0; i < order.Files.Count; i++)
-                //{
+                for (int i = 0; i < order.Files.Count; i++)
+                {
 
-                //    List<Worksheet> worksheets = await _excelService.GetWorksheetsAsync(order.Files[i], _progressValue, _progress);
+                    List<Worksheet> worksheets = await _excelService.GetWorksheetsAsync(order.Files[i], _progressValue, _progress);
 
-                //    if (worksheets == null)
-                //    {
-                //        continue;
-                //    }
-                //    order.Files[i].Worksheets.AddRange(worksheets);
-                //}
+                    if (worksheets == null)
+                    {
+                        continue;
+                    }
+                    order.Files[i].Worksheets.AddRange(worksheets);
+                }
 
                 return order;
 
             }
             catch (Exception ex)
             {
-                _logService.Error($"Error in GetOrderWorksheets: {ex.Message}");
+                _logger.LogError($"Error in GetOrderWorksheets: {ex.Message}");
                 return order;
             }
         }
@@ -417,24 +380,21 @@ namespace a2p.Infrastructure.Services
                     //}
                     //);
                 }
-                else
-                {
-                    order.SalesDocumentNumber = result.Item1 ?? -1;
-                    order.SalesDocumentVersion = result.Item2 ?? -1;
-                }
+
+
+
 
                 return order;
             }
             catch (Exception ex)
             {
-                _logService.Error("Unhandled error {$Class}.{Method}." +
+                _logger.LogError("Unhandled error {$Class}.{Method}." +
                     "\nOrder {$OrderNumber}." +
                     " \n{$Exception}",
                nameof(ReadService),
                     nameof(GetOrderSalesDocumentAsync),
                     order.OrderNumber ?? string.Empty,
                     ex.Message);
-
                 return order;
             }
         }
@@ -449,7 +409,7 @@ namespace a2p.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                // _logService.Error("Unhandled error {$Class}.{Method}." +
+                // _logger.Error("Unhandled error {$Class}.{Method}." +
                 //     "\nOrder {$OrderNumber}." +
                 //     " \n{$Exception}",
                 //nameof(ReadService),
@@ -465,12 +425,10 @@ namespace a2p.Infrastructure.Services
         {
             try
             {
-                SalesDocument salesDocument = new()
-                {
-                    SalesDocumentNumber = order.SalesDocumentNumber,
-                    SalesDocumentVersion = order.SalesDocumentVersion,
-                    //  SalesDocumentState = await GetOrderSalesDocumentState(order)
-                };
+                SalesDocument salesDocument = new();
+                //{
+                //    SalesDocumentNumber = order.SalesDocumentNumber,
+
 
                 ///  OrderState orderState = (OrderState)order.SalesDocumentState;
 
@@ -498,7 +456,7 @@ namespace a2p.Infrastructure.Services
                 //    Message = $"OrderNumber {order.OrderNumber} - {order.Number}/{order.Version} contains calculated material needs!"
 
                 //});
-                return order;
+
 
                 //     }
                 //
@@ -542,14 +500,14 @@ namespace a2p.Infrastructure.Services
 
                 //}
 
-                //return order;
+                return order;
 
             }
             catch (Exception ex)
             {
 
                 Console.WriteLine(ex.Message);
-                //    _logService.Error("Unhandled error {$Class}.{Method}." +
+                //    _logger.Error("Unhandled error {$Class}.{Method}." +
                 //        "\nOrder {$OrderNumber}." +
                 //        " \n{$Exception}",
                 //   nameof(ReadService),

@@ -32,7 +32,7 @@ namespace a2p.Domain.Interfaces
         /// </summary>
         /// <param name="material">The material entity to insert.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the newly created material with assigned identifier.</returns>
-        Task<MaterialEntity> InsertMaterialAsync(MaterialEntity material);
+        Task<MaterialEntity> CreateMaterialAsync(MaterialEntity material);
 
         /// <summary>
         /// Updates an existing material record in the system asynchronously.

@@ -1,8 +1,8 @@
-using a2p.Application.Models;
 using a2p.Application.Services;
 using a2p.Domain.Entities;
 using a2p.Domain.Exception;
 using a2p.Domain.Interfaces;
+
 using Microsoft.Extensions.Logging;
 
 public class OrderQueueService : IOrderQueueService
@@ -17,137 +17,125 @@ public class OrderQueueService : IOrderQueueService
 
     }
 
-    public async Task<Result<OrderQueueEntity>> InsertOrderQueueAsync(OrderQueueEntity order)
+    public async Task<OrderQueueEntity?> InsertOrderQueueAsync(OrderQueueEntity order)
     {
         try
         {
 
-            order.CreatedUTCDateTime = DateTime.UtcNow;
+
             var result = await _repo.InsertOrderAsync(order);
-            if (!result.IsSuccess)
-            {
-                return Result.Failure<OrderQueueEntity>($"Failed to insert order '{order.OrderNumber}'!");
-            }
-            return Result.Success(result.Value!);
+            return result;
+
+
         }
 
         catch (DomainException dex)
         {
-            // domain rule violation - handled gracefully
-            return Result.Failure<OrderQueueEntity>(dex.Message);
+            _logger.LogError(dex, "Domain error inserting order!");
+            return null;
+
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error inserting order '{order.OrderNumber}'!");
-            return Result.Failure<OrderQueueEntity>($"Error inserting order '{order.OrderNumber}': {ex.Message}");
+            _logger.LogError(ex, "Error inserting order!");
+            return null;
+
         }
 
     }
 
-    public async Task<Result<OrderQueueEntity>> GetOrderAsync(Guid rowId)
+    public async Task<OrderQueueEntity?> GetOrderAsync(Guid rowId)
     {
         try
         {
 
             var result = await _repo.GetOrderAsync(rowId);
-            if (!result.IsSuccess)
-            {
-                return Result.Failure<OrderQueueEntity>($"Failed to get order. Order with rowId '{rowId}' not found.");
-            }
-            return Result.Success(result.Value!);
+            return result;
         }
 
         catch (DomainException dex)
         {
-            // domain rule violation - handled gracefully
-            return Result.Failure<OrderQueueEntity>(dex.Message);
+            _logger.LogError(dex, "Domain error getting order!");
+            return null;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error getting order rowId '{rowId}'!");
-            return Result.Failure<OrderQueueEntity>($"Error getting order rowId '{rowId}': {ex.Message}");
+            _logger.LogError(ex, "Error getting order!");
+            return null;
         }
 
     }
 
 
-    public async Task<Result<IEnumerable<OrderQueueEntity>>> GetOrdersAsync()
+    public async Task<IEnumerable<OrderQueueEntity>?> GetOrdersAsync()
     {
         try
         {
 
             var result = await _repo.GetOrdersAsync();
-            if (!result.IsSuccess)
-            {
-                return Result.Failure<IEnumerable<OrderQueueEntity>>($"Failed to get orders. No orders found.");
-            }
-            return Result.Success(result.Value!);
+            return result;
+
+
         }
 
         catch (DomainException dex)
         {
-            // domain rule violation - handled gracefully
-            return Result.Failure<IEnumerable<OrderQueueEntity>>(dex.Message);
+            _logger.LogError(dex, "Domain error getting orders!");
+
+            return null;
+
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting orders!");
-            return Result.Failure<IEnumerable<OrderQueueEntity>>($"Error getting orders: {ex.Message}");
+            return null;
+
         }
 
     }
 
-    public async Task<Result<OrderQueueEntity>> UpdateOrderAsync(OrderQueueEntity order)
+    public async Task<OrderQueueEntity?> UpdateOrderAsync(OrderQueueEntity order)
     {
         try
         {
 
             order.ModifiedUTCDateTime = DateTime.UtcNow;
-            var result = await _repo.UpdateOrderAsync(order);
-            if (!result.IsSuccess)
-            {
-                return Result.Failure<OrderQueueEntity>($"Failed to update order '{order.OrderNumber}'.");
-            }
-            return Result.Success(result.Value!);
+            var result = await _repo.InsertOrderAsync(order);
+            return result;
+
         }
 
         catch (DomainException dex)
         {
             // domain rule violation - handled gracefully
-            return Result.Failure<OrderQueueEntity>(dex.Message);
+            return null;
+
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error updating order '{order.OrderNumber}'!");
-            return Result.Failure<OrderQueueEntity>($"Error updating order '{order.OrderNumber}': {ex.Message}");
+            return null;
         }
 
     }
 
-    public async Task<Result<Guid>> DeleteOrderAsync(Guid rowId)
+    public async Task<Guid> DeleteOrderAsync(Guid id)
     {
         try
         {
 
-            var result = await _repo.DeleteOrderAsync(rowId);
-            if (!result.IsSuccess || result.Value == Guid.Empty)
-            {
-
-                return Result.Failure<Guid>($"Failed to delete order. Order rowId '{rowId}' not found!");
-            }
-
-            return Result.Success(result.Value);
+            var result = await _repo.DeleteOrderAsync(id);
+            return result;
         }
 
         catch (DomainException dex)
         {
             // domain rule violation - handled gracefully
-            return Result.Failure<Guid>(dex.Message);
+            return Guid.Empty;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error deleting order. Order rowId '{rowId}'!");
-            return Result.Failure<Guid>($"Error deleting order. Order rowId '{rowId}': {ex.Message}");
+            return Guid.Empty;
+
         }
 
     }

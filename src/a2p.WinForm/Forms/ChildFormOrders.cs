@@ -2,6 +2,7 @@ using a2p.Application.DTOs;
 using a2p.Application.Interfaces;
 using a2p.Application.Models;
 using a2p.Domain.Models;
+using a2p.Domain.Enums;
 
 using System.Data;
 
@@ -864,7 +865,7 @@ namespace a2p.WinForm.Forms
                 Progress<ProgressValue> progress = new(progressBarForm.UpdateProgress);
 
                 int totalItems = importOrdersDto.Sum(order => order.ItemsDto.Count);
-                int totalMaterials = importOrdersDto.Sum(order => order.Materials.Count);
+                int totalMaterials = importOrdersDto.Sum(order => order.MaterialDto.Count);
                 int totalOrders = importOrdersDto.Count;
 
                 _progress = progress;
@@ -879,7 +880,6 @@ namespace a2p.WinForm.Forms
                 _progressValue.Value = 0;
                 _progressValue.MaxValue = 100;
                 _progressValue.MinValue = 0;
-
 
 
 
@@ -936,8 +936,6 @@ namespace a2p.WinForm.Forms
                 }
 
                 await UpdateDatable(importOrdersDto, 2);
-
-
 
 
 
@@ -1204,8 +1202,7 @@ namespace a2p.WinForm.Forms
             int materialCount = 0;
             int warningCount = 0;
             int errorCount = 0;
-            int fatalCount = 0;
-            foreach (ExcelOrderDto order in orders)
+            foreach (ExcelOrderDto order in ordersDto)
             {
 
                 if (order.Files.SelectMany(f => f.Worksheets).Count(w => w.WorksheetType == WorksheetType.Items) == 0)
@@ -1315,7 +1312,7 @@ namespace a2p.WinForm.Forms
                         materialCount += orderRecord.Materials;
                         warningCount += orderRecord.WarningCount;
                         errorCount += orderRecord.ErrorCount;
-                        fatalCount += orderRecord.FatalCount;
+                        //fatalCount += orderRecord.FatalCount;
                         lbInfoOrdersCount.Text = orderCount.ToString();
                         lbInfoFilesCount.Text = fileCount.ToString();
                         lbInfoWorksheetsCount.Text = worksheetCount.ToString();
@@ -1325,8 +1322,6 @@ namespace a2p.WinForm.Forms
                         lbInfoErrorCount.Text = errorCount.ToString();
                         plGridPanel.ResumeLayout(false);
                         plGridPanel.PerformLayout();
-
-
 
 
 

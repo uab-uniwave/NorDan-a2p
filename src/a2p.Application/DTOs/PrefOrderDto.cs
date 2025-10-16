@@ -1,7 +1,7 @@
 using a2p.Domain.Enums;
 namespace a2p.Application.DTOs
 {
-    public class PrefExcelExcelOrderDto
+    public class PrefOrderDto
     {
 
         public int Number

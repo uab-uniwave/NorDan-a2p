@@ -39,7 +39,7 @@ namespace a2p.Infrastructure
             _ = services.AddSingleton<ILogService, LogService>();
             _ = services.AddSingleton<ISettingsService, SettingsService>();
             _ = services.AddSingleton<SettingsManager>();
-            // _ = services.AddSingleton<IExcelService, Services.ExcelService>();
+            _ = services.AddSingleton<IExcelService, ExcelService>();
             _ = services.AddSingleton<ISQLService, SQLService>();
             _ = services.AddSingleton<IPrefSuiteService, PrefSuiteService>();
             _ = services.AddSingleton<IPrefSuiteDataService, PrefSuiteDataService>();
@@ -65,6 +65,7 @@ namespace a2p.Infrastructure
             // Repositories
             _ = services.AddSingleton<IMaterialRepository, MaterialRepository>();
             _ = services.AddSingleton<IItemRepository, ItemRepository>();
+            _ = services.AddSingleton<IOrderRepository, OrderRepository>();
             
             // Register OrderQueueRepository with its dependencies
             _ = services.AddSingleton<IOrderQueueRepository>(provider =>

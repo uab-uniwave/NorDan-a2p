@@ -1,8 +1,11 @@
-using a2p.Application.Interfaces;
-using a2p.Application.Models;
-
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
+
+using a2p.Application.Interfaces.Excel;
+using a2p.Application.Interfaces.Excel.Files;
+using a2p.Application.Interfaces.Orchestrators;
+using a2p.Application.Interfaces.Services;
+using a2p.Application.Models;
 
 namespace a2p.WinForm.Forms
 {
@@ -17,7 +20,7 @@ namespace a2p.WinForm.Forms
         private readonly IWriteService _writeService;
         private readonly IExcelService _excelService;
         private readonly ISettingsService _settingsService;
-        private readonly ILogService _logService;
+        private readonly ILogger _logger;
         private readonly IFileService _fileService;
 
         private readonly ProgressValue _progressValue = new();
@@ -53,7 +56,7 @@ namespace a2p.WinForm.Forms
 
         public FormMain(IReadService readService,
                        IExcelService excelService,
-                       ILogService logService,
+                       ILogger logger,
                        IFileService fileService,
                        ISettingsService settingsService,
                        IWriteService writeService)
@@ -61,7 +64,7 @@ namespace a2p.WinForm.Forms
             _readService = readService ?? throw new ArgumentNullException(nameof(readService));
             _writeService = writeService ?? throw new ArgumentNullException(nameof(writeService));
             _excelService = excelService ?? throw new ArgumentNullException(nameof(excelService));
-            _logService = logService ?? throw new ArgumentNullException(nameof(logService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
             _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
 
@@ -69,9 +72,9 @@ namespace a2p.WinForm.Forms
             _settingsContainer = _settingsService.LoadAllSettings();
             _progress = new Progress<ProgressValue>();
 
-            _orderForm = new ChildFormOrders(_settingsService, _logService, _fileService, _excelService, _readService, _writeService);
-            _logForm = new ChildFormLog(_settingsService, _logService);
-            _settingForm = new ChildFormSetting(_logService, _settingsService);
+            _orderForm = new ChildFormOrders(_settingsService, _logger, _fileService, _excelService, _readService, _writeService);
+            _logForm = new ChildFormLog(_settingsService, _logger);
+            _settingForm = new ChildFormSetting(_logger, _settingsService);
 
             this.AutoScaleMode = AutoScaleMode.Dpi;
             this.SuspendLayout();
@@ -109,7 +112,7 @@ namespace a2p.WinForm.Forms
             }
             else
             {
-                _logService.Information("User settings file loaded successfully.");
+                _logger.LogInformation("User settings file loaded successfully.");
             }
 
             try
@@ -119,7 +122,7 @@ namespace a2p.WinForm.Forms
             }
             catch (Exception ex)
             {
-                _logService.Error($"MF: Unhandled error while loading main form: {ex.Message}");
+                _logger.LogError($"MF: Unhandled error while loading main form: {ex.Message}");
             }
         }
 
@@ -129,7 +132,7 @@ namespace a2p.WinForm.Forms
             try
             {
                 await ShowFormAsync(_orderForm,
-                    () => new ChildFormOrders(_settingsService, _logService, _fileService, _excelService, _readService, _writeService));
+                    () => new ChildFormOrders(_settingsService, _logger, _fileService, _excelService, _readService, _writeService));
 
                 if (_appSettings.RefreshFilesOnStartup)
                 {
@@ -138,7 +141,7 @@ namespace a2p.WinForm.Forms
             }
             catch (Exception ex)
             {
-                _logService.Error($"MF: Unhandled error while showing main form: {ex.Message}");
+                _logger.LogError($"MF: Unhandled error while showing main form: {ex.Message}");
             }
             finally
             {
@@ -242,7 +245,7 @@ namespace a2p.WinForm.Forms
             var originalImage = GetImageByName(imageName);
             if (originalImage == null)
             {
-                _logService?.Warning($"Image resource '{imageName}' not found or invalid.");
+                _logger.LogWarning($"Image resource '{imageName}' not found or invalid.");
                 return null;
             }
             try
@@ -257,7 +260,7 @@ namespace a2p.WinForm.Forms
             }
             catch (ArgumentException ex)
             {
-                _logService?.Error($"Failed to load or resize image '{imageName}': {ex.Message}");
+                _logger.LogError($"Failed to load or resize image '{imageName}': {ex.Message}");
                 return null;
             }
         }
@@ -269,12 +272,12 @@ namespace a2p.WinForm.Forms
                 var obj = Properties.Resources.ResourceManager.GetObject(imageName);
                 if (obj is Image img)
                     return img;
-                _logService?.Warning($"Resource '{imageName}' is not a valid image.");
+                _logger.LogWarning($"Resource '{imageName}' is not a valid image.");
                 return null;
             }
             catch (Exception ex)
             {
-                _logService?.Error($"Error loading image resource '{imageName}': {ex.Message}");
+                _logger.LogError($"Error loading image resource '{imageName}': {ex.Message}");
                 return null;
             }
         }
@@ -305,7 +308,7 @@ namespace a2p.WinForm.Forms
             try
             {
                 await ShowFormAsync(_orderForm,
-                    () => new ChildFormOrders(_settingsService, _logService, _fileService, _excelService, _readService, _writeService));
+                    () => new ChildFormOrders(_settingsService, _logger, _fileService, _excelService, _readService, _writeService));
 
                 await _orderForm.OrdersLoad();
             }
@@ -337,7 +340,7 @@ namespace a2p.WinForm.Forms
                 await Task.Run(DisableButtons);
 
                 await ShowFormAsync(_orderForm,
-                    () => new ChildFormOrders(_settingsService, _logService, _fileService, _excelService, _readService, _writeService));
+                    () => new ChildFormOrders(_settingsService, _logger, _fileService, _excelService, _readService, _writeService));
                 await _orderForm.ImportAsync();
             }
             catch (Exception ex)
@@ -362,7 +365,7 @@ namespace a2p.WinForm.Forms
                 await Task.Run(DisableButtons);
 
                 await ShowFormAsync(_logForm,
-                    () => new ChildFormLog(_settingsService, _logService));
+                    () => new ChildFormLog(_settingsService, _logger));
 
                 await _logForm.LogRefreshAsync();
             }
@@ -380,7 +383,7 @@ namespace a2p.WinForm.Forms
         private async void BtnProperties_Click(object sender, EventArgs e)
         {
             await ShowFormAsync(_settingForm,
-                () => new ChildFormSetting(_logService, _settingsService));
+                () => new ChildFormSetting(_logger, _settingsService));
         }
 
         private void BtnExit_Click(object sender, EventArgs e)
@@ -537,7 +540,7 @@ namespace a2p.WinForm.Forms
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            _logService.DeleteLogFiles();
+            // _logger.DeleteLogFiles();
         }
 
         private void MainForm_DpiChanged(object? sender, DpiChangedEventArgs e)

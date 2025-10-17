@@ -1,138 +1,189 @@
-using System.Linq;
-using a2p.Application.Models;
+using a2p.Application.DTOs;
+using a2p.Application.Interfaces.Repositories;
+using a2p.Application.Interfaces.Services;
+using a2p.Application.Validations;
 using a2p.Domain.Entities;
-using a2p.Application.Services;
-using a2p.Domain.Exception;
-using a2p.Domain.Interfaces;
+using a2p.Domain.Shared;
+
+using AutoMapper;
+
+using FluentValidation;
+
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 
-public class OrderService : IOrderService
+namespace a2p.Application.Services
 {
-    private readonly IOrderRepository _repo;
-    private readonly ILogger<OrderService> _logger;
-
-    public OrderService(IOrderRepository repo, ILogger<OrderService> logger)
+    public class OrderService : IOrderService
     {
-        _repo = repo;
-        _logger = logger;
-    }
+        private readonly IOrderRepository _repository;
+        private readonly IValidator<OrderDto> _validator;
+        private readonly IMapper _mapper;
+        private readonly ILogger<OrderService> _logger;
 
-    public async Task<Result<OrderEntity>> InsertOrderAsync(OrderEntity order)
-    {
-        try
+        public OrderService(
+            IOrderRepository repository,
+            IValidator<OrderDto> validator,
+            IMapper mapper,
+            ILogger<OrderService> logger)
         {
-            order.CreatedUTCDateTime = DateTime.UtcNow;
-            var result = await _repo.InsertOrderAsync(order);
-            if (result == null || result.Id == Guid.Empty)
+            _repository = repository;
+            _validator = validator;
+            _mapper = mapper;
+            _logger = logger;
+        }
+
+        // CREATE
+        public async Task<ValidationResult<OrderEntity>> CreateOrderAsync(OrderDto dto)
+        {
+            // Step 1. Validate input
+            var validation = await _validator.ValidateAsync(dto);
+            var validationResult = validation.ToValidationResult<OrderEntity>();
+            if (!validationResult.IsSuccess)
+                return validationResult;
+
+            try
             {
-                return Result.Failure<OrderEntity>($"Failed to insert order '{order.OrderNumber}'!");
-            }
-            return Result.Success(result);
-        }
-        catch (DomainException dex)
-        {
-            // domain rule violation - handled gracefully
-            return Result.Failure<OrderEntity>(dex.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error inserting order '{OrderNumber}'!", order.OrderNumber);
-            return Result.Failure<OrderEntity>($"Error inserting order '{order.OrderNumber}': {ex.Message}");
-        }
-    }
+                var entity = _mapper.Map<OrderEntity>(dto)
+                ?? throw new InvalidOperationException("Mapping resulted in null OrderEntity.");
+                var created = await _repository.CreateOrderAsync(entity);
+                if (created == null)
+                    return ValidationResult<OrderEntity>.Failure(
+                        new[] { new ValidationError("Repository", "Failed to create order.") });
 
-    public async Task<Result<OrderEntity?>> GetOrderAsync(Guid id)
-    {
-        try
-        {
-            var result = await _repo.GetOrderAsync(id);
-            if (result == null || result.Id == Guid.Empty)
+                _logger.LogInformation("Order {OrderNumber} created.", created.OrderNumber);
+                return ValidationResult<OrderEntity>.Success(created, "Order created successfully.");
+            }
+            catch (SqlException ex)
             {
-                return Result.Failure<OrderEntity?>($"Failed to get order. Order with rowId '{id}' not found.");
+                _logger.LogError(ex, "SQL error creating order.");
+                return ValidationResult<OrderEntity>.Failure(
+                    new[] { new ValidationError("Database", "Database error occurred.") });
             }
-            return Result.Success<OrderEntity?>(result);
-        }
-        catch (DomainException dex)
-        {
-            // domain rule violation - handled gracefully
-            return Result.Failure<OrderEntity?>(dex.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error getting order rowId '{RowId}'!", id);
-            return Result.Failure<OrderEntity?>($"Error getting order rowId '{id}': {ex.Message}");
-        }
-    }
-
-
-    public async Task<Result<IEnumerable<OrderEntity>>?> GetOrdersAsync()
-    {
-        try
-        {
-            var result = await _repo.GetOrdersAsync();
-            if (result == null || !result.Any())
+            catch (Exception ex)
             {
-                return Result.Failure<IEnumerable<OrderEntity>>($"Failed to get orders. Orders not found.");
+                _logger.LogError(ex, "Unexpected error creating order.");
+                return ValidationResult<OrderEntity>.Failure(
+                    new[] { new ValidationError("System", ex.Message) });
             }
-            return Result.Success(result);
         }
-        catch (DomainException dex)
-        {
-            // domain rule violation - handled gracefully
-            return Result.Failure<IEnumerable<OrderEntity>>(dex.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error getting orders!");
-            return Result.Failure<IEnumerable<OrderEntity>>($"Error getting orders: {ex.Message}");
-        }
-    }
 
-    public async Task<Result<OrderEntity?>> UpdateOrderAsync(OrderEntity order)
-    {
-        try
+        // UPDATE
+        public async Task<ValidationResult<OrderEntity>> UpdateOrderAsync(OrderDto dto)
         {
-            order.ModifiedUTCDateTime = DateTime.UtcNow;
-            var result = await _repo.UpdateOrdrAsync(order);
-            if (result == null || result.Id == Guid.Empty)
+            // Step 1. Validate
+            var validation = await _validator.ValidateAsync(dto);
+            var validationResult = validation.ToValidationResult<OrderEntity>();
+            if (!validationResult.IsSuccess)
+                return validationResult;
+
+            try
             {
-                return Result.Failure<OrderEntity?>($"Failed to update order. OrderNumber '{order.OrderNumber}'");
-            }
-            return Result.Success<OrderEntity?>(result);
-        }
-        catch (DomainException dex)
-        {
-            // domain rule violation - handled gracefully
-            return Result.Failure<OrderEntity?>(dex.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error updating order '{OrderNumber}'!", order.OrderNumber);
-            return Result.Failure<OrderEntity?>($"Error updating order '{order.OrderNumber}': {ex.Message}");
-        }
-    }
+                var entity = _mapper.Map<OrderEntity>(dto);
 
-    public async Task<Result<Guid>> DeleteOrderAsync(Guid id)
-    {
-        try
-        {
-            var result = await _repo.DeleteOrderAsync(id);
-            if (result == Guid.Empty)
+                var existing = await _repository.GetOrderAsync(entity.Id);
+                if (existing == null)
+                    return ValidationResult<OrderEntity>.Failure(
+                        new[] { new ValidationError(nameof(dto.Id), "Order not found.") });
+
+                entity.ModifiedUTCDateTime = DateTime.UtcNow;
+
+                var rows = await _repository.UpdateOrderAsync(entity);
+                if (rows == 0)
+                    return ValidationResult<OrderEntity>.Failure(
+                        new[] { new ValidationError("Repository", "Failed to update order.") });
+
+                _logger.LogInformation("Order {OrderNumber} updated successfully.", entity.OrderNumber);
+                return ValidationResult<OrderEntity>.Success(entity, "Order updated successfully.");
+            }
+            catch (SqlException ex)
             {
-                return Result.Failure<Guid>($"Failed to delete order. Order rowId '{id}' not found!");
+                _logger.LogError(ex, "SQL error updating order.");
+                return ValidationResult<OrderEntity>.Failure(
+                    new[] { new ValidationError("Database", "Database error.") });
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error updating order.");
+                return ValidationResult<OrderEntity>.Failure(
+                    new[] { new ValidationError("System", ex.Message) });
+            }
+        }
 
-            return Result.Success(result);
-        }
-        catch (DomainException dex)
+        // GET BY ID
+        public async Task<Result<OrderEntity>> GetOrderByIdAsync(Guid id)
         {
-            // domain rule violation - handled gracefully
-            return Result.Failure<Guid>(dex.Message);
+            try
+            {
+                var order = await _repository.GetOrderAsync(id);
+                return order == null
+                    ? Result<OrderEntity>.Failure($"Order {id} not found.")
+                    : Result<OrderEntity>.Success(order);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving order {Id}", id);
+                return Result<OrderEntity>.Failure("Error retrieving order.");
+            }
         }
-        catch (Exception ex)
+
+
+        // PAGED
+        public async Task<PagedResult<OrderEntity>> GetOrdersAsync(int page, int size)
         {
-            _logger.LogError(ex, "Error deleting order. Order rowId '{RowId}'!", id);
-            return Result.Failure<Guid>($"Error deleting order. Order rowId '{id}': {ex.Message}");
+            try
+            {
+                var (orders, total) = await _repository.GetOrdersAsync(page, size);
+                return PagedResult<OrderEntity>.Success(orders, total, page, size);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving paged orders.");
+                return PagedResult<OrderEntity>.Failure("Error retrieving paged orders.");
+            }
+        }
+
+        // UPDATE DELIVERY ADDRESS
+        public async Task<Result<bool>> UpdateOrderDeliveryAddressAsync(Guid id, string deliveryAddress)
+        {
+            try
+            {
+                var existing = await _repository.GetOrderAsync(id);
+                if (existing == null)
+                    return Result<bool>.Failure($"Order {id} not found.");
+
+                var rows = await _repository.UpdateOrderDeliveryAddressAsync(id, deliveryAddress);
+                return rows == 0
+                    ? Result<bool>.Failure("Failed to update delivery address.")
+                    : Result<bool>.Success(true, "Delivery address updated.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating delivery address for order {Id}", id);
+                return Result<bool>.Failure("Error updating delivery address.");
+            }
+        }
+
+        // DELETE
+        public async Task<Result<bool>> DeleteOrderByIdAsync(Guid id)
+        {
+            try
+            {
+                var existing = await _repository.GetOrderAsync(id);
+                if (existing == null)
+                {
+                    return Result<bool>.Failure($"Order {id} not found.");
+                }
+                var rows = await _repository.DeleteOrderAsync(id);
+                return rows == 0
+                    ? Result<bool>.Failure("Failed to delete order.")
+                    : Result<bool>.Success(true, "Order deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting order {Id}", id);
+                return Result<bool>.Failure("Error deleting order.");
+            }
         }
     }
 }

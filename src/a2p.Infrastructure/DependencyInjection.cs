@@ -1,11 +1,16 @@
-using a2p.Application.Interfaces;
+using a2p.Application.Interfaces.Excel;
+using a2p.Application.Interfaces.Excel.Files;
+using a2p.Application.Interfaces.Orchestrators;
+using a2p.Application.Interfaces.PrefSuite;
+using a2p.Application.Interfaces.Repositories;
+using a2p.Application.Interfaces.Services;
 using a2p.Application.Services;
-using a2p.Domain.Interfaces;
-using a2p.Infrastructure.Data;
-using a2p.Infrastructure.Services;
-using a2p.Infrastructure.Services.Logger;
-using a2p.Infrastructure.Services.MappingService;
-using a2p.Infrastructure.Services.PrefSuiteService;
+using a2p.Infrastructure.Persistence.Repositories;
+using a2p.Infrastructure.Services.DataServices;
+using a2p.Infrastructure.Services.ExcelServices;
+using a2p.Infrastructure.Services.FileServices;
+using a2p.Infrastructure.Services.Orchestartors;
+using a2p.Infrastructure.Services.PrefSuiteServices;
 using a2p.Infrastructure.Services.SettingsService;
 
 using Microsoft.Extensions.Configuration;
@@ -26,8 +31,9 @@ namespace a2p.Infrastructure
             // Register services
             ServiceCollection services = new();
 
-            // Initialize Serilog
-            LoggerSetup.ConfigureLogger(configuration);
+            LoggerConfiguration loggerConfig = new LoggerConfiguration()
+              .ReadFrom.Configuration(configuration)
+              .Enrich.FromLogContext();
 
             // Register logging
             _ = services.AddLogging(builder => builder.AddSerilog());
@@ -36,11 +42,10 @@ namespace a2p.Infrastructure
             _ = services.AddSingleton<IConfiguration>(configuration);
 
             // Register core services
-            _ = services.AddSingleton<ILogService, LogService>();
             _ = services.AddSingleton<ISettingsService, SettingsService>();
             _ = services.AddSingleton<SettingsManager>();
             _ = services.AddSingleton<IExcelService, ExcelService>();
-            _ = services.AddSingleton<ISQLService, SQLService>();
+
             _ = services.AddSingleton<IPrefSuiteService, PrefSuiteService>();
             _ = services.AddSingleton<IPrefSuiteDataService, PrefSuiteDataService>();
             _ = services.AddSingleton<IFileService, FileService>();
@@ -51,6 +56,7 @@ namespace a2p.Infrastructure
             _ = services.AddSingleton<IOrderService, OrderService>();
             _ = services.AddSingleton<IMaterialService, MaterialService>();
             _ = services.AddSingleton<IItemService, ItemService>();
+            _ = services.AddSingleton<ITaskQueueService, ITaskQueueService>();
 
             // Get connection string from configuration
             var connectionString = configuration.GetConnectionString("DefaultConnection");
@@ -66,15 +72,11 @@ namespace a2p.Infrastructure
             _ = services.AddSingleton<IMaterialRepository, MaterialRepository>();
             _ = services.AddSingleton<IItemRepository, ItemRepository>();
             _ = services.AddSingleton<IOrderRepository, OrderRepository>();
-            
-            // Register OrderQueueRepository with its dependencies
-            _ = services.AddSingleton<IOrderQueueRepository>(provider =>
-            {
-                var logService = provider.GetRequiredService<ILogService>();
-                return new OrderQueueRepository(connectionString, logService);
-            });
+            _ = services.AddSingleton<ITaskQueueRepository, TaskQueueRepository>();
 
-            // Mappers
+
+
+            // Parsers
             _ = services.AddSingleton<IExcelParserTechDesign, ExcelParserTechDesign>();
             _ = services.AddSingleton<IExcelParserSchuco, ExcelParserSchuco>();
             // TODO: If you have MapperSapa, register it here as well

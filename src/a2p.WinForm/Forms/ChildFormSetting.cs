@@ -1,24 +1,24 @@
-using a2p.Application.Interfaces;
+using System.Text.Json;
+
+using a2p.Application.Interfaces.Services;
 using a2p.Application.Models;
 
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
-using System.Text.Json;
-
 namespace a2p.WinForm.Forms
 {
     public partial class ChildFormSetting : Form
     {
-        private readonly ILogService _logService;
+        private readonly ILogger _logger;
         private readonly ISettingsService _settingsService;
         private bool _isSettingsChanged = false; // Flag to track changes
         private AppSettings _currentSettings; // Store the current settings
         private readonly IConfiguration _configuration;
 
-        public ChildFormSetting(ILogService logService, ISettingsService userSettingsService)
+        public ChildFormSetting(ILogger logger, ISettingsService userSettingsService)
         {
-            _logService = logService;
+            _logger = logger;
             _settingsService = userSettingsService;
 
             IConfigurationBuilder builder = new ConfigurationBuilder()
@@ -154,7 +154,7 @@ namespace a2p.WinForm.Forms
                     {
                         _isSettingsChanged = false;
                         btnSave.Enabled = false;
-                        _logService.Information("Settings saved successfully.");
+                        _logger.LogInformation("Settings saved successfully.");
                         _ = MessageBox.Show("Settings saved.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }));
                 }
@@ -162,7 +162,7 @@ namespace a2p.WinForm.Forms
                 {
                     _isSettingsChanged = false;
                     btnSave.Enabled = false;
-                    _logService.Information("Settings saved successfully.");
+                    _logger.LogInformation("Settings saved successfully.");
                     _ = MessageBox.Show("Settings saved.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
@@ -172,13 +172,13 @@ namespace a2p.WinForm.Forms
                 {
                     Invoke(new Action(() =>
                     {
-                        _logService.Error("Failed to save settings.");
+                        _logger.LogError("Failed to save settings.");
                         _ = MessageBox.Show($"Failed to save settings: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }));
                 }
                 else
                 {
-                    _logService.Error("Failed to save settings.");
+                    _logger.LogError("Failed to save settings.");
                     _ = MessageBox.Show($"Failed to save settings: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
@@ -276,7 +276,7 @@ namespace a2p.WinForm.Forms
             }
             catch
             {
-                _logService.Error("Check Settings. User name password, SQL Server and DB!");
+                _logger.LogError("Check Settings. User name password, SQL Server and DB!");
                 return "";
             }
         }

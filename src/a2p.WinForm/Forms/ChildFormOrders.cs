@@ -1,10 +1,13 @@
-using a2p.Application.DTOs;
-using a2p.Application.Interfaces;
-using a2p.Application.Models;
-using a2p.Domain.Models;
-using a2p.Domain.Enums;
-
 using System.Data;
+
+using a2p.Application.DTOs;
+using a2p.Application.Interfaces.Excel;
+using a2p.Application.Interfaces.Excel.Files;
+using a2p.Application.Interfaces.Orchestrators;
+using a2p.Application.Interfaces.Services;
+using a2p.Application.Models;
+using a2p.Domain.Enums;
+using a2p.Infrastructure.Models;
 
 
 namespace a2p.WinForm.Forms
@@ -14,19 +17,19 @@ namespace a2p.WinForm.Forms
         private readonly ISettingsService _settingsService;
         private SettingsContainer _settingsContainer;
         private AppSettings _appSettings;
-        private readonly ILogService _logService;
+        private readonly ILogger _logger;
         private readonly IFileService _fileService;
         private readonly IExcelService _excelService;
         private readonly IReadService _readService;
         private readonly IWriteService _writeService;
-        private List<ExcelOrderDto> _orders;
+        private List<OrderDto> _orders;
 
         private DataTable _dataTable;
         private BindingSource _bindingSource;
         private IProgress<ProgressValue>? _progress;
         private ProgressValue _progressValue;
         public ChildFormOrders(ISettingsService userSettingsService,
-                          ILogService logService,
+                          ILogger logger,
                           IFileService fileService,
                           IExcelService excelService,
                           IReadService readService,
@@ -38,7 +41,7 @@ namespace a2p.WinForm.Forms
             _appSettings = _settingsService.LoadSettings();
             _settingsContainer = _settingsService.LoadAllSettings();
             _fileService = fileService;
-            _logService = logService;
+            _logger = logger;
             _excelService = excelService;
             _writeService = writeService;
             _readService = readService;
@@ -407,7 +410,7 @@ namespace a2p.WinForm.Forms
             }
             catch (Exception ex)
             {
-                _logService.Error("OrderNumber Form: Unhandled Error initializing grid view. Exception: {$Exception}.", ex.Message);
+                _logger.LogError("OrderNumber Form: Unhandled Error initializing grid view. Exception: {$Exception}.", ex.Message);
             }
 
         }
@@ -448,7 +451,7 @@ namespace a2p.WinForm.Forms
             }
             catch (Exception ex)
             {
-                _logService.Error("OrderNumber Form: Unhandled Error initializing data table. Exception {$Exception}.", ex.Message);
+                _logger.LogError("OrderNumber Form: Unhandled Error initializing data table. Exception {$Exception}.", ex.Message);
 
             }
             finally
@@ -500,7 +503,7 @@ namespace a2p.WinForm.Forms
         //===============================================================
         private void DataGridViewFiles_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            _logService.Error("FF:GridViewFiles. Error in column {$Column}, row {$Row}: {$Exception}", e.ColumnIndex, e.RowIndex, e.Exception?.Message ?? "Exception details missing.");
+            _logger.LogError("FF:GridViewFiles. Error in column {$Column}, row {$Row}: {$Exception}", e.ColumnIndex, e.RowIndex, e.Exception?.Message ?? "Exception details missing.");
             Console.WriteLine($"GridViewFiles Error in column {e.ColumnIndex}, row {e.RowIndex}: {e.Exception?.Message ?? "Exception details missing."}");
             e.ThrowException = false;
 
@@ -584,7 +587,7 @@ namespace a2p.WinForm.Forms
             }
             catch (Exception)
             {
-                _logService.Error("OrderNumber Form: Unhandled Error formatting cells!");
+                _logger.LogError("OrderNumber Form: Unhandled Error formatting cells!");
             }
             finally
             {
@@ -644,7 +647,7 @@ namespace a2p.WinForm.Forms
             catch (Exception ex)
             {
 
-                _logService.Error("OrderNumber Form: Unhandled error setting grid row readonly. Exception: {$Exception}.", ex.Message);
+                _logger.LogError("OrderNumber Form: Unhandled error setting grid row readonly. Exception: {$Exception}.", ex.Message);
             }
 
         }
@@ -716,7 +719,7 @@ namespace a2p.WinForm.Forms
 
                 //Read Orders Data
                 //=====================================================================================================
-                List<ExcelOrderDto> orders = await _readService.ReadAsync(_progressValue, _progress);
+                List<OrderDto> orders = await _readService.ReadAsync(_progressValue, _progress);
                 _progress?.Report(_progressValue);
 
                 if (orders == null || orders.Count == 0)
@@ -747,7 +750,7 @@ namespace a2p.WinForm.Forms
             }
             catch (Exception ex)
             {
-                _logService.Error("OrderNumber Form: Unhandled Error loading Orders. Exception: {$Exception}.", ex.Message);
+                _logger.LogError("OrderNumber Form: Unhandled Error loading Orders. Exception: {$Exception}.", ex.Message);
             }
 
         }
@@ -775,7 +778,7 @@ namespace a2p.WinForm.Forms
         }
         public async Task ImportAsync()
         {
-            List<ExcelOrderDto> importOrdersDto
+            List<OrderDto> importOrdersDto
                 = [];
 
             try
@@ -865,7 +868,7 @@ namespace a2p.WinForm.Forms
                 Progress<ProgressValue> progress = new(progressBarForm.UpdateProgress);
 
                 int totalItems = importOrdersDto.Sum(order => order.ItemsDto.Count);
-                int totalMaterials = importOrdersDto.Sum(order => order.MaterialDto.Count);
+                int totalMaterials = importOrdersDto.Sum(order => order.MaterialsDto.Count);
                 int totalOrders = importOrdersDto.Count;
 
                 _progress = progress;
@@ -953,7 +956,7 @@ namespace a2p.WinForm.Forms
 
             catch (Exception ex)
             {
-                _logService.Error("OrderNumber Form: Unhandled error loading importing orders. Exception: {$Exception}.", ex.Message);
+                _logger.LogError("OrderNumber Form: Unhandled error loading importing orders. Exception: {$Exception}.", ex.Message);
                 _ = MessageBox.Show($"An Error occurred while loading the files." +
                     $"{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -963,7 +966,7 @@ namespace a2p.WinForm.Forms
             }
         }
 
-        public async Task<OrderRecord> MapToReadOrderDTOAsync(ExcelOrderDto exceExcelOrderDto
+        public async Task<OrderRecord> MapToReadOrderDTOAsync(OrderDto exceExcelOrderDto
             , int type)   // type 1 - read; 2 - write 
         {
             try
@@ -992,7 +995,7 @@ namespace a2p.WinForm.Forms
                     //orderRecord.FileList = string.Join("\n", exceExcelOrderDto.Files.Select(file => file.FileName));
                     // orderRecord.WorksheetCount = exceExcelOrderDto.Files.Sum(file => file.Worksheets?.Count ?? 0);
                     //  orderRecord.WorksheetList = string.Join("\n", exceExcelOrderDto.Files.SelectMany(file => file.Worksheets).Select(ws => ws.Name));
-                    orderRecord.Materials = exceExcelOrderDto.MaterialDto.Count(); // Added line to count Materials
+                    orderRecord.Materials = exceExcelOrderDto.MaterialsDto.Count(); // Added line to count Materials
 
                     if (type == 1)
                     {
@@ -1119,7 +1122,7 @@ namespace a2p.WinForm.Forms
             }
             catch (Exception ex)
             {
-                _logService.Error("OrderNumber Form: Unhandled error mapping ExcelOrderDto for grid : {$Exception}.", ex.Message);
+                _logger.LogError("OrderNumber Form: Unhandled error mapping ExcelOrderDto for grid : {$Exception}.", ex.Message);
                 return new OrderRecord();
             }
         }
@@ -1127,56 +1130,56 @@ namespace a2p.WinForm.Forms
         //===============================================================
         // -= Read Errors =-
         //===============================================================
-        private int CountReadWarning(Application.DTOs.ExcelOrderDto order)
+        private int CountReadWarning(Application.DTOs.OrderDto order)
         {
             //        return exceExcelOrderDto.Errors.Count(error => error.Level == ErrorLevel.Warning);
             return 0;
         }
 
-        private int CountReadError(Application.DTOs.ExcelOrderDto order)
+        private int CountReadError(Application.DTOs.OrderDto order)
 
         {
             //      return exceExcelOrderDto.Errors.Count(error => error.Level == ErrorLevel.Error);
             return 0;
         }
 
-        private int CountReadFatal(Application.DTOs.ExcelOrderDto order)
+        private int CountReadFatal(Application.DTOs.OrderDto order)
         {
             //     return exceExcelOrderDto.Errors.Count(error => error.Level == ErrorLevel.Fatal);
             return 0;
         }
 
-        private int CountReadExistsError(Application.DTOs.ExcelOrderDto order)
+        private int CountReadExistsError(Application.DTOs.OrderDto order)
         {
             //  return exceExcelOrderDto.Errors.Count(error => error.Code == ErrorCode.DatabaseRead_OrderAlreadyImported);
             return 0;
         }
 
-        private int CountReadTotalError(Application.DTOs.ExcelOrderDto order)
+        private int CountReadTotalError(Application.DTOs.OrderDto order)
         {
             //      return exceExcelOrderDto.Errors.Count(error => error.Level is ErrorLevel.Warning or ErrorLevel.Error or ErrorLevel.Fatal);
             return 0;
         }
 
-        private int CountWriteFatal(Application.DTOs.ExcelOrderDto order)
+        private int CountWriteFatal(Application.DTOs.OrderDto order)
         {
             //      return exceExcelOrderDto.Errors.Count(error => error.Level == ErrorLevel.Fatal);
             return 0;
         }
 
-        private int CountWriteError(Application.DTOs.ExcelOrderDto order)
+        private int CountWriteError(Application.DTOs.OrderDto order)
         {
             //        return exceExcelOrderDto.Errors.Count(error => error.Level == ErrorLevel.Error);
             return 0;
         }
 
-        private int CountWriteWarning(Application.DTOs.ExcelOrderDto order)
+        private int CountWriteWarning(Application.DTOs.OrderDto order)
         {
             //return exceExcelOrderDto.Errors.Count(error => error.Level == ErrorLevel.Warning);
             return 0;
         }
 
-        private int CountWriteTotalError(Application.DTOs.ExcelOrderDto order)
+        private int CountWriteTotalError(Application.DTOs.OrderDto order)
         {
             //return exceExcelOrderDto.Errors.Count(error => error.Level is ErrorLevel.Warning or ErrorLevel.Error or ErrorLevel.Fatal);
             return 0;
@@ -1184,7 +1187,7 @@ namespace a2p.WinForm.Forms
 
 
 
-        private async Task UpdateDatable(List<Application.DTOs.ExcelOrderDto> ordersDto, int type)
+        private async Task UpdateDatable(List<Application.DTOs.OrderDto> ordersDto, int type)
         {
 
             _dataTable.Rows.Clear();
@@ -1202,13 +1205,13 @@ namespace a2p.WinForm.Forms
             int materialCount = 0;
             int warningCount = 0;
             int errorCount = 0;
-            foreach (ExcelOrderDto order in ordersDto)
+            foreach (OrderDto order in ordersDto)
             {
 
                 if (order.Files.SelectMany(f => f.Worksheets).Count(w => w.WorksheetType == WorksheetType.Items) == 0)
                 {
 
-                    _logService.Warning("Found exceExcelOrderDto {$OrderNumber}, files, but items worksheet  is missing", order.OrderNumber);
+                    _logger.LogWarning("Found exceExcelOrderDto {$OrderNumber}, files, but items worksheet  is missing", order.OrderNumber);
                     continue;
 
                     //}
@@ -1344,7 +1347,7 @@ namespace a2p.WinForm.Forms
                     }
                     catch (Exception ex)
                     {
-                        _logService.Debug("Error adding individual exceExcelOrderDto to data table. Excepton: {$Exceptiom}", ex.Message);
+                        _logger.LogDebug("Error adding individual exceExcelOrderDto to data table. Excepton: {$Exceptiom}", ex.Message);
                     }
                 }
                 if (InvokeRequired)

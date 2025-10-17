@@ -24,26 +24,27 @@ namespace a2p.Domain.Entities
         public string ResponsibleManager { get; set; } = string.Empty;
 
         //===================================================================================
-        public Wo SourceAppType { get; set; } = Enums.Wo.Unknown;
+        public SourceAppType SourceAppType { get; set; } = Enums.SourceAppType.Unknown;
         //===================================================================================
 
-        public int ItemCount { get; set; } = 0;
-        public int MaterialCount { get; set; } = 0;
-        public int ErrorCount { get; set; } = 0;
-        public int TotalQuantity { get; set; } = 0;
+        public int ItemCount { get; set; } = 0; //Number of  positions. Single Position can have quantity > 1
 
-        public Decimal TotalUnits { get; set; }
+        public int ErrorCount { get; set; } = 0; //Number of errors for this order
 
-        public Decimal TotalWeight { get; set; } = 0;
-        public Decimal TotalWeightWithoutGlass { get; set; } = 0;
-        public Decimal TotalWeightGlass { get; set; } = 0;
-        public Decimal TotalArea { get; set; } = 0;
-        public Decimal TotalHours { get; set; } = 0;
-        public Decimal TotalMaterialCost { get; set; } = 0;
-        public Decimal TotalLaborCost { get; set; } = 0;
-        public Decimal TotalCost { get; set; } = 0;
-        public Decimal TotalPrice { get; set; } = 0;
-        public string? Currency { get; set; } //3 char ISO code
+
+        public int TotalQuantity { get; set; } = 0; //Quantity of all items , sum of quantities of all positions
+
+
+        public Decimal TotalWeight { get; set; } = 0;  //Weight of all items , sum of Weight of all positions
+        public Decimal TotalWeightWithoutGlass { get; set; } = 0; //Weight of all items without glass , sum of WeightWithoutGlass of all positions
+        public Decimal TotalWeightGlass { get; set; } = 0; //Weight of all glass , sum of WeightGlass of all positions
+        public Decimal TotalArea { get; set; } = 0; //Area of all items , sum of Area of all positions
+        public Decimal TotalHours { get; set; } = 0; //Hours of all items , sum of Hours of all positions
+        public Decimal TotalMaterialCost { get; set; } = 0; //Total Material Cost of all items , sum of MaterialCost of all positions
+        public Decimal TotalLaborCost { get; set; } = 0; //Total Labor Cost of all items , sum of LaborCost of all positions
+        public Decimal TotalCost { get; set; } = 0; //Total Cost of all items , sum of Cost of all positions
+        public Decimal TotalPrice { get; set; } = 0; //Total Price of all items , sum of Price of all positions
+        public string? Currency { get; set; } //3 char ISO code 
         public double ExchangeRate { get; set; }
         public DateOnly ExchangeRateDate { get; set; }
         //======================================================= ============================

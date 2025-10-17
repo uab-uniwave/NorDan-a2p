@@ -1,6 +1,6 @@
 namespace a2p.Domain.Enums
 {
-    public enum Wo
+    public enum SourceAppType
     {
         Unknown = 0,
         //Sapa = 1,

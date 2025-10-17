@@ -1,24 +1,23 @@
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
-using a2p.Application.Interfaces;
-using a2p.Domain.Entities;
-
-using Microsoft.Data.SqlClient;
 
 using System.Data;
 
-namespace a2p.Infrastructure.Services.PrefSuiteService
+using a2p.Application.Interfaces.PrefSuite;
+using a2p.Application.Interfaces.Services;
+using a2p.Domain.Entities;
+
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Logging;
+namespace a2p.Infrastructure.Services.PrefSuiteServices
 {
     public class PrefSuiteDataService : IPrefSuiteDataService
     {
-        private readonly ILogService _logService;
+        private readonly ILogger _logger;
         private readonly ISQLService _sqlService;
 
-        public PrefSuiteDataService(ISQLService sqlService, ILogService logService)
+        public PrefSuiteDataService(ISQLService sqlService, ILogger logger)
         {
             _sqlService = sqlService ?? throw new ArgumentNullException(nameof(sqlService));
-            _logService = logService ?? throw new ArgumentNullException(nameof(logService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<int> GetSalesDocumentStateAsync(int number, int version)
@@ -29,7 +28,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
 
             if (number < 1 || version < 1)
             {
-                _logService.Verbose("{$Class}.{$Method}. Error getting sales document state. Number {$Number} or version {$Version} are wrong.",
+                _logger.LogDebug("{$Class}.{$Method}. Error getting sales document state. Number {$Number} or version {$Version} are wrong.",
                        nameof(PrefSuiteDataService),
                 nameof(GetSalesDocumentStateAsync), number, version);
                 return state;
@@ -55,7 +54,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
 
             catch (Exception ex)
             {
-                _logService.Verbose(
+                _logger.LogDebug(
                 "{$Class}.{$Method}. Unhandled error in {$Class}. {$Method}. Error getting order state for sales document. Exception: {Exception}.",
                 nameof(PrefSuiteDataService),
                 nameof(GetSalesDocumentStateAsync),
@@ -90,7 +89,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
 
             catch (Exception ex)
             {
-                _logService.Verbose(
+                _logger.LogDebug(
                 "{$Class}.{$Method}. Unhandled error getting sales document number and version. Exception: {Exception}.",
                 nameof(PrefSuiteDataService),
                 nameof(GetSalesDocumentAsync),
@@ -109,7 +108,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
             if (string.IsNullOrEmpty(description))
             {
 
-                _logService.Information("{$Class}.{$Method}. Error getting glass reference. Provided glass description is missing.",
+                _logger.LogInformation("{$Class}.{$Method}. Error getting glass reference. Provided glass description is missing.",
                   nameof(PrefSuiteDataService),
                       nameof(GetGlassReferenceAsync));
                 return null;
@@ -123,7 +122,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
 
                 if (result == null)
                 {
-                    _logService.Verbose("{$Class}.{$Method}. Error getting glass reference. Glass with description {$Description} not found coresponding glass reference in PrefSuite DB.",
+                    _logger.LogDebug("{$Class}.{$Method}. Error getting glass reference. Glass with description {$Description} not found coresponding glass reference in PrefSuite DB.",
                       nameof(PrefSuiteDataService),
                       nameof(GetGlassReferenceAsync),
                       description);
@@ -134,14 +133,14 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
 
                 if (string.IsNullOrEmpty(glassReference))
                 {
-                    _logService.Verbose("{$Class}.{$Method}. Error getting glass reference. Glass with description {$Description} not found coresponding glass reference in PrefSuite DB.",
+                    _logger.LogDebug("{$Class}.{$Method}. Error getting glass reference. Glass with description {$Description} not found coresponding glass reference in PrefSuite DB.",
                       nameof(PrefSuiteDataService),
                       nameof(GetGlassReferenceAsync),
                       description);
                     return null;
                 }
 
-                _logService.Verbose
+                _logger.LogDebug
                     ("{$Class}.{$Method}. Glass with description {$Description}  found coresponding glass reference {$Reference} in PrefSuite DB.",
                      description,
                      glassReference,
@@ -154,7 +153,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
             }
             catch (Exception ex)
             {
-                _logService.Verbose(
+                _logger.LogDebug(
                   "{$Class}.{$Method}. Unhandled error inserting color configuration for color {$Color}. Exception: {$Exception}.",
                   nameof(PrefSuiteDataService),
                   nameof(GetGlassReferenceAsync),
@@ -169,7 +168,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
         {
             if (string.IsNullOrEmpty(sourceReference))
             {
-                _logService.Information("{$Class}.{$Method}. Error getting TechDesign commodity code. Provided sourceReference is missing.",
+                _logger.LogInformation("{$Class}.{$Method}. Error getting TechDesign commodity code. Provided sourceReference is missing.",
                     nameof(PrefSuiteDataService),
                     nameof(GetCommodityCode));
                 return null;
@@ -190,7 +189,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
             }
             catch (Exception ex)
             {
-                _logService.Verbose(
+                _logger.LogDebug(
                     "{$Class}.{$Method}. Unhandled error in {$Class}. {$Method}. Error getting TechDesign commodity code. Exception: {Exception}.",
                     nameof(PrefSuiteDataService),
                     nameof(GetCommodityCode),
@@ -204,7 +203,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
         {
             if (string.IsNullOrEmpty(sourceReference))
             {
-                _logService.Information("{$Class}.{$Method}. Error getting TechDesign Weight. Provided sourceReference is missing.",
+                _logger.LogInformation("{$Class}.{$Method}. Error getting TechDesign Weight. Provided sourceReference is missing.",
                     nameof(PrefSuiteDataService),
                     nameof(GetTechDesignWeight));
                 return 0;
@@ -225,7 +224,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
             }
             catch (Exception ex)
             {
-                _logService.Verbose(
+                _logger.LogDebug(
                     "{$Class}.{$Method}. Unhandled error in {$Class}. {$Method}.Error getting TechDesign Weight. Exception: {Exception}.",
                     nameof(PrefSuiteDataService),
                     nameof(GetTechDesignWeight),
@@ -238,7 +237,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
         {
             if (string.IsNullOrEmpty(color))
             {
-                _logService.Information("{$Class}.{$Method}. Error getting Sapa color. Provided color is missing.",
+                _logger.LogInformation("{$Class}.{$Method}. Error getting Sapa color. Provided color is missing.",
                     nameof(PrefSuiteDataService),
                     nameof(GetSapaColorAsync));
                 return null;
@@ -259,7 +258,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
             }
             catch (Exception ex)
             {
-                _logService.Verbose(
+                _logger.LogDebug(
                     "{$Class}.{$Method}. Unhandled error in {$Class}. {$Method}. Error getting order state for sales document. Exception: {Exception}.",
                     nameof(PrefSuiteDataService),
                     nameof(GetSapaColorAsync),
@@ -289,16 +288,16 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
 
                 if (result > 0)
                 {
-                    //    _logService.Verbose("{$Class}.{$Method}. Color configuration for color {$Color} successfully inserted into PrefSuite DB.",
-                    //      nameof(PrefSuiteDataService),
-                    //      nameof(GetPrefSuiteColorConfigurationAsync),
-                    //      color);
+                    _logger.LogDebug("{$Class}.{$Method}. Color configuration for color {$Color} successfully inserted into PrefSuite DB.",
+                      nameof(PrefSuiteDataService),
+                      nameof(GetPrefSuiteColorConfigurationAsync),
+                      color);
                 }
 
                 if (result == 0)
                 {
 
-                    //_logService.Verbose("{$Class}.{$Method}. Color configuration for color {$Color} already exists in PrefSuite DB.",
+                    //_logger.LogDebug("{$Class}.{$Method}. Color configuration for color {$Color} already exists in PrefSuite DB.",
                     //  nameof(PrefSuiteDataService),
                     //  nameof(GetPrefSuiteColorConfigurationAsync),
                     // color);
@@ -312,12 +311,12 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                 Console.WriteLine(ex.Message);
 
 
-                //_logService.Verbose(
-                //"{$Class}.{$Method}. Unhandled error inserting color configuration for color {$Color}. Exception: {$Exception}.",
-                //nameof(PrefSuiteDataService),
-                //nameof(GetPrefSuiteColorConfigurationAsync),
-                //color,
-                //ex.Message
+                _logger.LogDebug(
+                "{$Class}.{$Method}. Unhandled error inserting color configuration for color {$Color}. Exception: {$Exception}.",
+                nameof(PrefSuiteDataService),
+                nameof(GetPrefSuiteColorConfigurationAsync),
+                color,
+                ex.Message);
                 //);
                 return result;
             }
@@ -328,59 +327,45 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
 
             if (number < 1 || version < 1)
             {
-                //_logService.Error("{$Class}.{$Method}. Error deleting sales document data. Number {$Number} or version {$Version} are wrong.",
-                // nameof(PrefSuiteDataService),
-                //   nameof(DeleteSalesDocumentDataAsync),
-                //   number,
-                //   version);
-                //return new ErrorEntity()
-                //{
-                //    OrderNumber = string.Empty,
-                //    Level = ErrorLevel.Error,
-                //    Code = ErrorCode.SQL_Data_Write,
-                //    Message = $"Error {nameof(PrefSuiteDataService)}.{nameof(DeleteSalesDocumentDataAsync)}.  "
-                //};
-            }
+                _logger.LogError("{$Class}.{$Method}. Error deleting sales document data. Number {$Number} or version {$Version} are wrong.",
+                 nameof(PrefSuiteDataService),
+                   nameof(DeleteSalesDocumentDataAsync),
+                   number,
+                   version);
 
-            try
-            {
-                var delete = deleteExisting ? 1 : 0;
 
-                SqlCommand cmd = new()
+                try
                 {
-                    CommandText = "[dbo].[Uniwave_a2p_DeleteExistingData]",
-                    CommandType = CommandType.StoredProcedure
-                };
+                    var delete = deleteExisting ? 1 : 0;
 
-                _ = cmd.Parameters.AddWithValue("@Number", number);
-                _ = cmd.Parameters.AddWithValue("@Version", version);
-                _ = cmd.Parameters.AddWithValue("@DeleteExisting", delete);
+                    SqlCommand cmd = new()
+                    {
+                        CommandText = "[dbo].[Uniwave_a2p_DeleteExistingData]",
+                        CommandType = CommandType.StoredProcedure
+                    };
 
-                int result = await _sqlService.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
+                    _ = cmd.Parameters.AddWithValue("@Number", number);
+                    _ = cmd.Parameters.AddWithValue("@Version", version);
+                    _ = cmd.Parameters.AddWithValue("@DeleteExisting", delete);
 
+                    int result = await _sqlService.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
+
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogDebug(
+                    "{$Class}.{$Method}. Unhandled error in {$Class}. {$Method}. Error deleting sales document data for sales document {$Number}/{$Version} . Exception: {$Exception}.",
+                    nameof(PrefSuiteDataService),
+                    nameof(DeleteSalesDocumentDataAsync),
+                    number,
+                    version,
+                    ex.Message
+                   );
+
+                }
 
             }
-            catch (Exception ex)
-            {
-                // _logService.Verbose(
-                // "{$Class}.{$Method}. Unhandled error in {$Class}. {$Method}. Error deleting sales document data for sales document {$Number}/{$Version} . Exception: {$Exception}.",
-                // nameof(PrefSuiteDataService),
-                // nameof(DeleteSalesDocumentDataAsync),
-                // number,
-                // version,
-                // ex.Message
-                //);
-                //return new ErrorEntity()
-                //{
-                //    OrderNumber = string.Empty,
-                //    Level = ErrorLevel.Error,
-                //    Code = ErrorCode.SQL_Data_Write,
-                //    Message = $"Error {nameof(PrefSuiteDataService)}.{nameof(DeleteSalesDocumentDataAsync)}." +
-                //    $"\nError deleting sales document data for sales document {number}/{version}." +
-                //    $"\n{ex.Message}.  "
-                //};
-            }
-
         }
 
         public async Task InsertPrefSuiteColorAsync(MaterialEntity material)
@@ -402,60 +387,44 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
 
                 if (result > 0)
                 {
-                    _logService.Verbose("{$Class}.{$Method}. Color {$Color}, {$ColorDescription} successfully inserted into PrefSuite DB.", material.Color, material.ColorDescription ?? "Without");
+                    _logger.LogDebug("{$Class}.{$Method}. Color {$Color}, {$ColorDescription} successfully inserted into PrefSuite DB.", material.Color, material.ColorDescription ?? "Without");
                 }
 
                 if (result == 0)
                 {
 
-                    _logService.Verbose("{$Class}.{$Method}. Color {$Color}, {$ColorDescription} already exists in PrefSuite DB.", material.Color, material.ColorDescription ?? "Without");
+                    _logger.LogDebug("{$Class}.{$Method}. Color {$Color}, {$ColorDescription} already exists in PrefSuite DB.", material.Color, material.ColorDescription ?? "Without");
 
                 }
 
             }
             catch (Exception ex)
             {
-                // _logService.Error(
-                // "{$Class}.{$Method}. Unhandled error." +
-                // "\nOrder {$OrderNumber}," +
-                // "\nWorksheet {$Worksheet}," +
-                // "\nLine {$Line}," +
-                // "\nReferenceBase {$ReferenceBase}, " +
-                // "\nReference {$Reference}," +
-                // "\nColor {$Color}, " +
-                // "\nColor {$ColorDescription}, " +
-                // "\nDescription {$Description}," +
-                // "\nException: {$Exception}",
-                // nameof(PrefSuiteDataService),
-                // nameof(InsertPrefSuiteColorAsync),
-                // material.OrderNumber ?? string.Empty,
-                // material.Worksheet ?? string.Empty,
-                // material.Line,
-                // material.ReferenceBase ?? string.Empty,
-                // material.Reference ?? string.Empty,
-                // material.Color ?? string.Empty,
-                //  material.ColorDescription ?? string.Empty,
-                // material.Description ?? string.Empty,
-                // ex.Message ?? string.Empty
-                //);
+                _logger.LogError(
+                "{$Class}.{$Method}. Unhandled error." +
+                "\nOrder {$OrderNumber}," +
+                "\nWorksheet {$Worksheet}," +
+                "\nLine {$Line}," +
+                "\nReferenceBase {$ReferenceBase}, " +
+                "\nReference {$Reference}," +
+                "\nColor {$Color}, " +
+                "\nColor {$ColorDescription}, " +
+                "\nDescription {$Description}," +
+                "\nException: {$Exception}",
+                nameof(PrefSuiteDataService),
+                nameof(InsertPrefSuiteColorAsync),
+                material.OrderNumber ?? string.Empty,
+                material.Worksheet ?? string.Empty,
+                material.Line,
+                material.ReferenceBase ?? string.Empty,
+                material.Reference ?? string.Empty,
+                material.Color ?? string.Empty,
+                 material.ColorDescription ?? string.Empty,
+                material.Description ?? string.Empty,
+                ex.Message ?? string.Empty
+               );
 
-                {
-                    // OrderNumber = material.OrderNumber ?? string.Empty,
-                    // Level = ErrorLevel.Error,
-                    // Code = ErrorCode.SQL_Data_Write,
-                    // Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteColorAsync)}. Unhandled error." +
-                    //$"\nOrder {material.OrderNumber ?? string.Empty}," +
-                    //$"\nWorksheet {material.Worksheet ?? string.Empty}," +
-                    //$"\nLine {material.Line}," +
-                    //$"\nReferenceBase {material.ReferenceBase ?? string.Empty}, " +
-                    //$"\nReference {material.Reference ?? string.Empty}," +
-                    //$"\nColor {material.Color ?? string.Empty}, " +
-                    //$"\nColorDescription {material.ColorDescription ?? string.Empty}, " +
-                    //$"\nDescription {material.Description ?? string.Empty}," +
-                    //$"\nException: {ex.Message ?? string.Empty}"
 
-                }
-                ;
             }
 
         }
@@ -478,13 +447,13 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
 
                 if (result > 0)
                 {
-                    _logService.Verbose("{$Class}.{$Method}. Color configuration for color {$Color} successfully inserted into PrefSuite DB.", material.Color);
+                    _logger.LogDebug("{$Class}.{$Method}. Color configuration for color {$Color} successfully inserted into PrefSuite DB.", material.Color);
                 }
 
                 if (result == 0)
                 {
 
-                    _logService.Verbose("{$Class}.{$Method}. Color configuration for color {$Color} already exists in PrefSuite DB.", material.Color);
+                    _logger.LogDebug("{$Class}.{$Method}. Color configuration for color {$Color} already exists in PrefSuite DB.", material.Color);
 
                 }
 
@@ -492,46 +461,30 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
             }
             catch (Exception ex)
             {
-                // _logService.Error(
-                // "{$Class}.{$Method}. Unhandled error." +
-                // "\nOrder {$OrderNumber}," +
-                // "\nWorksheet {$Worksheet}," +
-                // "\nLine {$Line}," +
-                // "\nReferenceBase {$ReferenceBase}, " +
-                // "\nReference {$Reference}," +
-                // "\nColor {$Color}, " +
-                // "\nColor {$ColorDescription}, " +
-                // "\nDescription {$Description}," +
-                // "\nException: {$Exception}",
-                // nameof(PrefSuiteDataService),
-                // nameof(InsertPrefSuiteColorConfigurationAsync),
-                // material.OrderNumber ?? string.Empty,
-                // material.Worksheet ?? string.Empty,
-                // material.Line,
-                // material.ReferenceBase ?? string.Empty,
-                // material.Reference ?? string.Empty,
-                // material.Color ?? string.Empty,
-                //  material.ColorDescription ?? string.Empty,
-                // material.Description ?? string.Empty,
-                // ex.Message ?? string.Empty
-                //);
-                //return new ErrorEntity()
-                //{
-                //    OrderNumber = material.OrderNumber ?? string.Empty,
-                //    Level = ErrorLevel.Error,
-                //    Code = ErrorCode.SQL_Data_Write,
-                //    Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteColorConfigurationAsync)}. Unhandled error." +
-                //   $"\nOrder {material.OrderNumber ?? string.Empty}," +
-                //   $"\nWorksheet {material.Worksheet ?? string.Empty}," +
-                //   $"\nLine {material.Line}," +
-                //   $"\nReferenceBase {material.ReferenceBase ?? string.Empty}, " +
-                //   $"\nReference {material.Reference ?? string.Empty}," +
-                //   $"\nColor {material.Color ?? string.Empty}, " +
-                //   $"\nColorDescription {material.ColorDescription ?? string.Empty}, " +
-                //   $"\nDescription {material.Description ?? string.Empty}," +
-                //   $"\nException: {ex.Message ?? string.Empty}"
+                _logger.LogError(
+                "{$Class}.{$Method}. Unhandled error." +
+                "\nOrder {$OrderNumber}," +
+                "\nWorksheet {$Worksheet}," +
+                "\nLine {$Line}," +
+                "\nReferenceBase {$ReferenceBase}, " +
+                "\nReference {$Reference}," +
+                "\nColor {$Color}, " +
+                "\nColor {$ColorDescription}, " +
+                "\nDescription {$Description}," +
+                "\nException: {$Exception}",
+                nameof(PrefSuiteDataService),
+                nameof(InsertPrefSuiteColorConfigurationAsync),
+                material.OrderNumber ?? string.Empty,
+                material.Worksheet ?? string.Empty,
+                material.Line,
+                material.ReferenceBase ?? string.Empty,
+                material.Reference ?? string.Empty,
+                material.Color ?? string.Empty,
+                 material.ColorDescription ?? string.Empty,
+                material.Description ?? string.Empty,
+                ex.Message ?? string.Empty
+               );
 
-                //};
             }
 
         }
@@ -561,21 +514,21 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
 
                 if (result > 0)
                 {
-                    //_logService.Verbose("{$Class}.{$Method}. Material Base {$ReferenceBase} {$Description} successfully inserted into PrefSuite DB",
-                    //    nameof(PrefSuiteDataService),
-                    //    nameof(InsertPrefSuiteMaterialBaseAsync),
-                    //    material.ReferenceBase,
-                    //    material.Description ?? "");
+                    _logger.LogDebug("{$Class}.{$Method}. Material Base {$ReferenceBase} {$Description} successfully inserted into PrefSuite DB",
+                        nameof(PrefSuiteDataService),
+                        nameof(InsertPrefSuiteMaterialBaseAsync),
+                        material.ReferenceBase,
+                        material.Description ?? "");
                 }
 
                 if (result == 0)
                 {
 
-                    //_logService.Verbose("{$Class}.{$Method}. Material {$Reference} {$Description} already exists in PrefSuite DB.",
-                    //    nameof(PrefSuiteDataService),
-                    //    nameof(InsertPrefSuiteMaterialBaseAsync),
-                    //    material.ReferenceBase,
-                    //    material.Description ?? "");
+                    _logger.LogDebug("{$Class}.{$Method}. Material {$Reference} {$Description} already exists in PrefSuite DB.",
+                        nameof(PrefSuiteDataService),
+                        nameof(InsertPrefSuiteMaterialBaseAsync),
+                        material.ReferenceBase,
+                        material.Description ?? "");
 
                 }
 
@@ -583,43 +536,28 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
             }
             catch (Exception ex)
             {
-                // _logService.Error(
-                // "{$Class}.{$Method}. Unhandled error." +
-                // "\nOrder {$OrderNumber}," +
-                // "\nWorksheet {$Worksheet}," +
-                // "\nLine {$Line}," +
-                // "\nReferenceBase {$ReferenceBase}, " +
-                // "\nReference {$Reference}," +
-                // "\nColor {$Color}, " +
-                // "\nDescription {$Description}," +
-                // "\nException: {$Exception}",
-                // nameof(PrefSuiteDataService),
-                // nameof(InsertPrefSuiteMaterialBaseAsync),
-                // material.OrderNumber ?? string.Empty,
-                // material.Worksheet ?? string.Empty,
-                // material.Line,
-                // material.ReferenceBase ?? string.Empty,
-                // material.Reference ?? string.Empty,
-                // material.Color ?? string.Empty,
-                // material.Description ?? string.Empty,
-                // ex.Message ?? string.Empty
-                //);
-                //return new ErrorEntity()
-                //{
-                //    OrderNumber = material.OrderNumber ?? string.Empty,
-                //    Level = ErrorLevel.Error,
-                //    Code = ErrorCode.SQL_Data_Write,
-                //    Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteMaterialBaseAsync)}. Unhandled error." +
-                //   $"\nOrder {material.OrderNumber ?? string.Empty}," +
-                //   $"\nWorksheet {material.Worksheet ?? string.Empty}," +
-                //   $"\nLine {material.Line}," +
-                //   $"\nReferenceBase {material.ReferenceBase ?? string.Empty}, " +
-                //   $"\nReference {material.Reference ?? string.Empty}," +
-                //   $"\nColor {material.Color ?? string.Empty}, " +
-                //   $"\nDescription {material.Description ?? string.Empty}," +
-                //   $"\nException: {ex.Message ?? string.Empty}"
+                _logger.LogError(
+                "{$Class}.{$Method}. Unhandled error." +
+                "\nOrder {$OrderNumber}," +
+                "\nWorksheet {$Worksheet}," +
+                "\nLine {$Line}," +
+                "\nReferenceBase {$ReferenceBase}, " +
+                "\nReference {$Reference}," +
+                "\nColor {$Color}, " +
+                "\nDescription {$Description}," +
+                "\nException: {$Exception}",
+                nameof(PrefSuiteDataService),
+                nameof(InsertPrefSuiteMaterialBaseAsync),
+                material.OrderNumber ?? string.Empty,
+                material.Worksheet ?? string.Empty,
+                material.Line,
+                material.ReferenceBase ?? string.Empty,
+                material.Reference ?? string.Empty,
+                material.Color ?? string.Empty,
+                material.Description ?? string.Empty,
+                ex.Message ?? string.Empty
+                );
 
-                //};
             }
 
         }
@@ -645,67 +583,52 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                 //=====================================================================================================================
                 int result = await _sqlService.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
 
-                //if (result > 0)
-                //{
-                //    _logService.Verbose("{$Class}.{$Method}. Material {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
-                //nameof(PrefSuiteDataService),
-                //nameof(InsertPrefSuiteMaterialAsync),
-                //material.Reference,
-                //material.Color,
-                //material.Description ?? "");
-                //}
+                if (result > 0)
+                {
+                    _logger.LogDebug("{$Class}.{$Method}. Material {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
+                nameof(PrefSuiteDataService),
+                nameof(InsertPrefSuiteMaterialAsync),
+                material.Reference,
+                material.Color,
+                material.Description ?? "");
+                }
 
-                //if (result == 0)
-                //{
+                if (result == 0)
+                {
 
-                //    _logService.Verbose("{$Class}.{$Method}. Material {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
-                //nameof(PrefSuiteDataService),
-                //nameof(InsertPrefSuiteMaterialAsync),
-                //material.Reference, material.Color,
-                //material.Description ?? "");
+                    _logger.LogDebug("{$Class}.{$Method}. Material {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
+                nameof(PrefSuiteDataService),
+                nameof(InsertPrefSuiteMaterialAsync),
+                material.Reference, material.Color,
+                material.Description ?? "");
 
-                //}
+                }
 
             }
             catch (Exception ex)
             {
-                // _logService.Error(
-                // "{$Class}.{$Method}. Unhandled error." +
-                // "\nOrder {$OrderNumber}," +
-                // "\nWorksheet {$Worksheet}," +
-                // "\nLine {$Line}," +
-                // "\nReferenceBase {$ReferenceBase}, " +
-                // "\nReference {$Reference}," +
-                // "\nColor {$Color}, " +
-                // "\nDescription {$Description}," +
-                // "\nException: {$Exception}",
-                // nameof(PrefSuiteDataService),
-                // nameof(InsertPrefSuiteMaterialAsync),
-                // material.OrderNumber ?? string.Empty,
-                // material.Worksheet ?? string.Empty,
-                // material.Line,
-                // material.ReferenceBase ?? string.Empty,
-                // material.Reference ?? string.Empty,
-                // material.Color ?? string.Empty,
-                // material.Description ?? string.Empty,
-                // ex.Message ?? string.Empty
-                //);
-                // return new ErrorEntity()
-                // {
-                //     OrderNumber = material.OrderNumber ?? string.Empty,
-                //     Level = ErrorLevel.Error,
-                //     Code = ErrorCode.SQL_Data_Write,
-                //     Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteMaterialAsync)}. Unhandled error." +
-                //    $"\nOrder {material.OrderNumber ?? string.Empty}," +
-                //    $"\nWorksheet {material.Worksheet ?? string.Empty}," +
-                //    $"\nLine {material.Line}," +
-                //    $"\nReferenceBase {material.ReferenceBase ?? string.Empty}, " +
-                //    $"\nReference {material.Reference ?? string.Empty}," +
-                //    $"\nColor {material.Color ?? string.Empty}, " +
-                //    $"\nDescription {material.Description ?? string.Empty}," +
-                //    $"\nException: {ex.Message ?? string.Empty}"
+                _logger.LogError(
+                "{$Class}.{$Method}. Unhandled error." +
+                "\nOrder {$OrderNumber}," +
+                "\nWorksheet {$Worksheet}," +
+                "\nLine {$Line}," +
+                "\nReferenceBase {$ReferenceBase}, " +
+                "\nReference {$Reference}," +
+                "\nColor {$Color}, " +
+                "\nDescription {$Description}," +
+                "\nException: {$Exception}",
+                nameof(PrefSuiteDataService),
+                nameof(InsertPrefSuiteMaterialAsync),
+                material.OrderNumber ?? string.Empty,
+                material.Worksheet ?? string.Empty,
+                material.Line,
+                material.ReferenceBase ?? string.Empty,
+                material.Reference ?? string.Empty,
+                material.Color ?? string.Empty,
+                material.Description ?? string.Empty,
+                ex.Message ?? string.Empty
+               );
 
-                // };
             }
 
         }
@@ -737,23 +660,23 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
 
                 if (result > 0)
                 {
-                    //    _logService.Verbose("{$Class}.{$Method}. Profile {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
-                    //nameof(PrefSuiteDataService),
-                    //nameof(InsertPrefSuiteMaterialProfileAsync),
-                    //material.Reference,
-                    //material.Color,
-                    //material.Description ?? "");
+                    _logger.LogDebug("{$Class}.{$Method}. Profile {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
+                nameof(PrefSuiteDataService),
+                nameof(InsertPrefSuiteMaterialProfileAsync),
+                material.Reference,
+                material.Color,
+                material.Description ?? "");
                 }
 
                 if (result == 0)
                 {
 
-                    //    _logService.Verbose("{$Class}.{$Method}. Profile {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
-                    //nameof(PrefSuiteDataService),
-                    //nameof(InsertPrefSuiteMaterialProfileAsync),
-                    //material.Reference,
-                    //material.Color,
-                    //material.Description ?? "");
+                    _logger.LogDebug("{$Class}.{$Method}. Profile {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
+                nameof(PrefSuiteDataService),
+                nameof(InsertPrefSuiteMaterialProfileAsync),
+                material.Reference,
+                material.Color,
+                material.Description ?? "");
 
                 }
 
@@ -762,43 +685,28 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
 
             catch (Exception ex)
             {
-                //    _logService.Error(
-                //    "{$Class}.{$Method}. Unhandled error." +
-                //    "\nOrder {$OrderNumber}," +
-                //    "\nWorksheet {$Worksheet}," +
-                //    "\nLine {$Line}," +
-                //    "\nReferenceBase {$ReferenceBase}, " +
-                //    "\nReference {$Reference}," +
-                //    "\nColor {$Color}, " +
-                //    "\nDescription {$Description}," +
-                //    "\nException: {$Exception}",
-                //    nameof(PrefSuiteDataService),
-                //    nameof(InsertPrefSuiteMaterialProfileAsync),
-                //    material.OrderNumber ?? string.Empty,
-                //    material.Worksheet ?? string.Empty,
-                //    material.Line,
-                //    material.ReferenceBase ?? string.Empty,
-                //    material.Reference ?? string.Empty,
-                //    material.Color ?? string.Empty,
-                //    material.Description ?? string.Empty,
-                //    ex.Message ?? string.Empty
-                //   );
-                //    return new ErrorEntity()
-                //    {
-                //        OrderNumber = material.OrderNumber ?? string.Empty,
-                //        Level = ErrorLevel.Error,
-                //        Code = ErrorCode.SQL_Data_Write,
-                //        Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteMaterialProfileAsync)}. Unhandled error." +
-                //       $"\nOrder {material.OrderNumber ?? string.Empty}," +
-                //       $"\nWorksheet {material.Worksheet ?? string.Empty}," +
-                //       $"\nLine {material.Line}," +
-                //       $"\nReferenceBase {material.ReferenceBase ?? string.Empty}, " +
-                //       $"\nReference {material.Reference ?? string.Empty}," +
-                //       $"\nColor {material.Color ?? string.Empty}, " +
-                //       $"\nDescription {material.Description ?? string.Empty}," +
-                //       $"\nException: {ex.Message ?? string.Empty}"
+                _logger.LogError(
+                "{$Class}.{$Method}. Unhandled error." +
+                "\nOrder {$OrderNumber}," +
+                "\nWorksheet {$Worksheet}," +
+                "\nLine {$Line}," +
+                "\nReferenceBase {$ReferenceBase}, " +
+                "\nReference {$Reference}," +
+                "\nColor {$Color}, " +
+                "\nDescription {$Description}," +
+                "\nException: {$Exception}",
+                nameof(PrefSuiteDataService),
+                nameof(InsertPrefSuiteMaterialProfileAsync),
+                material.OrderNumber ?? string.Empty,
+                material.Worksheet ?? string.Empty,
+                material.Line,
+                material.ReferenceBase ?? string.Empty,
+                material.Reference ?? string.Empty,
+                material.Color ?? string.Empty,
+                material.Description ?? string.Empty,
+                ex.Message ?? string.Empty
+               );
 
-                //    };
             }
 
         }
@@ -833,23 +741,23 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
 
                 if (result > 0)
                 {
-                    //    _logService.Verbose("{$Class}.{$Method}. Meter material {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
-                    //nameof(PrefSuiteDataService),
-                    //nameof(InsertPrefSuiteMaterialMeterAsync),
-                    //material.Reference,
-                    //material.Color,
-                    //material.Description ?? "");
+                    _logger.LogDebug("{$Class}.{$Method}. Meter material {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
+                nameof(PrefSuiteDataService),
+                nameof(InsertPrefSuiteMaterialMeterAsync),
+                material.Reference,
+                material.Color,
+                material.Description ?? "");
                 }
 
                 if (result == 0)
                 {
 
-                    //    _logService.Verbose("{$Class}.{$Method}. Meter material {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
-                    //nameof(PrefSuiteDataService),
-                    //nameof(InsertPrefSuiteMaterialMeterAsync),
-                    //material.Reference,
-                    //material.Color,
-                    //material.Description ?? "");
+                    _logger.LogDebug("{$Class}.{$Method}. Meter material {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
+                nameof(PrefSuiteDataService),
+                nameof(InsertPrefSuiteMaterialMeterAsync),
+                material.Reference,
+                material.Color,
+                material.Description ?? "");
 
                 }
                 // return null;
@@ -857,7 +765,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
             }
             catch (Exception ex)
             {
-                // _logService.Error(
+                // _logger.LogError(
                 // "{$Class}.{$Method}. Unhandled error." +
                 // "\nOrder {$OrderNumber}," +
                 // "\nWorksheet {$Worksheet}," +
@@ -922,7 +830,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                 int result = await _sqlService.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
                 if (result > 0)
                 {
-                    //    _logService.Verbose("{$Class}.{$Method}. Piece material {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
+                    //    _logger.LogDebug("{$Class}.{$Method}. Piece material {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
                     //                     nameof(PrefSuiteDataService),
                     //nameof(InsertPrefSuiteMaterialPieceAsync),
                     //material.Reference,
@@ -933,7 +841,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                 if (result == 0)
                 {
 
-                    //    _logService.Verbose("{$Class}.{$Method}. Piece material {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
+                    //    _logger.LogDebug("{$Class}.{$Method}. Piece material {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
                     //        nameof(PrefSuiteDataService),
                     //nameof(InsertPrefSuiteMaterialPieceAsync),
                     //material.Reference,
@@ -946,7 +854,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
             }
             catch (Exception ex)
             {
-                // _logService.Error(
+                // _logger.LogError(
                 // "{$Class}.{$Method}. Unhandled error." +
                 // "\nOrder {$OrderNumber}," +
                 // "\nWorksheet {$Worksheet}," +
@@ -1014,7 +922,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
 
                 if (result > 0)
                 {
-                    //    _logService.Verbose("($Class}.{$Method}. Surface material {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
+                    //    _logger.LogDebug("($Class}.{$Method}. Surface material {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
                     //        nameof(PrefSuiteDataService),
                     //nameof(InsertPrefSuiteMaterialSurfaceAsync),
                     //material.Reference,
@@ -1025,7 +933,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                 if (result == 0)
                 {
 
-                    //_logService.Verbose("($Class}.{$Method}. Surface material {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
+                    //_logger.LogDebug("($Class}.{$Method}. Surface material {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
                     //    nameof(PrefSuiteDataService),
                     //    nameof(InsertPrefSuiteMaterialSurfaceAsync),
                     //    material.Reference,
@@ -1038,7 +946,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
             }
             catch (Exception ex)
             {
-                //    _logService.Error(
+                //    _logger.LogError(
                 //    "{$Class}.{$Method}. Unhandled error." +
                 //    "\nOrder {$OrderNumber}," +
                 //    "\nWorksheet {$Worksheet}," +
@@ -1109,7 +1017,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
 
                 if (result > 0)
                 {
-                    // _logService.Verbose("($Class}.{$Method}. Purchase data material {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
+                    // _logger.LogDebug("($Class}.{$Method}. Purchase data material {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
                     //        nameof(PrefSuiteDataService),
                     //nameof(InsertPrefSuiteMaterialPurchaseDataAsync),
                     //material.Reference,
@@ -1120,7 +1028,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                 if (result == 0)
                 {
 
-                    //_logService.Verbose("($Class}.{$Method}. Purchase data material {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
+                    //_logger.LogDebug("($Class}.{$Method}. Purchase data material {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
                     //    nameof(PrefSuiteDataService),
                     //    nameof(InsertPrefSuiteMaterialPurchaseDataAsync),
                     //    material.Reference,
@@ -1134,7 +1042,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
             catch (Exception ex)
             {
 
-                // _logService.Error(
+                // _logger.LogError(
                 // "{$Class}.{$Method}. Unhandled error." +
                 // "\nOrder {$OrderNumber}," +
                 // "\nWorksheet {$Worksheet}," +
@@ -1204,7 +1112,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
 
                 if (result > 0)
                 {
-                    //    _logService.Verbose("($Class}.{$Method}. BC Mapping  {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
+                    //    _logger.LogDebug("($Class}.{$Method}. BC Mapping  {$Reference} color {$Color}, {$Description} successfully inserted into PrefSuite DB.",
                     //        nameof(PrefSuiteDataService),
                     //nameof(UpdateBCMapping),
                     //material.Reference,
@@ -1215,7 +1123,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                 if (result == 0)
                 {
 
-                    //_logService.Verbose("($Class}.{$Method}. BC Mapping {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
+                    //_logger.LogDebug("($Class}.{$Method}. BC Mapping {$Reference} color {$Color}, {$Description} already exists in PrefSuite DB.",
                     //    nameof(PrefSuiteDataService),
                     //    nameof(UpdateBCMapping),
                     //    material.Reference,
@@ -1228,7 +1136,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
             catch (Exception ex)
             {
 
-                //    _logService.Error(
+                //    _logger.LogError(
                 //    "{$Class}.{$Method}. Unhandled error." +
                 //    "\nOrder {$OrderNumber}," +
                 //    "\nWorksheet {$Worksheet}," +
@@ -1293,7 +1201,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
             }
             catch (Exception ex)
             {
-                //    _logService.Error(
+                //    _logger.LogError(
                 //    "{$Class}.{$Method}. Unhandled error." +
                 //    "\nOrder {$OrderNumber}," +
                 //    "\nSalesDocument {$Number}/{$Version}." +
@@ -1341,7 +1249,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
             }
             catch (Exception ex)
             {
-                //    _logService.Error(
+                //    _logger.LogError(
                 //    "{$Class}.{$Method}. Unhandled error." +
                 //    "\nOrder {$OrderNumber}," +
                 //    "\nSalesDocument {$Number}/{$Version}." +

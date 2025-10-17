@@ -4,7 +4,6 @@ namespace a2p.Domain.Entities
 {
     public class ItemEntity : BaseEntity
     {
-
         public int Line { get; set; } = -1;
         public int Column { get; set; } = -1;
         //============================================================================================================================

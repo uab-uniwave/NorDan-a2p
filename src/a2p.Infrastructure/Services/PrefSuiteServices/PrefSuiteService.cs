@@ -2,31 +2,33 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using a2p.Application.DTOs;
-using a2p.Application.Interfaces;
+using a2p.Application.Interfaces.PrefSuite;
+using a2p.Application.Interfaces.Services;
 using a2p.Application.Models;
 using a2p.Domain.Enums;
 
-namespace a2p.Infrastructure.Services.PrefSuiteService
+using Microsoft.Extensions.Logging;
+namespace a2p.Infrastructure.Services.PrefSuiteServices
 {
     public class PrefSuiteService : IPrefSuiteService
     {
-        private readonly ILogService _logService;
+        private readonly ILogger _logger;
         private readonly ISQLService _sqlRepository;
 
         private readonly PrefDataManager.IPrefDataSource _prefSuiteOLEDBConnection;
         private ProgressValue _progressValue;
         private IProgress<ProgressValue>? _progress;
 
-        public PrefSuiteService(ILogService logService, ISQLService sqlRepository)
+        public PrefSuiteService(ILogger logger, ISQLService sqlRepository)
         {
-            _logService = logService;
+            _logger = logger;
             _sqlRepository = sqlRepository;
             _progressValue = new ProgressValue();
             _progress = new Progress<ProgressValue>();
             _prefSuiteOLEDBConnection = new PrefDataManager.PrefDataSource();
         }
 
-        public async Task InsertItemsAsync(ExcelOrderDto excelExcelOrderDto, ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
+        public async Task InsertItemsAsync(OrderDto orderDto, ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
         {
             try
             {
@@ -48,57 +50,57 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                     _progressValue.ProgressTask3 = string.Empty;
                     _progress?.Report(_progressValue);
 
-                    salesDoc.Load(excelExcelOrderDto.SalesDocument.Number, excelExcelOrderDto.SalesDocument.Version);
+                    salesDoc.Load(orderDto.SalesDocument.Number, orderDto.SalesDocument.Version);
 
-                    for (int i = 0; i < excelExcelOrderDto.ItemsDto.Count; i++)
+                    for (int i = 0; i < orderDto.ItemsDto.Count; i++)
                     {
                         try
                         {
-                            if (string.IsNullOrEmpty(excelExcelOrderDto.ItemsDto[i].ItemName))
+                            if (string.IsNullOrEmpty(orderDto.ItemsDto[i].ItemName))
                             {
                                 continue;
                             }
                             _progressValue.CurrentValue += 10; //10  x2 
 
-                            _progressValue.ProgressTask2 = $"Inserting items {i + 1} of {excelExcelOrderDto.ItemsDto.Count} models into PrefSuite...";
-                            _progressValue.ProgressTask3 = $"ItemName # {excelExcelOrderDto.ItemsDto[i].ItemName}";
+                            _progressValue.ProgressTask2 = $"Inserting items {i + 1} of {orderDto.ItemsDto.Count} models into PrefSuite...";
+                            _progressValue.ProgressTask3 = $"ItemName # {orderDto.ItemsDto[i].ItemName}";
                             _progress?.Report(_progressValue);
 
 
                             string Command = "<cmd:Commands name=\"CommandName\" xmlns:cmd=\"http://www.preference.com/XMLSchemas/2006/PrefCAD.Command\">" +
                                               "<cmd:Command name=\"Model.SetDimensions\">" +
-                                              $"<cmd:Parameter name=\"dimensions\" type=\"string\" value=\"W={Math.Ceiling(excelExcelOrderDto.ItemsDto[i].Width)};H={Math.Ceiling(excelExcelOrderDto.ItemsDto[i].Height)};\"/>" +
+                                              $"<cmd:Parameter name=\"dimensions\" type=\"string\" value=\"W={Math.Ceiling(orderDto.ItemsDto[i].Width)};H={Math.Ceiling(orderDto.ItemsDto[i].Height)};\"/>" +
                                               "</cmd:Command>" +
                                               "<cmd:Command name=\"Model.SetModelVariables\">" +
                                               "<cmd:Parameter name=\"variables\" type=\"list\">" +
                                               "<cmd:ItemName type=\"set\">" +
                                               "<cmd:ItemValue name=\"name\" type=\"string\" value=\"Weight\"/>" +
                                               "<cmd:ItemValue name=\"namespace\" type=\"string\" value=\"\"/>" +
-                                              $"<cmd:ItemValue name=\"value\" type=\"real\" value=\"{Math.Round(excelExcelOrderDto.ItemsDto[i].Weight, 4)}\"/>" +
+                                              $"<cmd:ItemValue name=\"value\" type=\"real\" value=\"{Math.Round(orderDto.ItemsDto[i].Weight, 4)}\"/>" +
                                               "</cmd:ItemName>" +
                                               "</cmd:Parameter>" +
                                               "</cmd:Command>" +
                                               "<cmd:Command name=\"Model.Regenerate\"/>" +
                                               "</cmd:Commands>";
 
-                            var sdi = salesDoc.Items.Add(excelExcelOrderDto.ItemsDto[i].RowId.ToString());
+                            var sdi = salesDoc.Items.Add(orderDto.ItemsDto[i].Id.ToString());
                             sdi.SetCode("Sapa_ALU", false);
                             sdi.ExecuteCommandStr(Command, out string? resultStr, true);
 
-                            sdi.SetUnitPrice(Math.Round((double)excelExcelOrderDto.ItemsDto[i].Price, 2));
-                            sdi.SetUnitCost(Math.Round((double)excelExcelOrderDto.ItemsDto[i].Cost, 2));
+                            sdi.SetUnitPrice(Math.Round((double)orderDto.ItemsDto[i].Price, 2));
+                            sdi.SetUnitCost(Math.Round((double)orderDto.ItemsDto[i].Cost, 2));
                             sdi.PriceClosed = true;
-                            sdi.SetQuantity((int)excelExcelOrderDto.ItemsDto[i].Quantity);
-                            sdi.Fields["Position"].Value = excelExcelOrderDto.ItemsDto[i].SortOrder.ToString();
-                            sdi.Fields["SortOrder"].Value = excelExcelOrderDto.ItemsDto[i].SortOrder.ToString();
-                            sdi.Fields["Description"].Value = excelExcelOrderDto.ItemsDto[i].Description;
-                            sdi.Fields["Nomenclature"].Value = excelExcelOrderDto.ItemsDto[i].ItemName;
+                            sdi.SetQuantity((int)orderDto.ItemsDto[i].Quantity);
+                            sdi.Fields["Position"].Value = orderDto.ItemsDto[i].SortOrder.ToString();
+                            sdi.Fields["SortOrder"].Value = orderDto.ItemsDto[i].SortOrder.ToString();
+                            sdi.Fields["Description"].Value = orderDto.ItemsDto[i].Description;
+                            sdi.Fields["Nomenclature"].Value = orderDto.ItemsDto[i].ItemName;
 
-                            _logService.Information($"PrefSuite Service: ItemName {excelExcelOrderDto.ItemsDto[i].ItemName} inserted for excelExcelOrderDto {excelExcelOrderDto.OrderNumber}.");
+                            _logger.LogInformation($"PrefSuite Service: ItemName {orderDto.ItemsDto[i].ItemName} inserted for orderDto {orderDto.OrderNumber}.");
                         }
                         catch (Exception ex)
                         {
-                            _logService.Error(
+                            _logger.LogError(
                                 "{$Class}.{$Method}. Unhandled error." +
                                 "\nOrder {$OrderNumber}," +
                                 "\nWorksheet {$Worksheet}," +
@@ -108,24 +110,24 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                                 "\nException: {$Exception}",
                                 nameof(PrefSuiteService),
                                 nameof(InsertItemsAsync),
-                                excelExcelOrderDto.ItemsDto[i].OrderNumber ?? string.Empty,
-                                excelExcelOrderDto.ItemsDto[i].Worksheet ?? string.Empty,
-                                excelExcelOrderDto.ItemsDto[i].Line,
-                                excelExcelOrderDto.ItemsDto[i].ItemName ?? string.Empty,
-                                excelExcelOrderDto.ItemsDto[i].Description ?? string.Empty,
+                                orderDto.ItemsDto[i].OrderNumber ?? string.Empty,
+                                orderDto.ItemsDto[i].Worksheet ?? string.Empty,
+                                orderDto.ItemsDto[i].Line,
+                                orderDto.ItemsDto[i].ItemName ?? string.Empty,
+                                orderDto.ItemsDto[i].Description ?? string.Empty,
                                 ex.Message ?? string.Empty
                             );
-                            excelExcelOrderDto.ErrorsDto.Add(new ErrorEntity()
+                            orderDto.ErrorsDto.Add(new ErrorEntity()
                             {
-                                OrderNumber = excelExcelOrderDto.ItemsDto[i].OrderNumber ?? string.Empty,
+                                OrderNumber = orderDto.ItemsDto[i].OrderNumber ?? string.Empty,
                                 Level = ErrorLevel.Error,
                                 Code = ErrorCode.SQL_Data_Write,
                                 Message = $"{nameof(PrefSuiteService)}.{nameof(InsertItemsAsync)}. Unhandled error." +
-                                    $"\nOrder {excelExcelOrderDto.ItemsDto[i].OrderNumber ?? string.Empty}," +
-                                    $"\nWorksheet {excelExcelOrderDto.ItemsDto[i].Worksheet ?? string.Empty}," +
-                                    $"\nLine {excelExcelOrderDto.ItemsDto[i].Line}," +
-                                    $"\nReferenceBase {excelExcelOrderDto.ItemsDto[i].ItemName ?? string.Empty}, " +
-                                    $"\nReference {excelExcelOrderDto.ItemsDto[i].Description ?? string.Empty}," +
+                                    $"\nOrder {orderDto.ItemsDto[i].OrderNumber ?? string.Empty}," +
+                                    $"\nWorksheet {orderDto.ItemsDto[i].Worksheet ?? string.Empty}," +
+                                    $"\nLine {orderDto.ItemsDto[i].Line}," +
+                                    $"\nReferenceBase {orderDto.ItemsDto[i].ItemName ?? string.Empty}, " +
+                                    $"\nReference {orderDto.ItemsDto[i].Description ?? string.Empty}," +
                                     $"\nException: {ex.Message ?? string.Empty}"
                             });
                             continue;
@@ -138,29 +140,29 @@ namespace a2p.Infrastructure.Services.PrefSuiteService
                     _progress?.Report(_progressValue);
                     salesDoc.Save();
                 });
-                //  return (excelExcelOrderDto, _progressValue);
+                //  return (orderDto, _progressValue);
             }
             catch (Exception ex)
             {
-                _logService.Error(
+                _logger.LogError(
                     "{$Class}.{$Method}. Unhandled error." +
                     "\nOrder {$OrderNumber}," +
                     "\nException: {$Exception}",
                     nameof(PrefSuiteService),
                     nameof(InsertItemsAsync),
-                    excelExcelOrderDto.OrderNumber ?? string.Empty,
+                    orderDto.OrderNumber ?? string.Empty,
                     ex.Message ?? string.Empty
                 );
-                excelExcelOrderDto.ErrorsDto.Add(new ErrorEntity()
+                orderDto.ErrorsDto.Add(new ErrorEntity()
                 {
-                    OrderNumber = excelExcelOrderDto.OrderNumber ?? string.Empty,
+                    OrderNumber = orderDto.OrderNumber ?? string.Empty,
                     Level = ErrorLevel.Error,
                     Code = ErrorCode.SQL_Data_Write,
                     Message = $"{nameof(PrefSuiteService)}.{nameof(InsertItemsAsync)}. Unhandled error." +
-                        $"\nOrder {excelExcelOrderDto.OrderNumber ?? string.Empty}," +
+                        $"\nOrder {orderDto.OrderNumber ?? string.Empty}," +
                         $"\nException: {ex.Message ?? string.Empty}"
                 });
-                //     return (excelExcelOrderDto, _progressValue);
+                //     return (orderDto, _progressValue);
             }
         }
     }

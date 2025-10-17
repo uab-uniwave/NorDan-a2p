@@ -1,35 +1,38 @@
+using System.Text.RegularExpressions;
+
 using a2p.Application.DTOs;
-using a2p.Application.Interfaces;
+using a2p.Application.Interfaces.Excel;
+using a2p.Application.Interfaces.PrefSuite;
 using a2p.Application.Models;
 using a2p.Domain.Entities;
 using a2p.Domain.Enums;
 
-using System.Text.RegularExpressions;
-namespace a2p.Infrastructure.Services.MappingService
+using Microsoft.Extensions.Logging;
+namespace a2p.Infrastructure.Services.ExcelServices
 {
     public class ExcelParserTechDesign : IExcelParserTechDesign
     {
-        private readonly ILogService _logService;
+        private readonly ILogger _logger;
 
         private IPrefSuiteDataService _prefSuiteDataService;
         private ProgressValue _progressValue;
         private IProgress<ProgressValue>? _progress;
 
-        public ExcelParserTechDesign(ILogService logService, IPrefSuiteDataService prefSuiteDataService)
+        public ExcelParserTechDesign(ILogger logger, IPrefSuiteDataService prefSuiteDataService)
         {
-            _logService = logService;
+            _logger = logger;
             _prefSuiteDataService = prefSuiteDataService;
             _progressValue = new ProgressValue();
         }
 
-        public async Task<List<ExcelItemDto>> MapItemsAsync(Worksheet worksheet, ProgressValue? progressValue, IProgress<ProgressValue>? progress = null)
+        public async Task<List<ItemDto>> MapItemsAsync(Worksheet worksheet, ProgressValue? progressValue, IProgress<ProgressValue>? progress = null)
         {
             _progressValue = progressValue ?? new ProgressValue();
             _progress = progress;
 
             List<ItemEntity> items = [];
             List<ErrorEntity> errors = [];
-            List<ExcelItemDto> result = [];
+            List<ItemDto> result = [];
 
             if (worksheet == null || !worksheet.WorksheetData.Any())
             {
@@ -81,7 +84,7 @@ namespace a2p.Infrastructure.Services.MappingService
 
                         if (string.IsNullOrEmpty(item.ItemName))
                         {
-                            _logService.Debug("{$Class}.{$Method}." +
+                            _logger.LogDebug("{$Class}.{$Method}." +
                            "\nOrder {$OrderNumber}." +
                            "\nWorksheet {$Worksheet}." +
                            "\nLine {$Line}. ItemName name is missing." +
@@ -138,18 +141,18 @@ namespace a2p.Infrastructure.Services.MappingService
 
                         items.Add(item);
 
-                        // Convert to ExcelItemDto
-                        result.Add(new ExcelItemDto
+                        // Convert to ItemDto
+                        result.Add(new ItemDto
                         {
-                            // Map necessary fields from item to ExcelItemDto
-                            // Add proper mapping based on ExcelItemDto structure
+                            // Map necessary fields from item to ItemDto
+                            // Add proper mapping based on ItemDto structure
                         });
 
                         await LogMappedItemEntityAsync(item);
                     }
                     catch (Exception ex)
                     {
-                        _logService.Error("Unhandled error {$Class}.{Method}." +
+                        _logger.LogError("Unhandled error {$Class}.{Method}." +
                             "\nOrder {$OrderNumber}." +
                             "\nWorksheet {$Worksheet}." +
                             "\nLine {$Line}" +
@@ -190,7 +193,7 @@ namespace a2p.Infrastructure.Services.MappingService
             }
             catch (Exception ex)
             {
-                _logService.Error("Unhandled error {$Class}.{Method}." +
+                _logger.LogError("Unhandled error {$Class}.{Method}." +
                     "\nOrder {$OrderNumber}." +
                     "\n{$Exception}",
                nameof(ExcelParserTechDesign),
@@ -202,14 +205,14 @@ namespace a2p.Infrastructure.Services.MappingService
             }
         }
 
-        public async Task<List<ExcelMaterialDto>> MapMaterialsAsync(Worksheet worksheet, ProgressValue? progressValue, IProgress<ProgressValue>? progress = null)
+        public async Task<List<MaterialDto>> MapMaterialsAsync(Worksheet worksheet, ProgressValue? progressValue, IProgress<ProgressValue>? progress = null)
         {
             _progressValue = progressValue ?? new ProgressValue();
             _progress = progress;
 
-            List<ExcelMaterialDto> materials = [];
+            List<MaterialDto> materials = [];
             List<ErrorEntity> errors = [];
-            List<ExcelMaterialDto> result = [];
+            List<MaterialDto> result = [];
 
             if (worksheet == null || !worksheet.WorksheetData.Any())
             {
@@ -263,13 +266,13 @@ namespace a2p.Infrastructure.Services.MappingService
 
                 }
 
-                // Convert materials to ExcelMaterialDto
+                // Convert materials to MaterialsDto
                 foreach (var material in materials)
                 {
-                    result.Add(new ExcelMaterialDto
+                    result.Add(new MaterialDto
                     {
-                        // Map necessary fields from material to ExcelMaterialDto
-                        // Add proper mapping based on ExcelMaterialDto structure
+                        // Map necessary fields from material to MaterialsDto
+                        // Add proper mapping based on MaterialsDto structure
                     });
                 }
 
@@ -283,13 +286,13 @@ namespace a2p.Infrastructure.Services.MappingService
             }
         }
 
-        private async Task<List<ExcelMaterialDto>> MapProfilesAsync(Worksheet worksheet)
+        private async Task<List<MaterialDto>> MapProfilesAsync(Worksheet worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
 
-            List<ExcelMaterialDto> materials = []; List<ErrorEntity> ErrorEntitys = [];
+            List<MaterialDto> materials = []; List<ErrorEntity> ErrorEntitys = [];
             try
             {
 
@@ -297,7 +300,7 @@ namespace a2p.Infrastructure.Services.MappingService
                 {
                     sortOrder++;
                     line = i + 1;
-                    ExcelMaterialDto material = new();
+                    MaterialDto material = new();
                     try
                     {
                         //===================================================================================================
@@ -435,12 +438,12 @@ namespace a2p.Infrastructure.Services.MappingService
 
         }
 
-        private async Task<List<ExcelMaterialDto>> MapGasketsAsync(Worksheet worksheet)
+        private async Task<List<MaterialDto>> MapGasketsAsync(Worksheet worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
-            List<ExcelMaterialDto> materials = [];
+            List<MaterialDto> materials = [];
             List<ErrorEntity> ErrorEntitys = [];
 
             try
@@ -450,7 +453,7 @@ namespace a2p.Infrastructure.Services.MappingService
 
                 for (int i = 4; i < worksheet.RowCount; i++)
                 {
-                    ExcelMaterialDto material = new();
+                    MaterialDto material = new();
                     sortOrder++;
                     line = i + 1;
                     try
@@ -474,7 +477,7 @@ namespace a2p.Infrastructure.Services.MappingService
 
                         if (string.IsNullOrEmpty(material.SourceReference) && string.IsNullOrEmpty(material.SourceColor))
                         {
-                            _logService.Error("{$Class}.{$Method}. Sapa article and color are missing. Line will be skipped." +
+                            _logger.LogError("{$Class}.{$Method}. Sapa article and color are missing. Line will be skipped." +
                               "\nOrder {$OrderNumber}, " +
                             "\nWorksheet: {$Worksheet}, " +
                             "\nDescription {$Description}," +
@@ -633,7 +636,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     }
                     catch (Exception ex)
                     {
-                        _logService.Error("Unhandled error {$Class}.{Method}." +
+                        _logger.LogError("Unhandled error {$Class}.{Method}." +
                             "\nOrder {$OrderNumber}, " +
                             "\nWorksheet: {$Worksheet}, " +
                             "\nReference: {$Reference }, " +
@@ -678,7 +681,7 @@ namespace a2p.Infrastructure.Services.MappingService
             }
             catch (Exception ex)
             {
-                _logService.Error("Unhandled error {$Class}.{Method}." +
+                _logger.LogError("Unhandled error {$Class}.{Method}." +
                     "\nOrder {$OrderNumber}." +
                     "\nWorksheet {$Worksheet}." +
                     "\n{$Exception}",
@@ -693,14 +696,14 @@ namespace a2p.Infrastructure.Services.MappingService
 
         }
 
-        private async Task<List<ExcelMaterialDto>> MapAccessoriesAsync(Worksheet worksheet)
+        private async Task<List<MaterialDto>> MapAccessoriesAsync(Worksheet worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
 
             List<ErrorEntity> ErrorEntitys = [];
-            List<ExcelMaterialDto> materials = [];
+            List<MaterialDto> materials = [];
             try
             {
 
@@ -708,7 +711,7 @@ namespace a2p.Infrastructure.Services.MappingService
 
                 for (int i = 4; i < worksheet.RowCount; i++)
                 {
-                    ExcelMaterialDto material = new();
+                    MaterialDto material = new();
                     sortOrder++;
 
                     line = i + 1;
@@ -848,7 +851,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     }
                     catch (Exception ex)
                     {
-                        _logService.Error("Unhandled error {$Class}.{Method}." +
+                        _logger.LogError("Unhandled error {$Class}.{Method}." +
                            "\nOrder {$OrderNumber}, " +
                             "\nWorksheet: {$Worksheet}, " +
                             "\nReference: {$Reference }, " +
@@ -895,7 +898,7 @@ namespace a2p.Infrastructure.Services.MappingService
             }
             catch (Exception ex)
             {
-                _logService.Error("Unhandled error {$Class}.{Method}." +
+                _logger.LogError("Unhandled error {$Class}.{Method}." +
                     "\nOrder {$OrderNumber}." +
                     "\nWorksheet {$Worksheet}." +
                     "\n{$Exception}",
@@ -910,12 +913,12 @@ namespace a2p.Infrastructure.Services.MappingService
 
         }
 
-        private async Task<List<ExcelMaterialDto>> MapPanelsAsync(Worksheet worksheet)
+        private async Task<List<MaterialDto>> MapPanelsAsync(Worksheet worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
-            List<ExcelMaterialDto> materials = [];
+            List<MaterialDto> materials = [];
             List<ErrorEntity> ErrorEntitys = [];
 
             try
@@ -926,7 +929,7 @@ namespace a2p.Infrastructure.Services.MappingService
 
                 for (int i = 4; i < worksheet.RowCount; i++)
                 {
-                    ExcelMaterialDto material = new();
+                    MaterialDto material = new();
 
                     sortOrder++;
 
@@ -1153,7 +1156,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     }
                     catch (Exception ex)
                     {
-                        _logService.Error("Unhandled error {$Class}.{$Method}." +
+                        _logger.LogError("Unhandled error {$Class}.{$Method}." +
                             "\nOrder {$OrderNumber}, " +
                             "\nWorksheet: {$Worksheet}, " +
                             "\nReference: {$Reference}, " +
@@ -1201,7 +1204,7 @@ namespace a2p.Infrastructure.Services.MappingService
             }
             catch (Exception ex)
             {
-                _logService.Error("Unhandled error {$Class}.{Method}." +
+                _logger.LogError("Unhandled error {$Class}.{Method}." +
                     "\nOrder {$OrderNumber}." +
                     "\nWorksheet {$Worksheet}." +
                     "\n{$Exception}",
@@ -1216,12 +1219,12 @@ namespace a2p.Infrastructure.Services.MappingService
 
         }
 
-        private async Task<List<ExcelMaterialDto>> MapGlassesAsync(Worksheet worksheet)
+        private async Task<List<MaterialDto>> MapGlassesAsync(Worksheet worksheet)
         {
             int sortOrder = -1;
             int line = -1;
 
-            List<ExcelMaterialDto> materials = [];
+            List<MaterialDto> materials = [];
             List<ErrorEntity> ErrorEntitys = [];
 
             try
@@ -1232,7 +1235,7 @@ namespace a2p.Infrastructure.Services.MappingService
 
                 for (int i = 4; i < worksheet.RowCount; i++)
                 {
-                    ExcelMaterialDto material = new();
+                    MaterialDto material = new();
                     sortOrder++;
                     line = i + 1;
                     try
@@ -1261,7 +1264,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         material.Description = worksheet.WorksheetData[i][2].ToString() ?? string.Empty;
                         if (string.IsNullOrEmpty(material.Description))
                         {
-                            _logService.Error("{$Class}.{$Method}. Glass description is missing." +
+                            _logger.LogError("{$Class}.{$Method}. Glass description is missing." +
                            "\nOrder {$OrderNumber}, " +
                            "\nWorksheet: {$Worksheet}, " +
                            "\nReference {$Reference}, " +
@@ -1299,7 +1302,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         }
                         if (string.IsNullOrEmpty(resultGlassReference))
                         {
-                            _logService.Error("{$Class}.{$Method}. Glass not exists in PrefSuite DB." +
+                            _logger.LogError("{$Class}.{$Method}. Glass not exists in PrefSuite DB." +
                           "\nOrder {$OrderNumber}, " +
                           "\nWorksheet: {$Worksheet}, " +
                           "\nReference: {$Reference}, " +
@@ -1393,7 +1396,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     }
                     catch (Exception ex)
                     {
-                        _logService.Error("Unhandled error  {$Class}.{Method}" +
+                        _logger.LogError("Unhandled error  {$Class}.{Method}" +
                             "\nOrder {$OrderNumber}, " +
                             "\nWorksheet: {$Worksheet}, " +
                             "\nReference {$Reference}, " +
@@ -1439,7 +1442,7 @@ namespace a2p.Infrastructure.Services.MappingService
             }
             catch (Exception ex)
             {
-                _logService.Error("Unhandled error {$Class}.{Method}." +
+                _logger.LogError("Unhandled error {$Class}.{Method}." +
                     "\nOrder {$OrderNumber}." +
                     "\nWorksheet {$Worksheet}." +
                     "\n{$Exception}",
@@ -1454,13 +1457,13 @@ namespace a2p.Infrastructure.Services.MappingService
 
         }
 
-        private async Task<List<ExcelMaterialDto>> MapOthersAsync(Worksheet worksheet)
+        private async Task<List<MaterialDto>> MapOthersAsync(Worksheet worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
 
-            List<ExcelMaterialDto> materials = [];
+            List<MaterialDto> materials = [];
             List<ErrorEntity> ErrorEntitys = [];
 
             try
@@ -1472,7 +1475,7 @@ namespace a2p.Infrastructure.Services.MappingService
 
                 for (int i = 4; i < worksheet.RowCount; i++)
                 {
-                    ExcelMaterialDto material = new();
+                    MaterialDto material = new();
                     sortOrder++;
 
                     line = i + 1;
@@ -1593,7 +1596,7 @@ namespace a2p.Infrastructure.Services.MappingService
                     }
                     catch (Exception ex)
                     {
-                        _logService.Error("Unhandled error {$Class}.{Method}." +
+                        _logger.LogError("Unhandled error {$Class}.{Method}." +
                             "\nOrder {$OrderNumber}, " +
                             "\nWorksheet: {$Worksheet}, " +
                             "\nLine {$Line}, " +
@@ -1637,7 +1640,7 @@ namespace a2p.Infrastructure.Services.MappingService
             }
             catch (Exception ex)
             {
-                _logService.Error("Unhandled error {$Class}.{Method}." +
+                _logger.LogError("Unhandled error {$Class}.{Method}." +
                     "\nOrder {$OrderNumber}." +
                     "\nWorksheet {$Worksheet}." +
                     "\n{$Exception}",
@@ -1656,7 +1659,7 @@ namespace a2p.Infrastructure.Services.MappingService
         {
             await Task.Run(() =>
             {
-                _logService.Verbose("Mapper Sapa 2 Service: Map Materials | OrderNumber : {$OrderNumber} " +
+                _logger.LogDebug("Mapper Sapa 2 Service: Map Materials | OrderNumber : {$OrderNumber} " +
                                                               "| Worksheet {Worksheet$} " +
                                                               "| Line: {$Line} " +
                                                               "| Sort order: " +
@@ -1746,7 +1749,7 @@ namespace a2p.Infrastructure.Services.MappingService
         {
             await Task.Run(() =>
             {
-                _logService.Verbose(
+                _logger.LogDebug(
                     "Mapper Sapa 2 Service: Map ItemsDto | OrderNumber : {$OrderNumber} " +
                     "| Worksheet {Worksheet$} " +
                     "| Line: {$Line} " +
@@ -1868,7 +1871,7 @@ namespace a2p.Infrastructure.Services.MappingService
             }
             catch (Exception ex)
             {
-                _logService.Error("Unhandled error {$Class}.{Method}." +
+                _logger.LogError("Unhandled error {$Class}.{Method}." +
                     "\nGlass description: {$GlassDescription}." +
                     "\nGlass predicted reference:  {$PredictedReference}." +
                     "\nException {$Exception}",
@@ -1894,7 +1897,7 @@ namespace a2p.Infrastructure.Services.MappingService
             }
             catch (Exception ex)
             {
-                _logService.Error("Unhandled error {$Class}.{Method}." +
+                _logger.LogError("Unhandled error {$Class}.{Method}." +
                     "\nPredicted glass reference: {$PredictedReference}," +
                     "\nException {$Exception}",
                nameof(ExcelParserTechDesign),
@@ -1919,7 +1922,7 @@ namespace a2p.Infrastructure.Services.MappingService
                 // Log an error if both fields are empty
                 if (string.IsNullOrEmpty(sapaReference) && string.IsNullOrEmpty(sapaColor))
                 {
-                    _logService.Error("{$Class}.{$Method}. " +
+                    _logger.LogError("{$Class}.{$Method}. " +
                     "Error Sapa article and color are empty." +
                     "\nOrder: {$OrderNumber}, " +
                     "\nWorksheet: {$Worksheet}, " +
@@ -2014,7 +2017,7 @@ namespace a2p.Infrastructure.Services.MappingService
                         string newReference = $"*{reference[..24]}";
 
 
-                        _logService.Error("Mapper Sapa 2 Service: Warning." +
+                        _logger.LogError("Mapper Sapa 2 Service: Warning." +
                            "Reference > 25 characters." +
                            "\nOrder: {$OrderNumber}, " +
                            "\nWorksheet: {$Worksheet}," +
@@ -2058,7 +2061,7 @@ namespace a2p.Infrastructure.Services.MappingService
             }
             catch (Exception ex)
             {
-                _logService.Error("Unhandled error {$Class}.{Method}." +
+                _logger.LogError("Unhandled error {$Class}.{Method}." +
                     "\nOrder {$OrderNumber}." +
                     "\nException {$Exception}",
                    nameof(ExcelParserTechDesign),

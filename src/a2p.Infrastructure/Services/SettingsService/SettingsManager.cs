@@ -1,6 +1,5 @@
-using a2p.Application.Interfaces;
+using a2p.Application.Interfaces.Services;
 using a2p.Application.Models;
-
 namespace a2p.Infrastructure.Services.SettingsService
 {
     public class SettingsManager

@@ -1,18 +1,17 @@
-using a2p.Application.Interfaces; // Added for async/await
-using a2p.Application.Models;
-using a2p.Domain.Models;
-
-using ClosedXML.Excel;
-
 using System.Data;
 using System.Text.Json.Nodes;
+
+using a2p.Application.Interfaces.Services;
+using a2p.Application.Models;
+
+using ClosedXML.Excel;
 
 namespace a2p.WinForm.Forms
 {
     public partial class ChildFormLog : Form
     {
 
-        private readonly ILogService _logService;
+        private readonly ILogger _logger;
         private readonly Color _backColor = Color.FromArgb(56, 57, 60);
         private ISettingsService _settingsService;
         private ProgressValue _progressValue;
@@ -25,9 +24,9 @@ namespace a2p.WinForm.Forms
 
         private string _file;
 
-        public ChildFormLog(ISettingsService settingsService, ILogService logService)
+        public ChildFormLog(ISettingsService settingsService, ILogger logger)
         {
-            _logService = logService;
+            _logger = logger;
             _dataTableLog = new DataTable();
             _bindingSourceLog = new BindingSource();
             _dataTableProperties = new DataTable();
@@ -190,7 +189,7 @@ namespace a2p.WinForm.Forms
             {
                 if (!DesignMode)
                 {
-                    _logService?.Error("Log form: Unhandled Error Log Grid View: {$Exception}", ex.Message);
+                     _logger.LogError("Log form: Unhandled Error Log Grid View: {$Exception}", ex.Message);
                 }
                 else
                 {
@@ -221,7 +220,7 @@ namespace a2p.WinForm.Forms
                 string methodName = nameof(InitializeTable); // Replace with the actual method name if different
 
                 // Log the error
-                _logService?.Error("Error in {Class}.{Method}. Exception {Message}", className, methodName, ex2.Message);
+                 _logger.LogError("Error in {Class}.{Method}. Exception {Message}", className, methodName, ex2.Message);
 
                 // Display the error in a MessageBox
                 _ = MessageBox.Show($@"Error in {className}.{methodName}: {ex2.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -265,7 +264,7 @@ namespace a2p.WinForm.Forms
         private void dataGridViewLog_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
             // Log any errors that occur during processing
-            //_logService.Error("Log Form: GridViewLog. Error in column {$Column}, row {$Row}: {$Exception}", e.ColumnIndex, e.RowIndex, e.Exception?.Message ?? "Exception details missing.");
+            //_logger.LogError("Log Form: GridViewLog. Error in column {$Column}, row {$Row}: {$Exception}", e.ColumnIndex, e.RowIndex, e.Exception?.Message ?? "Exception details missing.");
             //e.ThrowException = false;
 
         }
@@ -344,7 +343,7 @@ namespace a2p.WinForm.Forms
             catch (Exception ex)
             {
                 // Log any errors that occur during processing
-                _logService.Error(ex.Message, "Log Form: Error Grid ${RowIndex} cell Formatting. Error formatting log cell.", e.RowIndex);
+                _logger.LogError(ex.Message, "Log Form: Error Grid ${RowIndex} cell Formatting. Error formatting log cell.", e.RowIndex);
 
             }
 
@@ -358,7 +357,7 @@ namespace a2p.WinForm.Forms
             catch (Exception ex)
             {
                 // Log any errors that occur during processing
-                _logService.Error(ex.Message, "LF: Error Grid ${RowIndex} cell Click. Error getting log properties.", e.RowIndex);
+                _logger.LogError(ex.Message, "LF: Error Grid ${RowIndex} cell Click. Error getting log properties.", e.RowIndex);
             }
         }
 
@@ -379,14 +378,14 @@ namespace a2p.WinForm.Forms
                 if (!string.IsNullOrEmpty(line))
                 {
                     // Parse the JSON line
-                    LogRecord logEntry = await LogParseLineAsync(line);
+                    LogEntity logEntry = await LogParseLineAsync(line);
                     // Add the parsed data to the DataTable
                     await Task.Run(() => LogAddAsync(logEntry));
                 }
 
             }
         }
-        private async Task<LogRecord> LogParseLineAsync(string jsonLine)
+        private async Task<LogEntity> LogParseLineAsync(string jsonLine)
         {
             try
             {
@@ -396,8 +395,8 @@ namespace a2p.WinForm.Forms
 
                 if (root == null || root["Properties"] is not JsonObject propertiesNode)
                 {
-                    _logService.Warning("LF: Invalid log entry or missing Properties.");
-                    return new LogRecord();
+                    _logger.LogWarning("LF: Invalid log entry or missing Properties.");
+                    return new LogEntity();
                 }
 
                 // Convert Properties to a dictionary
@@ -406,7 +405,7 @@ namespace a2p.WinForm.Forms
                  kvp => kvp.Value?.ToString() as object
                 );
 
-                LogRecord logRecord = new()
+                LogEntity logRecord = new()
                 {
                     Order = propertiesNode["OrderNumber"]?.ToString() ?? string.Empty,
                     Worksheet = propertiesNode["Worksheet"]?.ToString() ?? string.Empty,
@@ -433,11 +432,11 @@ namespace a2p.WinForm.Forms
             }
             catch (Exception ex)
             {
-                _logService.Error("LF: Error parsing log entry: {Exception}", ex.Message);
-                return new LogRecord();
+                _logger.LogError("LF: Error parsing log entry: {Exception}", ex.Message);
+                return new LogEntity();
             }
         }
-        private void LogAddAsync(LogRecord logEntry)
+        private void LogAddAsync(LogEntity logEntry)
         {
             try
             {
@@ -459,7 +458,7 @@ namespace a2p.WinForm.Forms
             }
             catch (Exception ex)
             {
-                _logService.Error("LF: Error adding log entry to DataTable: {Exception}", ex.Message);
+                _logger.LogError("LF: Error adding log entry to DataTable: {Exception}", ex.Message);
             }
         }
         public async Task LogRefreshAsync()
@@ -469,13 +468,13 @@ namespace a2p.WinForm.Forms
             try
             {
 
-                List<LogRecord> logEntries = await _logService.GetRepository(string.Empty);
+                List<LogEntity> logEntries = await _logger.GetRepository(string.Empty);
 
                 if (logEntries != null)
                 {
 
                     // Remove duplicates based on unique properties (e.g., Timestamp, Message, etc.)
-                    List<LogRecord> distinctLogEntries = logEntries
+                    List<LogEntity> distinctLogEntries = logEntries
                      .GroupBy(entry => new
                      {
                          entry.Order,
@@ -488,7 +487,7 @@ namespace a2p.WinForm.Forms
                      .Select(group => group.First())
                      .ToList();
 
-                    foreach (LogRecord? logEntry in distinctLogEntries)
+                    foreach (LogEntity? logEntry in distinctLogEntries)
                     {
 
                         _ = _dataTableLog.Rows.Add(logEntry.Order, logEntry.Worksheet, logEntry.Reference, logEntry.Color, logEntry.Level, logEntry.Message);
@@ -500,7 +499,7 @@ namespace a2p.WinForm.Forms
             catch (Exception ex)
             {
                 // Log any errors that occur during processing
-                _logService.Error($"LF: Error refreshing log entries: {ex.Message}");
+                _logger.LogError($"LF: Error refreshing log entries: {ex.Message}");
             }
 
         }
@@ -527,7 +526,7 @@ namespace a2p.WinForm.Forms
             catch (Exception ex)
             {
                 // Log any errors that occur during processing
-                _logService.Error($"LF: Error clearing log file: {ex.Message}");
+                _logger.LogError($"LF: Error clearing log file: {ex.Message}");
             }
         }
 
@@ -590,7 +589,7 @@ namespace a2p.WinForm.Forms
 
                     workbook.SaveAs(fileName);
                 }
-                _logService.Information("Log saved successfully to {FileName}", fileName);
+                _logger.LogInformation("Log saved successfully to {FileName}", fileName);
             }
         }
 

@@ -1,11 +1,14 @@
-using a2p.Application.Interfaces;
-using a2p.WinForm.Forms;
-
-using Microsoft.Extensions.DependencyInjection;
-
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+
+using a2p.Application.Interfaces.Excel;
+using a2p.Application.Interfaces.Excel.Files;
+using a2p.Application.Interfaces.Orchestrators;
+using a2p.Application.Interfaces.Services;
+using a2p.WinForm.Forms;
+
+using Microsoft.Extensions.DependencyInjection;
 
 namespace a2p.WinForm
 {
@@ -29,7 +32,7 @@ namespace a2p.WinForm
 
             _services = ConfigureServices();
 
-            var logService = _services.GetRequiredService<ILogService>();
+            var logger = _services.GetRequiredService<ILogger>();
             Console.SetOut(new DebugTextWriter());
 
             var settingsService = _services.GetRequiredService<ISettingsService>();
@@ -38,14 +41,14 @@ namespace a2p.WinForm
             var fileService = _services.GetRequiredService<IFileService>();
             var writeService = _services.GetRequiredService<IWriteService>();
 
-            logService.Information("Application started.");
+            logger.LogInformation("Application started.");
 
             using var splashScreen = new FormSplashScreen();
             splashScreen.Show();
             splashScreen.FadeIn();
             Task.Delay(2000).Wait();
 
-            var mainForm = new FormMain(readService, excelService, logService, fileService, settingsService, writeService);
+            var mainForm = new FormMain(readService, excelService, logger, fileService, settingsService, writeService);
 
             splashScreen.FadeOut();
             splashScreen.Close();

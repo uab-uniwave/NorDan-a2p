@@ -1,13 +1,13 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using a2p.Application.Interfaces;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+
+using a2p.Application.Interfaces.Services;
 using a2p.Application.Models;
 
 using Microsoft.Extensions.Configuration;
-
-using System.Text.Json;
-using System.Text.Json.Nodes;
 
 namespace a2p.Infrastructure.Services.SettingsService
 {
@@ -66,9 +66,9 @@ namespace a2p.Infrastructure.Services.SettingsService
             System.IO.File.WriteAllText(_settingsFile, fullJson.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
         }
 
-        public SettingsContainer LoadAllSettings()
+        public Application.Models.SettingsContainer LoadAllSettings()
         {
-            var settings = new SettingsContainer();
+            var settings = new Application.Models.SettingsContainer();
             IConfigurationRoot config = new ConfigurationBuilder()
                 .AddJsonFile(_settingsFile, optional: false, reloadOnChange: true)
                 .Build();

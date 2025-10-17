@@ -163,6 +163,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "a2p.Application", "src\a2p.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "a2p.WinForm", "src\a2p.WinForm\a2p.WinForm.csproj", "{A977102E-5FF1-1F38-A7A4-F8DD7871E268}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "a2p.SharedKernel", "src\a2p.SharedKernel\a2p.SharedKernel.csproj", "{258A4E66-91BE-AD49-8E72-4C6F14B4265C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -189,6 +191,10 @@ Global
 		{A977102E-5FF1-1F38-A7A4-F8DD7871E268}.Debug|x64.Build.0 = Debug|x64
 		{A977102E-5FF1-1F38-A7A4-F8DD7871E268}.Release|x64.ActiveCfg = Release|x64
 		{A977102E-5FF1-1F38-A7A4-F8DD7871E268}.Release|x64.Build.0 = Release|x64
+		{258A4E66-91BE-AD49-8E72-4C6F14B4265C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{258A4E66-91BE-AD49-8E72-4C6F14B4265C}.Debug|x64.Build.0 = Debug|Any CPU
+		{258A4E66-91BE-AD49-8E72-4C6F14B4265C}.Release|x64.ActiveCfg = Release|Any CPU
+		{258A4E66-91BE-AD49-8E72-4C6F14B4265C}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -215,10 +221,11 @@ Global
 		{A36DDB57-A8B5-2BFF-F8CB-DCA367E5C013} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{60A691D0-4F4D-8A29-DF61-1000276EAB44} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{A977102E-5FF1-1F38-A7A4-F8DD7871E268} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{258A4E66-91BE-AD49-8E72-4C6F14B4265C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		BuildVersion_StartDate = 2000/1/1
-		BuildVersion_BuildVersioningStyle = None.None.None.Increment
 		SolutionGuid = {02931AC6-E3AF-4E96-A144-EE9EE4BE10E7}
+		BuildVersion_BuildVersioningStyle = None.None.None.Increment
+		BuildVersion_StartDate = 2000/1/1
 	EndGlobalSection
 EndGlobal

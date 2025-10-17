@@ -2,10 +2,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 
-using a2p.Application.Interfaces.Excel;
-using a2p.Application.Interfaces.Excel.Files;
-using a2p.Application.Interfaces.Orchestrators;
-using a2p.Application.Interfaces.Services;
+using a2p.Infrastructure.DependencyInjection;
 using a2p.WinForm.Forms;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -30,25 +27,29 @@ namespace a2p.WinForm
             System.Windows.Forms.Application.EnableVisualStyles();
             System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
 
-            _services = ConfigureServices();
+            IServiceCollection services = DependencyInjection.ConfigureServicesCollection();
 
-            var logger = _services.GetRequiredService<ILogger>();
+            // Register WinForm-specific types explicitly so ActivatorUtilities isn't needed
+            _ = services.AddSingleton<FormSplashScreen>();
+            _ = services.AddSingleton<FormMain>();
+            _ = services.AddTransient<ChildFormOrders>();
+            _ = services.AddTransient<ChildFormLog>();
+            _ = services.AddTransient<ChildFormSetting>();
+            _ = services.AddTransient<FormProgressBar>();
+            services.AddLogging(builder => builder.AddConsole());
+
+            _services = services.BuildServiceProvider();
+
+            Microsoft.Extensions.Logging.ILogger logger = _services.GetRequiredService<Microsoft.Extensions.Logging.ILogger>();
             Console.SetOut(new DebugTextWriter());
 
-            var settingsService = _services.GetRequiredService<ISettingsService>();
-            var excelService = _services.GetRequiredService<IExcelService>();
-            var readService = _services.GetRequiredService<IReadService>();
-            var fileService = _services.GetRequiredService<IFileService>();
-            var writeService = _services.GetRequiredService<IWriteService>();
 
             logger.LogInformation("Application started.");
 
-            using var splashScreen = new FormSplashScreen();
+            using FormSplashScreen splashScreen = _services.GetRequiredService<FormSplashScreen>();
             splashScreen.Show();
             splashScreen.FadeIn();
-            Task.Delay(2000).Wait();
-
-            var mainForm = new FormMain(readService, excelService, logger, fileService, settingsService, writeService);
+            FormMain mainForm = _services.GetRequiredService<FormMain>();
 
             splashScreen.FadeOut();
             splashScreen.Close();
@@ -56,11 +57,7 @@ namespace a2p.WinForm
             System.Windows.Forms.Application.Run(mainForm);
         }
 
-        private static IServiceProvider ConfigureServices()
-        {
-            // Use the centralized DI from Infrastructure
-            return a2p.Infrastructure.DependencyInjection.ConfigureServices();
-        }
+
     }
 
     public class DebugTextWriter : TextWriter

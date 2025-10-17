@@ -8,6 +8,7 @@ using a2p.Domain.Shared;
 using AutoMapper;
 
 using FluentValidation;
+using FluentValidation.Results;
 
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
@@ -37,20 +38,24 @@ namespace a2p.Application.Services
         public async Task<ValidationResult<ItemEntity>> CreateItemAsync(ItemDto dto)
         {
             // Step 1. Validate input
-            var validation = await _validator.ValidateAsync(dto);
-            var validationResult = validation.ToValidationResult<ItemEntity>();
+            ValidationResult validation = await _validator.ValidateAsync(dto);
+            ValidationResult<ItemEntity> validationResult = validation.ToValidationResult<ItemEntity>();
             if (!validationResult.IsSuccess)
+            {
                 return validationResult;
+            }
 
             try
             {
-                var entity = _mapper.Map<ItemEntity>(dto)
+                ItemEntity entity = _mapper.Map<ItemEntity>(dto)
                     ?? throw new InvalidOperationException("Mapping resulted in null ItemEntity.");
 
-                var created = await _repository.CreateItemAsync(entity);
+                ItemEntity? created = await _repository.CreateItemAsync(entity);
                 if (created == null)
+                {
                     return ValidationResult<ItemEntity>.Failure(
                         new[] { new ValidationError("Repository", "Failed to create item.") });
+                }
 
                 _logger.LogInformation("Item {ItemName} created.", created.ItemName);
                 return ValidationResult<ItemEntity>.Success(created, "Item created successfully.");
@@ -73,24 +78,27 @@ namespace a2p.Application.Services
         public async Task<ValidationResult<ItemEntity>> UpdateItemAsync(ItemDto dto)
         {
             // Step 1. Validate
-            var validation = await _validator.ValidateAsync(dto);
-            var validationResult = validation.ToValidationResult<ItemEntity>();
+            ValidationResult validation = await _validator.ValidateAsync(dto);
+            ValidationResult<ItemEntity> validationResult = validation.ToValidationResult<ItemEntity>();
             if (!validationResult.IsSuccess)
+            {
                 return validationResult;
+            }
 
             try
             {
-                var item = _mapper.Map<ItemEntity>(dto)
+                ItemEntity item = _mapper.Map<ItemEntity>(dto)
                     ?? throw new InvalidOperationException("Mapping resulted in null ItemEntity.");
 
                 // Repository provides GetItemAsync by id
-                var existing = await _repository.GetItemAsync(item.Id);
+                ItemEntity? existing = await _repository.GetItemAsync(item.Id);
                 if (existing == null)
+                {
                     return ValidationResult<ItemEntity>.Failure(
                         new[] { new ValidationError(nameof(dto.Id), "Item not found.") });
+                }
 
                 item.ModifiedUTCDateTime = DateTime.UtcNow;
-
 
                 // ItemRepository.UpdateItemAsync returns updated item (nullable)
                 var updated = await _repository.UpdateItemAsync(item);
@@ -121,7 +129,7 @@ namespace a2p.Application.Services
         {
             try
             {
-                var item = await _repository.GetItemAsync(id);
+                ItemEntity? item = await _repository.GetItemAsync(id);
                 return item == null
                     ? Result<ItemEntity>.Failure($"Item {id} not found.")
                     : Result<ItemEntity>.Success(item);
@@ -138,9 +146,8 @@ namespace a2p.Application.Services
         {
             try
             {
-                var items = await _repository.GetOrderItems(id, page, size);
+                (IEnumerable<ItemEntity> Ir, int TotalCount) items = await _repository.GetOrderItems(id, page, size);
                 return PagedResult<IEnumerable<ItemEntity>?>.Failure($"Items for order '{id}' not found.");
-
 
             }
             catch (Exception ex)
@@ -155,7 +162,7 @@ namespace a2p.Application.Services
         {
             try
             {
-                var (items, total) = await _repository.GetItemsAsync(page, size);
+                (IEnumerable<ItemEntity>? items, int total) = await _repository.GetItemsAsync(page, size);
 
                 return PagedResult<ItemEntity>.Success(items, total, page, size);
             }
@@ -171,7 +178,7 @@ namespace a2p.Application.Services
         {
             try
             {
-                var existing = await _repository.GetItemAsync(id);
+                ItemEntity? existing = await _repository.GetItemAsync(id);
                 if (existing == null)
                 {
                     return Result<bool>.Failure($"Order {id} not found");
@@ -187,7 +194,6 @@ namespace a2p.Application.Services
                 return Result<bool>.Failure("Error deleting order.");
             }
         }
-
 
     }
 }

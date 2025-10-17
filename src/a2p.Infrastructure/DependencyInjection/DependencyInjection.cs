@@ -1,5 +1,7 @@
+using System.Data;
+
 using a2p.Application.Interfaces.Excel;
-using a2p.Application.Interfaces.Excel.Files;
+using a2p.Application.Interfaces.Files;
 using a2p.Application.Interfaces.Orchestrators;
 using a2p.Application.Interfaces.PrefSuite;
 using a2p.Application.Interfaces.Repositories;
@@ -15,15 +17,17 @@ using a2p.Infrastructure.Services.SettingsService;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 using Serilog;
 
-namespace a2p.Infrastructure
+namespace a2p.Infrastructure.DependencyInjection
 {
     public static class DependencyInjection
     {
         // Get the current culture of the PC
-        public static IServiceProvider ConfigureServices()
+        // Expose a method that returns IServiceCollection so callers (UI project) can register additional types before building
+        public static IServiceCollection ConfigureServicesCollection()
         {
             // Load configuration
             IConfiguration configuration = BuildConfiguration();
@@ -35,14 +39,34 @@ namespace a2p.Infrastructure
               .ReadFrom.Configuration(configuration)
               .Enrich.FromLogContext();
 
-            // Register logging
-            _ = services.AddLogging(builder => builder.AddSerilog());
+            // Initialize Serilog logger instance before registering logging providers
+            Log.Logger = loggerConfig.CreateLogger();
+
+            // Register logging (uses Serilog instance)
+            _ = services.AddLogging(builder => builder.AddSerilog(Log.Logger, dispose: true));
+
+            // Register a non-generic ILogger so existing code that asks for ILogger (non-generic)
+            // will resolve to a logger with the "Application" category.
+            _ = services.AddSingleton<Microsoft.Extensions.Logging.ILogger>(sp =>
+                sp.GetRequiredService<ILoggerFactory>().CreateLogger("Application"));
+
+            // NOTE: Do NOT register the concrete Logger<> type manually.
+            // AddLogging already sets up resolution for ILogger<T>.
+            // _ = services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));    // removed — caused unresolved service for Logger<T>
 
             // Register configuration instance
             _ = services.AddSingleton<IConfiguration>(configuration);
-
+            // Repositories - use Scoped lifetime (per-request) instead of transient/singleton
+            _ = services.AddScoped<IDbConnection>(sp =>
+            {
+                IDbConnectionFactory factory = sp.GetRequiredService<IDbConnectionFactory>();
+                IDbConnection conn = factory.CreateConnection();
+                conn.Open();
+                return conn;
+            });
             // Register core services
             _ = services.AddSingleton<ISettingsService, SettingsService>();
+            _ = services.AddSingleton<ISQLService, SQLService>();
             _ = services.AddSingleton<SettingsManager>();
             _ = services.AddSingleton<IExcelService, ExcelService>();
 
@@ -56,32 +80,28 @@ namespace a2p.Infrastructure
             _ = services.AddSingleton<IOrderService, OrderService>();
             _ = services.AddSingleton<IMaterialService, MaterialService>();
             _ = services.AddSingleton<IItemService, ItemService>();
-            _ = services.AddSingleton<ITaskQueueService, ITaskQueueService>();
-
-            // Get connection string from configuration
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new InvalidOperationException("Connection string 'DefaultConnection' not found in configuration");
-            }
+            _ = services.AddSingleton<ITaskQueueService, TaskQueueService>();
 
             // Register DapperService as singleton with connection string from configuration
-            _ = services.AddSingleton<DapperService>(provider => new DapperService(connectionString));
+            _ = services.AddSingleton<DapperService>();
 
-            // Repositories
-            _ = services.AddSingleton<IMaterialRepository, MaterialRepository>();
-            _ = services.AddSingleton<IItemRepository, ItemRepository>();
-            _ = services.AddSingleton<IOrderRepository, OrderRepository>();
-            _ = services.AddSingleton<ITaskQueueRepository, TaskQueueRepository>();
-
-
+            _ = services.AddScoped<IMaterialRepository, MaterialRepository>();
+            _ = services.AddScoped<IItemRepository, ItemRepository>();
+            _ = services.AddScoped<IOrderRepository, OrderRepository>();
+            _ = services.AddScoped<ITaskQueueRepository, TaskQueueRepository>();
 
             // Parsers
             _ = services.AddSingleton<IExcelParserTechDesign, ExcelParserTechDesign>();
             _ = services.AddSingleton<IExcelParserSchuco, ExcelParserSchuco>();
             // TODO: If you have MapperSapa, register it here as well
 
-            return services.BuildServiceProvider();
+            return services;
+        }
+
+        // Backward-compatible method used by callers who expect IServiceProvider
+        public static IServiceProvider ConfigureServices()
+        {
+            return ConfigureServicesCollection().BuildServiceProvider();
         }
 
         private static IConfiguration BuildConfiguration()

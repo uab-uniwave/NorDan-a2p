@@ -3,7 +3,6 @@
 
 using a2p.Domain.Enums;
 
-
 namespace a2p.Domain.Entities
 {
     public class OrderEntity : BaseEntity
@@ -31,19 +30,17 @@ namespace a2p.Domain.Entities
 
         public int ErrorCount { get; set; } = 0; //Number of errors for this order
 
-
         public int TotalQuantity { get; set; } = 0; //Quantity of all items , sum of quantities of all positions
 
-
-        public Decimal TotalWeight { get; set; } = 0;  //Weight of all items , sum of Weight of all positions
-        public Decimal TotalWeightWithoutGlass { get; set; } = 0; //Weight of all items without glass , sum of WeightWithoutGlass of all positions
-        public Decimal TotalWeightGlass { get; set; } = 0; //Weight of all glass , sum of WeightGlass of all positions
-        public Decimal TotalArea { get; set; } = 0; //Area of all items , sum of Area of all positions
-        public Decimal TotalHours { get; set; } = 0; //Hours of all items , sum of Hours of all positions
-        public Decimal TotalMaterialCost { get; set; } = 0; //Total Material Cost of all items , sum of MaterialCost of all positions
-        public Decimal TotalLaborCost { get; set; } = 0; //Total Labor Cost of all items , sum of LaborCost of all positions
-        public Decimal TotalCost { get; set; } = 0; //Total Cost of all items , sum of Cost of all positions
-        public Decimal TotalPrice { get; set; } = 0; //Total Price of all items , sum of Price of all positions
+        public decimal TotalWeight { get; set; } = 0;  //Weight of all items , sum of Weight of all positions
+        public decimal TotalWeightWithoutGlass { get; set; } = 0; //Weight of all items without glass , sum of WeightWithoutGlass of all positions
+        public decimal TotalWeightGlass { get; set; } = 0; //Weight of all glass , sum of WeightGlass of all positions
+        public decimal TotalArea { get; set; } = 0; //Area of all items , sum of Area of all positions
+        public decimal TotalHours { get; set; } = 0; //Hours of all items , sum of Hours of all positions
+        public decimal TotalMaterialCost { get; set; } = 0; //Total Material Cost of all items , sum of MaterialCost of all positions
+        public decimal TotalLaborCost { get; set; } = 0; //Total Labor Cost of all items , sum of LaborCost of all positions
+        public decimal TotalCost { get; set; } = 0; //Total Cost of all items , sum of Cost of all positions
+        public decimal TotalPrice { get; set; } = 0; //Total Price of all items , sum of Price of all positions
         public string? Currency { get; set; } //3 char ISO code 
         public double ExchangeRate { get; set; }
         public DateOnly ExchangeRateDate { get; set; }
@@ -51,7 +48,6 @@ namespace a2p.Domain.Entities
 
     }
 }
-
 
 /*
  * USE [PrefSuite_NorDan_Development]

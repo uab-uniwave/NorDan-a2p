@@ -9,11 +9,11 @@ namespace a2p.Infrastructure.Persistence.Repositories
 {
     public class OrderRepository : IOrderRepository
     {
-        private readonly IDbConnection _db;
+        private readonly IDbConnectionFactory _factory;
 
-        public OrderRepository(IDbConnection db)
+        public OrderRepository(IDbConnectionFactory factory)
         {
-            _db = db;
+            _factory = factory;
         }
 
         // CREATE
@@ -38,14 +38,16 @@ namespace a2p.Infrastructure.Persistence.Repositories
                     @CreatedUTCDateTime, @CreatedBy
                 );";
 
-            return await _db.QuerySingleOrDefaultAsync<OrderEntity>(sql, order);
+            using IDbConnection db = _factory.CreateConnection();
+            return await db.QuerySingleOrDefaultAsync<OrderEntity>(sql, order);
         }
 
         // READ BY ID
         public async Task<OrderEntity?> GetOrderAsync(Guid id)
         {
             const string sql = "SELECT * FROM Uniwave_a2p_Orders WHERE Id = @id;";
-            return await _db.QuerySingleOrDefaultAsync<OrderEntity>(sql, new { Id = id });
+            using IDbConnection db = _factory.CreateConnection();
+            return await db.QuerySingleOrDefaultAsync<OrderEntity>(sql, new { Id = id });
         }
 
         // PAGED READ
@@ -56,13 +58,12 @@ namespace a2p.Infrastructure.Persistence.Repositories
                 ORDER BY OrderNumber DESC, SortOrder 
                 OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
                 SELECT COUNT(*) FROM Uniwave_a2p_Order;";
-
-            using var multi = await _db.QueryMultipleAsync(sql, new { Offset = (page - 1) * size, PageSize = size });
-            var orders = await multi.ReadAsync<OrderEntity>();
+            using IDbConnection db = _factory.CreateConnection();
+            using SqlMapper.GridReader multi = await db.QueryMultipleAsync(sql, new { Offset = (page - 1) * size, PageSize = size });
+            IEnumerable<OrderEntity> orders = await multi.ReadAsync<OrderEntity>();
             var total = await multi.ReadSingleAsync<int>();
             return (orders, total);
         }
-
 
         // UPDATE ALL ORDER DETAILS
         public async Task<int> UpdateOrderAsync(OrderEntity order)
@@ -85,27 +86,25 @@ namespace a2p.Infrastructure.Persistence.Repositories
                     @TotalOrderCost, @TotalLaborCost, @TotalCost, @TotalPrice, @Currency, @ExchangeRate, @ExchangeRateDate,
                     @CreatedUTCDateTime, @CreatedBy
                 );";
-
-
-            return await _db.ExecuteAsync(sql, order);
+            using IDbConnection db = _factory.CreateConnection();
+            return await db.ExecuteAsync(sql, order);
         }
-
-
 
         // UPDATE ALL ORDER DETAILS
         public async Task<int> UpdateOrderDeliveryAddressAsync(Guid id, string deliveryAddress)
         {
             const string sql = @"UPDATE Uniwave_a2p_Orders SET DeliveryAddress = @DeliveryAddress WHERE Id = @id;";
-            return await _db.ExecuteAsync(sql, new { Id = id, DeliveryAddress = deliveryAddress });
+            using IDbConnection db = _factory.CreateConnection();
+            return await db.ExecuteAsync(sql, new { Id = id, DeliveryAddress = deliveryAddress });
         }
 
         // DELETE BY ID
         public async Task<int> DeleteOrderAsync(Guid id)
         {
             const string sql = "DELETE FROM Uniwave_a2p_Orders WHERE Id = @id;";
-            return await _db.ExecuteAsync(sql, new { Id = id });
+            using IDbConnection db = _factory.CreateConnection();
+            return await db.ExecuteAsync(sql, new { Id = id });
         }
-
 
     }
 }

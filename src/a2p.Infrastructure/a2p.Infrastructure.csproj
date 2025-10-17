@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="appsettings.Development.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <COMReference Include="PrefDataManager">
       <WrapperTool>tlbimp</WrapperTool>
       <VersionMinor>0</VersionMinor>
@@ -40,20 +36,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Include="appsettings.Development.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Page>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\a2p.Application\a2p.Application.csproj" />
     <ProjectReference Include="..\a2p.Domain\a2p.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

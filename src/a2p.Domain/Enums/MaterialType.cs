@@ -9,7 +9,6 @@ namespace a2p.Domain.Enums
         Panels = 4,  //4
         Glasses = 5,  //5 
 
-
     }
 
 }

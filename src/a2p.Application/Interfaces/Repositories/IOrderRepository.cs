@@ -1,3 +1,4 @@
+
 using a2p.Domain.Entities;
 
 namespace a2p.Application.Interfaces.Repositories
@@ -14,12 +15,8 @@ namespace a2p.Application.Interfaces.Repositories
         // PAGED READ
         Task<(IEnumerable<OrderEntity> Orders, int TotalCount)> GetOrdersAsync(int page, int size);
 
-
-
         // UPDATE ALL ORDER DETAILS
         Task<int> UpdateOrderAsync(OrderEntity order);
-
-
 
         // UPDATE ALL ORDER DETAILS
         Task<int> UpdateOrderDeliveryAddressAsync(Guid id, string deliveryAddress);

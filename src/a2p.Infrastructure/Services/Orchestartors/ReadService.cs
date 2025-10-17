@@ -2,16 +2,14 @@ using System.Data;
 
 using a2p.Application.DTOs;
 using a2p.Application.Interfaces.Excel;
-using a2p.Application.Interfaces.Excel.Files;
+using a2p.Application.Interfaces.Files;
 using a2p.Application.Interfaces.Orchestrators;
 using a2p.Application.Interfaces.PrefSuite;
-using a2p.Application.Interfaces.Repositories;
 using a2p.Application.Models;
 using a2p.Domain.Enums;
 using a2p.Infrastructure.Models.BaseModels;
 
 using Microsoft.Extensions.Logging;
-
 
 namespace a2p.Infrastructure.Services.Orchestartors
 {
@@ -21,9 +19,6 @@ namespace a2p.Infrastructure.Services.Orchestartors
         private readonly IFileService _fileService;
         private readonly IExcelService _excelService;
         private readonly IPrefSuiteDataService _prefSuiteDataService;
-        private readonly IOrderRepository _orderRepository;
-        private readonly IMaterialRepository _materialRepository;
-        private readonly IItemRepository _itemRepository;
         private readonly IExcelParserSchuco _excelParserSchuco;
         private readonly IExcelParserTechDesign _excelParserTechDesign;
         private List<OrderDto> _excelOrdersDto;
@@ -34,19 +29,13 @@ namespace a2p.Infrastructure.Services.Orchestartors
                            IFileService fileService,
                            IExcelService excelService,
                            IPrefSuiteDataService prefSuiteDataService,
-                           IOrderRepository orderRepository,
-                           IMaterialRepository materialRepository,
-                           IItemRepository itemRepository,
-                           IExcelParserTechDesign excelparserTechesign,
+                            IExcelParserTechDesign excelparserTechesign,
                            IExcelParserSchuco excelParserSchuco
                    )
         {
 
             _logger = logger;
             _fileService = fileService;
-            _orderRepository = orderRepository;
-            _materialRepository = materialRepository;
-            _itemRepository = itemRepository;
             _excelService = excelService;
             _excelParserTechDesign = excelparserTechesign;
             _excelParserSchuco = excelParserSchuco;
@@ -89,8 +78,6 @@ namespace a2p.Infrastructure.Services.Orchestartors
                 _progressValue.ProgressTask1 = $"Found {_excelOrdersDto.Count} orders!";
                 _progress?.Report(_progressValue);
 
-
-
                 //==================================================================================================================================
                 //🔵 Get OrderNumber Files Progress Bar 1
                 //==================================================================================================================================
@@ -116,8 +103,6 @@ namespace a2p.Infrastructure.Services.Orchestartors
                         {
                             _progressValue.ProgressTask2 = $"Worksheet #{_excelOrdersDto[i].Files[j].Worksheets[k].Name}";
 
-
-
                             SourceAppType sourceAppType = _excelOrdersDto[i].SourceAppType;
                             WorksheetType worksheetType = _excelOrdersDto[i].Files[j].Worksheets[k].WorksheetType;
 
@@ -127,7 +112,6 @@ namespace a2p.Infrastructure.Services.Orchestartors
                                 , _excelOrdersDto[i].Files[j].FileName);
                                 continue;
                             }
-
 
                             if (worksheetType == WorksheetType.Unknown)
                             {
@@ -148,27 +132,25 @@ namespace a2p.Infrastructure.Services.Orchestartors
                             //=====================================================================================================
                             if (sourceAppType == SourceAppType.TechDesign || worksheetType == WorksheetType.Items)
                             {
-                                var result = await _excelParserTechDesign.MapItemsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
+                                List<ItemDto> result = await _excelParserTechDesign.MapItemsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
                                 _excelOrdersDto[i].ItemsDto.AddRange(result);
                             }
-
 
                             //=====================================================================================================`
                             //🔵 Schuco Items
                             //=================================`====================================================================
                             else if (sourceAppType == SourceAppType.Schuco || worksheetType == WorksheetType.Items)
                             {
-                                var result = await _excelParserSchuco.MapItemsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
+                                List<ItemDto> result = await _excelParserSchuco.MapItemsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
                                 _excelOrdersDto[i].ItemsDto.AddRange(result);
                             }
-
 
                             //=====================================================================================================`
                             //🔵 TechnoDesign Materals
                             //=====================================================================================================
                             else if (sourceAppType == SourceAppType.TechDesign || worksheetType == WorksheetType.Materials)
                             {
-                                var result = await _excelParserTechDesign.MapMaterialsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
+                                List<MaterialDto> result = await _excelParserTechDesign.MapMaterialsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
                                 _excelOrdersDto[i].MaterialsDto.AddRange(result);
                             }
                             //=====================================================================================================`
@@ -176,10 +158,9 @@ namespace a2p.Infrastructure.Services.Orchestartors
                             //=====================================================================================================
                             else if (sourceAppType == SourceAppType.Schuco || worksheetType == WorksheetType.Materials)
                             {
-                                var result = await _excelParserSchuco.MapItemsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
+                                List<ItemDto> result = await _excelParserSchuco.MapItemsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
                                 _excelOrdersDto[i].ItemsDto.AddRange(result);
                             }
-
 
                             //=======================================================================================
                             //🔵 Materials Worksheet
@@ -200,13 +181,13 @@ namespace a2p.Infrastructure.Services.Orchestartors
                                 }
                                 else if (_excelOrdersDto[i].SourceAppType == SourceAppType.TechDesign)
                                 {
-                                    var result = await _excelParserTechDesign.MapMaterialsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
+                                    List<MaterialDto> result = await _excelParserTechDesign.MapMaterialsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
                                     _excelOrdersDto[i].MaterialsDto.AddRange(result);
 
                                 }
                                 else if (_excelOrdersDto[i].SourceAppType == SourceAppType.Schuco)
                                 {
-                                    var result = await _excelParserSchuco.MapMaterialsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
+                                    List<MaterialDto> result = await _excelParserSchuco.MapMaterialsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
                                     _excelOrdersDto[i].MaterialsDto.AddRange(result);
                                 }
                                 else
@@ -217,7 +198,6 @@ namespace a2p.Infrastructure.Services.Orchestartors
 
                             }
 
-
                         }
                     }
                 }
@@ -225,7 +205,6 @@ namespace a2p.Infrastructure.Services.Orchestartors
             }
             catch (Exception ex)
             {
-
 
                 _logger.LogError("PrefSuite Service: Unhandled error reading orders. Exception {$Exception}", ex.Message);
                 return _excelOrdersDto;
@@ -384,9 +363,6 @@ namespace a2p.Infrastructure.Services.Orchestartors
                     //);
                 }
 
-
-
-
                 return order;
             }
             catch (Exception ex)
@@ -410,7 +386,7 @@ namespace a2p.Infrastructure.Services.Orchestartors
 
                 return order;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // _logger.LogError("Unhandled error {$Class}.{Method}." +
                 //     "\nOrder {$OrderNumber}." +
@@ -431,7 +407,6 @@ namespace a2p.Infrastructure.Services.Orchestartors
                 SalesDocument salesDocument = new();
                 //{
                 //    SalesDocumentNumber = order.SalesDocumentNumber,
-
 
                 ///  OrderState orderState = (OrderState)order.SalesDocumentState;
 
@@ -459,7 +434,6 @@ namespace a2p.Infrastructure.Services.Orchestartors
                 //    Message = $"OrderNumber {order.OrderNumber} - {order.Number}/{order.Version} contains calculated material needs!"
 
                 //});
-
 
                 //     }
                 //

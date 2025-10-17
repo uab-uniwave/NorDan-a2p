@@ -4,12 +4,15 @@ namespace a2p.Application.Interfaces.Services
 {
     public interface ISettingsService
     {
-        SettingsContainer LoadAllSettings();
-        AppSettings LoadSettings();
-        void SaveSettings(AppSettings updatedAppSettings);
-        void SaveConnectionString(string updatedConnectionString);
+        SettingsContainer GetSettings();
+        AppSettings GetAppSettings();
+        void SetAppSettings(AppSettings updatedAppSettings);
+
+        string GetConnectionString();
+
+        void SetConnectionString(string updatedConnectionString);
         string GetSettingsFilePath();
-        void SaveSerilogMinimumLevel(string level);
-        string LoadSerilogMinimumLevel();
+        void SetSerilogLevel(string level);
+        string GetSerilogLevel();
     }
 }

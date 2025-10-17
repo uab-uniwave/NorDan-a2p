@@ -9,11 +9,11 @@ namespace a2p.Infrastructure.Persistence.Repositories
 {
     public class MaterialRepository : IMaterialRepository
     {
-        private readonly IDbConnection _db;
+        private readonly IDbConnectionFactory _factory;
 
-        public MaterialRepository(IDbConnection db)
+        public MaterialRepository(IDbConnectionFactory factory)
         {
-            _db = db;
+            _factory = factory;
         }
 
         // CREATE
@@ -37,15 +37,16 @@ namespace a2p.Infrastructure.Persistence.Repositories
                     @TotalMaterialCost, @TotalLaborCost, @TotalCost, @TotalPrice, @Currency, @ExchangeRate, @ExchangeRateDate,
                     @CreatedUTCDateTime, @CreatedBy
                 );";
-
-            return await _db.QuerySingleOrDefaultAsync<MaterialEntity>(sql, material);
+            using IDbConnection db = _factory.CreateConnection();
+            return await db.QuerySingleOrDefaultAsync<MaterialEntity>(sql, material);
         }
 
         // READ BY ID
         public async Task<MaterialEntity?> GetMaterialAsync(Guid id)
         {
             const string sql = "SELECT * FROM Uniwave_a2p_Materials WHERE Id = @id;";
-            return await _db.QuerySingleOrDefaultAsync<MaterialEntity>(sql, new { Id = id });
+            using IDbConnection db = _factory.CreateConnection();
+            return await db.QuerySingleOrDefaultAsync<MaterialEntity>(sql, new { Id = id });
         }
 
         // PAGED READ BY ORDER NUMBER
@@ -56,13 +57,12 @@ namespace a2p.Infrastructure.Persistence.Repositories
                 ORDER BY SortOrder
                 OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
                 SELECT COUNT(*) FROM Uniwave_a2p_Material WHERE OrderId = @id;";
-
-            using var multi = await _db.QueryMultipleAsync(sql, new { OrderId = @id, Offset = (page - 1) * size, PageSize = size });
-            var materials = await multi.ReadAsync<MaterialEntity>();
+            using IDbConnection db = _factory.CreateConnection();
+            using SqlMapper.GridReader multi = await db.QueryMultipleAsync(sql, new { OrderId = @id, Offset = (page - 1) * size, PageSize = size });
+            IEnumerable<MaterialEntity> materials = await multi.ReadAsync<MaterialEntity>();
             var total = await multi.ReadSingleAsync<int>();
             return (materials, total);
         }
-
 
         // PAGED READ
         public async Task<(IEnumerable<MaterialEntity> Materials, int TotalCount)> GetMaterialsAsync(int page, int size)
@@ -72,9 +72,9 @@ namespace a2p.Infrastructure.Persistence.Repositories
                 ORDER BY OrderNumber DESC, SortOrder 
                 OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
                 SELECT COUNT(*) FROM Uniwave_a2p_Material;";
-
-            using var multi = await _db.QueryMultipleAsync(sql, new { Offset = (page - 1) * size, PageSize = size });
-            var materials = await multi.ReadAsync<MaterialEntity>();
+            using IDbConnection db = _factory.CreateConnection();
+            using SqlMapper.GridReader multi = await db.QueryMultipleAsync(sql, new { Offset = (page - 1) * size, PageSize = size });
+            IEnumerable<MaterialEntity> materials = await multi.ReadAsync<MaterialEntity>();
             var total = await multi.ReadSingleAsync<int>();
             return (materials, total);
         }
@@ -101,24 +101,24 @@ namespace a2p.Infrastructure.Persistence.Repositories
                     @CreatedUTCDateTime, @CreatedBy
                 );";
 
-
-            return await _db.ExecuteAsync(sql, material);
+            using IDbConnection db = _factory.CreateConnection();
+            return await db.ExecuteAsync(sql, material);
         }
-
 
         // DELETE BY ID
         public async Task<int> DeleteMaterialsdAsync(Guid id)
         {
             const string sql = "DELETE FROM Uniwave_a2p_Materials WHERE Id = @Id;";
-            return await _db.ExecuteAsync(sql, new { Id = id });
+            using IDbConnection db = _factory.CreateConnection();
+            return await db.ExecuteAsync(sql, new { Id = id });
         }
-
 
         // DELETE BY ORDER ID
         public async Task<int> DeleteMaterialByOrderIdAsync(Guid id)
         {
             const string sql = "DELETE FROM Uniwave_a2p_Materials WHERE OrderId = @id;";
-            return await _db.ExecuteAsync(sql, new { OrderId = id });
+            using IDbConnection db = _factory.CreateConnection();
+            return await db.ExecuteAsync(sql, new { OrderId = id });
         }
     }
 }

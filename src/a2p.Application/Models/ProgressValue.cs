@@ -3,7 +3,6 @@ namespace a2p.Application.Models
     public class ProgressValue
     {
 
-
         public int MinValue { get; set; } = 0;
         public int MaxValue { get; set; } = 100;
         public float Value { get; set; } = 0;

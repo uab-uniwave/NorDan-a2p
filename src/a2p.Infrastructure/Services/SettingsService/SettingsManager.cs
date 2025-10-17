@@ -8,9 +8,9 @@ namespace a2p.Infrastructure.Services.SettingsService
 
         public SettingsManager(ISettingsService settingsService) => _SettingsService = settingsService;
 
-        public AppSettings LoadSettings() => _SettingsService.LoadSettings();
+        public AppSettings LoadSettings() => _SettingsService.GetAppSettings();
 
-        public void SaveSettings(AppSettings settings) => _SettingsService.SaveSettings(settings);
+        public void SaveSettings(AppSettings settings) => _SettingsService.SetAppSettings(settings);
     }
 }
 

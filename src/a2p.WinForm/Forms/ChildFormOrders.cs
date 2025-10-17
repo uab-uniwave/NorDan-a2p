@@ -2,13 +2,12 @@ using System.Data;
 
 using a2p.Application.DTOs;
 using a2p.Application.Interfaces.Excel;
-using a2p.Application.Interfaces.Excel.Files;
+using a2p.Application.Interfaces.Files;
 using a2p.Application.Interfaces.Orchestrators;
 using a2p.Application.Interfaces.Services;
 using a2p.Application.Models;
 using a2p.Domain.Enums;
 using a2p.Infrastructure.Models;
-
 
 namespace a2p.WinForm.Forms
 {
@@ -38,8 +37,8 @@ namespace a2p.WinForm.Forms
         {
 
             _settingsService = userSettingsService;
-            _appSettings = _settingsService.LoadSettings();
-            _settingsContainer = _settingsService.LoadAllSettings();
+            _appSettings = _settingsService.GetAppSettings();
+            _settingsContainer = _settingsService.GetSettings();
             _fileService = fileService;
             _logger = logger;
             _excelService = excelService;
@@ -652,8 +651,6 @@ namespace a2p.WinForm.Forms
 
         }
 
-
-
         private void DataGridViewFiles_CurrentCellDirtyStateChanged(object? sender, EventArgs e)
         {
             if (dataGridViewFiles.IsCurrentCellDirty)
@@ -716,7 +713,6 @@ namespace a2p.WinForm.Forms
                 _progress?.Report(_progressValue);
                 progressBarForm.Show();
 
-
                 //Read Orders Data
                 //=====================================================================================================
                 List<OrderDto> orders = await _readService.ReadAsync(_progressValue, _progress);
@@ -738,7 +734,6 @@ namespace a2p.WinForm.Forms
                 _progress?.Report(_progressValue); progressBarForm.Show();
 
                 progressBarForm.Close();
-
 
                 DataGridViewLogReadOnlyRows();
                 _progressValue.ProgressTitle = string.Empty;
@@ -784,7 +779,6 @@ namespace a2p.WinForm.Forms
             try
             {
 
-
                 for (int i = 0; i < dataGridViewFiles.Rows.Count; i++)
                 {
                     if ((bool)dataGridViewFiles.Rows[i].Cells["Import"].Value)
@@ -813,14 +807,11 @@ namespace a2p.WinForm.Forms
                                     {
                                         _orders[j].DeleteExistsing = true;
 
-
-
                                     }
                                     if (result == DialogResult.No)
                                     {
 
                                         _orders[j].DeleteExistsing = false;
-
 
                                     }
 
@@ -831,8 +822,6 @@ namespace a2p.WinForm.Forms
                                         importOrdersDto.Remove(_orders[j]);
 
                                     }
-
-
 
                                 }
 
@@ -845,8 +834,6 @@ namespace a2p.WinForm.Forms
                     }
 
                 }
-
-
 
                 //ProgressBar. Create a new instance of the ProgressBarForm   
                 //=======================================================================================================
@@ -864,7 +851,7 @@ namespace a2p.WinForm.Forms
                     progressBarForm.progressBar.ForeColor = Color.FromArgb(239, 112, 32);
                 };
 
-                ProgressValue progressvalue = new ProgressValue();
+                ProgressValue progressvalue = new();
                 Progress<ProgressValue> progress = new(progressBarForm.UpdateProgress);
 
                 int totalItems = importOrdersDto.Sum(order => order.ItemsDto.Count);
@@ -878,16 +865,13 @@ namespace a2p.WinForm.Forms
                 _progressValue.ProgressTask2 = string.Empty;
                 _progressValue.ProgressTask3 = string.Empty;
 
-                _progressValue.TotalValue = totalItems * 20 + totalMaterials * 1 + totalOrders * 230 + 40;
+                _progressValue.TotalValue = (totalItems * 20) + (totalMaterials * 1) + (totalOrders * 230) + 40;
                 _progressValue.CurrentValue = 0;
                 _progressValue.Value = 0;
                 _progressValue.MaxValue = 100;
                 _progressValue.MinValue = 0;
 
-
-
                 //20pts x1   single per import- exceExcelOrderDto Form Preparing Import 
-
 
                 //30 pts x 1  per OrderNumber - Write Service  Deletig existinfg data
 
@@ -899,12 +883,6 @@ namespace a2p.WinForm.Forms
                 //10pts. x 1 per  ItemName -  Write service -   Inserting data into DB
                 //1 pts x per material   Write service 
 
-
-
-
-
-
-
                 //20pts x1   single per import- exceExcelOrderDto Form finishing
 
                 _progressValue.CurrentValue = _progressValue.CurrentValue + 30; //x20 / x1  
@@ -914,7 +892,6 @@ namespace a2p.WinForm.Forms
                 _progressValue.ProgressTask3 = $"Orders Count {totalMaterials} pending import";
                 _progress?.Report(_progressValue);
                 progressBarForm.Show();
-
 
                 _progress?.Report(_progressValue);
                 _progressValue.ProgressTask1 = string.Empty;
@@ -929,10 +906,8 @@ namespace a2p.WinForm.Forms
                     progressBarForm.Show();
                     await _writeService.WriteAsync(importOrdersDto[i], _progressValue, _progress);
 
-
                     //var a2POrder = Result.Item1;
                     //_progressValue = Result.Item2;
-
 
                     //importOrdersDto[i] = a2POrder;
 
@@ -940,16 +915,12 @@ namespace a2p.WinForm.Forms
 
                 await UpdateDatable(importOrdersDto, 2);
 
-
-
                 _progressValue.CurrentValue = _progressValue.CurrentValue + 20; //x20 /x2  
                 _progressValue.ProgressTitle = "Importing orders ... ";
                 _progressValue.ProgressTask1 = "Import Finished";
                 _progressValue.ProgressTask2 = string.Empty;
                 _progressValue.ProgressTask3 = string.Empty;
                 _progress?.Report(_progressValue);
-
-
 
                 progressBarForm.Close(); // TODO: on cancel overwrite should stay grid data
             }
@@ -974,9 +945,7 @@ namespace a2p.WinForm.Forms
 
                 Image a = imageList1.Images[0];
                 OrderRecord orderRecord = new();
-                int warningCount = 0;
                 int errorCount = 0;
-                int fatalCount = 0;
 
                 await Task.Run(() =>
                 {
@@ -999,7 +968,6 @@ namespace a2p.WinForm.Forms
 
                     if (type == 1)
                     {
-                        warningCount = 0;
 
                         //       exceExcelOrderDto.Errors
                         //.Where(error => error.Level is ErrorLevel.Warning)
@@ -1022,7 +990,6 @@ namespace a2p.WinForm.Forms
                         //    .Distinct()
                         //    .Count();
 
-
                         orderRecord.ErrorCount = errorCount;
 
                         //orderRecord.ErrorList = string.Join("\n", exceExcelOrderDto.Errors
@@ -1044,10 +1011,8 @@ namespace a2p.WinForm.Forms
 
                     }
 
-
                     if (type == 2)
                     {
-
 
                         //warningCount = exceExcelOrderDto.Errors
                         //     .Where(error => error.Level is ErrorLevel.Warning)
@@ -1106,16 +1071,10 @@ namespace a2p.WinForm.Forms
 
                         //                           .Distinct());
 
-
-
                     }
                     orderRecord.Import = CountReadTotalError(exceExcelOrderDto) <= 0;
 
                 });
-
-
-
-
 
                 return orderRecord;
 
@@ -1184,8 +1143,6 @@ namespace a2p.WinForm.Forms
             //return exceExcelOrderDto.Errors.Count(error => error.Level is ErrorLevel.Warning or ErrorLevel.Error or ErrorLevel.Fatal);
             return 0;
         }
-
-
 
         private async Task UpdateDatable(List<Application.DTOs.OrderDto> ordersDto, int type)
         {
@@ -1326,12 +1283,10 @@ namespace a2p.WinForm.Forms
                         plGridPanel.ResumeLayout(false);
                         plGridPanel.PerformLayout();
 
-
-
                         if (type == 2)
                         {
                             // Fix: Select file names as strings, not as chars
-                            var fileNames = order.Files.Select(f => f.FileName).ToList();
+                            List<string> fileNames = order.Files.Select(f => f.FileName).ToList();
                             if (orderRecord.ErrorCount + orderRecord.FatalCount > 0)
                             {
                                 _fileService.MoveOrderFiles(fileNames, false);
@@ -1341,8 +1296,6 @@ namespace a2p.WinForm.Forms
                                 //    _fileService.MoveOrderFiles(fileNames, true);
                             }
                         }
-
-
 
                     }
                     catch (Exception ex)
@@ -1367,7 +1320,6 @@ namespace a2p.WinForm.Forms
 
                 }
             }
-
 
         }
     }

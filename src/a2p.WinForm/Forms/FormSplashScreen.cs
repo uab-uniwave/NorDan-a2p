@@ -1,4 +1,4 @@
-﻿using System.Drawing.Drawing2D;
+using System.Drawing.Drawing2D;
 
 namespace a2p.WinForm.Forms
 {
@@ -6,7 +6,6 @@ namespace a2p.WinForm.Forms
     {
         public FormSplashScreen()
         {
-
 
             this.AutoScaleMode = AutoScaleMode.Dpi;
             this.AutoScaleDimensions = new SizeF(96F, 96F);
@@ -29,7 +28,6 @@ namespace a2p.WinForm.Forms
         }
         private void SplashScreenForm_DpiChanged(object? sender, DpiChangedEventArgs e)
         {
-
 
             this.PerformAutoScale();
             this.ResumeLayout(false);

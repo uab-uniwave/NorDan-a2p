@@ -7,8 +7,6 @@ namespace a2p.Application.Models
 
         public List<Worksheet> Worksheets { get; set; } = [];
 
-
-
         public string Currency { get; set; } = string.Empty;
 
         public string FullName { get; set; } = string.Empty;
@@ -20,7 +18,6 @@ namespace a2p.Application.Models
         public bool IsLocked { get; set; } = false;
 
         public bool IsOrderItemsFile { get; set; } = false;
-
 
     }
 }

@@ -2,7 +2,7 @@ using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 
 using a2p.Application.Interfaces.Excel;
-using a2p.Application.Interfaces.Excel.Files;
+using a2p.Application.Interfaces.Files;
 using a2p.Application.Interfaces.Orchestrators;
 using a2p.Application.Interfaces.Services;
 using a2p.Application.Models;
@@ -68,8 +68,8 @@ namespace a2p.WinForm.Forms
             _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
             _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
 
-            _appSettings = _settingsService.LoadSettings();
-            _settingsContainer = _settingsService.LoadAllSettings();
+            _appSettings = _settingsService.GetAppSettings();
+            _settingsContainer = _settingsService.GetSettings();
             _progress = new Progress<ProgressValue>();
 
             _orderForm = new ChildFormOrders(_settingsService, _logger, _fileService, _excelService, _readService, _writeService);
@@ -108,7 +108,7 @@ namespace a2p.WinForm.Forms
                 _appSettings.Folders.ImportFailed = "Import_Failed";
                 _appSettings.Folders.ImportSuccess = "Import_Success";
                 _appSettings.Folders.Log = "Log";
-                await Task.Run(() => _settingsService.SaveSettings(_appSettings));
+                await Task.Run(() => _settingsService.SetAppSettings(_appSettings));
             }
             else
             {
@@ -235,14 +235,14 @@ namespace a2p.WinForm.Forms
         {
             if (sender is Button btn && btn == selectedButton)
             {
-                using var pen = new Pen(borderColor, borderWidth);
+                using Pen pen = new(borderColor, borderWidth);
                 e.Graphics.DrawRectangle(pen, 1, 1, btn.Width - 2, btn.Height - 2);
             }
         }
 
         private Image? LoadImage(string imageName, int width, int height)
         {
-            var originalImage = GetImageByName(imageName);
+            Image? originalImage = GetImageByName(imageName);
             if (originalImage == null)
             {
                 _logger.LogWarning($"Image resource '{imageName}' not found or invalid.");
@@ -250,8 +250,8 @@ namespace a2p.WinForm.Forms
             }
             try
             {
-                var resizedBitmap = new Bitmap(width, height);
-                using (var g = Graphics.FromImage(resizedBitmap))
+                Bitmap resizedBitmap = new(width, height);
+                using (Graphics g = Graphics.FromImage(resizedBitmap))
                 {
                     g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                     g.DrawImage(originalImage, new Rectangle(0, 0, width, height));
@@ -269,9 +269,12 @@ namespace a2p.WinForm.Forms
         {
             try
             {
-                var obj = Properties.Resources.ResourceManager.GetObject(imageName);
+                object? obj = Properties.Resources.ResourceManager.GetObject(imageName);
                 if (obj is Image img)
+                {
                     return img;
+                }
+
                 _logger.LogWarning($"Resource '{imageName}' is not a valid image.");
                 return null;
             }
@@ -367,7 +370,7 @@ namespace a2p.WinForm.Forms
                 await ShowFormAsync(_logForm,
                     () => new ChildFormLog(_settingsService, _logger));
 
-                await _logForm.LogRefreshAsync();
+                //     await _logForm.LogRefreshAsync();
             }
             catch (Exception ex)
             {
@@ -453,7 +456,7 @@ namespace a2p.WinForm.Forms
             {
                 base.WndProc(ref m);
 
-                var mousePosition = this.PointToClient(new Point(m.LParam.ToInt32() & 0xFFFF, m.LParam.ToInt32() >> 16));
+                Point mousePosition = this.PointToClient(new Point(m.LParam.ToInt32() & 0xFFFF, m.LParam.ToInt32() >> 16));
 
                 if (statusStrip.Bounds.Contains(mousePosition))
                 {
@@ -485,13 +488,13 @@ namespace a2p.WinForm.Forms
             base.OnResize(e);
             ResizeControls();
 
-            var controls = new Control[]
+            Control[] controls = new Control[]
             {
                 tplHeader, plTBPanel, statusStrip, plFormContainer,
                 plNordanHeaderLogo, plSideBarMain
             };
 
-            foreach (var control in controls)
+            foreach (Control control in controls)
             {
                 control.ResumeLayout(false);
                 control.PerformLayout();
@@ -515,7 +518,7 @@ namespace a2p.WinForm.Forms
         {
             if (e.Control && e.Alt && e.KeyCode == Keys.D)
             {
-                using var g = CreateGraphics();
+                using Graphics g = CreateGraphics();
                 MessageBox.Show(
                     $"Current DPI: {g.DpiX} x {g.DpiY}",
                     "DPI Debug",
@@ -548,13 +551,13 @@ namespace a2p.WinForm.Forms
             this.PerformAutoScale();
             ResizeControls();
 
-            var controls = new Control[]
+            Control[] controls = new Control[]
             {
                 tplHeader, plTBPanel, statusStrip, plFormContainer,
                 plNordanHeaderLogo, plSideBarMain
             };
 
-            foreach (var control in controls)
+            foreach (Control control in controls)
             {
                 control.ResumeLayout(false);
                 control.PerformLayout();

@@ -9,9 +9,11 @@ namespace a2p.Application.Validations
             T? value = default)
         {
             if (fluentResult.IsValid)
+            {
                 return ValidationResult<T>.Success(value!);
+            }
 
-            var errors = fluentResult.Errors
+            List<ValidationError> errors = fluentResult.Errors
                 .Select(e => new ValidationError(e.PropertyName, e.ErrorMessage))
                 .ToList();
 

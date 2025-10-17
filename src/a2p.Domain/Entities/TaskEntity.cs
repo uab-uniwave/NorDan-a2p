@@ -6,7 +6,6 @@ namespace a2p.Domain.Entities
     public class TaskEntity : BaseEntity
     {
 
-
         public string OrderNumber { get; set; } = string.Empty;
         public Guid OrderId { get; set; } = Guid.Empty;
         public string ProjectNumber { get; set; } = string.Empty;

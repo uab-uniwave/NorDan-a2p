@@ -3,6 +3,7 @@ using System.Text.Json.Nodes;
 
 using a2p.Application.Interfaces.Services;
 using a2p.Application.Models;
+using a2p.Domain.Entities;
 
 using ClosedXML.Excel;
 
@@ -33,8 +34,8 @@ namespace a2p.WinForm.Forms
             _bindingSourceProperties = new BindingSource();
             _progressValue = new ProgressValue();
             _settingsService = settingsService;
-            _appSettings = _settingsService.LoadSettings();
-            _settingsContainer = _settingsService.LoadAllSettings();
+            _appSettings = _settingsService.GetAppSettings();
+            _settingsContainer = _settingsService.GetSettings();
 
             _file = Path.Combine(_appSettings.Folders.RootFolder, _appSettings.Folders.Log, "a2pLog.json");
 
@@ -75,7 +76,6 @@ namespace a2p.WinForm.Forms
                     AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
 
                 });
-
 
                 _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
                 {
@@ -119,8 +119,6 @@ namespace a2p.WinForm.Forms
                     SortMode = DataGridViewColumnSortMode.NotSortable
 
                 });
-
-
 
                 //DataGrid Header Style 
                 //===================================================================================================================
@@ -189,7 +187,7 @@ namespace a2p.WinForm.Forms
             {
                 if (!DesignMode)
                 {
-                     _logger.LogError("Log form: Unhandled Error Log Grid View: {$Exception}", ex.Message);
+                    _logger.LogError("Log form: Unhandled Error Log Grid View: {$Exception}", ex.Message);
                 }
                 else
                 {
@@ -211,7 +209,6 @@ namespace a2p.WinForm.Forms
                 _bindingSourceLog.DataSource = _dataTableLog;
                 dataGridViewLog.DataSource = _bindingSourceLog;
 
-
             }
 
             catch (Exception ex2)
@@ -220,7 +217,7 @@ namespace a2p.WinForm.Forms
                 string methodName = nameof(InitializeTable); // Replace with the actual method name if different
 
                 // Log the error
-                 _logger.LogError("Error in {Class}.{Method}. Exception {Message}", className, methodName, ex2.Message);
+                _logger.LogError("Error in {Class}.{Method}. Exception {Message}", className, methodName, ex2.Message);
 
                 // Display the error in a MessageBox
                 _ = MessageBox.Show($@"Error in {className}.{methodName}: {ex2.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -268,7 +265,6 @@ namespace a2p.WinForm.Forms
             //e.ThrowException = false;
 
         }
-
 
         private void LogGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
@@ -337,7 +333,6 @@ namespace a2p.WinForm.Forms
                         }
                     }
 
-
                 }
             }
             catch (Exception ex)
@@ -362,8 +357,6 @@ namespace a2p.WinForm.Forms
         }
 
         #endregion -== Grids events == -
-
-
 
         #region -== Data Table methods ==-
         public async Task LogoMonitorFileAsync()
@@ -416,19 +409,7 @@ namespace a2p.WinForm.Forms
 
                 };
 
-                if (properties == null)
-                {
-                    return logRecord;
-                }
-
-                if (properties.Count == 0)
-                {
-                    return logRecord;
-
-                }
-
-                return logRecord;
-
+                return properties == null ? logRecord : properties.Count == 0 ? logRecord : logRecord;
             }
             catch (Exception ex)
             {
@@ -461,74 +442,74 @@ namespace a2p.WinForm.Forms
                 _logger.LogError("LF: Error adding log entry to DataTable: {Exception}", ex.Message);
             }
         }
-        public async Task LogRefreshAsync()
-        {
-            LogClear();
+        //public async Task LogRefreshAsync()
+        //{
+        //    LogClear();
 
-            try
-            {
+        //    try
+        //    {
 
-                List<LogEntity> logEntries = await _logger.GetRepository(string.Empty);
+        //        List<LogEntity> logEntries = await _logger.GetRepository(string.Empty);
 
-                if (logEntries != null)
-                {
+        //        if (logEntries != null)
+        //        {
 
-                    // Remove duplicates based on unique properties (e.g., Timestamp, Message, etc.)
-                    List<LogEntity> distinctLogEntries = logEntries
-                     .GroupBy(entry => new
-                     {
-                         entry.Order,
-                         entry.Worksheet,
-                         entry.Reference,
-                         entry.Color,
-                         entry.Level,
-                         entry.Message,
-                     })
-                     .Select(group => group.First())
-                     .ToList();
+        //            // Remove duplicates based on unique properties (e.g., Timestamp, Message, etc.)
+        //            List<LogEntity> distinctLogEntries = logEntries
+        //             .GroupBy(entry => new
+        //             {
+        //                 entry.Order,
+        //                 entry.Worksheet,
+        //                 entry.Reference,
+        //                 entry.Color,
+        //                 entry.Level,
+        //                 entry.Message,
+        //             })
+        //             .Select(group => group.First())
+        //             .ToList();
 
-                    foreach (LogEntity? logEntry in distinctLogEntries)
-                    {
+        //            foreach (LogEntity? logEntry in distinctLogEntries)
+        //            {
 
-                        _ = _dataTableLog.Rows.Add(logEntry.Order, logEntry.Worksheet, logEntry.Reference, logEntry.Color, logEntry.Level, logEntry.Message);
-                    }
+        //                _ = _dataTableLog.Rows.Add(logEntry.Order, logEntry.Worksheet, logEntry.Reference, logEntry.Color, logEntry.Level, logEntry.Message);
+        //            }
 
-                }
+        //        }
 
-            }
-            catch (Exception ex)
-            {
-                // Log any errors that occur during processing
-                _logger.LogError($"LF: Error refreshing log entries: {ex.Message}");
-            }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log any errors that occur during processing
+        //        _logger.LogError($"LF: Error refreshing log entries: {ex.Message}");
+        //    }
 
-        }
+        //}
 
-        public void LogClear()
-        {
-            try
-            {
-                if (InvokeRequired)
-                {
-                    LogClear();
-                }
-                else
-                {
+        //public void LogClear()
+        //{
+        //    try
+        //    {
+        //        if (InvokeRequired)
+        //        {
+        //            LogClear();
+        //        }
+        //        else
+        //        {
 
-                    if (_dataTableLog.Rows.Count > 0)
-                    {
-                        _dataTableLog.Rows.Clear();
-                        _dataTableProperties.Rows.Clear();
-                    }
+        //            if (_dataTableLog.Rows.Count > 0)
+        //            {
+        //                _dataTableLog.Rows.Clear();
+        //                _dataTableProperties.Rows.Clear();
+        //            }
 
-                }
-            }
-            catch (Exception ex)
-            {
-                // Log any errors that occur during processing
-                _logger.LogError($"LF: Error clearing log file: {ex.Message}");
-            }
-        }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log any errors that occur during processing
+        //        _logger.LogError($"LF: Error clearing log file: {ex.Message}");
+        //    }
+        //}
 
         //========================================================
         private void saveLogToolStripMenuItem_Click(object sender, EventArgs e)
@@ -554,19 +535,19 @@ namespace a2p.WinForm.Forms
                     // Set word wrap for column 5 (indexing is 1-based in ClosedXML)
 
                     // Only apply header style to used columns in Row(1)
-                    var HeaderRow = worksheet.Row(1);
+                    IXLRow HeaderRow = worksheet.Row(1);
                     int usedColumnCount = worksheet.ColumnsUsed().Count();
                     for (int i = 1; i <= usedColumnCount; i++)
                     {
-                        var cell = HeaderRow.Cell(i);
+                        IXLCell cell = HeaderRow.Cell(i);
                         cell.Style.Font.Bold = true;
                         cell.Style.Font.FontSize = 12;
                         cell.Style.Fill.BackgroundColor = XLColor.FromArgb(56, 57, 60);
                         cell.Style.Font.FontColor = XLColor.FromArgb(239, 112, 32);
                     }
                     // Set borders for all used cells to color (239, 112, 32)
-                    var borderColor = XLColor.FromArgb(239, 112, 32);
-                    foreach (var cell in worksheet.CellsUsed())
+                    XLColor borderColor = XLColor.FromArgb(239, 112, 32);
+                    foreach (IXLCell? cell in worksheet.CellsUsed())
                     {
                         cell.Style.Border.TopBorder = XLBorderStyleValues.Thin;
                         cell.Style.Border.TopBorderColor = borderColor;
@@ -578,7 +559,7 @@ namespace a2p.WinForm.Forms
                         cell.Style.Border.RightBorderColor = borderColor;
                     }
 
-                    var colMessage = worksheet.Column(6);
+                    IXLColumn colMessage = worksheet.Column(6);
                     colMessage.Style.Alignment.WrapText = true;
 
                     // Auto-size all columns
@@ -592,7 +573,6 @@ namespace a2p.WinForm.Forms
                 _logger.LogInformation("Log saved successfully to {FileName}", fileName);
             }
         }
-
 
         #endregion -== Contextual Menu ==-
     }

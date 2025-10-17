@@ -3,7 +3,7 @@
 
 using System.Data;
 
-using a2p.Application.Interfaces.Excel.Files;
+using a2p.Application.Interfaces.Files;
 using a2p.Application.Interfaces.Services;
 using a2p.Application.Models;
 
@@ -26,9 +26,8 @@ namespace a2p.Infrastructure.Services.FileServices
 
             _settingsService = settingsService;
 
-
-            _appSettings = _settingsService.LoadSettings();
-            _settingsContainer = _settingsService.LoadAllSettings();
+            _appSettings = _settingsService.GetAppSettings();
+            _settingsContainer = _settingsService.GetSettings();
         }
 
         public List<string>? GetFiles()
@@ -142,7 +141,6 @@ namespace a2p.Infrastructure.Services.FileServices
             catch (Exception ex)
             {
 
-
                 _logger.LogError("{$Class}.{$Method}. File \"{$File}\" is locked Exception: {$Exception}",
                    nameof(FileService),
                    nameof(IsLocked),
@@ -156,7 +154,6 @@ namespace a2p.Infrastructure.Services.FileServices
         //======================================================================
         public void MoveOrderFiles(List<string> files, bool success)
         {
-
 
             try
             {
@@ -172,7 +169,6 @@ namespace a2p.Infrastructure.Services.FileServices
                             System.IO.File.Delete(destinationFile);
                         }
 
-
                         System.IO.File.Move(file, destinationFile);
                     }
                     else if (System.IO.File.Exists(file) && success == false)
@@ -187,7 +183,6 @@ namespace a2p.Infrastructure.Services.FileServices
 
                     }
                 }
-
 
             }
             catch (Exception ex)
@@ -270,8 +265,6 @@ namespace a2p.Infrastructure.Services.FileServices
             return folder;
 
         }
-
-
 
     }
 }

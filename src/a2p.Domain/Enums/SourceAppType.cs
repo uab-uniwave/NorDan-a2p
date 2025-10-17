@@ -7,6 +7,5 @@ namespace a2p.Domain.Enums
         TechDesign = 2,
         Schuco = 3
 
-
     }
 }

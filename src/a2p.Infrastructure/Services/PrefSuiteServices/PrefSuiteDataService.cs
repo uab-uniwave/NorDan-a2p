@@ -310,7 +310,6 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
             {
                 Console.WriteLine(ex.Message);
 
-
                 _logger.LogDebug(
                 "{$Class}.{$Method}. Unhandled error inserting color configuration for color {$Color}. Exception: {$Exception}.",
                 nameof(PrefSuiteDataService),
@@ -333,10 +332,9 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                    number,
                    version);
 
-
                 try
                 {
-                    var delete = deleteExisting ? 1 : 0;
+                    int delete = deleteExisting ? 1 : 0;
 
                     SqlCommand cmd = new()
                     {
@@ -349,7 +347,6 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                     _ = cmd.Parameters.AddWithValue("@DeleteExisting", delete);
 
                     int result = await _sqlService.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
-
 
                 }
                 catch (Exception ex)
@@ -424,7 +421,6 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 ex.Message ?? string.Empty
                );
 
-
             }
 
         }
@@ -456,7 +452,6 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                     _logger.LogDebug("{$Class}.{$Method}. Color configuration for color {$Color} already exists in PrefSuite DB.", material.Color);
 
                 }
-
 
             }
             catch (Exception ex)
@@ -497,7 +492,6 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
 
                 material.CommodityCode = await GetCommodityCode(material.SourceReference ?? string.Empty);
 
-
                 SqlCommand cmd = new()
                 {
                     CommandText = "[dbo].[Uniwave_a2p_InsertPrefSuiteMaterialBase]",
@@ -531,7 +525,6 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                         material.Description ?? "");
 
                 }
-
 
             }
             catch (Exception ex)
@@ -640,10 +633,9 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
             {
                 if (material.Weight == 0)
                 {
-                    var weight = await GetTechDesignWeight(material.SourceReference ?? string.Empty);
+                    decimal weight = await GetTechDesignWeight(material.SourceReference ?? string.Empty);
                     material.Weight = weight;
                 }
-
 
                 SqlCommand cmd = new()
                 {
@@ -680,7 +672,6 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
 
                 }
 
-
             }
 
             catch (Exception ex)
@@ -711,7 +702,6 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
 
         }
 
-
         public async Task InsertPrefSuiteMaterialMeterAsync(MaterialEntity material)
         {
 
@@ -719,11 +709,9 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
 
             {
 
-
-
                 if (material.Weight == 0)
                 {
-                    var weight = await GetTechDesignWeight(material.SourceReference ?? string.Empty);
+                    decimal weight = await GetTechDesignWeight(material.SourceReference ?? string.Empty);
                     material.Weight = weight;
                 }
 
@@ -763,7 +751,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 // return null;
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // _logger.LogError(
                 // "{$Class}.{$Method}. Unhandled error." +
@@ -813,7 +801,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
 
                 if (material.Weight == 0)
                 {
-                    var weight = await GetTechDesignWeight(material.SourceReference ?? string.Empty);
+                    decimal weight = await GetTechDesignWeight(material.SourceReference ?? string.Empty);
                     material.Weight = weight;
                 }
 
@@ -850,9 +838,8 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
 
                 }
 
-
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // _logger.LogError(
                 // "{$Class}.{$Method}. Unhandled error." +
@@ -890,7 +877,6 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 //    $"\nDescription {material.Description ?? string.Empty}," +
                 //    $"\nException: {ex.Message ?? string.Empty}"
 
-
                 //    };
                 //  return null;
             }
@@ -903,7 +889,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
             {
                 if (material.Weight == 0)
                 {
-                    var weight = await GetTechDesignWeight(material.SourceReference ?? string.Empty);
+                    decimal weight = await GetTechDesignWeight(material.SourceReference ?? string.Empty);
                     material.Weight = weight;
                 }
 
@@ -942,9 +928,8 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
 
                 }
 
-
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //    _logger.LogError(
                 //    "{$Class}.{$Method}. Unhandled error." +
@@ -985,14 +970,10 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 //    };
             }
 
-
-
         }
 
         public async Task InsertPrefSuiteMaterialPurchaseDataAsync(MaterialEntity material)
         {
-
-
 
             try
 
@@ -1037,9 +1018,8 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
 
                 }
 
-
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
                 // _logger.LogError(
@@ -1084,15 +1064,12 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
             }
         }
 
-
-
         public async Task UpdateBCMapping(MaterialEntity material)
         {
 
             try
 
             {
-
 
                 SqlCommand cmd = new()
                 {
@@ -1133,7 +1110,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
                 //    _logger.LogError(
@@ -1177,8 +1154,6 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
 
         }
 
-
-
         public async Task InsertPrefSuiteMaterialNeedsMasterAsync(string order, int number, int version)
         {
 
@@ -1197,9 +1172,8 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 //=====================================================================================================================
                 int result = await _sqlService.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
 
-
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //    _logger.LogError(
                 //    "{$Class}.{$Method}. Unhandled error." +
@@ -1245,9 +1219,8 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 //=====================================================================================================================
                 int result = await _sqlService.ExecuteNonQueryAsync(cmd.CommandText, cmd.CommandType, cmd.Parameters.Cast<SqlParameter>().ToArray());
 
-
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //    _logger.LogError(
                 //    "{$Class}.{$Method}. Unhandled error." +
@@ -1275,7 +1248,6 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
             }
 
         }
-
 
     }
 }

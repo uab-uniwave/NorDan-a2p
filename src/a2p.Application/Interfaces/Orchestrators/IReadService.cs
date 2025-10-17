@@ -7,6 +7,5 @@ namespace a2p.Application.Interfaces.Orchestrators
     {
         Task<List<OrderDto>> ReadAsync(ProgressValue progressValue, IProgress<ProgressValue>? progress = null);
 
-
     }
 }

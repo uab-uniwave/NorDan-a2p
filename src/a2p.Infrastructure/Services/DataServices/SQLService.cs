@@ -30,7 +30,7 @@ namespace a2p.Infrastructure.Services.DataServices
 
                 _settingsService = settingsService;
 
-                _appSettings = _settingsService.LoadSettings();
+                _appSettings = _settingsService.GetAppSettings();
 
                 if (_appSettings == null)
                 {
@@ -38,7 +38,7 @@ namespace a2p.Infrastructure.Services.DataServices
                     throw new ArgumentNullException(nameof(_appSettings));
                 }
 
-                _settingsContainer = _settingsService.LoadAllSettings();
+                _settingsContainer = _settingsService.GetSettings();
 
                 if (_settingsContainer == null)
                 {

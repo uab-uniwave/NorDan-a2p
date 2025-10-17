@@ -8,6 +8,7 @@ using a2p.Domain.Shared;
 using AutoMapper;
 
 using FluentValidation;
+using FluentValidation.Results;
 
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
@@ -37,20 +38,24 @@ namespace a2p.Application.Services
         public async Task<ValidationResult<MaterialEntity>> CreateMaterialAsync(MaterialDto dto)
         {
             // Step 1. Validate input
-            var validation = await _validator.ValidateAsync(dto);
-            var validationResult = validation.ToValidationResult<MaterialEntity>();
+            ValidationResult validation = await _validator.ValidateAsync(dto);
+            ValidationResult<MaterialEntity> validationResult = validation.ToValidationResult<MaterialEntity>();
             if (!validationResult.IsSuccess)
+            {
                 return validationResult;
+            }
 
             try
             {
-                var entity = _mapper.Map<MaterialEntity>(dto)
+                MaterialEntity entity = _mapper.Map<MaterialEntity>(dto)
                     ?? throw new InvalidOperationException("Mapping resulted in null MaterialEntity.");
 
-                var created = await _repository.CreateMaterialAsync(entity);
+                MaterialEntity? created = await _repository.CreateMaterialAsync(entity);
                 if (created == null)
+                {
                     return ValidationResult<MaterialEntity>.Failure(
                         new[] { new ValidationError("Repository", "Failed to create material.") });
+                }
 
                 _logger.LogInformation("Material {Reference} created.", created.Reference);
                 return ValidationResult<MaterialEntity>.Success(created, "Material created successfully.");
@@ -73,27 +78,30 @@ namespace a2p.Application.Services
         public async Task<ValidationResult<MaterialEntity>> UpdateMaterialAsync(MaterialDto dto)
         {
             // Step 1. Validate
-            var validation = await _validator.ValidateAsync(dto);
-            var validationResult = validation.ToValidationResult<MaterialEntity>();
+            ValidationResult validation = await _validator.ValidateAsync(dto);
+            ValidationResult<MaterialEntity> validationResult = validation.ToValidationResult<MaterialEntity>();
             if (!validationResult.IsSuccess)
+            {
                 return validationResult;
+            }
 
             try
             {
-                var material = _mapper.Map<MaterialEntity>(dto)
+                MaterialEntity material = _mapper.Map<MaterialEntity>(dto)
                     ?? throw new InvalidOperationException("Mapping resulted in null MaterialEntity.");
 
                 // Repository provides GetMaterialAsync by id
-                var existing = await _repository.GetMaterialAsync(material.Id);
+                MaterialEntity? existing = await _repository.GetMaterialAsync(material.Id);
                 if (existing == null)
+                {
                     return ValidationResult<MaterialEntity>.Failure(
                         new[] { new ValidationError(nameof(dto.Id), "Material not found.") });
+                }
 
                 material.ModifiedUTCDateTime = DateTime.UtcNow;
 
-
                 // MaterialRepository.UpdateMaterialAsync returns updated material (nullable)
-                var updated = await _repository.UpdateMaterialAsync(material);
+                int updated = await _repository.UpdateMaterialAsync(material);
                 if (updated == 0)
                 {
                     return ValidationResult<MaterialEntity>.Failure(
@@ -121,7 +129,7 @@ namespace a2p.Application.Services
         {
             try
             {
-                var material = await _repository.GetMaterialAsync(id);
+                MaterialEntity? material = await _repository.GetMaterialAsync(id);
                 return material == null
                     ? Result<MaterialEntity>.Failure($"Material {id} not found.")
                     : Result<MaterialEntity>.Success(material);
@@ -138,9 +146,8 @@ namespace a2p.Application.Services
         {
             try
             {
-                var materials = await _repository.GetOrderMaterialsAsync(id, page, size);
+                (IEnumerable<MaterialEntity> Materials, int TotalCount) materials = await _repository.GetOrderMaterialsAsync(id, page, size);
                 return PagedResult<IEnumerable<MaterialEntity>?>.Failure($"Materials for order '{id}' not found.");
-
 
             }
             catch (Exception ex)
@@ -155,7 +162,7 @@ namespace a2p.Application.Services
         {
             try
             {
-                var (materials, total) = await _repository.GetMaterialsAsync(page, size);
+                (IEnumerable<MaterialEntity>? materials, int total) = await _repository.GetMaterialsAsync(page, size);
 
                 return PagedResult<MaterialEntity>.Success(materials, total, page, size);
             }
@@ -171,12 +178,12 @@ namespace a2p.Application.Services
         {
             try
             {
-                var existing = await _repository.GetMaterialAsync(id);
+                MaterialEntity? existing = await _repository.GetMaterialAsync(id);
                 if (existing == null)
                 {
                     return Result<bool>.Failure($"Order {id} not found");
                 }
-                var rows = await _repository.DeleteMaterialsdAsync(id);
+                int rows = await _repository.DeleteMaterialsdAsync(id);
                 return rows == 0
                     ? Result<bool>.Failure("Failed to delete order.")
                     : Result<bool>.Success(true, "Order deleted successfully.");
@@ -187,7 +194,6 @@ namespace a2p.Application.Services
                 return Result<bool>.Failure("Error deleting order.");
             }
         }
-
 
     }
 }

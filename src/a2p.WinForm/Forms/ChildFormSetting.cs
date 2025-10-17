@@ -44,7 +44,7 @@ namespace a2p.WinForm.Forms
             chxLoadOnStart.CheckedChanged += OnSettingChanged;
             chxTrusted.CheckedChanged += OnSettingChanged;
             cbxLogLevel.SelectedIndexChanged += OnSettingChanged;
-            _currentSettings = _settingsService.LoadSettings();
+            _currentSettings = _settingsService.GetAppSettings();
         }
 
         private void SettingForm_Load(object sender, EventArgs e)
@@ -144,8 +144,8 @@ namespace a2p.WinForm.Forms
                 }
 
                 // Save settings asynchronously
-                await Task.Run(() => _settingsService.SaveSettings(_currentSettings));
-                await Task.Run(() => _settingsService.SaveConnectionString(BuildConnectionStringFromForm()));
+                await Task.Run(() => _settingsService.SetAppSettings(_currentSettings));
+                await Task.Run(() => _settingsService.SetConnectionString(BuildConnectionStringFromForm()));
 
                 // Update UI controls on the UI thread
                 if (InvokeRequired)
@@ -202,7 +202,7 @@ namespace a2p.WinForm.Forms
             txbLogFolder.Text = string.IsNullOrEmpty(settings.Folders.Log.ToString()) == true
                ? "Log" : settings.Folders.Log.ToString();
 
-            cbxLogLevel.SelectedItem = _settingsService.LoadSerilogMinimumLevel();
+            cbxLogLevel.SelectedItem = _settingsService.GetSerilogLevel();
             chxTrusted.Checked = IsIntegratedSecurityEnabled();
             txbServerName.Text = ExtractValueFromConnectionString("Data Source");
             txbDatabaseName.Text = ExtractValueFromConnectionString("Initial Catalog");
@@ -224,7 +224,7 @@ namespace a2p.WinForm.Forms
         {
             try
             {
-                using var connection = new SqlConnection(connectionString);
+                using SqlConnection connection = new(connectionString);
                 connection.Open();
                 error = string.Empty;
                 return true;
@@ -252,7 +252,7 @@ namespace a2p.WinForm.Forms
         {
             try
             {
-                var builder = new SqlConnectionStringBuilder
+                SqlConnectionStringBuilder builder = new()
                 {
                     DataSource = txbServerName.Text,
                     InitialCatalog = txbDatabaseName.Text,
@@ -284,7 +284,7 @@ namespace a2p.WinForm.Forms
         public string ExtractValueFromConnectionString(string key)
         {
             string settingsJson = System.IO.File.ReadAllText(_settingsService.GetSettingsFilePath());
-            var jsonDoc = JsonDocument.Parse(settingsJson);
+            JsonDocument jsonDoc = JsonDocument.Parse(settingsJson);
 
             if (!jsonDoc.RootElement.TryGetProperty("ConnectionStrings", out JsonElement connectionStrings))
             {

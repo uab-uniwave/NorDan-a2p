@@ -8,6 +8,7 @@ using a2p.Domain.Shared;
 using AutoMapper;
 
 using FluentValidation;
+using FluentValidation.Results;
 
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
@@ -37,19 +38,23 @@ namespace a2p.Application.Services
         public async Task<ValidationResult<OrderEntity>> CreateOrderAsync(OrderDto dto)
         {
             // Step 1. Validate input
-            var validation = await _validator.ValidateAsync(dto);
-            var validationResult = validation.ToValidationResult<OrderEntity>();
+            ValidationResult validation = await _validator.ValidateAsync(dto);
+            ValidationResult<OrderEntity> validationResult = validation.ToValidationResult<OrderEntity>();
             if (!validationResult.IsSuccess)
+            {
                 return validationResult;
+            }
 
             try
             {
-                var entity = _mapper.Map<OrderEntity>(dto)
+                OrderEntity entity = _mapper.Map<OrderEntity>(dto)
                 ?? throw new InvalidOperationException("Mapping resulted in null OrderEntity.");
-                var created = await _repository.CreateOrderAsync(entity);
+                OrderEntity? created = await _repository.CreateOrderAsync(entity);
                 if (created == null)
+                {
                     return ValidationResult<OrderEntity>.Failure(
                         new[] { new ValidationError("Repository", "Failed to create order.") });
+                }
 
                 _logger.LogInformation("Order {OrderNumber} created.", created.OrderNumber);
                 return ValidationResult<OrderEntity>.Success(created, "Order created successfully.");
@@ -72,26 +77,32 @@ namespace a2p.Application.Services
         public async Task<ValidationResult<OrderEntity>> UpdateOrderAsync(OrderDto dto)
         {
             // Step 1. Validate
-            var validation = await _validator.ValidateAsync(dto);
-            var validationResult = validation.ToValidationResult<OrderEntity>();
+            ValidationResult validation = await _validator.ValidateAsync(dto);
+            ValidationResult<OrderEntity> validationResult = validation.ToValidationResult<OrderEntity>();
             if (!validationResult.IsSuccess)
+            {
                 return validationResult;
+            }
 
             try
             {
-                var entity = _mapper.Map<OrderEntity>(dto);
+                OrderEntity entity = _mapper.Map<OrderEntity>(dto);
 
-                var existing = await _repository.GetOrderAsync(entity.Id);
+                OrderEntity? existing = await _repository.GetOrderAsync(entity.Id);
                 if (existing == null)
+                {
                     return ValidationResult<OrderEntity>.Failure(
                         new[] { new ValidationError(nameof(dto.Id), "Order not found.") });
+                }
 
                 entity.ModifiedUTCDateTime = DateTime.UtcNow;
 
-                var rows = await _repository.UpdateOrderAsync(entity);
+                int rows = await _repository.UpdateOrderAsync(entity);
                 if (rows == 0)
+                {
                     return ValidationResult<OrderEntity>.Failure(
                         new[] { new ValidationError("Repository", "Failed to update order.") });
+                }
 
                 _logger.LogInformation("Order {OrderNumber} updated successfully.", entity.OrderNumber);
                 return ValidationResult<OrderEntity>.Success(entity, "Order updated successfully.");
@@ -115,7 +126,7 @@ namespace a2p.Application.Services
         {
             try
             {
-                var order = await _repository.GetOrderAsync(id);
+                OrderEntity? order = await _repository.GetOrderAsync(id);
                 return order == null
                     ? Result<OrderEntity>.Failure($"Order {id} not found.")
                     : Result<OrderEntity>.Success(order);
@@ -127,13 +138,12 @@ namespace a2p.Application.Services
             }
         }
 
-
         // PAGED
         public async Task<PagedResult<OrderEntity>> GetOrdersAsync(int page, int size)
         {
             try
             {
-                var (orders, total) = await _repository.GetOrdersAsync(page, size);
+                (IEnumerable<OrderEntity>? orders, int total) = await _repository.GetOrdersAsync(page, size);
                 return PagedResult<OrderEntity>.Success(orders, total, page, size);
             }
             catch (Exception ex)
@@ -148,11 +158,13 @@ namespace a2p.Application.Services
         {
             try
             {
-                var existing = await _repository.GetOrderAsync(id);
+                OrderEntity? existing = await _repository.GetOrderAsync(id);
                 if (existing == null)
+                {
                     return Result<bool>.Failure($"Order {id} not found.");
+                }
 
-                var rows = await _repository.UpdateOrderDeliveryAddressAsync(id, deliveryAddress);
+                int rows = await _repository.UpdateOrderDeliveryAddressAsync(id, deliveryAddress);
                 return rows == 0
                     ? Result<bool>.Failure("Failed to update delivery address.")
                     : Result<bool>.Success(true, "Delivery address updated.");
@@ -169,12 +181,12 @@ namespace a2p.Application.Services
         {
             try
             {
-                var existing = await _repository.GetOrderAsync(id);
+                OrderEntity? existing = await _repository.GetOrderAsync(id);
                 if (existing == null)
                 {
                     return Result<bool>.Failure($"Order {id} not found.");
                 }
-                var rows = await _repository.DeleteOrderAsync(id);
+                int rows = await _repository.DeleteOrderAsync(id);
                 return rows == 0
                     ? Result<bool>.Failure("Failed to delete order.")
                     : Result<bool>.Success(true, "Order deleted successfully.");

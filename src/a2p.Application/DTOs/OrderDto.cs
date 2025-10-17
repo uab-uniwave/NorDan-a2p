@@ -30,27 +30,24 @@ namespace a2p.Application.DTOs
         public string ErrorList { get; set; } = string.Empty;
         public bool Import { get; set; } = false;
 
-
         public int TotalQuantity { get; set; } = 0;
 
-        public Decimal TotalUnits { get; set; }
+        public decimal TotalUnits { get; set; }
 
-        public Decimal TotalWeight { get; set; } = 0;
-        public Decimal TotalWeightWithoutGlass { get; set; } = 0;
-        public Decimal TotalWeightGlass { get; set; } = 0;
-        public Decimal TotalArea { get; set; } = 0;
-        public Decimal TotalHours { get; set; } = 0;
-        public Decimal TotalMaterialCost { get; set; } = 0;
-        public Decimal TotalLaborCost { get; set; } = 0;
-        public Decimal TotalCost { get; set; } = 0;
-        public Decimal TotalPrice { get; set; } = 0;
+        public decimal TotalWeight { get; set; } = 0;
+        public decimal TotalWeightWithoutGlass { get; set; } = 0;
+        public decimal TotalWeightGlass { get; set; } = 0;
+        public decimal TotalArea { get; set; } = 0;
+        public decimal TotalHours { get; set; } = 0;
+        public decimal TotalMaterialCost { get; set; } = 0;
+        public decimal TotalLaborCost { get; set; } = 0;
+        public decimal TotalCost { get; set; } = 0;
+        public decimal TotalPrice { get; set; } = 0;
         public double ExchangeRate { get; set; }
         public DateOnly ExchangeRateDate { get; set; }
 
         public bool DeleteExistsing { get; set; } = false;
         public SourceAppType SourceAppType { get; set; } = SourceAppType.Unknown;
-
-
 
     }
 }

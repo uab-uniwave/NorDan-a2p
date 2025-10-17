@@ -1,7 +1,5 @@
 namespace a2p.Application.DTOs
 
-
-
 {
     public class ApiExcelExcelOrderDto
     {

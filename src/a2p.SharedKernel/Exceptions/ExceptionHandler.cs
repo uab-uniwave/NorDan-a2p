@@ -4,8 +4,6 @@ using a2p.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-
-
 namespace a2p.SharedKernel.Exceptions
 {
     public static class ExceptionHandler

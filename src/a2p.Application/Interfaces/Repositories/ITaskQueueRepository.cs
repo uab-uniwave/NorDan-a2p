@@ -6,7 +6,6 @@ namespace a2p.Application.Interfaces.Repositories
     public interface ITaskQueueRepository
     {
 
-
         Task<TaskEntity?> CreateTaskAsync(TaskEntity order);
 
         // READ BY ID
@@ -25,7 +24,6 @@ namespace a2p.Application.Interfaces.Repositories
 
         // DELETE
         Task<int> DeleteTaskByIdAsync(Guid id);
-
 
     }
 }

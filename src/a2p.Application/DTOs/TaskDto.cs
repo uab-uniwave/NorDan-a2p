@@ -3,7 +3,6 @@ namespace a2p.Application.DTOs
     public class TaskDto
     {
 
-
         public Guid Id { get; set; } = Guid.Empty;
         public string? OrderNumber { get; set; } = string.Empty;
         public Guid? OrderId { get; set; } = Guid.Empty;

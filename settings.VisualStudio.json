@@ -1,0 +1,13 @@
+/* Visual Studio Settings File */
+{
+  "textEditor.codeCleanup.profile": "profile1",
+  "languages.cpp.codeCleanup.includeCleanup.removeUnusedSuggestionLevel": "dimmed",
+  "languages.cpp.codeCleanup.includeCleanup.optimizeUnusedSuggestionLevel": "suggestion",
+  "languages.cpp.codeCleanup.includeCleanup.addMissingSuggestionLevel": "warning",
+  "languages.cpp.codeCleanup.includeCleanup.sortAfterEdits": true,
+  "languages.cpp.codeCleanup.includeCleanup.formatAfterEdits": true,
+  "languages.cpp.codeCleanup.sortIncludes.suggestionLevel": "suggestion",
+  "languages.cpp.codeCleanup.sortIncludes.priorityCaseSensitive": true,
+  "languages.csharp.general.wordWrap": false,
+  "languages.csharp.general.virtualSpace": true
+}

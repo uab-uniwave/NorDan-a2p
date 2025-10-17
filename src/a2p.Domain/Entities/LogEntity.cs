@@ -1,7 +1,7 @@
 namespace a2p.Domain.Entities
 {
 
-    public class LogRecord
+    public class LogEntity
     {
         public string Timestamp { get; set; } = string.Empty;
         public string Level { get; set; } = string.Empty;

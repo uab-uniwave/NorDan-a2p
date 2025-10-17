@@ -1,4 +1,4 @@
-namespace a2p.Application.Interfaces.Excel.Files
+namespace a2p.Application.Interfaces.Files
 {
 
     public interface IFileService
@@ -12,7 +12,6 @@ namespace a2p.Application.Interfaces.Excel.Files
         string GetSuccessFolder();
         string GetLogFolder();
 
-
         List<string>? GetFiles();
 
         List<Models.File> GetOrderFiles(string order);
@@ -20,8 +19,6 @@ namespace a2p.Application.Interfaces.Excel.Files
         bool IsLocked(string filePath);
 
         void MoveOrderFiles(List<string> files, bool success);
-
-
 
     }
 }

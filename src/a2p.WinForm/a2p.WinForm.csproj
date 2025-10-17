@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
  <PropertyGroup>
  <OutputType>WinExe</OutputType>
@@ -22,92 +22,106 @@
 
 
   <ItemGroup>
-    <Compile Remove="ThemeColor.cs" />
+	<Compile Remove="ThemeColor.cs" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+	<None Remove="appsettings.Development.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <COMReference Include="PrefSales">
-      <WrapperTool>tlbimp</WrapperTool>
-      <VersionMinor>0</VersionMinor>
-      <VersionMajor>1</VersionMajor>
-      <Guid>c1694be9-8281-4ae9-805c-f536fbc09377</Guid>
-      <Lcid>0</Lcid>
-      <Isolated>false</Isolated>
-      <EmbedInteropTypes>true</EmbedInteropTypes>
-    </COMReference>
+	<COMReference Include="PrefSales">
+	  <WrapperTool>tlbimp</WrapperTool>
+	  <VersionMinor>0</VersionMinor>
+	  <VersionMajor>1</VersionMajor>
+	  <Guid>c1694be9-8281-4ae9-805c-f536fbc09377</Guid>
+	  <Lcid>0</Lcid>
+	  <Isolated>false</Isolated>
+	  <EmbedInteropTypes>true</EmbedInteropTypes>
+	</COMReference>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.9" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.9" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.9" />
-    <PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="9.0.9" />
-    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
-    <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
-    <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
-    <PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
-    <PackageReference Include="Serilog.Expressions" Version="5.1.0-dev-00186" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.1-dev-02308" />
-    <PackageReference Include="Serilog.Extensions.Logging.File" Version="9.0.0-dev-02302" />
-    <PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
-    <PackageReference Include="Serilog.Formatting.Compact.Reader" Version="4.1.0-dev-00085" />
-    <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-    <PackageReference Include="Serilog.Sinks.EventLog" Version="4.0.1-dev-00087" />
-    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
-    <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.9" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.9" />
+	<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.9" />
+	<PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="9.0.9" />
+	<PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+	<PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+	<PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+	<PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
+	<PackageReference Include="Serilog.Expressions" Version="5.1.0-dev-00186" />
+	<PackageReference Include="Serilog.Extensions.Logging" Version="9.0.1-dev-02308" />
+	<PackageReference Include="Serilog.Extensions.Logging.File" Version="9.0.0-dev-02302" />
+	<PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
+	<PackageReference Include="Serilog.Formatting.Compact.Reader" Version="4.1.0-dev-00085" />
+	<PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
+	<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+	<PackageReference Include="Serilog.Sinks.EventLog" Version="4.0.1-dev-00087" />
+	<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+	<PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
+	<Compile Update="Properties\Resources.Designer.cs">
+	  <DesignTime>True</DesignTime>
+	  <AutoGen>True</AutoGen>
+	  <DependentUpon>Resources.resx</DependentUpon>
+	</Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+	<EmbeddedResource Update="Properties\Resources.resx">
+	  <Generator>PublicResXFileCodeGenerator</Generator>
+	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	</EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="..\a2p.Shared\appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+	<None Update="..\a2p.Shared\appsettings.json">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="appsettings.json">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</None>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Resources\" />
+	<Folder Include="Resources\" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\a2p.GraphicAssets\Icons\AppIcons\128_128.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="Forms\FormSplashScreen.cs" />
+	<None Include="..\a2p.GraphicAssets\Icons\AppIcons\128_128.png">
+	  <Pack>True</Pack>
+	  <PackagePath>\</PackagePath>
+	</None>
+	<None Include="Forms\FormSplashScreen.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\a2p.Application\a2p.Application.csproj" />
-    <ProjectReference Include="..\a2p.Domain\a2p.Domain.csproj" />
-    <ProjectReference Include="..\a2p.Infrastructure\a2p.Infrastructure.csproj" />
+	<None Include="appsettings.Development.json">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</None>
+  </ItemGroup>
+
+  <ItemGroup>
+	<ProjectReference Include="..\a2p.Application\a2p.Application.csproj" />
+	<ProjectReference Include="..\a2p.Domain\a2p.Domain.csproj" />
+	<ProjectReference Include="..\a2p.Infrastructure\a2p.Infrastructure.csproj" />
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <!-- Create necessary directories first -->
-    <MakeDir Directories="$(OutputPath)\SQL" />
-    <MakeDir Directories="$(OutputPath)\Excel" />
-    <MakeDir Directories="$(OutputPath)\PrefSuiteBackup" />
+	<!-- Create necessary directories first -->
+	<MakeDir Directories="$(OutputPath)\SQL" />
+	<MakeDir Directories="$(OutputPath)\Excel" />
+	<MakeDir Directories="$(OutputPath)\PrefSuiteBackup" />
 
-    <!-- Copy files if source directories exist -->
-    <Exec Command="if exist &quot;$(ProjectDir)..\..\src\a2p.DataAssets\SQL&quot; xcopy /Y /I &quot;$(ProjectDir)..\..\src\a2p.DataAssets\SQL&quot; &quot;$(OutputPath)SQL&quot;" IgnoreExitCode="true" />
-    <Exec Command="if exist &quot;$(ProjectDir)..\..\src\a2p.DataAssets\Excel&quot; xcopy /Y /I &quot;$(ProjectDir)..\..\src\a2p.DataAssets\Excel&quot; &quot;$(OutputPath)Excel&quot;" IgnoreExitCode="true" />
-    <Exec Command="if exist &quot;$(ProjectDir)..\..\src\a2p.DataAssets\PrefSuiteBackup&quot; xcopy /Y /I &quot;$(ProjectDir)..\..\src\a2p.DataAssets\PrefSuiteBackup&quot; &quot;$(OutputPath)PrefSuiteBackup&quot;" IgnoreExitCode="true" />
-    <Exec Command="if exist &quot;$(ProjectDir)..\..\README.md&quot; xcopy /Y /I &quot;$(ProjectDir)..\..\README.md&quot; &quot;$(OutputPath)&quot;" IgnoreExitCode="true" />
+	<!-- Copy files if source directories exist -->
+	<Exec Command="if exist &quot;$(ProjectDir)..\..\src\a2p.DataAssets\SQL&quot; xcopy /Y /I &quot;$(ProjectDir)..\..\src\a2p.DataAssets\SQL&quot; &quot;$(OutputPath)SQL&quot;" IgnoreExitCode="true" />
+	<Exec Command="if exist &quot;$(ProjectDir)..\..\src\a2p.DataAssets\Excel&quot; xcopy /Y /I &quot;$(ProjectDir)..\..\src\a2p.DataAssets\Excel&quot; &quot;$(OutputPath)Excel&quot;" IgnoreExitCode="true" />
+	<Exec Command="if exist &quot;$(ProjectDir)..\..\src\a2p.DataAssets\PrefSuiteBackup&quot; xcopy /Y /I &quot;$(ProjectDir)..\..\src\a2p.DataAssets\PrefSuiteBackup&quot; &quot;$(OutputPath)PrefSuiteBackup&quot;" IgnoreExitCode="true" />
+	<Exec Command="if exist &quot;$(ProjectDir)..\..\README.md&quot; xcopy /Y /I &quot;$(ProjectDir)..\..\README.md&quot; &quot;$(OutputPath)&quot;" IgnoreExitCode="true" />
   </Target>
 
 </Project>

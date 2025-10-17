@@ -11,6 +11,4 @@ namespace a2p.Application.Interfaces.Excel
 
     }
 
-
-
 }

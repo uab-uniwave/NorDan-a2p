@@ -4,7 +4,6 @@ namespace a2p.Application.DTOs
 {
     public class ErrorEntity
 
-
     {
 
         public Guid Id { get; set; } = Guid.NewGuid();

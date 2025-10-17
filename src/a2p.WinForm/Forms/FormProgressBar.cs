@@ -1,6 +1,6 @@
-using a2p.Application.Models;
-
 using System.Drawing.Drawing2D;
+
+using a2p.Application.Models;
 namespace a2p.WinForm.Forms
 {
     public partial class FormProgressBar : Form
@@ -61,14 +61,10 @@ namespace a2p.WinForm.Forms
             progressBar.Maximum = 100;
             if (progressValue.CurrentValue > 0 && progressValue.TotalValue > 0)
             {
-                progressValue.Value = (progressValue.CurrentValue) * 100 / progressValue.TotalValue;
+                progressValue.Value = progressValue.CurrentValue * 100 / progressValue.TotalValue;
             }
 
-            if (progressValue.Value > 100)
-            {
-                progressBar.Value = 100;
-            }
-            else { progressBar.Value = (int)progressValue.Value; }
+            progressBar.Value = progressValue.Value > 100 ? 100 : (int)progressValue.Value;
 
             lbProgressBarTitle.Text = progressValue.ProgressTitle ?? string.Empty;
             lbProgressBarTask1.Text = progressValue.ProgressTask1 ?? string.Empty;

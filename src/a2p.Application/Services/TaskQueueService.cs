@@ -24,9 +24,11 @@ namespace a2p.Application.Services
             try
             {
                 task.CreatedUTCDateTime = DateTime.UtcNow;
-                var created = await _repo.CreateTaskAsync(task);
+                TaskEntity? created = await _repo.CreateTaskAsync(task);
                 if (created == null || created.Id == Guid.Empty)
+                {
                     return Result<TaskEntity>.Failure("Failed to create task.");
+                }
 
                 _logger.LogInformation("Task for Order {OrderNumber} created.", created.OrderNumber);
                 return Result<TaskEntity>.Success(created, "Task created successfully.");
@@ -42,7 +44,7 @@ namespace a2p.Application.Services
         {
             try
             {
-                var task = await _repo.GetTaskByIdAsync(id);
+                TaskEntity? task = await _repo.GetTaskByIdAsync(id);
                 return task == null
                     ? Result<TaskEntity>.Failure($"Task {id} not found.")
                     : Result<TaskEntity>.Success(task);
@@ -58,7 +60,7 @@ namespace a2p.Application.Services
         {
             try
             {
-                var task = await _repo.GetTaskByOrderNumberAsync(orderNumber);
+                TaskEntity? task = await _repo.GetTaskByOrderNumberAsync(orderNumber);
                 return task == null
                     ? Result<TaskEntity>.Failure($"Task for order '{orderNumber}' not found.")
                     : Result<TaskEntity>.Success(task);
@@ -74,7 +76,7 @@ namespace a2p.Application.Services
         {
             try
             {
-                var (tasks, total) = await _repo.GetPageTasksAsync(page, size);
+                (IEnumerable<TaskEntity>? tasks, int total) = await _repo.GetPageTasksAsync(page, size);
                 return PagedResult<TaskEntity>.Success(tasks, total, page, size);
             }
             catch (Exception ex)
@@ -88,7 +90,7 @@ namespace a2p.Application.Services
         {
             try
             {
-                var rows = await _repo.UpdateTaskStateAsync(id, state);
+                int rows = await _repo.UpdateTaskStateAsync(id, state);
                 return rows == 0
                     ? Result<bool>.Failure("Failed to update task state.")
                     : Result<bool>.Success(true, "Task state updated.");
@@ -104,7 +106,7 @@ namespace a2p.Application.Services
         {
             try
             {
-                var rows = await _repo.DeleteTaskByIdAsync(id);
+                int rows = await _repo.DeleteTaskByIdAsync(id);
                 return rows == 0
                     ? Result<bool>.Failure("Failed to delete task.")
                     : Result<bool>.Success(true, "Task deleted successfully.");

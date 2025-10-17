@@ -36,8 +36,6 @@ namespace a2p.Application.Mapping
                 // Source app type
                 .ForMember(dest => dest.SourceAppType, opt => opt.MapFrom(src => src.SourceAppType));
 
-
-
         }
     }
 }

@@ -36,11 +36,37 @@ namespace a2p.Infrastructure.Services.SettingsService
             }
 
         }
+        public string GetSettingsFilePath() => _settingsFile;
+        public AppSettings GetAppSettings()
+        {
+            AppSettings settings = new();
+            IConfigurationRoot config = new ConfigurationBuilder()
+                .AddJsonFile(_settingsFile, optional: false, reloadOnChange: false)
+                .Build();
 
-        public void SaveSettings(AppSettings updatedAppSettings)
+            config.GetSection("AppSettings").Bind(settings);
+            return settings;
+        }
+        public string GetConnectionString()
         {
             string jsonText = System.IO.File.ReadAllText(_settingsFile);
-            var fullJson = JsonNode.Parse(jsonText) as JsonObject;
+            JsonNode? json = JsonNode.Parse(jsonText);
+
+            return json?["ConnectionStrings"]?["DefaultConnection"]?.ToString() ?? string.Empty;
+        }
+
+        public string GetSerilogLevel()
+        {
+            string jsonText = System.IO.File.ReadAllText(_settingsFile);
+            JsonNode? json = JsonNode.Parse(jsonText);
+
+            return json?["Serilog"]?["MinimumLevel"]?["Default"]?.ToString() ?? "Information";
+        }
+
+        public void SetAppSettings(AppSettings updatedAppSettings)
+        {
+            string jsonText = System.IO.File.ReadAllText(_settingsFile);
+            JsonObject? fullJson = JsonNode.Parse(jsonText) as JsonObject;
 
             fullJson ??= [];
 
@@ -48,10 +74,10 @@ namespace a2p.Infrastructure.Services.SettingsService
 
             System.IO.File.WriteAllText(_settingsFile, fullJson.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
         }
-        public void SaveConnectionString(string updatedConnectionString)
+        public void SetConnectionString(string updatedConnectionString)
         {
             string jsonText = System.IO.File.ReadAllText(_settingsFile);
-            var fullJson = JsonNode.Parse(jsonText) as JsonObject;
+            JsonObject? fullJson = JsonNode.Parse(jsonText) as JsonObject;
 
             fullJson ??= [];
 
@@ -66,9 +92,9 @@ namespace a2p.Infrastructure.Services.SettingsService
             System.IO.File.WriteAllText(_settingsFile, fullJson.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
         }
 
-        public Application.Models.SettingsContainer LoadAllSettings()
+        public Application.Models.SettingsContainer GetSettings()
         {
-            var settings = new Application.Models.SettingsContainer();
+            SettingsContainer settings = new();
             IConfigurationRoot config = new ConfigurationBuilder()
                 .AddJsonFile(_settingsFile, optional: false, reloadOnChange: true)
                 .Build();
@@ -77,29 +103,14 @@ namespace a2p.Infrastructure.Services.SettingsService
             return settings;
         }
 
-        public AppSettings LoadSettings()
-        {
-            var settings = new AppSettings();
-            IConfigurationRoot config = new ConfigurationBuilder()
-                .AddJsonFile(_settingsFile, optional: false, reloadOnChange: false)
-                .Build();
 
-            config.GetSection("AppSettings").Bind(settings);
-            return settings;
-        }
 
-        public string LoadSerilogMinimumLevel()
+
+
+        public void SetSerilogLevel(string level)
         {
             string jsonText = System.IO.File.ReadAllText(_settingsFile);
-            var json = JsonNode.Parse(jsonText);
-
-            return json?["Serilog"]?["MinimumLevel"]?["Default"]?.ToString() ?? "Information";
-        }
-
-        public void SaveSerilogMinimumLevel(string level)
-        {
-            string jsonText = System.IO.File.ReadAllText(_settingsFile);
-            var json = JsonNode.Parse(jsonText) as JsonObject;
+            JsonObject? json = JsonNode.Parse(jsonText) as JsonObject;
 
             json ??= [];
 
@@ -120,6 +131,5 @@ namespace a2p.Infrastructure.Services.SettingsService
             System.IO.File.WriteAllText(_settingsFile, json.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
         }
 
-        public string GetSettingsFilePath() => _settingsFile;
     }
 }

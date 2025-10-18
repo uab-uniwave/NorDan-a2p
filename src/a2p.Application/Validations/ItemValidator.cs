@@ -17,7 +17,7 @@ namespace a2p.Application.Validations
                 .MaximumLength(50).WithMessage("ItemName too long, max length 50.");
 
             RuleFor(x => x.Worksheet)
-                .MaximumLength(255).WithMessage("Worksheet too long, max length 255.");
+                .MaximumLength(255).WithMessage("WorksheetDto too long, max length 255.");
 
             RuleFor(x => x.Line)
                 .GreaterThanOrEqualTo(0).WithMessage("Line must be greater than or equal to 0.");

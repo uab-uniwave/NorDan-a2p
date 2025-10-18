@@ -8,13 +8,16 @@ namespace a2p.Application.DTOs
         public Guid Id { get; set; } = Guid.NewGuid();
         public string OrderNumber { get; set; } = string.Empty;
         public string? ProjectNumber { get; set; }
-        public PrefOrderDto SalesDocument { get; set; } = new PrefOrderDto();
-        public int SalesDocumentState { get; set; } = -1;
+        public SalesDocumentDto SalesDocumentDto { get; set; } = new();
 
-        public List<Models.File> Files { get; set; } = [];
+        public List<FileDto> FilesDto { get; set; } = [];
+        public List<WorksheetDto> WorksheetsDto { get; set; } = [];
         public List<ItemDto> ItemsDto { get; set; } = [];
-        public List<ErrorEntity> ErrorsDto { get; set; } = [];
+
         public List<MaterialDto> MaterialsDto { get; set; } = [];
+
+        public List<ErrorDto> ErrorsDto { get; set; } = [];
+
         public string Currency { get; set; } = string.Empty;
 
         public int LockedCount { get; set; } = 0;
@@ -23,7 +26,7 @@ namespace a2p.Application.DTOs
         public int FileCount { get; set; } = 0;
         public string FileList { get; set; } = string.Empty;
         public int WorksheetCount { get; set; } = 0;
-        public List<Worksheet> Worksheets { get; set; } = [];
+
         public int ItemCount { get; set; } = 0;
         public int MaterialCount { get; set; } = 0;
         public int ErrorCount { get; set; } = 0;

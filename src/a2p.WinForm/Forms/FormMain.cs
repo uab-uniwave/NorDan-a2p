@@ -92,8 +92,8 @@ namespace a2p.WinForm.Forms
 
         private void InitializeToolTips()
         {
-            _toolTip.SetToolTip(btnLoad, "Refresh Files");
-            _toolTip.SetToolTip(btnImport, "Import Files");
+            _toolTip.SetToolTip(btnLoad, "Refresh FilesDto");
+            _toolTip.SetToolTip(btnImport, "Import FilesDto");
             _toolTip.SetToolTip(btnLog, "Refresh Logs");
             _toolTip.SetToolTip(btnProperties, "Settings");
             _toolTip.SetToolTip(btnExit, "Exit");
@@ -280,7 +280,7 @@ namespace a2p.WinForm.Forms
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error loading image resource '{imageName}': {ex.Message}");
+                _logger.LogError($"ErrorDto loading image resource '{imageName}': {ex.Message}");
                 return null;
             }
         }
@@ -317,7 +317,7 @@ namespace a2p.WinForm.Forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred during the import: {ex.Message}", "Error",
+                MessageBox.Show($"An error occurred during the import: {ex.Message}", "ErrorDto",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
@@ -348,7 +348,7 @@ namespace a2p.WinForm.Forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred during the import: {ex.Message}", "Error",
+                MessageBox.Show($"An error occurred during the import: {ex.Message}", "ErrorDto",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
@@ -374,7 +374,7 @@ namespace a2p.WinForm.Forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred refreshing logs: {ex.Message}", "Error",
+                MessageBox.Show($"An error occurred refreshing logs: {ex.Message}", "ErrorDto",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally

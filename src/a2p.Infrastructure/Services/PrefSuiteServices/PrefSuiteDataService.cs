@@ -28,7 +28,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
 
             if (number < 1 || version < 1)
             {
-                _logger.LogDebug("{$Class}.{$Method}. Error getting sales document state. Number {$Number} or version {$Version} are wrong.",
+                _logger.LogDebug("{$Class}.{$Method}. ErrorDto getting sales document state. Number {$Number} or version {$Version} are wrong.",
                        nameof(PrefSuiteDataService),
                 nameof(GetSalesDocumentStateAsync), number, version);
                 return state;
@@ -55,7 +55,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
             catch (Exception ex)
             {
                 _logger.LogDebug(
-                "{$Class}.{$Method}. Unhandled error in {$Class}. {$Method}. Error getting order state for sales document. Exception: {Exception}.",
+                "{$Class}.{$Method}. Unhandled error in {$Class}. {$Method}. ErrorDto getting order state for sales document. Exception: {Exception}.",
                 nameof(PrefSuiteDataService),
                 nameof(GetSalesDocumentStateAsync),
                  ex.Message
@@ -108,7 +108,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
             if (string.IsNullOrEmpty(description))
             {
 
-                _logger.LogInformation("{$Class}.{$Method}. Error getting glass reference. Provided glass description is missing.",
+                _logger.LogInformation("{$Class}.{$Method}. ErrorDto getting glass reference. Provided glass description is missing.",
                   nameof(PrefSuiteDataService),
                       nameof(GetGlassReferenceAsync));
                 return null;
@@ -122,7 +122,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
 
                 if (result == null)
                 {
-                    _logger.LogDebug("{$Class}.{$Method}. Error getting glass reference. Glass with description {$Description} not found coresponding glass reference in PrefSuite DB.",
+                    _logger.LogDebug("{$Class}.{$Method}. ErrorDto getting glass reference. Glass with description {$Description} not found coresponding glass reference in PrefSuite DB.",
                       nameof(PrefSuiteDataService),
                       nameof(GetGlassReferenceAsync),
                       description);
@@ -133,7 +133,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
 
                 if (string.IsNullOrEmpty(glassReference))
                 {
-                    _logger.LogDebug("{$Class}.{$Method}. Error getting glass reference. Glass with description {$Description} not found coresponding glass reference in PrefSuite DB.",
+                    _logger.LogDebug("{$Class}.{$Method}. ErrorDto getting glass reference. Glass with description {$Description} not found coresponding glass reference in PrefSuite DB.",
                       nameof(PrefSuiteDataService),
                       nameof(GetGlassReferenceAsync),
                       description);
@@ -168,7 +168,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
         {
             if (string.IsNullOrEmpty(sourceReference))
             {
-                _logger.LogInformation("{$Class}.{$Method}. Error getting TechDesign commodity code. Provided sourceReference is missing.",
+                _logger.LogInformation("{$Class}.{$Method}. ErrorDto getting TechDesign commodity code. Provided sourceReference is missing.",
                     nameof(PrefSuiteDataService),
                     nameof(GetCommodityCode));
                 return null;
@@ -190,7 +190,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
             catch (Exception ex)
             {
                 _logger.LogDebug(
-                    "{$Class}.{$Method}. Unhandled error in {$Class}. {$Method}. Error getting TechDesign commodity code. Exception: {Exception}.",
+                    "{$Class}.{$Method}. Unhandled error in {$Class}. {$Method}. ErrorDto getting TechDesign commodity code. Exception: {Exception}.",
                     nameof(PrefSuiteDataService),
                     nameof(GetCommodityCode),
                     ex.Message
@@ -203,7 +203,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
         {
             if (string.IsNullOrEmpty(sourceReference))
             {
-                _logger.LogInformation("{$Class}.{$Method}. Error getting TechDesign Weight. Provided sourceReference is missing.",
+                _logger.LogInformation("{$Class}.{$Method}. ErrorDto getting TechDesign Weight. Provided sourceReference is missing.",
                     nameof(PrefSuiteDataService),
                     nameof(GetTechDesignWeight));
                 return 0;
@@ -225,7 +225,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
             catch (Exception ex)
             {
                 _logger.LogDebug(
-                    "{$Class}.{$Method}. Unhandled error in {$Class}. {$Method}.Error getting TechDesign Weight. Exception: {Exception}.",
+                    "{$Class}.{$Method}. Unhandled error in {$Class}. {$Method}.ErrorDto getting TechDesign Weight. Exception: {Exception}.",
                     nameof(PrefSuiteDataService),
                     nameof(GetTechDesignWeight),
                     ex.Message
@@ -237,7 +237,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
         {
             if (string.IsNullOrEmpty(color))
             {
-                _logger.LogInformation("{$Class}.{$Method}. Error getting Sapa color. Provided color is missing.",
+                _logger.LogInformation("{$Class}.{$Method}. ErrorDto getting Sapa color. Provided color is missing.",
                     nameof(PrefSuiteDataService),
                     nameof(GetSapaColorAsync));
                 return null;
@@ -259,7 +259,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
             catch (Exception ex)
             {
                 _logger.LogDebug(
-                    "{$Class}.{$Method}. Unhandled error in {$Class}. {$Method}. Error getting order state for sales document. Exception: {Exception}.",
+                    "{$Class}.{$Method}. Unhandled error in {$Class}. {$Method}. ErrorDto getting order state for sales document. Exception: {Exception}.",
                     nameof(PrefSuiteDataService),
                     nameof(GetSapaColorAsync),
                     ex.Message
@@ -326,7 +326,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
 
             if (number < 1 || version < 1)
             {
-                _logger.LogError("{$Class}.{$Method}. Error deleting sales document data. Number {$Number} or version {$Version} are wrong.",
+                _logger.LogError("{$Class}.{$Method}. ErrorDto deleting sales document data. Number {$Number} or version {$Version} are wrong.",
                  nameof(PrefSuiteDataService),
                    nameof(DeleteSalesDocumentDataAsync),
                    number,
@@ -352,7 +352,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 catch (Exception ex)
                 {
                     _logger.LogDebug(
-                    "{$Class}.{$Method}. Unhandled error in {$Class}. {$Method}. Error deleting sales document data for sales document {$Number}/{$Version} . Exception: {$Exception}.",
+                    "{$Class}.{$Method}. Unhandled error in {$Class}. {$Method}. ErrorDto deleting sales document data for sales document {$Number}/{$Version} . Exception: {$Exception}.",
                     nameof(PrefSuiteDataService),
                     nameof(DeleteSalesDocumentDataAsync),
                     number,
@@ -400,7 +400,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 _logger.LogError(
                 "{$Class}.{$Method}. Unhandled error." +
                 "\nOrder {$OrderNumber}," +
-                "\nWorksheet {$Worksheet}," +
+                "\nWorksheet {$WorksheetDto}," +
                 "\nLine {$Line}," +
                 "\nReferenceBase {$ReferenceBase}, " +
                 "\nReference {$Reference}," +
@@ -459,7 +459,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 _logger.LogError(
                 "{$Class}.{$Method}. Unhandled error." +
                 "\nOrder {$OrderNumber}," +
-                "\nWorksheet {$Worksheet}," +
+                "\nWorksheet {$WorksheetDto}," +
                 "\nLine {$Line}," +
                 "\nReferenceBase {$ReferenceBase}, " +
                 "\nReference {$Reference}," +
@@ -532,7 +532,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 _logger.LogError(
                 "{$Class}.{$Method}. Unhandled error." +
                 "\nOrder {$OrderNumber}," +
-                "\nWorksheet {$Worksheet}," +
+                "\nWorksheet {$WorksheetDto}," +
                 "\nLine {$Line}," +
                 "\nReferenceBase {$ReferenceBase}, " +
                 "\nReference {$Reference}," +
@@ -603,7 +603,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 _logger.LogError(
                 "{$Class}.{$Method}. Unhandled error." +
                 "\nOrder {$OrderNumber}," +
-                "\nWorksheet {$Worksheet}," +
+                "\nWorksheet {$WorksheetDto}," +
                 "\nLine {$Line}," +
                 "\nReferenceBase {$ReferenceBase}, " +
                 "\nReference {$Reference}," +
@@ -679,7 +679,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 _logger.LogError(
                 "{$Class}.{$Method}. Unhandled error." +
                 "\nOrder {$OrderNumber}," +
-                "\nWorksheet {$Worksheet}," +
+                "\nWorksheet {$WorksheetDto}," +
                 "\nLine {$Line}," +
                 "\nReferenceBase {$ReferenceBase}, " +
                 "\nReference {$Reference}," +
@@ -756,7 +756,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 // _logger.LogError(
                 // "{$Class}.{$Method}. Unhandled error." +
                 // "\nOrder {$OrderNumber}," +
-                // "\nWorksheet {$Worksheet}," +
+                // "\nWorksheet {$WorksheetDto}," +
                 // "\nLine {$Line}," +
                 // "\nReferenceBase {$ReferenceBase}, " +
                 // "\nReference {$Reference}," +
@@ -766,7 +766,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 // nameof(PrefSuiteDataService),
                 // nameof(InsertPrefSuiteMaterialMeterAsync),
                 // material.OrderNumber ?? string.Empty,
-                // material.Worksheet ?? string.Empty,
+                // material.WorksheetDto ?? string.Empty,
                 // material.Line,
                 // material.ReferenceBase ?? string.Empty,
                 // material.Reference ?? string.Empty,
@@ -777,11 +777,11 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 // return new ErrorEntity()
                 // {
                 //     OrderNumber = material.OrderNumber ?? string.Empty,
-                //     Level = ErrorLevel.Error,
+                //     Level = ErrorLevel.ErrorDto,
                 //     Code = ErrorCode.SQL_Data_Write,
                 //     Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteMaterialMeterAsync)}. Unhandled error." +
                 //    $"\nOrder {material.OrderNumber ?? string.Empty}," +
-                //    $"\nWorksheet {material.Worksheet ?? string.Empty}," +
+                //    $"\nWorksheet {material.WorksheetDto ?? string.Empty}," +
                 //    $"\nLine {material.Line}," +
                 //    $"\nReferenceBase {material.ReferenceBase ?? string.Empty}, " +
                 //    $"\nReference {material.Reference ?? string.Empty}," +
@@ -844,7 +844,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 // _logger.LogError(
                 // "{$Class}.{$Method}. Unhandled error." +
                 // "\nOrder {$OrderNumber}," +
-                // "\nWorksheet {$Worksheet}," +
+                // "\nWorksheet {$WorksheetDto}," +
                 // "\nLine {$Line}," +
                 // "\nReferenceBase {$ReferenceBase}, " +
                 // "\nReference {$Reference}," +
@@ -854,7 +854,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 // nameof(PrefSuiteDataService),
                 // nameof(InsertPrefSuiteMaterialPieceAsync),
                 // material.OrderNumber ?? string.Empty,
-                // material.Worksheet ?? string.Empty,
+                // material.WorksheetDto ?? string.Empty,
                 // material.Line,
                 // material.ReferenceBase ?? string.Empty,
                 // material.Reference ?? string.Empty,
@@ -865,11 +865,11 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 // return new ErrorEntity()
                 // {
                 //     OrderNumber = material.OrderNumber ?? string.Empty,
-                //     Level = ErrorLevel.Error,
+                //     Level = ErrorLevel.ErrorDto,
                 //     Code = ErrorCode.SQL_Data_Write,
                 //     Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteMaterialPieceAsync)}. Unhandled error." +
                 //    $"\nOrder {material.OrderNumber ?? string.Empty}," +
-                //    $"\nWorksheet {material.Worksheet ?? string.Empty}," +
+                //    $"\nWorksheet {material.WorksheetDto ?? string.Empty}," +
                 //    $"\nLine {material.Line}," +
                 //    $"\nReferenceBase {material.ReferenceBase ?? string.Empty}, " +
                 //    $"\nReference {material.Reference ?? string.Empty}," +
@@ -934,7 +934,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 //    _logger.LogError(
                 //    "{$Class}.{$Method}. Unhandled error." +
                 //    "\nOrder {$OrderNumber}," +
-                //    "\nWorksheet {$Worksheet}," +
+                //    "\nWorksheet {$WorksheetDto}," +
                 //    "\nLine {$Line}," +
                 //    "\nReferenceBase {$ReferenceBase}, " +
                 //    "\nReference {$Reference}," +
@@ -944,7 +944,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 //    nameof(PrefSuiteDataService),
                 //    nameof(InsertPrefSuiteMaterialSurfaceAsync),
                 //    material.OrderNumber ?? string.Empty,
-                //    material.Worksheet ?? string.Empty,
+                //    material.WorksheetDto ?? string.Empty,
                 //    material.Line,
                 //    material.ReferenceBase ?? string.Empty,
                 //    material.Reference ?? string.Empty,
@@ -955,11 +955,11 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 //    return new ErrorEntity()
                 //    {
                 //        OrderNumber = material.OrderNumber ?? string.Empty,
-                //        Level = ErrorLevel.Error,
+                //        Level = ErrorLevel.ErrorDto,
                 //        Code = ErrorCode.SQL_Data_Write,
                 //        Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteMaterialSurfaceAsync)}. Unhandled error." +
                 //       $"\nOrder {material.OrderNumber ?? string.Empty}," +
-                //       $"\nWorksheet {material.Worksheet ?? string.Empty}," +
+                //       $"\nWorksheet {material.WorksheetDto ?? string.Empty}," +
                 //       $"\nLine {material.Line}," +
                 //       $"\nReferenceBase {material.ReferenceBase ?? string.Empty}, " +
                 //       $"\nReference {material.Reference ?? string.Empty}," +
@@ -1025,7 +1025,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 // _logger.LogError(
                 // "{$Class}.{$Method}. Unhandled error." +
                 // "\nOrder {$OrderNumber}," +
-                // "\nWorksheet {$Worksheet}," +
+                // "\nWorksheet {$WorksheetDto}," +
                 // "\nLine {$Line}," +
                 // "\nReferenceBase {$ReferenceBase}, " +
                 // "\nReference {$Reference}," +
@@ -1035,7 +1035,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 // nameof(PrefSuiteDataService),
                 // nameof(InsertPrefSuiteMaterialPurchaseDataAsync),
                 // material.OrderNumber ?? string.Empty,
-                // material.Worksheet ?? string.Empty,
+                // material.WorksheetDto ?? string.Empty,
                 // material.Line,
                 // material.ReferenceBase ?? string.Empty,
                 // material.Reference ?? string.Empty,
@@ -1046,11 +1046,11 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 //    return new ErrorEntity()
                 //    {
                 //        OrderNumber = material.OrderNumber ?? string.Empty,
-                //        Level = ErrorLevel.Error,
+                //        Level = ErrorLevel.ErrorDto,
                 //        Code = ErrorCode.SQL_Data_Write,
                 //        Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteMaterialPurchaseDataAsync)}. Unhandled error." +
                 //       $"\nOrder {material.OrderNumber ?? string.Empty}," +
-                //       $"\nWorksheet {material.Worksheet ?? string.Empty}," +
+                //       $"\nWorksheet {material.WorksheetDto ?? string.Empty}," +
                 //       $"\nLine {material.Line}," +
                 //       $"\nReferenceBase {material.ReferenceBase ?? string.Empty}, " +
                 //       $"\nReference {material.Reference ?? string.Empty}," +
@@ -1116,7 +1116,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 //    _logger.LogError(
                 //    "{$Class}.{$Method}. Unhandled error." +
                 //    "\nOrder {$OrderNumber}," +
-                //    "\nWorksheet {$Worksheet}," +
+                //    "\nWorksheet {$WorksheetDto}," +
                 //    "\nLine {$Line}," +
                 //    "\nReferenceBase {$ReferenceBase}, " +
                 //    "\nReference {$Reference}," +
@@ -1126,7 +1126,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 //    nameof(PrefSuiteDataService),
                 //    nameof(UpdateBCMapping),
                 //    material.OrderNumber ?? string.Empty,
-                //    material.Worksheet ?? string.Empty,
+                //    material.WorksheetDto ?? string.Empty,
                 //    material.Line,
                 //    material.ReferenceBase ?? string.Empty,
                 //    material.Reference ?? string.Empty,
@@ -1137,11 +1137,11 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 //    return new ErrorEntity()
                 //    {
                 //        OrderNumber = material.OrderNumber ?? string.Empty,
-                //        Level = ErrorLevel.Error,
+                //        Level = ErrorLevel.ErrorDto,
                 //        Code = ErrorCode.SQL_Data_Write,
                 //        Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteMaterialSurfaceAsync)}. Unhandled error." +
                 //       $"\nOrder {material.OrderNumber ?? string.Empty}," +
-                //       $"\nWorksheet {material.Worksheet ?? string.Empty}," +
+                //       $"\nWorksheet {material.WorksheetDto ?? string.Empty}," +
                 //       $"\nLine {material.Line}," +
                 //       $"\nReferenceBase {material.ReferenceBase ?? string.Empty}, " +
                 //       $"\nReference {material.Reference ?? string.Empty}," +
@@ -1190,7 +1190,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 //    return new ErrorEntity()
                 //    {
                 //        OrderNumber = order ?? string.Empty,
-                //        Level = ErrorLevel.Error,
+                //        Level = ErrorLevel.ErrorDto,
                 //        Code = ErrorCode.SQL_Data_Write,
                 //        Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteMaterialNeedsMasterAsync)}. Unhandled error." +
                 //        $"\nOrder {order ?? string.Empty}," +
@@ -1237,7 +1237,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                 //    return new ErrorEntity()
                 //    {
                 //        OrderNumber = order ?? string.Empty,
-                //        Level = ErrorLevel.Error,
+                //        Level = ErrorLevel.ErrorDto,
                 //        Code = ErrorCode.SQL_Data_Write,
                 //        Message = $"{nameof(PrefSuiteDataService)}.{nameof(InsertPrefSuiteMaterialNeedsAsync)}. Unhandled error." +
                 //        $"\nOrder {order ?? string.Empty}," +

@@ -7,7 +7,7 @@ namespace a2p.Application.Interfaces.Excel
 
         void WriteExcelErrorLog(string file);
         //  Task<List<AppWorksheet>> GetWorksheetListAsync(List<OrderEntry> files, IProgress<ProgressValue>? progress = null, CancellationToken cancellationToken = default);
-        Task<List<Worksheet>> GetWorksheetsAsync(Models.File file, ProgressValue progressValue, IProgress<ProgressValue>? progress);
+        Task<List<WorksheetDto>> GetWorksheetsAsync(Models.FileDto file, ProgressValue progressValue, IProgress<ProgressValue>? progress);
 
     }
 

@@ -35,7 +35,7 @@ string logFile = Path.Combine(logFolder, "a2pLog.json");
 
                 bool fileExists = false;
 
-                if (File.Exists(logFile))
+                if (FileDto.Exists(logFile))
                 {
                     fileExists = true;
                 }
@@ -43,7 +43,7 @@ string logFile = Path.Combine(logFolder, "a2pLog.json");
 
                 if (fileExists)
                 {
-                    File.Delete(logFile);
+                    FileDto.Delete(logFile);
                 }
             }
 

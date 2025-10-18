@@ -21,7 +21,7 @@ namespace a2p.Infrastructure.Persistence.Repositories
         {
             const string sql = @"
                 INSERT INTO Uniwave_a2p_Materials (
-                    Id, MaterialNumber, ProjectNumber, SalesDocumentNumber, SalesDocumentVersion, MaterialDate,
+                    Id, MaterialNumber, ProjectNumber, Number, Version, MaterialDate,
                     CustomerTitle, CustomerNumber, DeliveryAddress, CorrectionAvailableUnitil,
                     ResponsibleManager, SourceAppType, ItemCount, MaterialCount, ErrorCount, TotalQuantity,
                     TotalUnits, TotalWeight, TotalWeightWithoutGlass, TotalWeightGlass, TotalArea, TotalHours,
@@ -30,7 +30,7 @@ namespace a2p.Infrastructure.Persistence.Repositories
                 )
                 OUTPUT INSERTED.*
                 VALUES (
-                    @Id, @MaterialNumber, @ProjectNumber, @SalesDocumentNumber, @SalesDocumentVersion, @MaterialDate,
+                    @Id, @MaterialNumber, @ProjectNumber, @Number, @Version, @MaterialDate,
                     @CustomerTitle, @CustomerNumber, @DeliveryAddress, @CorrectionAvailableUnitil,
                     @ResponsibleManager, @SourceAppType, @ItemCount, @MaterialCount, @ErrorCount, @TotalQuantity,
                     @TotalUnits, @TotalWeight, @TotalWeightWithoutGlass, @TotalWeightGlass, @TotalArea, @TotalHours,
@@ -84,7 +84,7 @@ namespace a2p.Infrastructure.Persistence.Repositories
         {
             const string sql = @"
                 INSERT INTO Uniwave_a2p_Materials (
-                    Id, MaterialNumber, ProjectNumber, SalesDocumentNumber, SalesDocumentVersion, MaterialDate,
+                    Id, MaterialNumber, ProjectNumber, Number, Version, MaterialDate,
                     CustomerTitle, CustomerNumber, DeliveryAddress, CorrectionAvailableUnitil,
                     ResponsibleManager, SourceAppType, ItemCount, MaterialCount, ErrorCount, TotalQuantity,
                     TotalUnits, TotalWeight, TotalWeightWithoutGlass, TotalWeightGlass, TotalArea, TotalHours,
@@ -93,7 +93,7 @@ namespace a2p.Infrastructure.Persistence.Repositories
                 )
                 OUTPUT UNSERTED.*
                 VALUES (
-                    @Id, @MaterialNumber, @ProjectNumber, @SalesDocumentNumber, @SalesDocumentVersion, @MaterialDate,
+                    @Id, @MaterialNumber, @ProjectNumber, @Number, @Version, @MaterialDate,
                     @CustomerTitle, @CustomerNumber, @DeliveryAddress, @CorrectionAvailableUnitil,
                     @ResponsibleManager, @SourceAppType, @ItemCount, @MaterialCount, @ErrorCount, @TotalQuantity,
                     @TotalUnits, @TotalWeight, @TotalWeightWithoutGlass, @TotalWeightGlass, @TotalArea, @TotalHours,

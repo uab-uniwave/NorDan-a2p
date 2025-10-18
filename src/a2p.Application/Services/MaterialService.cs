@@ -136,8 +136,8 @@ namespace a2p.Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving material {Id}", id);
-                return Result<MaterialEntity>.Failure("Error retrieving material.");
+                _logger.LogError(ex, "ErrorDto retrieving material {Id}", id);
+                return Result<MaterialEntity>.Failure("ErrorDto retrieving material.");
             }
         }
 
@@ -152,8 +152,8 @@ namespace a2p.Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving materials for order {id}", id);
-                return PagedResult<IEnumerable<MaterialEntity>?>.Failure("Error retrieving order materials.");
+                _logger.LogError(ex, "ErrorDto retrieving materials for order {id}", id);
+                return PagedResult<IEnumerable<MaterialEntity>?>.Failure("ErrorDto retrieving order materials.");
             }
         }
 
@@ -168,8 +168,8 @@ namespace a2p.Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving paged materials.");
-                return PagedResult<MaterialEntity>.Failure("Error retrieving paged materials.");
+                _logger.LogError(ex, "ErrorDto retrieving paged materials.");
+                return PagedResult<MaterialEntity>.Failure("ErrorDto retrieving paged materials.");
             }
         }
 
@@ -190,8 +190,8 @@ namespace a2p.Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting order {Id}", id);
-                return Result<bool>.Failure("Error deleting order.");
+                _logger.LogError(ex, "ErrorDto deleting order {Id}", id);
+                return Result<bool>.Failure("ErrorDto deleting order.");
             }
         }
 

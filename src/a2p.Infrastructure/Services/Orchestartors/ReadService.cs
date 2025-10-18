@@ -7,7 +7,7 @@ using a2p.Application.Interfaces.Orchestrators;
 using a2p.Application.Interfaces.PrefSuite;
 using a2p.Application.Models;
 using a2p.Domain.Enums;
-using a2p.Infrastructure.Models.BaseModels;
+using a2p.Infrastructure.Services.FileServices;
 
 using Microsoft.Extensions.Logging;
 
@@ -21,7 +21,7 @@ namespace a2p.Infrastructure.Services.Orchestartors
         private readonly IPrefSuiteDataService _prefSuiteDataService;
         private readonly IExcelParserSchuco _excelParserSchuco;
         private readonly IExcelParserTechDesign _excelParserTechDesign;
-        private List<OrderDto> _excelOrdersDto;
+        private List<OrderDto> _ordersDto;
 
         private ProgressValue _progressValue;
         private IProgress<ProgressValue> _progress;
@@ -40,159 +40,202 @@ namespace a2p.Infrastructure.Services.Orchestartors
             _excelParserTechDesign = excelparserTechesign;
             _excelParserSchuco = excelParserSchuco;
             _prefSuiteDataService = prefSuiteDataService;
-            _excelOrdersDto = [];
+            _ordersDto = [];
             _progressValue = new ProgressValue();
             _progress = new Progress<ProgressValue>();
 
         }
 
-        public async Task<List<OrderDto>?> ReadAsync(ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
+        public async Task<List<OrderDto>> ReadAsync(ProgressValue progressValue, IProgress<ProgressValue>? progress = null)
         {
-            _excelOrdersDto = [];
+            _ordersDto = [];
             _progressValue = progressValue;
             _progress = progress ?? new Progress<ProgressValue>();
 
             try
             {
                 //==================================================================================================================================
-                //🔵 Get Files
+                //🔵 Get FilesDto
                 //==================================================================================================================================
-                List<string>? allFiles = _fileService.GetFiles();
-                if (allFiles == null || allFiles.Count == 0)
+                List<string> files = _fileService.GetFiles();
+                if (files.Count == 0)
                 {
 
-                    return null;
+                    return [];
 
                 }
 
                 //==================================================================================================================================
-                //🔵 Get Files
+                //🔵 Get Orders list
                 //==================================================================================================================================
-                _excelOrdersDto = await GetOrders(allFiles);
-                if (_excelOrdersDto == null || _excelOrdersDto.Count == 0)
+                List<string> orders = GetOrders(files);
+
+                //==================================================================================================================================
+                //🔵 Create OrdersDto List   
+                //==================================================================================================================================
+
+                for (int i = 0; i < orders.Count; i++)
                 {
-                    return null;
+                    List<string> orderFiles = GetOrderFiles(orders[i], files);
+                    OrderDto orderDto = new();
+
+                    orderDto.OrderNumber = orders[i];
+                    orderDto.ItemsDto = [];
+                    orderDto.MaterialsDto = [];
+                    orderDto.ErrorsDto = [];
+                    orderDto.Currency = "Unknown";
+                    orderDto.ExchangeRate = 1;
+
+                    for (int j = 0; j < orderFiles.Count; j++)
+                    {
+                        FileDto fileDto = new();
+                        fileDto.OrderNumber = orders[i];
+                        fileDto.FilePath = orderFiles[j];
+                        fileDto.FileName = Path.GetFileName(orderFiles[j]);
+                        fileDto.IsLocked = _fileService.IsLocked(orderFiles[j]);
+                        orderDto.FilesDto.Add(fileDto);
+
+                    }
+
+                    if (orderDto.FilesDto.Any())
+                    {
+
+                        orderDto.FileCount = orderDto.FilesDto.Count;
+                        orderDto.FileList = string.Join(", ", orderDto.FilesDto.Select(f => f.FileName));
+
+                        if (orderDto.FilesDto.Any(f => f.IsLocked))
+                        {
+                            orderDto.LockedCount = orderDto.FilesDto.Count(f => f.IsLocked);
+                            orderDto.LockedFiles = string.Join(", ", orderDto.FilesDto.Where(f => f.IsLocked).Select(f => f.FileName));
+                        }
+
+                        orderDto.SourceAppType = orderDto.FilesDto.Any(f => !string.IsNullOrEmpty(f.FileName) && f.FileName.Contains("calculation", System.StringComparison.OrdinalIgnoreCase))
+                            ? SourceAppType.Schuco
+                            : orderDto.FilesDto.Any(f => !string.IsNullOrEmpty(f.FileName) && f.FileName.Contains("Price_Details", System.StringComparison.OrdinalIgnoreCase))
+                                ? SourceAppType.TechDesign
+                                : SourceAppType.Unknown;
+
+                    }
+                    _ordersDto.Add(orderDto);
                 }
 
-                _progressValue.MaxValue = _excelOrdersDto.Count * 5;
-                _progressValue.ProgressTask1 = $"Found {_excelOrdersDto.Count} orders!";
+                //==================================================================================================================================
+                //🔵 Initialize Progress Bar
+                //==================================================================================================================================
+                _progressValue.Value = 0;
+
+                _progressValue.MaxValue = _ordersDto.Count * 5;
+                _progressValue.ProgressTask1 = $"Found {_ordersDto.Count} orders!";
                 _progress?.Report(_progressValue);
 
                 //==================================================================================================================================
-                //🔵 Get OrderNumber Files Progress Bar 1
+                //🔵 Get OrderNumber FilesDto Progress Bar 1
                 //==================================================================================================================================
 
-                for (int i = 0; i < _excelOrdersDto.Count; i++)
+                for (int i = 0; i < _ordersDto.Count; i++)
                 {
                     _progressValue.Value++;
                     _progressValue.ProgressTask1 = string.Empty;
-                    _progressValue.ProgressTask2 = $"Searching Orders Files {i + 1} of {_excelOrdersDto.Count} - OrderNumber #{_excelOrdersDto[i].OrderNumber}";
+                    _progressValue.ProgressTask2 = $"Searching Orders FilesDto {i + 1} of {_ordersDto.Count} - OrderNumber #{_ordersDto[i].OrderNumber}";
                     _progress?.Report(_progressValue);
 
-                    _excelOrdersDto[i] = await GetOrderFilesAsync(_excelOrdersDto[i]);
-                    _excelOrdersDto[i] = await GetOrderSalesDocumentAsync(_excelOrdersDto[i]);
-                    _excelOrdersDto[i] = await GetOrderSalesDocumentState(_excelOrdersDto[i]);
-                    _excelOrdersDto[i] = await GetOrderWorksheetsAsync(_excelOrdersDto[i]);
+                    _ordersDto[i] = await GetOrderSalesDocumentAsync(_ordersDto[i]);
+                    _ordersDto[i] = await GetOrderSalesDocumentState(_ordersDto[i]);
+                    _ordersDto[i] = await GetOrderWorksheetsAsync(_ordersDto[i]);
+                    _ordersDto[i] = await SetSalesDocumentReadErrors(_ordersDto[i]);
 
-                    for (int j = 0; j < _excelOrdersDto[i].Files.Count; j++)
+                    for (int j = 0; j < _ordersDto[i].FilesDto.Count; j++)
                     {
                         _progressValue.Value++;
                         _progress?.Report(_progressValue);
 
-                        for (int k = 0; k < _excelOrdersDto[i].Files[j].Worksheets.Count; k++)
+                        for (int k = 0; k < _ordersDto[i].FilesDto[j].Worksheets.Count; k++)
                         {
-                            _progressValue.ProgressTask2 = $"Worksheet #{_excelOrdersDto[i].Files[j].Worksheets[k].Name}";
+                            _progressValue.ProgressTask2 = $"WorksheetDto #{_ordersDto[i].FilesDto[j].Worksheets[k].Name}";
 
-                            SourceAppType sourceAppType = _excelOrdersDto[i].SourceAppType;
-                            WorksheetType worksheetType = _excelOrdersDto[i].Files[j].Worksheets[k].WorksheetType;
+                            SourceAppType sourceAppType = _ordersDto[i].SourceAppType;
+                            WorksheetType worksheetType = _ordersDto[i].FilesDto[j].Worksheets[k].WorksheetType;
 
                             if (sourceAppType == SourceAppType.Unknown)
                             {
-                                _logger.LogError("Excel files format not recognized. Source application is Unknown. File {$Filename}."
-                                , _excelOrdersDto[i].Files[j].FileName);
+                                _logger.LogError("Excel files format not recognized. Source application is Unknown. FileDto {$Filename}."
+                                , _ordersDto[i].FilesDto[j].FileName);
                                 continue;
                             }
 
                             if (worksheetType == WorksheetType.Unknown)
                             {
-                                _logger.LogError(" Excel files format not recognized. Worksheet type  is Unknown. File {$Filename}.",
-                                  _excelOrdersDto[i].Files[j].FileName);
-                                _excelOrdersDto[i].ErrorsDto.Add(new ErrorEntity
+                                _logger.LogError(" Excel files format not recognized. WorksheetDto type  is Unknown. FileDto {$Filename}.",
+                                  _ordersDto[i].FilesDto[j].FileName);
+                                _ordersDto[i].ErrorsDto.Add(new ErrorDto
                                 {
-                                    OrderNumber = _excelOrdersDto[i].OrderNumber,
+                                    OrderNumber = _ordersDto[i].OrderNumber,
                                     Level = ErrorLevel.Fatal,
                                     Code = ErrorCode.Excel_Read_Workbook_Source_Application_Format_Unknown,
-                                    Message = $"OrderNumber {_excelOrdersDto[i].OrderNumber}. File ${_excelOrdersDto[i].Files[j].FileName} contains worksheet with unknown type."
+                                    Message = $"OrderNumber {_ordersDto[i].OrderNumber}. FileDto ${_ordersDto[i].FilesDto[j].FileName} contains worksheet with unknown type."
                                 });
                                 continue;
                             }
 
-                            //=====================================================================================================`
+                            //=====================================================================================================``
                             //🔵 TechnoDesign Items
                             //=====================================================================================================
-                            if (sourceAppType == SourceAppType.TechDesign || worksheetType == WorksheetType.Items)
+                            if (sourceAppType == SourceAppType.TechDesign && worksheetType == WorksheetType.Items)
                             {
-                                List<ItemDto> result = await _excelParserTechDesign.MapItemsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
-                                _excelOrdersDto[i].ItemsDto.AddRange(result);
+                                List<ItemDto> result = await _excelParserTechDesign.MapItemsAsync(_ordersDto[i].FilesDto[j].Worksheets[k], _progressValue, _progress);
+                                _ordersDto[i].ItemsDto.AddRange(result);
                             }
 
-                            //=====================================================================================================`
+                            //=====================================================================================================``
                             //🔵 Schuco Items
                             //=================================`====================================================================
-                            else if (sourceAppType == SourceAppType.Schuco || worksheetType == WorksheetType.Items)
+                            else if (sourceAppType == SourceAppType.Schuco && worksheetType == WorksheetType.Items)
                             {
-                                List<ItemDto> result = await _excelParserSchuco.MapItemsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
-                                _excelOrdersDto[i].ItemsDto.AddRange(result);
+                                List<ItemDto> result = await _excelParserSchuco.MapItemsAsync(_ordersDto[i].FilesDto[j].Worksheets[k], _progressValue, _progress);
+                                _ordersDto[i].ItemsDto.AddRange(result);
                             }
 
-                            //=====================================================================================================`
+                            //=====================================================================================================``
                             //🔵 TechnoDesign Materals
                             //=====================================================================================================
-                            else if (sourceAppType == SourceAppType.TechDesign || worksheetType == WorksheetType.Materials)
+                            else if (sourceAppType == SourceAppType.TechDesign && worksheetType == WorksheetType.Materials)
                             {
-                                List<MaterialDto> result = await _excelParserTechDesign.MapMaterialsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
-                                _excelOrdersDto[i].MaterialsDto.AddRange(result);
+                                List<MaterialDto> result = await _excelParserTechDesign.MapMaterialsAsync(_ordersDto[i].FilesDto[j].Worksheets[k], _progressValue, _progress);
+                                _ordersDto[i].MaterialsDto.AddRange(result);
                             }
-                            //=====================================================================================================`
+                            //=====================================================================================================``
                             //🔵 TechnoDesign Materals
                             //=====================================================================================================
-                            else if (sourceAppType == SourceAppType.Schuco || worksheetType == WorksheetType.Materials)
+                            else if (sourceAppType == SourceAppType.Schuco && worksheetType == WorksheetType.Materials)
                             {
-                                List<ItemDto> result = await _excelParserSchuco.MapItemsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
-                                _excelOrdersDto[i].ItemsDto.AddRange(result);
+                                List<ItemDto> result = await _excelParserSchuco.MapItemsAsync(_ordersDto[i].FilesDto[j].Worksheets[k], _progressValue, _progress);
+                                _ordersDto[i].ItemsDto.AddRange(result);
                             }
 
                             //=======================================================================================
-                            //🔵 Materials Worksheet
+                            //🔵 Materials WorksheetDto
                             //=======================================================================================
                             else
                             {
-                                //=======================================================================================
-                                //🔵 Unknown Materials
-                                //=======================================================================================
-                                //🔵TechnoDesign Materials
-                                //=======================================================================================
-                                //🔵 Schuco Materials
-                                //=======================================================================================
 
-                                if (_excelOrdersDto[i].SourceAppType == SourceAppType.Unknown)
+                                if (_ordersDto[i].SourceAppType == SourceAppType.Unknown)
                                 {
                                     continue;
                                 }
-                                else if (_excelOrdersDto[i].SourceAppType == SourceAppType.TechDesign)
+                                else if (_ordersDto[i].SourceAppType == SourceAppType.TechDesign)
                                 {
-                                    List<MaterialDto> result = await _excelParserTechDesign.MapMaterialsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
-                                    _excelOrdersDto[i].MaterialsDto.AddRange(result);
+                                    List<MaterialDto> result = await _excelParserTechDesign.MapMaterialsAsync(_ordersDto[i].FilesDto[j].Worksheets[k], _progressValue, _progress);
+                                    _ordersDto[i].MaterialsDto.AddRange(result);
 
                                 }
-                                else if (_excelOrdersDto[i].SourceAppType == SourceAppType.Schuco)
+                                else if (_ordersDto[i].SourceAppType == SourceAppType.Schuco)
                                 {
-                                    List<MaterialDto> result = await _excelParserSchuco.MapMaterialsAsync(_excelOrdersDto[i].Files[j].Worksheets[k], _progressValue, _progress);
-                                    _excelOrdersDto[i].MaterialsDto.AddRange(result);
+                                    List<MaterialDto> result = await _excelParserSchuco.MapMaterialsAsync(_ordersDto[i].FilesDto[j].Worksheets[k], _progressValue, _progress);
+                                    _ordersDto[i].MaterialsDto.AddRange(result);
                                 }
                                 else
                                 {
-                                    _logger.LogError("Excel files format not recognized. Source application is Unknown. File {$Filename}.", _excelOrdersDto[i].Files[j].FileName);
+                                    _logger.LogError("Excel files format not recognized. Source application is Unknown. FileDto {$Filename}.", _ordersDto[i].FilesDto[j].FileName);
                                     continue;
                                 }
 
@@ -201,133 +244,68 @@ namespace a2p.Infrastructure.Services.Orchestartors
                         }
                     }
                 }
-                return await Task.Run(() => _excelOrdersDto);
+                return await Task.Run(() => _ordersDto);
             }
             catch (Exception ex)
             {
 
                 _logger.LogError("PrefSuite Service: Unhandled error reading orders. Exception {$Exception}", ex.Message);
-                return _excelOrdersDto;
+                return _ordersDto;
             }
 
         }
 
-        private async Task<List<OrderDto>?> GetOrders(List<string>? files)
+        private List<string> GetOrders(List<string> files)
         {
-
-            if (files == null || files.Count == 0)
-            {
-                return await Task.Run(() => _excelOrdersDto);
-            }
-
             try
             {
-                List<string> workingFiles = files.Select(f => f)
-                                      .Where(f => !f.Contains("~$") && f.EndsWith(".xlsx")).ToList();
-
-                if (workingFiles == null || workingFiles.Count == 0)
-                {
-                    return await Task.Run(() => _excelOrdersDto);
-                }
-
-                List<string> orderNumbers = workingFiles.Select(f => Path.GetFileName(f)!.Split(new[] { '_', ' ' }, StringSplitOptions.RemoveEmptyEntries)[0])
-                      .Distinct()
-                      .OrderBy(f => f)
-                      .ToList();
-
-                foreach (string orderNumber in orderNumbers)
-                {
-
-                    OrderDto orderDto = new()
-                    {
-                        OrderNumber = orderNumber,
-                        ItemsDto = [],
-                        MaterialsDto = [],
-                        ErrorsDto = [],
-                        Currency = "Unknown",
-                        ExchangeRate = 1
-
-                    };
-
-                    _excelOrdersDto.Add(orderDto);
-
-                }
-
-                return await Task.Run(() => _excelOrdersDto);
-
-            }
-
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error in GetOrders: {ex.Message}");
-                return await Task.Run(() => _excelOrdersDto);
-
-            }
-        }
-
-        private async Task<OrderDto> GetOrderFilesAsync(OrderDto order)
-        {
-
-            try
-            {
-                await Task.Run((Action)(() =>
-                {
-
-                    List<string> files = _fileService.GetFiles().Select(f => f)
-                        .Where(f => !f.Contains("~$") && f.EndsWith(".xlsx") && Path.GetFileName(f)!.StartsWith(order.OrderNumber)).ToList();
-
-                    for (int i = 0; i < files.Count; i++)
-                    {
-
-                        Application.Models.File file = new()
-                        {
-                            FullName = files[i],
-                            OrderNumber = order.OrderNumber,
-                            FileName = System.IO.Path.GetFileName(files[i]),
-                            // IsLocked = _fileService.IsLocked(files[i]),
-                            FilePath = System.IO.Path.GetFullPath(files[i]),
-                            Worksheets = []
-                        };
-
-                        if (file.IsLocked)
-                        {
-
-                            //order.Errors.Add(new ErrorEntity
-                            //{
-                            //    OrderNumber = order.OrderNumber,
-                            //    Level = ErrorLevel.Fatal,
-                            //    Code = ErrorCode.FileSystemReadWrite,
-                            //    Message = $"OrderNumber {order.OrderNumber}. File ${file.FileName} is Locked."
-
-                            //});
-                        }
-                        //order.Files.Add(file);
-                    }
-
-                }));
-                return order;
+                List<string> orders = files
+                    .Select(f => Path.GetFileName(f).Split(' ', '_')[0]) // Assuming order number is before the first underscore
+                    .Distinct()
+                    .ToList() ?? [];
+                return orders;
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error in GetOrderFiles: {ex.Message}");
-                return order;
+                _logger.LogError("{$Class}.{$Method}. Unhandled error getting orders! Exception: {$Exception}",
+                    nameof(FileService),
+                    nameof(GetOrders),
+                    ex.Message);
+                return [];
             }
         }
+        private List<string> GetOrderFiles(string order, List<string> files)
+        {
+            try
+            {
 
+                List<string> orderFiles = files.Where(f => f.Contains(order) && !f.Contains("~$") && f.EndsWith(".xlsx")).ToList(); // Get all files that match the order number
+
+                return orderFiles ?? [];
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("{$Class}.{$Method}. Unhandled error getting ordr files! Exception: {$Exception}",
+                    nameof(FileService),
+                    nameof(GetOrderFiles),
+                    ex.Message);
+                return [];
+            }
+        }
         private async Task<OrderDto> GetOrderWorksheetsAsync(OrderDto order)
         {
             try
             {
-                for (int i = 0; i < order.Files.Count; i++)
+                for (int i = 0; i < order.FilesDto.Count; i++)
                 {
 
-                    List<Worksheet> worksheets = await _excelService.GetWorksheetsAsync(order.Files[i], _progressValue, _progress);
+                    List<WorksheetDto> worksheets = await _excelService.GetWorksheetsAsync(order.FilesDto[i], _progressValue, _progress);
 
                     if (worksheets == null)
                     {
                         continue;
                     }
-                    order.Files[i].Worksheets.AddRange(worksheets);
+                    order.FilesDto[i].Worksheets.AddRange(worksheets);
                 }
 
                 return order;
@@ -335,34 +313,31 @@ namespace a2p.Infrastructure.Services.Orchestartors
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error in GetOrderWorksheets: {ex.Message}");
+                _logger.LogError($"ErrorDto in GetOrderWorksheets: {ex.Message}");
                 return order;
             }
         }
-
         private async Task<OrderDto> GetOrderSalesDocumentAsync(OrderDto order)
         {
-
-            (int, int) salesDocument = (-1, -1);
             try
             {
 
                 (int?, int?) result = await _prefSuiteDataService.GetSalesDocumentAsync(order.OrderNumber);
                 if (result.Item1 < 1 || result.Item2 < 1)
                 {
-                    salesDocument.Item1 = -1;
-                    salesDocument.Item2 = -1;
 
-                    //order.Errors.Add(new ErrorEntity
-                    //{
-                    //    OrderNumber = order.OrderNumber,
-                    //    Level = ErrorLevel.Fatal,
-                    //    Code = ErrorCode.DatabaseRead_OrderReferenceNotFound,
-                    //    Message = $"OrderNumber# {order.OrderNumber} not exists in PrefSuite DB !"
-                    //}
-                    //);
+                    order.ErrorsDto.Add(new ErrorDto
+                    {
+                        OrderNumber = order.OrderNumber,
+                        Level = ErrorLevel.Fatal,
+                        Code = ErrorCode.Business_Process_Order_Not_Found_In_PreSuite,
+                        Message = $"OrderNumber# {order.OrderNumber} not exists in PrefSuite DB !"
+                    }
+                    );
                 }
 
+                order.SalesDocumentDto.Number = result.Item1 ?? -1;
+                order.SalesDocumentDto.Version = result.Item2 ?? -1;
                 return order;
             }
             catch (Exception ex)
@@ -382,117 +357,100 @@ namespace a2p.Infrastructure.Services.Orchestartors
             try
             {
 
-                //order.SalesDocumentState = await _prefSuiteDataService.GetSalesDocumentStateAsync(order.Number, order.Version);
-
+                int state = await _prefSuiteDataService.GetSalesDocumentStateAsync(order.SalesDocumentDto.Number, order.SalesDocumentDto.Version);
+                order.SalesDocumentDto.State = (OrderState)state;
                 return order;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // _logger.LogError("Unhandled error {$Class}.{Method}." +
-                //     "\nOrder {$OrderNumber}." +
-                //     " \n{$Exception}",
-                //nameof(ReadService),
-                //     nameof(GetOrderSalesDocumentAsync),
-                //     order.OrderNumber ?? string.Empty,
-                //     ex.Message);
+                _logger.LogError("Unhandled error {$Class}.{Method}." +
+                    "\nOrder {$OrderNumber}." +
+                    " \n{$Exception}",
+               nameof(ReadService),
+                    nameof(GetOrderSalesDocumentAsync),
+                    order.OrderNumber ?? string.Empty,
+                    ex.Message);
 
                 return order;
             }
 
         }
-        private OrderDto SetSalesDocumentReadErrors(OrderDto order)
+        private async Task<OrderDto> SetSalesDocumentReadErrors(OrderDto order)
         {
             try
             {
-                SalesDocument salesDocument = new();
-                //{
-                //    SalesDocumentNumber = order.SalesDocumentNumber,
 
-                ///  OrderState orderState = (OrderState)order.SalesDocumentState;
+                if (order.SalesDocumentDto.State.HasFlag(OrderState.PurchaseOrdersExist))
+                {
+                    order.ErrorsDto.Add(new ErrorDto
 
-                // if (orderState.HasFlag(OrderState.PurchaseOrdersExist))
-                //{
-                //    //order.Errors.Add(new ErrorEntity
-                //    //{
-                //    //    OrderNumber = order.OrderNumber,
-                //    //    Level = ErrorLevel.Fatal,
-                //    //    Code = ErrorCode.DatabaseRead_OrderAlreadyImported,
-                //    //    Message = $"OrderNumber {order.OrderNumber} - {order.Number}/{order.Version} contains purchase orders.\nPlease remove purchase orders and try load data again."
+                    {
+                        OrderNumber = order.OrderNumber,
+                        Level = ErrorLevel.Fatal,
+                        Code = ErrorCode.Business_Process_Order_Purcahes_Has_Been_Done,
+                        Message = $"OrderNumber {order.OrderNumber} - {order.SalesDocumentDto.Number}/{order.SalesDocumentDto.Version} contains purchase orders.\nPlease remove purchase orders and try load data again."
 
-                //    //});
-                //    return order;
+                    });
+                    return await Task.Run(() => order);
 
-                //}
+                }
 
-                //  if (orderState.HasFlag(OrderState.MaterialNeedsInserted))
-                //    {
-                //order.Errors.Add(new ErrorEntity
-                //{
-                //    OrderNumber = order.OrderNumber,
-                //    Level = ErrorLevel.Warning,
-                //    Code = ErrorCode.DatabaseRead_OrderAlreadyImported,
-                //    Message = $"OrderNumber {order.OrderNumber} - {order.Number}/{order.Version} contains calculated material needs!"
+                if (order.SalesDocumentDto.State.HasFlag(OrderState.MaterialNeedsInserted))
+                {
+                    order.ErrorsDto.Add(new ErrorDto
+                    {
+                        OrderNumber = order.OrderNumber,
+                        Level = ErrorLevel.Warning,
+                        Code = ErrorCode.Business_Process_Order_MaterialNeeds_Calculated,
+                        Message = $"OrderNumber {order.OrderNumber} - {order.SalesDocumentDto.Number}/{order.SalesDocumentDto.Version}  contains calculated material needs!"
 
-                //});
+                    });
+                    return await Task.Run(() => order);
 
-                //     }
-                //
-                //if (orderState.HasFlag(OrderState.ItemsCreated))
-                //{
-                //    order.Errors.Add(new ErrorEntity
-                //    {
-                //        OrderNumber = order.OrderNumber,
-                //        Level = ErrorLevel.Warning,
-                //        Code = ErrorCode.DatabaseRead_OrderAlreadyImported,
-                //        Message = $"OrderNumber {order.OrderNumber} - {order.Number}/{order.Version} contains PrefSuite items!"
+                }
 
-                //    });
-                //    return order;
+                if (order.SalesDocumentDto.State.HasFlag(OrderState.ItemsCreated))
+                {
+                    order.ErrorsDto.Add(new ErrorDto
+                    {
+                        OrderNumber = order.OrderNumber,
+                        Level = ErrorLevel.Warning,
+                        Code = ErrorCode.Business_Process_Order_Already_Contains_Items,
+                        Message = $"OrderNumber {order.OrderNumber} - {order.SalesDocumentDto.Number}/{order.SalesDocumentDto.Version}  contains PrefSuite items!"
 
-                //}
+                    });
+                    return await Task.Run(() => order);
 
-                //if (orderState.HasFlag(OrderState.A2PItemsImported))
-                //{
-                //    //order.Errors.Add(new ErrorEntity
-                //    //{
-                //    //    OrderNumber = order.OrderNumber,
-                //    //    Level = ErrorLevel.Warning,
-                //    //    Code = ErrorCode.DatabaseRead_OrderAlreadyImported,
-                //    //    Message = $"OrderNumber {order.OrderNumber} - {order.Number}/{order.Version} contains imported items worksheet!"
+                }
 
-                //    //});
+                if (order.SalesDocumentDto.State.HasFlag(OrderState.A2PItemsImported))
+                {
+                    order.ErrorsDto.Add(new ErrorDto
+                    {
+                        OrderNumber = order.OrderNumber,
+                        Level = ErrorLevel.Warning,
+                        Code = ErrorCode.Business_Process_Order_Already_Contains_Items,
+                        Message = $"OrderNumber {order.OrderNumber} - {order.SalesDocumentDto.Number}/{order.SalesDocumentDto.Version}  contains imported items worksheet!"
 
-                //}
+                    });
+                    return await Task.Run(() => order);
 
-                //if (orderState.HasFlag(OrderState.A2PMaterialsImported))
-                //{
-                //    //order.Errors.Add(new ErrorEntity
-                //    //{
-                //    //    OrderNumber = order.OrderNumber,
-                //    //    Level = ErrorLevel.Warning,
-                //    //    Code = ErrorCode.DatabaseRead_OrderAlreadyImported,
-                //    //    Message = $"OrderNumber {order.OrderNumber} - {order.Number}/{order.Version} contains imported material worksheets!"
-
-                //    //});
-
-                //}
-
-                return order;
-
+                }
+                return await Task.Run(() => order);
             }
             catch (Exception ex)
             {
 
                 Console.WriteLine(ex.Message);
-                //    _logger.LogError("Unhandled error {$Class}.{Method}." +
-                //        "\nOrder {$OrderNumber}." +
-                //        " \n{$Exception}",
-                //   nameof(ReadService),
-                //        nameof(GetOrderSalesDocumentAsync),
-                //        order.OrderNumber ?? string.Empty,
-                //        ex.Message);
+                _logger.LogError("Unhandled error {$Class}.{Method}." +
+                    "\nOrder {$OrderNumber}." +
+                    " \n{$Exception}",
+               nameof(ReadService),
+                    nameof(GetOrderSalesDocumentAsync),
+                    order.OrderNumber ?? string.Empty,
+                    ex.Message);
 
-                return order;
+                return await Task.Run(() => order);
             }
 
         }

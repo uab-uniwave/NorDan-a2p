@@ -10,8 +10,8 @@ namespace a2p.Application.DTOs
     public class MaterialDto
     {
         public Guid Id { get; set; } = Guid.NewGuid(); // In PrefSuite it is materialNeed Id 
-        [MaxLength(50)] public Guid OrderId { get; set; } = Guid.Empty; // In PrefSuite it is SalesDocument Id
-        [MaxLength(50)] public string OrderNumber { get; set; } = string.Empty; // In PrefSuite it is SalesDocument Reference 
+        [MaxLength(50)] public Guid OrderId { get; set; } = Guid.Empty; // In PrefSuite it is SalesDocumentDto Id
+        [MaxLength(50)] public string OrderNumber { get; set; } = string.Empty; // In PrefSuite it is SalesDocumentDto Reference 
         public int SalesDocumentNumber { get; set; } = -1;
         public int SalesDocumentVersion { get; set; } = -1;
         //============================================================================================================================

@@ -12,9 +12,7 @@ namespace a2p.Application.Interfaces.Files
         string GetSuccessFolder();
         string GetLogFolder();
 
-        List<string>? GetFiles();
-
-        List<Models.File> GetOrderFiles(string order);
+        List<string> GetFiles();
 
         bool IsLocked(string filePath);
 

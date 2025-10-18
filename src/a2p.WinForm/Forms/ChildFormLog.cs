@@ -68,9 +68,9 @@ namespace a2p.WinForm.Forms
                 });
                 _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
                 {
-                    HeaderText = "Worksheet",
-                    DataPropertyName = "Worksheet",
-                    Name = "Worksheet",
+                    HeaderText = "WorksheetDto",
+                    DataPropertyName = "WorksheetDto",
+                    Name = "WorksheetDto",
                     ReadOnly = true,
                     Visible = true,
                     AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
@@ -187,7 +187,7 @@ namespace a2p.WinForm.Forms
             {
                 if (!DesignMode)
                 {
-                    _logger.LogError("Log form: Unhandled Error Log Grid View: {$Exception}", ex.Message);
+                    _logger.LogError("Log form: Unhandled ErrorDto Log Grid View: {$Exception}", ex.Message);
                 }
                 else
                 {
@@ -201,7 +201,7 @@ namespace a2p.WinForm.Forms
             {
                 // DataTable for log entries
                 _ = _dataTableLog.Columns.Add("OrderNumber", typeof(string));
-                _ = _dataTableLog.Columns.Add("Worksheet", typeof(string));
+                _ = _dataTableLog.Columns.Add("WorksheetDto", typeof(string));
                 _ = _dataTableLog.Columns.Add("Reference", typeof(string));
                 _ = _dataTableLog.Columns.Add("Color", typeof(string));
                 _ = _dataTableLog.Columns.Add("Level", typeof(string));
@@ -217,10 +217,10 @@ namespace a2p.WinForm.Forms
                 string methodName = nameof(InitializeTable); // Replace with the actual method name if different
 
                 // Log the error
-                _logger.LogError("Error in {Class}.{Method}. Exception {Message}", className, methodName, ex2.Message);
+                _logger.LogError("ErrorDto in {Class}.{Method}. Exception {Message}", className, methodName, ex2.Message);
 
                 // Display the error in a MessageBox
-                _ = MessageBox.Show($@"Error in {className}.{methodName}: {ex2.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _ = MessageBox.Show($@"ErrorDto in {className}.{methodName}: {ex2.Message}", "ErrorDto", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             }
 
@@ -261,7 +261,7 @@ namespace a2p.WinForm.Forms
         private void dataGridViewLog_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
             // Log any errors that occur during processing
-            //_logger.LogError("Log Form: GridViewLog. Error in column {$Column}, row {$Row}: {$Exception}", e.ColumnIndex, e.RowIndex, e.Exception?.Message ?? "Exception details missing.");
+            //_logger.LogError("Log Form: GridViewLog. ErrorDto in column {$Column}, row {$Row}: {$Exception}", e.ColumnIndex, e.RowIndex, e.Exception?.Message ?? "Exception details missing.");
             //e.ThrowException = false;
 
         }
@@ -291,7 +291,7 @@ namespace a2p.WinForm.Forms
                         {
                             e.CellStyle.ForeColor = Color.DarkRed;
                         }
-                        else if (e.Value.ToString() == "Error")
+                        else if (e.Value.ToString() == "ErrorDto")
                         {
                             e.CellStyle.ForeColor = Color.Red;
                         }
@@ -338,7 +338,7 @@ namespace a2p.WinForm.Forms
             catch (Exception ex)
             {
                 // Log any errors that occur during processing
-                _logger.LogError(ex.Message, "Log Form: Error Grid ${RowIndex} cell Formatting. Error formatting log cell.", e.RowIndex);
+                _logger.LogError(ex.Message, "Log Form: ErrorDto Grid ${RowIndex} cell Formatting. ErrorDto formatting log cell.", e.RowIndex);
 
             }
 
@@ -352,7 +352,7 @@ namespace a2p.WinForm.Forms
             catch (Exception ex)
             {
                 // Log any errors that occur during processing
-                _logger.LogError(ex.Message, "LF: Error Grid ${RowIndex} cell Click. Error getting log properties.", e.RowIndex);
+                _logger.LogError(ex.Message, "LF: ErrorDto Grid ${RowIndex} cell Click. ErrorDto getting log properties.", e.RowIndex);
             }
         }
 
@@ -401,7 +401,7 @@ namespace a2p.WinForm.Forms
                 LogEntity logRecord = new()
                 {
                     Order = propertiesNode["OrderNumber"]?.ToString() ?? string.Empty,
-                    Worksheet = propertiesNode["Worksheet"]?.ToString() ?? string.Empty,
+                    Worksheet = propertiesNode["WorksheetDto"]?.ToString() ?? string.Empty,
                     Reference = propertiesNode["Reference"]?.ToString() ?? string.Empty,
                     Color = propertiesNode["Color"]?.ToString() ?? string.Empty,
                     Level = root["Level"]?.ToString() ?? string.Empty,
@@ -413,7 +413,7 @@ namespace a2p.WinForm.Forms
             }
             catch (Exception ex)
             {
-                _logger.LogError("LF: Error parsing log entry: {Exception}", ex.Message);
+                _logger.LogError("LF: ErrorDto parsing log entry: {Exception}", ex.Message);
                 return new LogEntity();
             }
         }
@@ -439,7 +439,7 @@ namespace a2p.WinForm.Forms
             }
             catch (Exception ex)
             {
-                _logger.LogError("LF: Error adding log entry to DataTable: {Exception}", ex.Message);
+                _logger.LogError("LF: ErrorDto adding log entry to DataTable: {Exception}", ex.Message);
             }
         }
         //public async Task LogRefreshAsync()
@@ -459,7 +459,7 @@ namespace a2p.WinForm.Forms
         //             .GroupBy(entry => new
         //             {
         //                 entry.Order,
-        //                 entry.Worksheet,
+        //                 entry.WorksheetDto,
         //                 entry.Reference,
         //                 entry.Color,
         //                 entry.Level,
@@ -471,7 +471,7 @@ namespace a2p.WinForm.Forms
         //            foreach (LogEntity? logEntry in distinctLogEntries)
         //            {
 
-        //                _ = _dataTableLog.Rows.Add(logEntry.Order, logEntry.Worksheet, logEntry.Reference, logEntry.Color, logEntry.Level, logEntry.Message);
+        //                _ = _dataTableLog.Rows.Add(logEntry.Order, logEntry.WorksheetDto, logEntry.Reference, logEntry.Color, logEntry.Level, logEntry.Message);
         //            }
 
         //        }
@@ -480,7 +480,7 @@ namespace a2p.WinForm.Forms
         //    catch (Exception ex)
         //    {
         //        // Log any errors that occur during processing
-        //        _logger.LogError($"LF: Error refreshing log entries: {ex.Message}");
+        //        _logger.LogError($"LF: ErrorDto refreshing log entries: {ex.Message}");
         //    }
 
         //}
@@ -507,7 +507,7 @@ namespace a2p.WinForm.Forms
         //    catch (Exception ex)
         //    {
         //        // Log any errors that occur during processing
-        //        _logger.LogError($"LF: Error clearing log file: {ex.Message}");
+        //        _logger.LogError($"LF: ErrorDto clearing log file: {ex.Message}");
         //    }
         //}
 

@@ -17,16 +17,16 @@ namespace a2p.Application.Validations
                 .NotEmpty().WithMessage("Currency is required.")
                 .Length(3).WithMessage("Currency must be a 3-letter ISO code.");
 
-            // SalesDocument basic checks
-            RuleFor(x => x.SalesDocument)
-                .NotNull().WithMessage("SalesDocument must be provided.");
+            // SalesDocumentDto basic checks
+            RuleFor(x => x.SalesDocumentDto)
+                .NotNull().WithMessage("SalesDocumentDto must be provided.");
 
-            When(x => x.SalesDocument != null, () =>
+            When(x => x.SalesDocumentDto != null, () =>
             {
-                RuleFor(x => x.SalesDocument.Number)
-                    .GreaterThan(0).WithMessage("SalesDocument.Number must be greater than zero.");
-                RuleFor(x => x.SalesDocument.Version)
-                    .GreaterThanOrEqualTo(0).WithMessage("SalesDocument.Version must be greater than or equal to zero.");
+                RuleFor(x => x.SalesDocumentDto.Number)
+                    .GreaterThan(0).WithMessage("SalesDocumentDto.Number must be greater than zero.");
+                RuleFor(x => x.SalesDocumentDto.Version)
+                    .GreaterThanOrEqualTo(0).WithMessage("SalesDocumentDto.Version must be greater than or equal to zero.");
             });
 
             // --- Numeric sanity ---

@@ -9,7 +9,6 @@ using a2p.Application.Interfaces.Files;
 using a2p.Application.Models;
 using a2p.Domain.Enums;
 
-
 using ClosedXML.Excel;
 
 using Microsoft.Extensions.Logging;
@@ -35,11 +34,11 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
         }
 
-        public async Task<List<Worksheet>> GetWorksheetsAsync(Application.Models.File file, ProgressValue progressValue, IProgress<ProgressValue>? progress)
+        public async Task<List<WorksheetDto>> GetWorksheetsAsync(Application.Models.FileDto file, ProgressValue progressValue, IProgress<ProgressValue>? progress)
         {
 
-            XLWorkbook workbook = new(file.FullName);
-            List<Worksheet> worksheets = [];
+            XLWorkbook workbook = new(file.FilePath);
+            List<WorksheetDto> worksheets = [];
             int worksheetCounter = 0;
             try
             {
@@ -48,14 +47,13 @@ namespace a2p.Infrastructure.Services.ExcelServices
                 {
                     worksheetCounter++;
 
-                    Worksheet worksheet = new()
-                    {
-                        Order = file.OrderNumber,
-                        WorksheetType = GetWorksheetType(file.FileName, ixlWorksheet.Name),
-                        Name = ixlWorksheet.Name,
-                        RowCount = ixlWorksheet.RowsUsed().Count(),
-                        FileName = file.FileName
-                    };
+                    WorksheetDto worksheet = new();
+                    worksheet.Order = file.OrderNumber;
+                    worksheet.WorksheetType = GetWorksheetType(file.FileName, ixlWorksheet.Name);
+                    worksheet.Name = ixlWorksheet.Name;
+                    worksheet.RowCount = ixlWorksheet.RowsUsed().Count();
+                    worksheet.FileName = file.FileName;
+
 
                     //   CultureInfo culture = CultureInfo.InvariantCulture;
                     int totalColumns = ixlWorksheet.LastColumnUsed()?.ColumnNumber() ?? 0;
@@ -124,91 +122,118 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
             }
         }
-
         private WorksheetType GetWorksheetType(string fileName, string worksheetName)
         {
-
-            if (string.IsNullOrEmpty(fileName))
+            try
             {
+                WorksheetType worksheetType = WorksheetType.Unknown;
 
+                if (string.IsNullOrEmpty(fileName))
+                {
+
+                    return WorksheetType.Unknown;
+                }
+
+                if (string.IsNullOrEmpty(worksheetName))
+                {
+                    return WorksheetType.Unknown;
+                }
+
+                if (worksheetName.Trim().Contains("Price Details") == true && fileName?.Contains("Price_Details") == true)
+                {
+
+                    worksheetType = WorksheetType.Items;
+
+                }
+
+                else if (worksheetName.Trim().Contains("Accessories") == true && fileName?.Contains("SumList") == true)
+
+                {
+
+                    worksheetType = WorksheetType.Materials;
+                }
+                else if (worksheetName.Trim().Contains("Others") == true && fileName?.Contains("SumList") == true)
+
+                {
+
+                    worksheetType = WorksheetType.Materials;
+                }
+
+                else if (worksheetName.Trim().Contains("Gaskets") == true && fileName?.Contains("SumList") == true)
+
+                {
+
+                    worksheetType = WorksheetType.Materials;
+                }
+                else if (worksheetName.Trim().Contains("Profiles") == true && fileName?.Contains("SumList") == true)
+
+                {
+
+                    worksheetType = WorksheetType.Materials;
+                }
+
+                else if (worksheetName.Trim().Contains("Glass") == true && fileName?.Contains("SumList") == true)
+
+                {
+
+                    worksheetType = WorksheetType.Glasses;
+                }
+
+                else if (worksheetName.Trim().Contains("Panel") == true && fileName?.Contains("SumList") == true)
+
+                {
+
+                    worksheetType = WorksheetType.Panels;
+                }
+
+                return worksheetType;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Excel Service. Unhandled error: Determining worksheet type from file {$FileName} and worksheet {$WorksheetName}. Exception:{$Exception}", fileName, worksheetName, ex.Message);
                 return WorksheetType.Unknown;
             }
-
-            if (string.IsNullOrEmpty(worksheetName))
-            {
-                return WorksheetType.Unknown;
-            }
-
-            WorksheetType worksheetType = worksheetName.Trim().Contains("Litteralista") && fileName.Contains("CalcSapaLogic") ||
-                    worksheetName.Trim().Contains("Price Details") && fileName?.Contains("Price_Details") == true
-                ? WorksheetType.Items
-                //Materials
-                //=======================================================================================================
-                : (worksheetName.Trim().Contains("Sapa Accessories") ||
-                                      worksheetName.Trim().Contains("Sapa Profiles") ||
-                                      worksheetName.Trim().Contains("Default hardware supplier") ||
-                                      worksheetName.Trim().Contains("Accessories") ||
-                                      worksheetName.Trim().Contains("Accessory_summary") ||
-                                      worksheetName.Trim().Contains("1") ||
-                                      worksheetName.Trim().Contains("2") ||
-                                      worksheetName.Trim().Contains("Others") ||
-                                      worksheetName.Trim().Contains("Gaskets") ||
-                                      worksheetName.Trim().Contains("Profiles")) &&
-                                     (fileName?.Contains("MaterialList") == true ||
-                                      fileName?.Contains("SumList") == true ||
-                                      fileName?.Contains("Profile_summary") == true)
-                    ? WorksheetType.Materials
-
-                    //Glasses
-                    //=======================================================================================================
-                    : (worksheetName.Trim().Contains("Default glazing supplier") ||
-                                                      worksheetName.Trim().Contains("Glasses") ||
-                                                      worksheetName.Trim().Contains("2")) &&
-                                                      (fileName?.Contains("FillingList") == true ||
-                                                      fileName?.Contains("SumList") == true ||
-                                                      fileName?.Contains("Glass_panel") == true)
-                                    ? WorksheetType.Glasses
-                                    : WorksheetType.Panels;
-
-            //ItemsDto
-            //=======================================================================================================
-
-            // SAPA TechnoDesign Positions
-            return worksheetType;
         }
 
         private async Task<double> ParseNumberToDoubleOrZero(IXLCell cell, IXLWorksheet worksheet) => await Task.Run(() =>
         {
-            string input = cell.Value.ToString();
-            bool parsed = false;
-
-            // First try: current culture
-            parsed = double.TryParse(input, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.CurrentCulture, out double value);
-
-            if (!parsed)
+            try
             {
-                // Try invariant culture
-                parsed = double.TryParse(input, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value);
-            }
+                string input = cell.Value.ToString();
+                bool parsed = false;
 
-            if (!parsed)
-            {
-                // Try common fallback cultures (optional)
-                string[] fallbackCultures = new[] { "en-US", "fr-FR", "de-DE", "es-ES", "ru-RU" };
-                foreach (string? cultureName in fallbackCultures)
+                // First try: current culture
+                parsed = double.TryParse(input, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.CurrentCulture, out double value);
+
+                if (!parsed)
                 {
-                    var culture = CultureInfo.GetCultureInfo(cultureName);
-                    parsed = double.TryParse(input, NumberStyles.Float | NumberStyles.AllowThousands, culture, out value);
-                    if (parsed)
+                    // Try invariant culture
+                    parsed = double.TryParse(input, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value);
+                }
+
+                if (!parsed)
+                {
+                    // Try common fallback cultures (optional)
+                    string[] fallbackCultures = new[] { "en-US", "fr-FR", "de-DE", "es-ES", "ru-RU" };
+                    foreach (string? cultureName in fallbackCultures)
                     {
-                        break;
+                        CultureInfo culture = CultureInfo.GetCultureInfo(cultureName);
+                        parsed = double.TryParse(input, NumberStyles.Float | NumberStyles.AllowThousands, culture, out value);
+                        if (parsed)
+                        {
+                            break;
+                        }
                     }
                 }
+
+                return parsed ? value : 0;
             }
-
-            return parsed ? value : 0;
+            catch (Exception ex)
+            {
+                _logger.LogError("Excel Service. Unhandled error: Parsing numeric value from cell {Cell} in worksheet {WorksheetDto}. Exception:{$Exception}", cell.Address.ToString() ?? "", worksheet.Name, ex.Message);
+                return 0;
+            }
         });
-
 
         private string GetCurrency(string customFormat)
         {
@@ -261,17 +286,12 @@ namespace a2p.Infrastructure.Services.ExcelServices
             return currency;
         }
 
-
-
         public void WriteExcelErrorLog(string file, List<ErrorEntity> errors)
         {
 
-
             List<ErrorEntity> criticalErrors = errors
-                .Where(e => e.Level == ErrorLevel.Fatal || e.Level == ErrorLevel.Error)
+                .Where(e => e.Level is ErrorLevel.Fatal or ErrorLevel.Error)
                 .ToList();
-
-
 
             file = file.Replace(".xslx", " Errors.xslx");
 
@@ -284,20 +304,18 @@ namespace a2p.Infrastructure.Services.ExcelServices
                 _ = dataTable.Columns.Add("Code", typeof(string));
                 _ = dataTable.Columns.Add("Message", typeof(string));
 
-                using (XLWorkbook workbook = new())
+                using XLWorkbook workbook = new();
+
+                foreach (ErrorEntity error in criticalErrors)
                 {
+                    _ = dataTable.Rows.Add(error.OrderNumber, error.Level.ToString(), error.Code.ToString(), error.Message);
 
-                    foreach (ErrorEntity error in criticalErrors)
-                    {
-                        _ = dataTable.Rows.Add(error.OrderNumber, error.Level.ToString(), error.Code.ToString(), error.Message);
-
-                        _logger.LogInformation(",.Log saved successfully to {FileName}", file);
-                    }
-
-                    _ = workbook.Worksheets.Add(dataTable, "LogRecords");
-
-                    workbook.SaveAs(file);
+                    _logger.LogInformation(",.Log saved successfully to {FileName}", file);
                 }
+
+                _ = workbook.Worksheets.Add(dataTable, "LogRecords");
+
+                workbook.SaveAs(file);
 
             }
         }

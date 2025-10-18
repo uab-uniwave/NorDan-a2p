@@ -1,8 +1,8 @@
 using a2p.Domain.Enums;
 
-namespace a2p.Domain.Entities
+namespace a2p.Application.DTOs
 {
-    public class Error
+    public class ErrorDto
     {
         public string OrderNumber { get; set; } = string.Empty;
         public ErrorLevel Level { get; set; } = ErrorLevel.Fatal;

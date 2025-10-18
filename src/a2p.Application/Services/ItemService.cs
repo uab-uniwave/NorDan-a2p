@@ -136,8 +136,8 @@ namespace a2p.Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving item {Id}", id);
-                return Result<ItemEntity>.Failure("Error retrieving item.");
+                _logger.LogError(ex, "ErrorDto retrieving item {Id}", id);
+                return Result<ItemEntity>.Failure("ErrorDto retrieving item.");
             }
         }
 
@@ -152,8 +152,8 @@ namespace a2p.Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving items for order {id}", id);
-                return PagedResult<IEnumerable<ItemEntity>?>.Failure("Error retrieving order items.");
+                _logger.LogError(ex, "ErrorDto retrieving items for order {id}", id);
+                return PagedResult<IEnumerable<ItemEntity>?>.Failure("ErrorDto retrieving order items.");
             }
         }
 
@@ -168,8 +168,8 @@ namespace a2p.Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving paged items.");
-                return PagedResult<ItemEntity>.Failure("Error retrieving paged items.");
+                _logger.LogError(ex, "ErrorDto retrieving paged items.");
+                return PagedResult<ItemEntity>.Failure("ErrorDto retrieving paged items.");
             }
         }
 
@@ -190,8 +190,8 @@ namespace a2p.Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting order {Id}", id);
-                return Result<bool>.Failure("Error deleting order.");
+                _logger.LogError(ex, "ErrorDto deleting order {Id}", id);
+                return Result<bool>.Failure("ErrorDto deleting order.");
             }
         }
 

@@ -8,6 +8,8 @@ using a2p.Application.Models;
 using a2p.Domain.Enums;
 
 using Microsoft.Extensions.Logging;
+
+using PrefSales;
 namespace a2p.Infrastructure.Services.PrefSuiteServices
 {
     public class PrefSuiteService : IPrefSuiteService
@@ -50,7 +52,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                     _progressValue.ProgressTask3 = string.Empty;
                     _progress?.Report(_progressValue);
 
-                    salesDoc.Load(orderDto.SalesDocument.Number, orderDto.SalesDocument.Version);
+                    salesDoc.Load(orderDto.SalesDocumentDto.Number, orderDto.SalesDocumentDto.Version);
 
                     for (int i = 0; i < orderDto.ItemsDto.Count; i++)
                     {
@@ -65,7 +67,6 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                             _progressValue.ProgressTask2 = $"Inserting items {i + 1} of {orderDto.ItemsDto.Count} models into PrefSuite...";
                             _progressValue.ProgressTask3 = $"ItemName # {orderDto.ItemsDto[i].ItemName}";
                             _progress?.Report(_progressValue);
-
 
                             string Command = "<cmd:Commands name=\"CommandName\" xmlns:cmd=\"http://www.preference.com/XMLSchemas/2006/PrefCAD.Command\">" +
                                               "<cmd:Command name=\"Model.SetDimensions\">" +
@@ -83,7 +84,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                                               "<cmd:Command name=\"Model.Regenerate\"/>" +
                                               "</cmd:Commands>";
 
-                            var sdi = salesDoc.Items.Add(orderDto.ItemsDto[i].Id.ToString());
+                            SalesDocItem sdi = salesDoc.Items.Add(orderDto.ItemsDto[i].Id.ToString());
                             sdi.SetCode("Sapa_ALU", false);
                             sdi.ExecuteCommandStr(Command, out string? resultStr, true);
 
@@ -103,7 +104,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                             _logger.LogError(
                                 "{$Class}.{$Method}. Unhandled error." +
                                 "\nOrder {$OrderNumber}," +
-                                "\nWorksheet {$Worksheet}," +
+                                "\nWorksheet {$WorksheetDto}," +
                                 "\nLine {$Line}," +
                                 "\nItem {ItemName}, " +
                                 "\nDescription {Description}," +
@@ -117,7 +118,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                                 orderDto.ItemsDto[i].Description ?? string.Empty,
                                 ex.Message ?? string.Empty
                             );
-                            orderDto.ErrorsDto.Add(new ErrorEntity()
+                            orderDto.ErrorsDto.Add(new ErrorDto()
                             {
                                 OrderNumber = orderDto.ItemsDto[i].OrderNumber ?? string.Empty,
                                 Level = ErrorLevel.Error,
@@ -153,7 +154,7 @@ namespace a2p.Infrastructure.Services.PrefSuiteServices
                     orderDto.OrderNumber ?? string.Empty,
                     ex.Message ?? string.Empty
                 );
-                orderDto.ErrorsDto.Add(new ErrorEntity()
+                orderDto.ErrorsDto.Add(new ErrorDto()
                 {
                     OrderNumber = orderDto.OrderNumber ?? string.Empty,
                     Level = ErrorLevel.Error,

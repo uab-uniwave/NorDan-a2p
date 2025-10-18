@@ -1,7 +1,7 @@
 using a2p.Domain.Enums;
 namespace a2p.Application.DTOs
 {
-    public class PrefOrderDto
+    public class SalesDocumentDto
     {
 
         public int Number

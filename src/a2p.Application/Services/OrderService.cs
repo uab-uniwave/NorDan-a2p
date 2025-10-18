@@ -133,8 +133,8 @@ namespace a2p.Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving order {Id}", id);
-                return Result<OrderEntity>.Failure("Error retrieving order.");
+                _logger.LogError(ex, "ErrorDto retrieving order {Id}", id);
+                return Result<OrderEntity>.Failure("ErrorDto retrieving order.");
             }
         }
 
@@ -148,8 +148,8 @@ namespace a2p.Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving paged orders.");
-                return PagedResult<OrderEntity>.Failure("Error retrieving paged orders.");
+                _logger.LogError(ex, "ErrorDto retrieving paged orders.");
+                return PagedResult<OrderEntity>.Failure("ErrorDto retrieving paged orders.");
             }
         }
 
@@ -171,8 +171,8 @@ namespace a2p.Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error updating delivery address for order {Id}", id);
-                return Result<bool>.Failure("Error updating delivery address.");
+                _logger.LogError(ex, "ErrorDto updating delivery address for order {Id}", id);
+                return Result<bool>.Failure("ErrorDto updating delivery address.");
             }
         }
 
@@ -193,8 +193,8 @@ namespace a2p.Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting order {Id}", id);
-                return Result<bool>.Failure("Error deleting order.");
+                _logger.LogError(ex, "ErrorDto deleting order {Id}", id);
+                return Result<bool>.Failure("ErrorDto deleting order.");
             }
         }
     }

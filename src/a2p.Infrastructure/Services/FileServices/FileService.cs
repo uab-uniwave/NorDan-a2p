@@ -15,7 +15,7 @@ namespace a2p.Infrastructure.Services.FileServices
     {
         private readonly ILogger<FileService> _logger;
         private readonly ISettingsService _settingsService;
-        private readonly Application.Models.AppSettings _appSettings;
+        private readonly AppSettings _appSettings;
         private SettingsContainer _settingsContainer;
 
         public FileService(ISettingsService settingsService,
@@ -23,62 +23,23 @@ namespace a2p.Infrastructure.Services.FileServices
 
         {
             _logger = logger;
-
             _settingsService = settingsService;
-
             _appSettings = _settingsService.GetAppSettings();
             _settingsContainer = _settingsService.GetSettings();
         }
 
-        public List<string>? GetFiles()
+        public List<string> GetFiles()
         {
-
-            List<string>? fileList;
             try
             {
 
-                List<string> rawFileList = Directory.GetFiles(GetRootFolder()).ToList(); // Get all files in the root destinationFolder
+                List<string> _files = Directory.GetFiles(GetRootFolder()).ToList() ?? []; // Get all files in the root destinationFolder
 
-                if (rawFileList == null || !rawFileList.Any())
-                {
-                    _logger.LogInformation("{$Class}.{$Method}.In folder: \"{$RootFolder}\" files not found.",
-                     nameof(FileService),
-                    nameof(GetFiles),
-                    GetRootFolder());
-                    return null;
-                }
-
-                fileList = rawFileList
+                return _files
                     .Where(f => f != null && !f.Contains("~$") && f.EndsWith("xlsx"))
                     .OrderBy(file => file)
-                    .ToList();
-                if (fileList == null)
-                {
+                    .ToList() ?? [];
 
-                    _logger.LogInformation("{$Class}.{$Method}.In folder: \"{$RootFolder}\" files not found.",
-                     nameof(FileService),
-                    nameof(GetFiles),
-                    GetRootFolder());
-                    return null;
-                }
-                else if (!fileList.Any())
-                {
-                    _logger.LogInformation("{$Class}.{$Method}.In folder: \"{$RootFolder}\" files not found.",
-                       nameof(FileService),
-                     nameof(GetFiles),
-                    GetRootFolder());
-                    return null;
-                }
-                else
-                {
-                    _logger.LogInformation("{$Class}.{$Method}. Found files ({!Count}) in folder \"{$RootFolder}\"",
-                        nameof(FileService),
-                    nameof(GetFiles),
-                    fileList.Count,
-                    GetRootFolder());
-
-                    return fileList;
-                }
 
             }
 
@@ -88,48 +49,10 @@ namespace a2p.Infrastructure.Services.FileServices
                     nameof(FileService),
                     nameof(GetFiles),
                     ex.Message);
-                return null;
+                return [];
 
             }
         }
-
-        public List<Application.Models.File> GetOrderFiles(string order)
-        {
-
-            List<Application.Models.File> files = [];
-            try
-            {
-
-                List<string> rawFileList = Directory.GetFiles(GetRootFolder()).ToList(); // Get all files in the root destinationFolder
-
-                List<string> orderFiles = rawFileList.Where(f => f.StartsWith(order) && !f.Contains("~$") && f.EndsWith(".xlsx")).ToList(); // Get all files that match the order number
-
-                for (int i = 0; i < orderFiles.Count; i++)
-                {
-
-                    Application.Models.File a2pFile = new()
-                    {
-
-                        FullName = orderFiles[i],
-                        IsLocked = IsLocked(orderFiles[i]),
-                        FilePath = Path.GetDirectoryName(orderFiles[i]) ?? string.Empty,
-                        FileName = Path.GetFileName(orderFiles[i]) ?? string.Empty
-                    };
-
-                    files.Add(a2pFile);
-                }
-                return files;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("{$Class}.{$Method}. Unhandled error getting ordr files! Exception: {$Exception}",
-                    nameof(FileService),
-                    nameof(GetOrderFiles),
-                    ex.Message);
-                return files;
-            }
-        }
-
         public bool IsLocked(string filePath)
         {
             try
@@ -144,6 +67,7 @@ namespace a2p.Infrastructure.Services.FileServices
                 _logger.LogError("{$Class}.{$Method}. File \"{$File}\" is locked Exception: {$Exception}",
                    nameof(FileService),
                    nameof(IsLocked),
+                   filePath,
                    ex.Message);
                 return true;
             }

@@ -1,15 +1,13 @@
 namespace a2p.Application.Models
 {
-    public class File
+    public class FileDto
     {
 
         public string OrderNumber { get; set; } = string.Empty;
 
-        public List<Worksheet> Worksheets { get; set; } = [];
+        public List<WorksheetDto> Worksheets { get; set; } = [];
 
         public string Currency { get; set; } = string.Empty;
-
-        public string FullName { get; set; } = string.Empty;
 
         public string FilePath { get; set; } = string.Empty;
 

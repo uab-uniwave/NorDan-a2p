@@ -23,11 +23,11 @@ namespace a2p.Infrastructure.Persistence.Repositories
                     ( 
                     [Id], 
                     [OrderNumber], 
-                    [Worksheet], 
+                    [WorksheetDto], 
                     [Line], 
                     [Column], 
-                    [SalesDocumentNumber], 
-                    [SalesDocumentVersion], 
+                    [Number], 
+                    [Version], 
                     [ItemName], 
                     [SortOrder], 
                     [Description], 
@@ -71,11 +71,11 @@ namespace a2p.Infrastructure.Persistence.Repositories
                     ( 
                     @Id, 
                     @OrderNumber, 
-                    @Worksheet, 
+                    @WorksheetDto, 
                     @Line, 
                     @Column, 
-                    @SalesDocumentNumber, 
-                    @SalesDocumentVersion, 
+                    @Number, 
+                    @Version, 
                     @ItemName, 
                     @SortOrder, 
                     @Description, 
@@ -139,7 +139,7 @@ namespace a2p.Infrastructure.Persistence.Repositories
             using IDbConnection db = _factory.CreateConnection();
             using SqlMapper.GridReader multi = await db.QueryMultipleAsync(sql, new { OrderId = id, Offset = (page - 1) * size, PageSize = size });
             IEnumerable<ItemEntity> items = await multi.ReadAsync<ItemEntity>();
-            var total = await multi.ReadSingleAsync<int>();
+            int total = await multi.ReadSingleAsync<int>();
             return (items, total);
         }
 
@@ -154,7 +154,7 @@ namespace a2p.Infrastructure.Persistence.Repositories
             using IDbConnection db = _factory.CreateConnection();
             using SqlMapper.GridReader multi = await db.QueryMultipleAsync(sql, new { Offset = (page - 1) * size, PageSize = size });
             IEnumerable<ItemEntity> items = await multi.ReadAsync<ItemEntity>();
-            var total = await multi.ReadSingleAsync<int>();
+            int total = await multi.ReadSingleAsync<int>();
             return (items, total);
         }
 
@@ -166,11 +166,11 @@ namespace a2p.Infrastructure.Persistence.Repositories
             (
                     [Id],
                     [OrderNumber],
-                    [Worksheet],
+                    [WorksheetDto],
                     [Line],
                     [Column],
-                    [SalesDocumentNumber],
-                    [SalesDocumentVersion],
+                    [Number],
+                    [Version],
                     [ItemName],
                     [SortOrder],
                     [Description],
@@ -214,11 +214,11 @@ namespace a2p.Infrastructure.Persistence.Repositories
                     (
                     @Id,
                     @OrderNumber,
-                    @Worksheet,
+                    @WorksheetDto,
                     @Line,
                     @Column,
-                    @SalesDocumentNumber,
-                    @SalesDocumentVersion,
+                    @Number,
+                    @Version,
                     @ItemName,
                     @SortOrder,
                     @Description,

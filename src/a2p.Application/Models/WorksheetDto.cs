@@ -2,7 +2,7 @@ using a2p.Domain.Enums;
 
 namespace a2p.Application.Models
 {
-    public class Worksheet
+    public class WorksheetDto
     {
         //   public string FileName { get; set; } = string.Empty;
 

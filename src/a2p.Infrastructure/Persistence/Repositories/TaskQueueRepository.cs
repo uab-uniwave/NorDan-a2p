@@ -26,8 +26,8 @@ namespace a2p.Infrastructure.Persistence.Repositories
                                 , OrderId 
                                 , OrderNumber 
                                 , ProjectNumber 
-                                , SalesDocumentNumber 
-                                , SalesDocumentVersion 
+                                , Number 
+                                , Version 
                                 , State 
                                 , PayloadJson 
                                 , ProcessedUTCDateTime 
@@ -41,8 +41,8 @@ namespace a2p.Infrastructure.Persistence.Repositories
                                 ,@rderId 
                                 ,@OrderNumber
                                 ,@ProjectNumber 
-                                ,@SalesDocumentNumber
-                                ,@SalesDocumentVersion 
+                                ,@Number
+                                ,@Version 
                                 ,@State
                                 ,@PayloadJson
                                 ,@ProcessedUTCDateTime
@@ -97,8 +97,8 @@ namespace a2p.Infrastructure.Persistence.Repositories
                                 , OrderId
                                 , OrderNumber
                                 , ProjectNumber
-                                , SalesDocumentNumber
-                                , SalesDocumentVersion
+                                , Number
+                                , Version
                                 , State
                                 , PayloadJson
                                 , ProcessedUTCDateTime
@@ -112,8 +112,8 @@ namespace a2p.Infrastructure.Persistence.Repositories
                                 , @rderId
                                 , @OrderNumber
                                 , @ProjectNumber
-                                , @SalesDocumentNumber
-                                , @SalesDocumentVersion
+                                , @Number
+                                , @Version
                                 , @State
                                 , @PayloadJson
                                 , @ProcessedUTCDateTime

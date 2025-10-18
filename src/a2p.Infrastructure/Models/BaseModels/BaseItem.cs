@@ -3,7 +3,7 @@ namespace a2p.Infrastructure.Models.BaseModels
     public class BaseItem
     {
         public string File { get; set; } = string.Empty; // Excel file name
-        public string Worksheet { get; set; } = string.Empty;// Worksheet name
+        public string Worksheet { get; set; } = string.Empty;// WorksheetDto name
         public string Order { get; set; } = string.Empty; // OrderNumber identifier
         public string Description { get; set; } = string.Empty; // ItemName description
         public string SortOrder { get; set; } = "0";// Sorting or ordering index

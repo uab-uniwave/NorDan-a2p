@@ -228,7 +228,7 @@ namespace a2p.WinForm.Forms
             lbInfoFiles.Name = "lbInfoFiles";
             lbInfoFiles.Size = new Size(153, 44);
             lbInfoFiles.TabIndex = 4;
-            lbInfoFiles.Text = "Files:";
+            lbInfoFiles.Text = "FilesDto:";
             lbInfoFiles.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // lbInfoFilesCount
@@ -259,7 +259,7 @@ namespace a2p.WinForm.Forms
             lbInfoWorksheets.Name = "lbInfoWorksheets";
             lbInfoWorksheets.Size = new Size(153, 44);
             lbInfoWorksheets.TabIndex = 0;
-            lbInfoWorksheets.Text = "Worksheets:";
+            lbInfoWorksheets.Text = "WorksheetsDto:";
             lbInfoWorksheets.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // lbInfoWorksheetsCount

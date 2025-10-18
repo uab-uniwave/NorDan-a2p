@@ -25,13 +25,13 @@ namespace a2p.Infrastructure.Services.ExcelServices
             _progressValue = new ProgressValue();
         }
 
-        public async Task<List<ItemDto>> MapItemsAsync(Worksheet worksheet, ProgressValue? progressValue, IProgress<ProgressValue>? progress = null)
+        public async Task<List<ItemDto>> MapItemsAsync(WorksheetDto worksheet, ProgressValue? progressValue, IProgress<ProgressValue>? progress = null)
         {
             _progressValue = progressValue ?? new ProgressValue();
             _progress = progress;
 
-            List<ItemEntity> items = [];
-            List<ErrorEntity> errors = [];
+            List<ItemDto> items = [];
+            List<ErrorDto> errors = [];
             List<ItemDto> result = [];
 
             if (worksheet == null || !worksheet.WorksheetData.Any())
@@ -44,41 +44,76 @@ namespace a2p.Infrastructure.Services.ExcelServices
                 int rowCounter = 0;
                 int sortOrder = -1;
 
-                decimal totalSellingPrice = decimal.TryParse(worksheet.WorksheetData[worksheet.RowCount - 1][20].ToString(), out decimal orderPrice) ? orderPrice : 0;
-                decimal totalQuotePrice = decimal.TryParse(worksheet.WorksheetData[worksheet.RowCount - 1][22].ToString(), out decimal orderDiscount) ? orderDiscount : 0;
+                // Use the actual parsed row count to avoid mismatches between RowCount and WorksheetData
+                int rowCount = worksheet.WorksheetData.Count;
+                if (rowCount == 0)
+                {
+                    return result;
+                }
+
+                int lastRow = Math.Max(0, rowCount - 1);
+
+                decimal totalSellingPrice = decimal.TryParse(GetCell(worksheet.WorksheetData, lastRow, 20), out decimal orderPrice) ? orderPrice : 0;
+                decimal totalQuotePrice = decimal.TryParse(GetCell(worksheet.WorksheetData, lastRow, 22), out decimal orderDiscount) ? orderDiscount : 0;
                 decimal discountCoeficient = 1;
                 if (totalSellingPrice != 0)
                 {
                     discountCoeficient = totalQuotePrice / totalSellingPrice;
                 }
 
-                for (int i = 1; i < worksheet.RowCount; i++)
+                for (int i = 1; i < rowCount; i++)
                 {
-                    ItemEntity item = new();
+                    ItemDto item = new();
                     try
                     {
+                        // Basic row validation: ensure row exists and has expected minimum columns
+                        List<object> row = worksheet.WorksheetData[i];
+                        if (row == null)
+                        {
+                            _logger.LogWarning("{$Class}.{$Method}. Row {Row} is null. Skipping.", nameof(ExcelParserTechDesign), nameof(MapItemsAsync), i + 1);
+                            continue;
+                        }
+
+                        // Many fields below assume at least 23 columns (index 0..22). If row is shorter, skip and log.
+                        const int requiredColumns = 23;
+                        if (row.Count < requiredColumns)
+                        {
+                            _logger.LogWarning("{$Class}.{$Method}. Row {Row} has {Columns} columns but {Required} are required. Skipping.",
+                                nameof(ExcelParserTechDesign), nameof(MapItemsAsync), i + 1, row.Count, requiredColumns);
+
+                            errors.Add(new ErrorDto()
+                            {
+                                OrderNumber = worksheet.Order ?? string.Empty,
+                                Level = ErrorLevel.Error,
+                                Code = ErrorCode.Excel_Material_Parsing,
+                                Message = $"Row {i + 1} has {row.Count} columns; expected at least {requiredColumns}."
+                            });
+
+                            continue;
+                        }
+
                         sortOrder++;
                         rowCounter++;
 
                         int line = i + 1;
-                        _progressValue.ProgressTask3 = $"Reading row {rowCounter} of {worksheet.RowCount - 2})";
+                        _progressValue.ProgressTask3 = $"Reading row {rowCounter} of {rowCount - 2})";
                         _progress?.Report(_progressValue);
 
                         item.OrderNumber = worksheet.Order ?? string.Empty;
                         item.Worksheet = worksheet.Name ?? string.Empty;
                         item.Line = line;
                         item.Column = -1;
-                        item.ItemName = worksheet.WorksheetData[i][2].ToString() ?? string.Empty;
+                        item.ItemName = GetCell(worksheet.WorksheetData, i, 2) ?? string.Empty;
                         item.SortOrder = sortOrder;
-                        item.Description = worksheet.WorksheetData[i][0].ToString();
-                        item.Quantity = int.TryParse(worksheet.WorksheetData[i][5].ToString(), out int quantity) ? quantity : 0;
-                        item.Width = decimal.TryParse(worksheet.WorksheetData[i][3].ToString(), out decimal width) ? width : 0;
-                        item.Height = decimal.TryParse(worksheet.WorksheetData[i][4].ToString(), out decimal height) ? height : 0;
-                        item.Weight = decimal.TryParse(worksheet.WorksheetData[i][6].ToString(), out decimal weight) ? weight : 0;
-                        item.WeightGlass = decimal.TryParse(worksheet.WorksheetData[i][7].ToString(), out decimal weightGlass) ? weightGlass : 0;
-                        item.LaborCost = decimal.TryParse(worksheet.WorksheetData[i][17].ToString(), out decimal laborCost) ? laborCost : 0;
-                        item.Hours = decimal.TryParse(worksheet.WorksheetData[i][18].ToString(), out decimal hours) ? hours : 0;
-                        item.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][22].ToString(), out decimal price) ? price : 0;
+                        item.Description = GetCell(worksheet.WorksheetData, i, 0);
+                        item.Quantity = int.TryParse(GetCell(worksheet.WorksheetData, i, 5), out int quantity) ? quantity : 0;
+                        item.Width = decimal.TryParse(GetCell(worksheet.WorksheetData, i, 3), out decimal width) ? width : 0;
+                        item.Height = decimal.TryParse(GetCell(worksheet.WorksheetData, i, 4), out decimal height) ? height : 0;
+                        item.Weight = decimal.TryParse(GetCell(worksheet.WorksheetData, i, 6), out decimal weight) ? weight : 0;
+                        item.WeightGlass = decimal.TryParse(GetCell(worksheet.WorksheetData, i, 7), out decimal weightGlass) ? weightGlass : 0;
+                        item.LaborCost = decimal.TryParse(GetCell(worksheet.WorksheetData, i, 17), out decimal laborCost) ? laborCost : 0;
+                        item.Hours = decimal.TryParse(GetCell(worksheet.WorksheetData, i, 18), out decimal hours) ? hours : 0;
+                        item.TotalPrice = decimal.TryParse(GetCell(worksheet.WorksheetData, i, 22), out decimal price) ? price : 0;
                         item.WorksheetType = worksheet.WorksheetType;
                         item.CurrencyCode = worksheet.Currency ?? "Unknown";
 
@@ -86,7 +121,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         {
                             _logger.LogDebug("{$Class}.{$Method}." +
                            "\nOrder {$OrderNumber}." +
-                           "\nWorksheet {$Worksheet}." +
+                           "\nWorksheet {$WorksheetDto}." +
                            "\nLine {$Line}. ItemName name is missing." +
                            "\nItem {$Data}.",
                           nameof(ExcelParserTechDesign),
@@ -94,23 +129,23 @@ namespace a2p.Infrastructure.Services.ExcelServices
                            item.OrderNumber ?? string.Empty,
                            item.Worksheet ?? string.Empty,
                            item.Line,
-                           worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty);
+                           string.Join(",", row.Select(o => o?.ToString() ?? string.Empty)));
                             continue;
                         }
 
-                        _progressValue.ProgressTask3 = $"ItemName {sortOrder} of {worksheet.RowCount - 2} - ItemName # \"{item.ItemName}\"";
+                        _progressValue.ProgressTask3 = $"ItemName {sortOrder} of {rowCount - 2} - ItemName # \"{item.ItemName}\"";
                         _progress?.Report(_progressValue);
 
-                        decimal profileCost = decimal.TryParse(worksheet.WorksheetData[i][8].ToString(), out decimal profile) ? profile : 0;
-                        decimal fittingCost = decimal.TryParse(worksheet.WorksheetData[i][9].ToString(), out decimal fitting) ? fitting : 0;
-                        decimal gasketAccessoriesCost = decimal.TryParse(worksheet.WorksheetData[i][10].ToString(), out decimal gasketAccessories) ? gasketAccessories : 0;
-                        decimal aluminumSheetCost = decimal.TryParse(worksheet.WorksheetData[i][11].ToString(), out decimal aluminumSheet) ? aluminumSheet : 0;
-                        decimal surchargeALuProfilesCost = decimal.TryParse(worksheet.WorksheetData[i][12].ToString(), out decimal surchargeALuProfiles) ? surchargeALuProfiles : 0;
-                        decimal surfaceTreatmentCost = decimal.TryParse(worksheet.WorksheetData[i][13].ToString(), out decimal surfaceTreatment) ? surfaceTreatment : 0;
-                        decimal clientMaterialsCost = decimal.TryParse(worksheet.WorksheetData[i][14].ToString(), out decimal clientMaterials) ? clientMaterials : 0;
-                        decimal glassCost = decimal.TryParse(worksheet.WorksheetData[i][15].ToString(), out decimal glass) ? glass : 0;
-                        decimal panelCost = decimal.TryParse(worksheet.WorksheetData[i][16].ToString(), out decimal panel) ? panel : 0;
-                        decimal specialCost = decimal.TryParse(worksheet.WorksheetData[i][19].ToString(), out decimal special) ? special : 0;
+                        decimal profileCost = decimal.TryParse(GetCell(worksheet.WorksheetData, i, 8), out decimal profile) ? profile : 0;
+                        decimal fittingCost = decimal.TryParse(GetCell(worksheet.WorksheetData, i, 9), out decimal fitting) ? fitting : 0;
+                        decimal gasketAccessoriesCost = decimal.TryParse(GetCell(worksheet.WorksheetData, i, 10), out decimal gasketAccessories) ? gasketAccessories : 0;
+                        decimal aluminumSheetCost = decimal.TryParse(GetCell(worksheet.WorksheetData, i, 11), out decimal aluminumSheet) ? aluminumSheet : 0;
+                        decimal surchargeALuProfilesCost = decimal.TryParse(GetCell(worksheet.WorksheetData, i, 12), out decimal surchargeALuProfiles) ? surchargeALuProfiles : 0;
+                        decimal surfaceTreatmentCost = decimal.TryParse(GetCell(worksheet.WorksheetData, i, 13), out decimal surfaceTreatment) ? surfaceTreatment : 0;
+                        decimal clientMaterialsCost = decimal.TryParse(GetCell(worksheet.WorksheetData, i, 14), out decimal clientMaterials) ? clientMaterials : 0;
+                        decimal glassCost = decimal.TryParse(GetCell(worksheet.WorksheetData, i, 15), out decimal glass) ? glass : 0;
+                        decimal panelCost = decimal.TryParse(GetCell(worksheet.WorksheetData, i, 16), out decimal panel) ? panel : 0;
+                        decimal specialCost = decimal.TryParse(GetCell(worksheet.WorksheetData, i, 19), out decimal special) ? special : 0;
 
                         item.WeightWithoutGlass = Math.Round(item.Weight - item.WeightGlass, 4);
                         item.TotalWeight = Math.Round(item.Weight * item.Quantity, 4);
@@ -154,7 +189,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     {
                         _logger.LogError("Unhandled error {$Class}.{Method}." +
                             "\nOrder {$OrderNumber}." +
-                            "\nWorksheet {$Worksheet}." +
+                            "\nWorksheet {$WorksheetDto}." +
                             "\nLine {$Line}" +
                             "\nItem {$ItemName}." +
                             "\nDescription {$Description}." +
@@ -167,21 +202,21 @@ namespace a2p.Infrastructure.Services.ExcelServices
                             item.Line,
                             item.ItemName ?? string.Empty,
                             item.Description ?? string.Empty,
-                            worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty,
+                            GetRowDataSafe(worksheet.WorksheetData, i),
                         ex.Message ?? string.Empty);
 
-                        errors.Add(new ErrorEntity()
+                        errors.Add(new ErrorDto()
                         {
                             OrderNumber = worksheet.Order ?? string.Empty,
                             Level = ErrorLevel.Error,
                             Code = ErrorCode.Excel_Material_Parsing,
-                            Message = $"Unhandled Error {nameof(ExcelParserTechDesign)}.{nameof(MapItemsAsync)}, " +
+                            Message = $"Unhandled ErrorDto {nameof(ExcelParserTechDesign)}.{nameof(MapItemsAsync)}, " +
                           $"\nOrder: {worksheet.Order ?? string.Empty}," +
                           $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
                           $"\nLine {item.Line}," +
                           $"\nItem: {item.ItemName ?? string.Empty}," +
                           $"\nDescription: {item.Description ?? string.Empty}," +
-                          $"\nData: {worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}," +
+                          $"\nData: {GetRowDataSafe(worksheet.WorksheetData, i)}," +
                           $"\nException: {ex.Message ?? string.Empty}."
                         });
 
@@ -205,13 +240,47 @@ namespace a2p.Infrastructure.Services.ExcelServices
             }
         }
 
-        public async Task<List<MaterialDto>> MapMaterialsAsync(Worksheet worksheet, ProgressValue? progressValue, IProgress<ProgressValue>? progress = null)
+        // Safe cell accessor helper
+        private static string GetCell(List<List<object>> sheet, int rowIdx, int colIdx)
+        {
+            if (sheet == null)
+            {
+                return string.Empty;
+            }
+
+            if (rowIdx < 0 || rowIdx >= sheet.Count)
+            {
+                return string.Empty;
+            }
+
+            List<object> row = sheet[rowIdx];
+            return row == null ? string.Empty : colIdx < 0 || colIdx >= row.Count ? string.Empty : row[colIdx]?.ToString() ?? string.Empty;
+        }
+
+        // Safe row-to-string helper for logging
+        private static string GetRowDataSafe(List<List<object>> sheet, int rowIdx)
+        {
+            if (sheet == null)
+            {
+                return string.Empty;
+            }
+
+            if (rowIdx < 0 || rowIdx >= sheet.Count)
+            {
+                return string.Empty;
+            }
+
+            List<object> row = sheet[rowIdx];
+            return row == null ? string.Empty : string.Join(",", row.Select(o => o?.ToString() ?? string.Empty));
+        }
+
+        public async Task<List<MaterialDto>> MapMaterialsAsync(WorksheetDto worksheet, ProgressValue? progressValue, IProgress<ProgressValue>? progress = null)
         {
             _progressValue = progressValue ?? new ProgressValue();
             _progress = progress;
 
             List<MaterialDto> materials = [];
-            List<ErrorEntity> errors = [];
+            List<ErrorDto> errors = [];
             List<MaterialDto> result = [];
 
             if (worksheet == null || !worksheet.WorksheetData.Any())
@@ -221,10 +290,9 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
             try
             {
-                // Iterate Files
+                // Iterate FilesDto
                 if (worksheet.Name == "ND_Profiles")
                 {
-
 
                     materials.AddRange(await MapProfilesAsync(worksheet));
 
@@ -237,17 +305,13 @@ namespace a2p.Infrastructure.Services.ExcelServices
                 else if (worksheet.Name == "ND_Accessories")
                 {
 
-
                     materials.AddRange(await MapAccessoriesAsync(worksheet));
-
 
                 }
                 else if (worksheet.Name == "ND_Panels")
                 {
 
-
                     materials.AddRange(await MapPanelsAsync(worksheet));
-
 
                 }
                 else if (worksheet.Name == "ND_Glasses")
@@ -255,19 +319,16 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
                     materials.AddRange(await MapGlassesAsync(worksheet));
 
-
                 }
                 else if (worksheet.Name == "ND_Others")
                 {
-
-
 
                     materials.AddRange(await MapOthersAsync(worksheet));
 
                 }
 
                 // Convert materials to MaterialsDto
-                foreach (var material in materials)
+                foreach (MaterialDto material in materials)
                 {
                     result.Add(new MaterialDto
                     {
@@ -278,21 +339,21 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
                 return result;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
 
                 return result;
             }
         }
 
-        private async Task<List<MaterialDto>> MapProfilesAsync(Worksheet worksheet)
+        private async Task<List<MaterialDto>> MapProfilesAsync(WorksheetDto worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
 
-            List<MaterialDto> materials = []; List<ErrorEntity> ErrorEntitys = [];
+            List<MaterialDto> materials = [];
+            List<ErrorDto> error = [];
             try
             {
 
@@ -318,7 +379,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         //===================================================================================================
                         material.ReferenceBase = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
 
-                        (string, ErrorEntity?) result = TransformReference(material.ReferenceBase, material.SourceColor ?? string.Empty, worksheet, line);
+                        (string, ErrorDto?) result = TransformReference(material.ReferenceBase, material.SourceColor ?? string.Empty, worksheet, line);
                         if (string.IsNullOrEmpty(result.Item1))
                         {
                             continue;
@@ -328,7 +389,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
                         if (result.Item2 != null)
                         {
-                            ErrorEntitys.Add(result.Item2);
+                            error.Add(result.Item2);
                         }
 
                         material.Description = worksheet.WorksheetData[i][4].ToString() ?? string.Empty;
@@ -378,11 +439,9 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
                         //===================================================================================================
 
-
                         if (!string.IsNullOrWhiteSpace(material.SourceColor))
                         {
                             (string, string)? customColors = SplitColors(material.SourceColor);
-
 
                             if (customColors != null)
                             {
@@ -417,9 +476,8 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
                         //===================================================================================================
 
-
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
 
                         continue;
@@ -431,25 +489,23 @@ namespace a2p.Infrastructure.Services.ExcelServices
                 _progress?.Report(_progressValue);
                 return materials;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return materials;
             }
 
         }
 
-        private async Task<List<MaterialDto>> MapGasketsAsync(Worksheet worksheet)
+        private async Task<List<MaterialDto>> MapGasketsAsync(WorksheetDto worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
             List<MaterialDto> materials = [];
-            List<ErrorEntity> ErrorEntitys = [];
+            List<ErrorDto> ErrorDtos = [];
 
             try
             {
-
-
 
                 for (int i = 4; i < worksheet.RowCount; i++)
                 {
@@ -479,7 +535,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         {
                             _logger.LogError("{$Class}.{$Method}. Sapa article and color are missing. Line will be skipped." +
                               "\nOrder {$OrderNumber}, " +
-                            "\nWorksheet: {$Worksheet}, " +
+                            "\nWorksheet: {$WorksheetDto}, " +
                             "\nDescription {$Description}," +
                             nameof(ExcelParserTechDesign),
                             nameof(MapGasketsAsync),
@@ -488,7 +544,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                             material.Description ?? string.Empty
                          );
 
-                            ErrorEntitys.Add(new ErrorEntity()
+                            ErrorDtos.Add(new ErrorDto()
                             {
                                 OrderNumber = worksheet.Order ?? string.Empty,
                                 Level = ErrorLevel.Error,
@@ -512,7 +568,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         material.ReferenceBase = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
                         if (material.Color != "Without")
                         {
-                            (string, ErrorEntity?) result = TransformReference(material.ReferenceBase, material.Color, worksheet, line);
+                            (string, ErrorDto?) result = TransformReference(material.ReferenceBase, material.Color, worksheet, line);
                             if (string.IsNullOrEmpty(result.Item1))
                             {
                                 continue;
@@ -521,14 +577,14 @@ namespace a2p.Infrastructure.Services.ExcelServices
                             material.Reference = result.Item1;
                             if (result.Item2 != null)
                             {
-                                ErrorEntitys.Add(result.Item2);
+                                ErrorDtos.Add(result.Item2);
                             }
 
                         }
 
                         else
                         {
-                            (string, ErrorEntity?) result = TransformReference(material.ReferenceBase, "", worksheet, line);
+                            (string, ErrorDto?) result = TransformReference(material.ReferenceBase, "", worksheet, line);
                             if (string.IsNullOrEmpty(result.Item1))
                             {
                                 continue;
@@ -599,7 +655,6 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         {
                             (string, string)? customColors = SplitColors(material.SourceColor);
 
-
                             if (customColors != null)
                             {
                                 material.CustomField1 = customColors.Value.Item1; // used for custom color
@@ -638,7 +693,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     {
                         _logger.LogError("Unhandled error {$Class}.{Method}." +
                             "\nOrder {$OrderNumber}, " +
-                            "\nWorksheet: {$Worksheet}, " +
+                            "\nWorksheet: {$WorksheetDto}, " +
                             "\nReference: {$Reference }, " +
                             "\nColor: {$Color }, " +
                             "\nPrefSuite Reference Base {$ReferenceBase}, " +
@@ -655,12 +710,12 @@ namespace a2p.Infrastructure.Services.ExcelServices
                             material.Reference ?? string.Empty,
                             material.Description ?? string.Empty,
                              ex.Message ?? string.Empty);
-                        ErrorEntitys.Add(new ErrorEntity()
+                        ErrorDtos.Add(new ErrorDto()
                         {
                             OrderNumber = worksheet.Order ?? string.Empty,
                             Level = ErrorLevel.Error,
                             Code = ErrorCode.Excel_Material_Parsing,
-                            Message = $"Unhandled Error {nameof(ExcelParserTechDesign)}.{nameof(MapGasketsAsync)}, " +
+                            Message = $"Unhandled ErrorDto {nameof(ExcelParserTechDesign)}.{nameof(MapGasketsAsync)}, " +
                            $"\nOrder: {worksheet.Order ?? string.Empty}," +
                            $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
                            $"\nLine {material.Line}," +
@@ -672,8 +727,6 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         continue;
                     }
 
-
-
                     _progressValue.ProgressTask3 = string.Empty;
                     _progress?.Report(_progressValue);
                 }
@@ -683,7 +736,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
             {
                 _logger.LogError("Unhandled error {$Class}.{Method}." +
                     "\nOrder {$OrderNumber}." +
-                    "\nWorksheet {$Worksheet}." +
+                    "\nWorksheet {$WorksheetDto}." +
                     "\n{$Exception}",
                nameof(ExcelParserTechDesign),
                     nameof(MapGasketsAsync),
@@ -696,18 +749,16 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
         }
 
-        private async Task<List<MaterialDto>> MapAccessoriesAsync(Worksheet worksheet)
+        private async Task<List<MaterialDto>> MapAccessoriesAsync(WorksheetDto worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
 
-            List<ErrorEntity> ErrorEntitys = [];
+            List<ErrorDto> ErrorDtos = [];
             List<MaterialDto> materials = [];
             try
             {
-
-
 
                 for (int i = 4; i < worksheet.RowCount; i++)
                 {
@@ -720,7 +771,6 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
                         material.Worksheet = worksheet.Name ?? string.Empty;
                         material.OrderNumber = worksheet.Order ?? string.Empty;
-
 
                         //===================================================================================================
                         material.SourceReference = worksheet.WorksheetData[i][1]?.ToString();
@@ -746,7 +796,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         material.ReferenceBase = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
                         if (material.Color != "Without")
                         {
-                            (string, ErrorEntity?) result = TransformReference(material.ReferenceBase, material.Color, worksheet, line);
+                            (string, ErrorDto?) result = TransformReference(material.ReferenceBase, material.Color, worksheet, line);
                             if (string.IsNullOrEmpty(result.Item1))
                             {
                                 continue;
@@ -754,13 +804,13 @@ namespace a2p.Infrastructure.Services.ExcelServices
                             material.Reference = result.Item1;
                             if (result.Item2 != null)
                             {
-                                ErrorEntitys.Add(result.Item2);
+                                ErrorDtos.Add(result.Item2);
                             }
 
                         }
                         else
                         {
-                            (string, ErrorEntity?) result = TransformReference(material.ReferenceBase, "", worksheet, line);
+                            (string, ErrorDto?) result = TransformReference(material.ReferenceBase, "", worksheet, line);
                             if (string.IsNullOrEmpty(result.Item1))
                             {
                                 continue;
@@ -814,7 +864,6 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         {
                             (string, string)? customColors = SplitColors(material.SourceColor);
 
-
                             if (customColors != null)
                             {
                                 material.CustomField1 = customColors.Value.Item1; // used for custom color
@@ -853,7 +902,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     {
                         _logger.LogError("Unhandled error {$Class}.{Method}." +
                            "\nOrder {$OrderNumber}, " +
-                            "\nWorksheet: {$Worksheet}, " +
+                            "\nWorksheet: {$WorksheetDto}, " +
                             "\nReference: {$Reference }, " +
                             "\nColor: {$Color }, " +
                             "\nPrefSuite Reference Base {$ReferenceBase}, " +
@@ -871,15 +920,14 @@ namespace a2p.Infrastructure.Services.ExcelServices
                             material.Description ?? string.Empty,
                              ex.Message ?? string.Empty);
 
-                        ErrorEntitys.Add(new ErrorEntity()
+                        ErrorDtos.Add(new ErrorDto()
                         {
                             OrderNumber = worksheet.Order ?? string.Empty,
                             Level = ErrorLevel.Error,
                             Code = ErrorCode.Excel_Material_Parsing,
-                            Message = $"Unhandled Error {nameof(ExcelParserTechDesign)}.{nameof(MapAccessoriesAsync)}, " +
+                            Message = $"Unhandled ErrorDto {nameof(ExcelParserTechDesign)}.{nameof(MapAccessoriesAsync)}, " +
                            $"\nOrder: {worksheet.Order ?? string.Empty}," +
                            $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
-
 
                            $"\nDescription: {material.Description ?? string.Empty}," +
                            $"\nData: {worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}," +
@@ -887,8 +935,6 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         });
                         continue;
                     }
-
-
 
                     _progressValue.ProgressTask3 = string.Empty;
                     _progress?.Report(_progressValue);
@@ -900,7 +946,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
             {
                 _logger.LogError("Unhandled error {$Class}.{Method}." +
                     "\nOrder {$OrderNumber}." +
-                    "\nWorksheet {$Worksheet}." +
+                    "\nWorksheet {$WorksheetDto}." +
                     "\n{$Exception}",
                nameof(ExcelParserTechDesign),
                     nameof(MapAccessoriesAsync),
@@ -913,19 +959,16 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
         }
 
-        private async Task<List<MaterialDto>> MapPanelsAsync(Worksheet worksheet)
+        private async Task<List<MaterialDto>> MapPanelsAsync(WorksheetDto worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
             List<MaterialDto> materials = [];
-            List<ErrorEntity> ErrorEntitys = [];
+            List<ErrorDto> ErrorDtos = [];
 
             try
             {
-
-
-
 
                 for (int i = 4; i < worksheet.RowCount; i++)
                 {
@@ -961,7 +1004,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
                         //===================================================================================================                          
                         material.Description = worksheet.WorksheetData[i][4].ToString() ?? string.Empty;
-                        var pattern = @"\(XPS\)\s+\d{1,2}mm$";
+                        string pattern = @"\(XPS\)\s+\d{1,2}mm$";
                         Match match = Regex.Match(material.Description, pattern);
 
                         material.ReferenceBase = match.Success
@@ -972,12 +1015,8 @@ namespace a2p.Infrastructure.Services.ExcelServices
                             ? $"LOB_XPS{match.Groups[0].Value.Replace("(XPS)", "").Replace("mm", "").Trim()}"
                             : string.Empty;
 
-
-
                         material.Color = match.Success ?
                         $"LOB_Surface" : string.Empty;
-
-
 
                         //===================================================================================================
 
@@ -987,25 +1026,24 @@ namespace a2p.Infrastructure.Services.ExcelServices
                             if (string.IsNullOrEmpty(material.Reference) && (material.Description == "1 mm aluminium sheet" || material.Description == "1mm aluminium sheet"))
                             {
 
-                                (string, ErrorEntity?) result = TransformReference("AluSheet1", material.SourceColor ?? string.Empty, worksheet, line);
+                                (string, ErrorDto?) result = TransformReference("AluSheet1", material.SourceColor ?? string.Empty, worksheet, line);
                                 if (string.IsNullOrEmpty(result.Item1))
                                 {
                                     continue;
                                 }
 
-
                                 material.Reference = result.Item1;
 
                                 if (result.Item2 != null)
                                 {
-                                    ErrorEntitys.Add(result.Item2);
+                                    ErrorDtos.Add(result.Item2);
                                 }
 
                             }
                             else if (string.IsNullOrEmpty(material.Reference) && (material.Description == "1.25 mm aluminium sheet" || material.Description == "1.25mm aluminium sheet"))
                             {
 
-                                (string, ErrorEntity?) result = TransformReference("AluSheet1.25", material.SourceColor ?? string.Empty, worksheet, line);
+                                (string, ErrorDto?) result = TransformReference("AluSheet1.25", material.SourceColor ?? string.Empty, worksheet, line);
                                 if (string.IsNullOrEmpty(result.Item1))
                                 {
                                     continue;
@@ -1013,14 +1051,14 @@ namespace a2p.Infrastructure.Services.ExcelServices
                                 material.Reference = result.Item1;
                                 if (result.Item2 != null)
                                 {
-                                    ErrorEntitys.Add(result.Item2);
+                                    ErrorDtos.Add(result.Item2);
                                 }
 
                             }
                             else if (string.IsNullOrEmpty(material.Reference) && (material.Description == "1.5 mm aluminium sheet" || material.Description == "1.5mm aluminium sheet"))
                             {
 
-                                (string, ErrorEntity?) result = TransformReference("AluSheet1.5", material.SourceColor ?? string.Empty, worksheet, line);
+                                (string, ErrorDto?) result = TransformReference("AluSheet1.5", material.SourceColor ?? string.Empty, worksheet, line);
                                 if (string.IsNullOrEmpty(result.Item1))
                                 {
                                     continue;
@@ -1028,13 +1066,13 @@ namespace a2p.Infrastructure.Services.ExcelServices
                                 material.Reference = result.Item1;
                                 if (result.Item2 != null)
                                 {
-                                    ErrorEntitys.Add(result.Item2);
+                                    ErrorDtos.Add(result.Item2);
                                 }
 
                             }
                             else
                             {
-                                (string, ErrorEntity?) result = TransformReference(material.SourceReference ?? string.Empty, material.SourceColor ?? string.Empty, worksheet, line);
+                                (string, ErrorDto?) result = TransformReference(material.SourceReference ?? string.Empty, material.SourceColor ?? string.Empty, worksheet, line);
 
                                 if (string.IsNullOrEmpty(result.Item1))
                                 {
@@ -1045,7 +1083,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
                                 if (result.Item2 != null)
                                 {
-                                    ErrorEntitys.Add(result.Item2);
+                                    ErrorDtos.Add(result.Item2);
                                 }
                             }
                             material.Color = worksheet.WorksheetData[i][2].ToString() ?? string.Empty;
@@ -1076,7 +1114,6 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
                         material.TotalArea = material.Area * material.Quantity;
 
-
                         material.RequiredArea = material.TotalArea; // not used 
                         material.LeftOverArea = 0; // not used 
 
@@ -1100,7 +1137,6 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         if (!string.IsNullOrWhiteSpace(material.SourceColor))
                         {
                             (string, string)? customColors = SplitColors(material.SourceColor);
-
 
                             if (customColors != null)
                             {
@@ -1126,7 +1162,6 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         //===================================================================================================
                         material.MaterialType = MaterialType.Panels;
 
-
                         if (string.IsNullOrEmpty(material.SourceColor))
                         {
                             material.SourceColor = material.Color;
@@ -1139,26 +1174,22 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
                         }
 
-
-
                         //===================================================================================================
                         _progressValue.ProgressTask3 = $"Panels {sortOrder} of {worksheet.RowCount - 5} - {material.Description}";
                         _progress?.Report(_progressValue);
 
                         //===================================================================================================
 
-
                         materials.Add(material);
 
                         //===================================================================================================
-
 
                     }
                     catch (Exception ex)
                     {
                         _logger.LogError("Unhandled error {$Class}.{$Method}." +
                             "\nOrder {$OrderNumber}, " +
-                            "\nWorksheet: {$Worksheet}, " +
+                            "\nWorksheet: {$WorksheetDto}, " +
                             "\nReference: {$Reference}, " +
                             "\nColor: {$Color}, " +
                             "\nPrefSuite Reference Base {$ReferenceBase}, " +
@@ -1176,12 +1207,12 @@ namespace a2p.Infrastructure.Services.ExcelServices
                             material.Description ?? string.Empty,
                              ex.Message ?? string.Empty);
 
-                        ErrorEntitys.Add(new ErrorEntity()
+                        ErrorDtos.Add(new ErrorDto()
                         {
                             OrderNumber = worksheet.Order ?? string.Empty,
                             Level = ErrorLevel.Error,
                             Code = ErrorCode.Excel_Material_Parsing,
-                            Message = $"Unhandled Error {nameof(ExcelParserTechDesign)}.{nameof(MapPanelsAsync)}, " +
+                            Message = $"Unhandled ErrorDto {nameof(ExcelParserTechDesign)}.{nameof(MapPanelsAsync)}, " +
                         $"\nOrder: {worksheet.Order ?? string.Empty}," +
                         $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
                         $"\nReference: {material.SourceReference ?? string.Empty}," +
@@ -1192,8 +1223,6 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         });
                         continue;
                     }
-
-
 
                     _progressValue.ProgressTask3 = string.Empty;
                     _progress?.Report(_progressValue);
@@ -1206,7 +1235,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
             {
                 _logger.LogError("Unhandled error {$Class}.{Method}." +
                     "\nOrder {$OrderNumber}." +
-                    "\nWorksheet {$Worksheet}." +
+                    "\nWorksheet {$WorksheetDto}." +
                     "\n{$Exception}",
                nameof(ExcelParserTechDesign),
                     nameof(MapPanelsAsync),
@@ -1219,19 +1248,16 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
         }
 
-        private async Task<List<MaterialDto>> MapGlassesAsync(Worksheet worksheet)
+        private async Task<List<MaterialDto>> MapGlassesAsync(WorksheetDto worksheet)
         {
             int sortOrder = -1;
             int line = -1;
 
             List<MaterialDto> materials = [];
-            List<ErrorEntity> ErrorEntitys = [];
+            List<ErrorDto> ErrorDtos = [];
 
             try
             {
-
-
-
 
                 for (int i = 4; i < worksheet.RowCount; i++)
                 {
@@ -1266,7 +1292,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         {
                             _logger.LogError("{$Class}.{$Method}. Glass description is missing." +
                            "\nOrder {$OrderNumber}, " +
-                           "\nWorksheet: {$Worksheet}, " +
+                           "\nWorksheet: {$WorksheetDto}, " +
                            "\nReference {$Reference}, " +
                            "\nColor {$Color}," +
 
@@ -1278,7 +1304,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                            material.Description ?? string.Empty
                             );
 
-                            ErrorEntitys.Add(new ErrorEntity()
+                            ErrorDtos.Add(new ErrorDto()
                             {
                                 OrderNumber = worksheet.Order!,
                                 Level = ErrorLevel.Error,
@@ -1304,7 +1330,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         {
                             _logger.LogError("{$Class}.{$Method}. Glass not exists in PrefSuite DB." +
                           "\nOrder {$OrderNumber}, " +
-                          "\nWorksheet: {$Worksheet}, " +
+                          "\nWorksheet: {$WorksheetDto}, " +
                           "\nReference: {$Reference}, " +
                           "\nDescription: {$Color} not found. " +
                           "\nExpected Reference {$ExpectedReference} of glass",
@@ -1317,7 +1343,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                               material.SourceDescription ?? string.Empty,
                               resultPredicted);
 
-                            ErrorEntitys.Add(new ErrorEntity()
+                            ErrorDtos.Add(new ErrorDto()
                             {
                                 OrderNumber = worksheet.Order!,
                                 Level = ErrorLevel.Error,
@@ -1391,14 +1417,12 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
                         materials.Add(material);
 
-
-
                     }
                     catch (Exception ex)
                     {
                         _logger.LogError("Unhandled error  {$Class}.{Method}" +
                             "\nOrder {$OrderNumber}, " +
-                            "\nWorksheet: {$Worksheet}, " +
+                            "\nWorksheet: {$WorksheetDto}, " +
                             "\nReference {$Reference}, " +
                             "\nColor {$Color}, " +
                             "\nPrefSuite Reference {$PrefSuiteReference}," +
@@ -1415,12 +1439,12 @@ namespace a2p.Infrastructure.Services.ExcelServices
                             material.Description ?? string.Empty,
                              ex.Message ?? string.Empty);
 
-                        ErrorEntitys.Add(new ErrorEntity()
+                        ErrorDtos.Add(new ErrorDto()
                         {
                             OrderNumber = worksheet.Order ?? string.Empty,
                             Level = ErrorLevel.Error,
                             Code = ErrorCode.Excel_Material_Parsing,
-                            Message = $"Unhandled Error {nameof(ExcelParserTechDesign)}.{nameof(MapGlassesAsync)}, " +
+                            Message = $"Unhandled ErrorDto {nameof(ExcelParserTechDesign)}.{nameof(MapGlassesAsync)}, " +
                      $"\nOrder: {worksheet.Order ?? string.Empty}," +
                      $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
                      $"\nReference: {material.SourceReference ?? string.Empty}," +
@@ -1444,7 +1468,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
             {
                 _logger.LogError("Unhandled error {$Class}.{Method}." +
                     "\nOrder {$OrderNumber}." +
-                    "\nWorksheet {$Worksheet}." +
+                    "\nWorksheet {$WorksheetDto}." +
                     "\n{$Exception}",
                nameof(ExcelParserTechDesign),
                     nameof(MapGlassesAsync),
@@ -1457,21 +1481,17 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
         }
 
-        private async Task<List<MaterialDto>> MapOthersAsync(Worksheet worksheet)
+        private async Task<List<MaterialDto>> MapOthersAsync(WorksheetDto worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
 
             List<MaterialDto> materials = [];
-            List<ErrorEntity> ErrorEntitys = [];
+            List<ErrorDto> ErrorDtos = [];
 
             try
             {
-
-
-
-
 
                 for (int i = 4; i < worksheet.RowCount; i++)
                 {
@@ -1481,7 +1501,6 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     line = i + 1;
                     try
                     {
-
 
                         material.Worksheet = worksheet.Name ?? string.Empty;
                         material.OrderNumber = worksheet.Order ?? string.Empty;
@@ -1506,7 +1525,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         if (material.Color != "Without")
                         {
 
-                            (string, ErrorEntity?) result = TransformReference(material.ReferenceBase, material.Color, worksheet, line);
+                            (string, ErrorDto?) result = TransformReference(material.ReferenceBase, material.Color, worksheet, line);
                             if (string.IsNullOrEmpty(result.Item1))
                             {
                                 continue;
@@ -1514,7 +1533,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                             material.Reference = result.Item1;
                             if (result.Item2 != null)
                             {
-                                ErrorEntitys.Add(result.Item2);
+                                ErrorDtos.Add(result.Item2);
                             }
 
                         }
@@ -1561,7 +1580,6 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         {
                             (string, string)? customColors = SplitColors(material.SourceColor);
 
-
                             if (customColors != null)
                             {
                                 material.CustomField1 = customColors.Value.Item1; // used for custom color
@@ -1583,7 +1601,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         material.CustomField4 = null; // not used 
                         material.CustomField5 = null; // not used 
 
-                        //================================================================================================================
+                        //===================================================================================================
                         material.MaterialType = MaterialType.Piece;
                         //===================================================================================================
                         _progressValue.ProgressTask3 = $"Other materials {sortOrder} of {worksheet.RowCount - 5} -  {material.ReferenceBase}_{material.Color}";
@@ -1591,14 +1609,12 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
                         materials.Add(material);
 
-
-
                     }
                     catch (Exception ex)
                     {
                         _logger.LogError("Unhandled error {$Class}.{Method}." +
                             "\nOrder {$OrderNumber}, " +
-                            "\nWorksheet: {$Worksheet}, " +
+                            "\nWorksheet: {$WorksheetDto}, " +
                             "\nLine {$Line}, " +
                             "\nReference base {$ReferenceBase}, " +
                             "\nReference {$Reference}," +
@@ -1614,12 +1630,12 @@ namespace a2p.Infrastructure.Services.ExcelServices
                             material.Description ?? string.Empty,
                              ex.Message ?? string.Empty);
 
-                        ErrorEntitys.Add(new ErrorEntity()
+                        ErrorDtos.Add(new ErrorDto()
                         {
                             OrderNumber = worksheet.Order ?? string.Empty,
                             Level = ErrorLevel.Error,
                             Code = ErrorCode.Excel_Material_Parsing,
-                            Message = $"Unhandled Error {nameof(ExcelParserTechDesign)}.{nameof(MapOthersAsync)}, " +
+                            Message = $"Unhandled ErrorDto {nameof(ExcelParserTechDesign)}.{nameof(MapOthersAsync)}, " +
                              $"\nOrder: {worksheet.Order ?? string.Empty}," +
                              $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
                              $"\nLine {material.Line}," +
@@ -1631,8 +1647,6 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         continue;
                     }
 
-
-
                 }
                 _progressValue.ProgressTask3 = string.Empty;
                 _progress?.Report(_progressValue);
@@ -1642,7 +1656,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
             {
                 _logger.LogError("Unhandled error {$Class}.{Method}." +
                     "\nOrder {$OrderNumber}." +
-                    "\nWorksheet {$Worksheet}." +
+                    "\nWorksheet {$WorksheetDto}." +
                     "\n{$Exception}",
                nameof(ExcelParserTechDesign),
                     nameof(MapOthersAsync),
@@ -1660,7 +1674,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
             await Task.Run(() =>
             {
                 _logger.LogDebug("Mapper Sapa 2 Service: Map Materials | OrderNumber : {$OrderNumber} " +
-                                                              "| Worksheet {Worksheet$} " +
+                                                              "| WorksheetDto {WorksheetDto$} " +
                                                               "| Line: {$Line} " +
                                                               "| Sort order: " +
                                                               "| Reference : {$Reference}  " +
@@ -1745,13 +1759,13 @@ namespace a2p.Infrastructure.Services.ExcelServices
             });
         }
 
-        private async Task LogMappedItemEntityAsync(ItemEntity item)
+        private async Task LogMappedItemEntityAsync(ItemDto item)
         {
             await Task.Run(() =>
             {
                 _logger.LogDebug(
                     "Mapper Sapa 2 Service: Map ItemsDto | OrderNumber : {$OrderNumber} " +
-                    "| Worksheet {Worksheet$} " +
+                    "| WorksheetDto {WorksheetDto$} " +
                     "| Line: {$Line} " +
                     "| Sort order: " +
                     "| ItemName : {$ItemName}  " +
@@ -1787,7 +1801,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     "| Total Cost EUR : {$TotalCostEUR} " +
                     "| Price EUR : {$PriceEUR} " +
                     "| Total Price EUR : {$TotalPriceEUR} " +
-                    "| Worksheet Type : {$WorksheetType} ",
+                    "| WorksheetDto Type : {$WorksheetType} ",
                     item.OrderNumber ?? string.Empty,
                     item.Worksheet ?? string.Empty,
                     item.Line,
@@ -1910,7 +1924,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
             }
         }
 
-        private (string, ErrorEntity?) TransformReference(string sapaReference, string sapaColor, Worksheet worksheet, int line)
+        private (string, ErrorDto?) TransformReference(string sapaReference, string sapaColor, WorksheetDto worksheet, int line)
         {
 
             string reference = string.Empty;
@@ -1923,9 +1937,9 @@ namespace a2p.Infrastructure.Services.ExcelServices
                 if (string.IsNullOrEmpty(sapaReference) && string.IsNullOrEmpty(sapaColor))
                 {
                     _logger.LogError("{$Class}.{$Method}. " +
-                    "Error Sapa article and color are empty." +
+                    "ErrorDto Sapa article and color are empty." +
                     "\nOrder: {$OrderNumber}, " +
-                    "\nWorksheet: {$Worksheet}, " +
+                    "\nWorksheet: {$WorksheetDto}, " +
                     "\nReference: {$Reference}, " +
                     "\nColor: {$Color}.",
                     nameof(ExcelParserTechDesign),
@@ -1935,12 +1949,12 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     initialReference ?? string.Empty,
                     initialColor ?? string.Empty);
 
-                    ErrorEntity ErrorEntity = new()
+                    ErrorDto ErrorDto = new()
                     {
                         OrderNumber = worksheet.Order ?? string.Empty,
                         Level = ErrorLevel.Error,
                         Code = ErrorCode.Excel_Material_Parsing,
-                        Message = $"Error Sapa article and color are empty" +
+                        Message = $"ErrorDto Sapa article and color are empty" +
                        $"\nLine will be skipped." +
                        $"\nOrder: {worksheet.Order ?? string.Empty}, " +
                        $"\nWorksheet: {worksheet.Name ?? string.Empty}, " +
@@ -1949,10 +1963,8 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
                     };
 
-                    return (string.Empty, ErrorEntity);
+                    return (string.Empty, ErrorDto);
                 }
-
-
 
                 if (worksheet.Name is "ND_Gaskets" or "ND_Accessories")
                 {
@@ -1962,14 +1974,10 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         return (sapaReference ?? string.Empty, null);
                     }
 
-
-
                     if (sapaReference.StartsWith("S"))
                     {
                         sapaReference = sapaReference[1..];
                     }
-
-
 
                     if (string.IsNullOrEmpty(sapaColor) && !string.IsNullOrEmpty(sapaReference))
                     {
@@ -2016,11 +2024,10 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     {
                         string newReference = $"*{reference[..24]}";
 
-
                         _logger.LogError("Mapper Sapa 2 Service: Warning." +
                            "Reference > 25 characters." +
                            "\nOrder: {$OrderNumber}, " +
-                           "\nWorksheet: {$Worksheet}," +
+                           "\nWorksheet: {$WorksheetDto}," +
                            "\nReference: {$Reference}," +
                            "\nColor: {$Color}," +
                            "\nGenerated PrefSuite Reference: {$PrefSuiteReference}, length:{$PrefSuiteReferenceLength}." +
@@ -2035,7 +2042,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                            newReference,
                            newReference.Length);
 
-                        ErrorEntity ErrorEntity = new()
+                        ErrorDto ErrorDto = new()
                         {
                             OrderNumber = worksheet.Order ?? string.Empty,
                             Level = ErrorLevel.Error,
@@ -2052,7 +2059,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         };
 
                         reference = newReference; // Use the new reference
-                        return (reference, ErrorEntity);
+                        return (reference, ErrorDto);
                     }
 
                 }
@@ -2069,19 +2076,19 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     worksheet.Order ?? string.Empty,
                     ex.Message);
 
-                ErrorEntity ErrorEntity = new()
+                ErrorDto ErrorDto = new()
                 {
                     OrderNumber = worksheet.Order ?? string.Empty,
                     Level = ErrorLevel.Error,
                     Code = ErrorCode.Excel_Material_Parsing,
-                    Message = $"Unhandled Error {nameof(ExcelParserTechDesign)}.{nameof(TransformReference)}, " +
+                    Message = $"Unhandled ErrorDto {nameof(ExcelParserTechDesign)}.{nameof(TransformReference)}, " +
 
                    $"\nOrder: {worksheet.Order ?? string.Empty}," +
                    $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
                    $"\nException: {ex.Message ?? string.Empty}."
                 };
 
-                return (reference, ErrorEntity);
+                return (reference, ErrorDto);
             }
 
         }
@@ -2123,7 +2130,6 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
             return colorPart; // Leave unchanged
         }
-
 
         private static (string, string)? SplitColors(string sourceColor)
         {

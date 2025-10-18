@@ -68,7 +68,7 @@ namespace a2p.Infrastructure.Services.Orchestartors
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, "Error while inserting item at index {Index}", i);
+                        _logger.LogError(ex, "ErrorDto while inserting item at index {Index}", i);
                     }
                 }
 
@@ -83,7 +83,7 @@ namespace a2p.Infrastructure.Services.Orchestartors
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, "Error while inserting material at index {Index}", i);
+                        _logger.LogError(ex, "ErrorDto while inserting material at index {Index}", i);
                     }
                 }
 

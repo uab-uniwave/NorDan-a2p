@@ -28,7 +28,7 @@ namespace a2p.Application.Validations
 
             // --- String length constraints for optional fields ---
             RuleFor(x => x.Worksheet)
-                .MaximumLength(255).WithMessage("Worksheet too long, max length 255.");
+                .MaximumLength(255).WithMessage("WorksheetDto too long, max length 255.");
 
             RuleFor(x => x.Description)
                 .MaximumLength(255).WithMessage("Description too long, max length 255.");

@@ -8,8 +8,8 @@ namespace a2p.Application.Interfaces.Excel
     public interface IExcelParserTechDesign
 
     {
-        Task<List<ItemDto>> MapItemsAsync(Worksheet worksheet, ProgressValue? progressValue, IProgress<ProgressValue>? progress = null);
-        Task<List<MaterialDto>> MapMaterialsAsync(Worksheet worksheet, ProgressValue? progressValue, IProgress<ProgressValue>? progress = null);
+        Task<List<ItemDto>> MapItemsAsync(WorksheetDto worksheet, ProgressValue? progressValue, IProgress<ProgressValue>? progress = null);
+        Task<List<MaterialDto>> MapMaterialsAsync(WorksheetDto worksheet, ProgressValue? progressValue, IProgress<ProgressValue>? progress = null);
 
     }
 };

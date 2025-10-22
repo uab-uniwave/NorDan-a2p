@@ -1,6 +1,6 @@
-using a2p.Domain.Enums;
+using Domain.Enums;
 
-namespace a2p.Application.DTOs
+namespace Application.DTOs
 {
     public class ErrorDto
     {

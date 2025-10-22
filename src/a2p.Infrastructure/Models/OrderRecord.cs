@@ -1,4 +1,4 @@
-namespace a2p.Infrastructure.Models
+namespace Infrastructure.Models
 {
     public class OrderRecord
     {

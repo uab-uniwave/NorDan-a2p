@@ -1,4 +1,4 @@
-namespace a2p.Domain.Shared
+namespace Domain.Shared
 {
     public class ValidationResult<T> : Result<T>
     {

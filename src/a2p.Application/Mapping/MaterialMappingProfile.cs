@@ -1,10 +1,11 @@
 // file: src\a2p.Application\Mapping\MaterialMappingProfile.cs
-using a2p.Application.DTOs;
-using a2p.Domain.Entities;
+using Application.DTOs;
 
 using AutoMapper;
 
-namespace a2p.Application.Mapping
+using Domain.Entities;
+
+namespace Application.Mapping
 {
     public class MaterialMappingProfile : Profile
     {
@@ -14,13 +15,14 @@ namespace a2p.Application.Mapping
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.OrderId))
                 .ForMember(dest => dest.OrderNumber, opt => opt.MapFrom(src => src.OrderNumber))
+                .ForMember(dest => dest.ProjectNumber, opt => opt.MapFrom(src => src.ProjectNumber))
                 .ForMember(dest => dest.SalesDocumentNumber, opt => opt.MapFrom(src => src.SalesDocumentNumber))
                 .ForMember(dest => dest.SalesDocumentVersion, opt => opt.MapFrom(src => src.SalesDocumentVersion))
+                .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.ItemName))
+                .ForMember(dest => dest.ItemId, opt => opt.MapFrom(src => src.ItemId))
                 .ForMember(dest => dest.Worksheet, opt => opt.MapFrom(src => src.Worksheet))
                 .ForMember(dest => dest.Line, opt => opt.MapFrom(src => src.Line))
                 .ForMember(dest => dest.Column, opt => opt.MapFrom(src => src.Column))
-                .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.ItemName))
-                .ForMember(dest => dest.ItemId, opt => opt.MapFrom(src => src.ItemId))
                 .ForMember(dest => dest.SortOrder, opt => opt.MapFrom(src => src.SortOrder))
                 .ForMember(dest => dest.ReferenceBase, opt => opt.MapFrom(src => src.ReferenceBase))
                 .ForMember(dest => dest.Reference, opt => opt.MapFrom(src => src.Reference))
@@ -55,7 +57,6 @@ namespace a2p.Application.Mapping
                 .ForMember(dest => dest.CustomField4, opt => opt.MapFrom(src => src.CustomField4))
                 .ForMember(dest => dest.CustomField5, opt => opt.MapFrom(src => src.CustomField5))
                 .ForMember(dest => dest.MaterialType, opt => opt.MapFrom(src => src.MaterialType))
-                .ForMember(dest => dest.WorksheetType, opt => opt.MapFrom(src => src.WorksheetType))
                 .ForMember(dest => dest.SourceReference, opt => opt.MapFrom(src => src.SourceReference))
                 .ForMember(dest => dest.SourceDescription, opt => opt.MapFrom(src => src.SourceDescription))
                 .ForMember(dest => dest.SourceColor, opt => opt.MapFrom(src => src.SourceColor))

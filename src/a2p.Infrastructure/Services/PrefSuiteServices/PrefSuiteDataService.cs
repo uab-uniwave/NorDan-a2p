@@ -1,20 +1,21 @@
 
 using System.Data;
 
-using a2p.Application.Interfaces.PrefSuite;
-using a2p.Application.Interfaces.Services;
-using a2p.Domain.Entities;
+using Application.Interfaces.PrefSuite;
+using Application.Interfaces.Services;
+
+using Domain.Entities;
 
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
-namespace a2p.Infrastructure.Services.PrefSuiteServices
+namespace Infrastructure.Services.PrefSuiteServices
 {
     public class PrefSuiteDataService : IPrefSuiteDataService
     {
-        private readonly ILogger _logger;
+        private readonly ILogger <PrefSuiteDataService> _logger;
         private readonly ISQLService _sqlService;
 
-        public PrefSuiteDataService(ISQLService sqlService, ILogger logger)
+        public PrefSuiteDataService(ISQLService  sqlService, ILogger <PrefSuiteDataService>logger)
         {
             _sqlService = sqlService ?? throw new ArgumentNullException(nameof(sqlService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

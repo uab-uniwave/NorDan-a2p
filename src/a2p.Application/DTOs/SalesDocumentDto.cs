@@ -1,5 +1,5 @@
-using a2p.Domain.Enums;
-namespace a2p.Application.DTOs
+using Domain.Enums;
+namespace Application.DTOs
 {
     public class SalesDocumentDto
     {

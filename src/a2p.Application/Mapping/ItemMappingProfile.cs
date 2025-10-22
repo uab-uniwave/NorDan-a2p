@@ -1,10 +1,11 @@
 // file: src\a2p.Application\Mapping\ItemMappingProfile.cs
-using a2p.Application.DTOs;
-using a2p.Domain.Entities;
+using Application.DTOs;
 
 using AutoMapper;
 
-namespace a2p.Application.Mapping
+using Domain.Entities;
+
+namespace Application.Mapping
 {
     public class ItemMappingProfile : Profile
     {
@@ -12,9 +13,11 @@ namespace a2p.Application.Mapping
         {
             CreateMap<ItemDto, ItemEntity>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                 .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.OrderId))
+                .ForMember(dest => dest.OrderNumber, opt => opt.MapFrom(src => src.OrderNumber))
+                .ForMember(dest => dest.ProjectNumber, opt => opt.MapFrom(src => src.ProjectNumber))
                 .ForMember(dest => dest.SalesDocumentNumber, opt => opt.MapFrom(src => src.SalesDocumentNumber))
                 .ForMember(dest => dest.SalesDocumentVersion, opt => opt.MapFrom(src => src.SalesDocumentVersion))
-                .ForMember(dest => dest.OrderNumber, opt => opt.MapFrom(src => src.OrderNumber))
                 .ForMember(dest => dest.Worksheet, opt => opt.MapFrom(src => src.Worksheet))
                 .ForMember(dest => dest.Line, opt => opt.MapFrom(src => src.Line))
                 .ForMember(dest => dest.Column, opt => opt.MapFrom(src => src.Column))
@@ -42,17 +45,8 @@ namespace a2p.Application.Mapping
                 .ForMember(dest => dest.TotalCost, opt => opt.MapFrom(src => src.TotalCost))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
                 .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice))
-                .ForMember(dest => dest.CurrencyCode, opt => opt.MapFrom(src => src.CurrencyCode))
-                .ForMember(dest => dest.ExchangeRateEUR, opt => opt.MapFrom(src => src.ExchangeRateEUR))
-                .ForMember(dest => dest.MaterialCostEUR, opt => opt.MapFrom(src => src.MaterialCostEUR))
-                .ForMember(dest => dest.LaborCostEUR, opt => opt.MapFrom(src => src.LaborCostEUR))
-                .ForMember(dest => dest.CostEUR, opt => opt.MapFrom(src => src.CostEUR))
-                .ForMember(dest => dest.TotalMaterialCostEUR, opt => opt.MapFrom(src => src.TotalMaterialCostEUR))
-                .ForMember(dest => dest.TotalLaborCostEUR, opt => opt.MapFrom(src => src.TotalLaborCostEUR))
-                .ForMember(dest => dest.TotalCostEUR, opt => opt.MapFrom(src => src.TotalCostEUR))
-                .ForMember(dest => dest.PriceEUR, opt => opt.MapFrom(src => src.PriceEUR))
-                .ForMember(dest => dest.TotalPriceEUR, opt => opt.MapFrom(src => src.TotalPriceEUR))
-                .ForMember(dest => dest.WorksheetType, opt => opt.MapFrom(src => src.WorksheetType));
-        }
+                .ForMember(dest => dest.CurrencyCode, opt => opt.MapFrom(src => src.CurrencyCode));
+                
+                        }
     }
 }

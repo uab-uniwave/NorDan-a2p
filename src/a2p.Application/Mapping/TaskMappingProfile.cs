@@ -1,10 +1,11 @@
 // file: src\a2p.Application\Mapping\TaskMappingProfile.cs
-using a2p.Application.DTOs;
-using a2p.Domain.Entities;
+using Application.DTOs;
 
 using AutoMapper;
 
-namespace a2p.Application.Mapping
+using Domain.Entities;
+
+namespace Application.Mapping
 {
     public class TaskMappingProfile : Profile
     {

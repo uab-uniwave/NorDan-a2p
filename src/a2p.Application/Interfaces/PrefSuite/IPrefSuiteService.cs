@@ -1,7 +1,7 @@
-using a2p.Application.DTOs;
-using a2p.Application.Models;
+using Application.DTOs;
+using Application.Models;
 
-namespace a2p.Application.Interfaces.PrefSuite
+namespace Application.Interfaces.PrefSuite
 {
     public interface IPrefSuiteService
     {

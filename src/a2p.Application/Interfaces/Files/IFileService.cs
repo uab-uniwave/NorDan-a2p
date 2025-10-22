@@ -1,4 +1,4 @@
-namespace a2p.Application.Interfaces.Files
+namespace Application.Interfaces.Files
 {
 
     public interface IFileService

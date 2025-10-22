@@ -1,27 +1,28 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using a2p.Application.DTOs;
-using a2p.Application.Interfaces.PrefSuite;
-using a2p.Application.Interfaces.Services;
-using a2p.Application.Models;
-using a2p.Domain.Enums;
+using Application.DTOs;
+using Application.Interfaces.PrefSuite;
+using Application.Interfaces.Services;
+using Application.Models;
+
+using Domain.Enums;
 
 using Microsoft.Extensions.Logging;
 
 using PrefSales;
-namespace a2p.Infrastructure.Services.PrefSuiteServices
+namespace Infrastructure.Services.PrefSuiteServices
 {
     public class PrefSuiteService : IPrefSuiteService
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<PrefSuiteService> _logger;
         private readonly ISQLService _sqlRepository;
 
         private readonly PrefDataManager.IPrefDataSource _prefSuiteOLEDBConnection;
         private ProgressValue _progressValue;
         private IProgress<ProgressValue>? _progress;
 
-        public PrefSuiteService(ILogger logger, ISQLService sqlRepository)
+        public PrefSuiteService(ILogger<PrefSuiteService> logger, ISQLService sqlRepository)
         {
             _logger = logger;
             _sqlRepository = sqlRepository;

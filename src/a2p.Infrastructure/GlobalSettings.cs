@@ -3,7 +3,7 @@
 
 using System.Globalization;
 
-namespace a2p.Infrastructure
+namespace Infrastructure
 {
     public static class GlobalSettings
     {

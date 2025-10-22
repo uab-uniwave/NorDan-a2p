@@ -1,6 +1,6 @@
-using a2p.Application.Models;
+using Application.Models;
 
-namespace a2p.Application.Interfaces.Services
+namespace Application.Interfaces.Services
 {
     public interface ISettingsService
     {

@@ -1,8 +1,8 @@
-using a2p.Domain.Entities;
-using a2p.Domain.Enums;
-using a2p.Domain.Shared;
+using Domain.Entities;
+using Domain.Enums;
+using Domain.Shared;
 
-namespace a2p.Application.Interfaces.Services
+namespace Application.Interfaces.Services
 {
     public interface ITaskQueueService
     {

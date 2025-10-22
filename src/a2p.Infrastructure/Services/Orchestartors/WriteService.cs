@@ -1,14 +1,14 @@
-
-using a2p.Application.DTOs; // adjust if OrderDto lives elsewhere
-using a2p.Application.Interfaces.Excel;
-using a2p.Application.Interfaces.Files;
-using a2p.Application.Interfaces.Orchestrators;
-using a2p.Application.Interfaces.PrefSuite;
-using a2p.Application.Models;
+using Application.DTOs;
+using Application.Interfaces.Excel;
+using Application.Interfaces.Files;
+using Application.Interfaces.Orchestrators;
+using Application.Interfaces.PrefSuite;
+using Application.Interfaces.Services;
+using Application.Models;
 
 using Microsoft.Extensions.Logging;
 
-namespace a2p.Infrastructure.Services.Orchestartors
+namespace Infrastructure.Services.Orchestartors
 {
     public class WriteService : IWriteService
     {
@@ -17,6 +17,9 @@ namespace a2p.Infrastructure.Services.Orchestartors
         private readonly IFileService _fileService;
         private readonly IPrefSuiteDataService _prefSuiteDataService;
         private readonly IPrefSuiteService _prefSuiteService;
+        private readonly IItemService _itemService;
+        private readonly IMaterialService _materialService;
+        private readonly IOrderService _orderService;
 
         private IProgress<ProgressValue>? _progress;
         private ProgressValue _progressValue;
@@ -25,8 +28,10 @@ namespace a2p.Infrastructure.Services.Orchestartors
                             IPrefSuiteService prefSuiteService,
                             IFileService fileService,
                             IExcelService excelService,
-                            IPrefSuiteDataService prefSuiteDataService
-
+                            IPrefSuiteDataService prefSuiteDataService,
+                            IItemService itemService,
+                            IMaterialService materialService,
+                            IOrderService orderService
             )
         {
 
@@ -35,6 +40,9 @@ namespace a2p.Infrastructure.Services.Orchestartors
             _excelService = excelService;
             _logger = logger;
             _prefSuiteService = prefSuiteService;
+            _itemService = itemService;
+            _materialService = materialService;
+            _orderService = orderService;
 
             _progressValue = new ProgressValue();
             _progress = new Progress<ProgressValue>();
@@ -49,7 +57,7 @@ namespace a2p.Infrastructure.Services.Orchestartors
 
             try
             {
-                _progressValue.CurrentValue = _progressValue.CurrentValue + 30;   //30pts. x 1 per Order               
+                _progressValue.CurrentValue = _progressValue.CurrentValue + 30;   //30pts. x 1 per OrderNumber               
                 _progressValue.ProgressTask2 = "Deleting any existing data import pending orders.....";
                 _progressValue.ProgressTask3 = string.Empty;
                 _progress?.Report(_progressValue);
@@ -65,6 +73,8 @@ namespace a2p.Infrastructure.Services.Orchestartors
                         _progressValue.ProgressTask3 = $"ItemName # {orders.ItemsDto[i].ItemName}";
 
                         _progress?.Report(_progressValue);
+
+                        await _itemService.CreateItemAsync(orders.ItemsDto[i]);
                     }
                     catch (Exception ex)
                     {
@@ -80,6 +90,7 @@ namespace a2p.Infrastructure.Services.Orchestartors
                         _progressValue.ProgressTask2 = $"Inserting materials {i + 1} of {orders.MaterialsDto.Count} into PrefSuite DB...";
                         _progressValue.ProgressTask3 = $"Material # {orders.MaterialsDto[i].ReferenceBase} {orders.MaterialsDto[i].Color}.";
                         _progress?.Report(_progressValue);
+                        await _materialService.CreateMaterialAsync(orders.MaterialsDto[i]);
                     }
                     catch (Exception ex)
                     {

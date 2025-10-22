@@ -1,4 +1,4 @@
-namespace a2p.Domain.Shared
+namespace Domain.Shared
 {
     public class PagedResult<T> : Result<IEnumerable<T>>
     {

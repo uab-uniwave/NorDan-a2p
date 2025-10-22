@@ -1,4 +1,4 @@
-namespace a2p.Infrastructure.Exceptions
+namespace Infrastructure.Exceptions
 {
     public abstract class InfrastructureException : System.Exception
     {

@@ -1,10 +1,11 @@
-using a2p.Domain.Exceptions;
-using a2p.Infrastructure.Exceptions;
+using Domain.Exceptions;
+
+using Infrastructure.Exceptions;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace a2p.SharedKernel.Exceptions
+namespace Shared.Exceptions
 {
     public static class ExceptionHandler
     {

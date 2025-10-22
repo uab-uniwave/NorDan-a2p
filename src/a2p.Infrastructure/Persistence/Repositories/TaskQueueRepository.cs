@@ -1,22 +1,30 @@
-using System.Data;
-
-using a2p.Application.Interfaces.Repositories;
-using a2p.Domain.Entities;
-using a2p.Domain.Enums;
+using Application.Interfaces;
+using Application.Interfaces.Repositories;
 
 using Dapper;
 
-namespace a2p.Infrastructure.Persistence.Repositories
+using Domain.Entities;
+using Domain.Enums;
+
+using Infrastructure.Data;
+
+using Microsoft.Extensions.Logging;
+
+using System.Data;
+
+namespace Infrastructure.Persistence.Repositories
 {
     public class TaskQueueRepository : ITaskQueueRepository
     {
-        private readonly IDbConnectionFactory _factory;
 
-        public TaskQueueRepository(IDbConnectionFactory factory)
+        private readonly DapperService _dapper;
+        private readonly ILogger<TaskQueueRepository> _logger;
+
+        public TaskQueueRepository(DapperService dapper, ILogger<TaskQueueRepository> logger)
         {
-            _factory = factory;
+            _dapper = dapper;
+            _logger = logger;
         }
-
         // CREATE
         public async Task<TaskEntity?> CreateTaskAsync(TaskEntity order)
         {
@@ -51,25 +59,25 @@ namespace a2p.Infrastructure.Persistence.Repositories
                                 ,@CreatedBy
                                 ,@ModifiedBy)";
 
-            using IDbConnection db = _factory.CreateConnection();
+         
 
-            return await db.QuerySingleOrDefaultAsync<TaskEntity>(sql, order);
+            return await _dapper.QuerySingleOrDefaultAsync<TaskEntity>(sql, order);
         }
 
         // READ BY ID
         public async Task<TaskEntity?> GetTaskByIdAsync(Guid id)
         {
             const string sql = "SELECT * FROM Uniwave_a2p_TaskQueue WHERE Id = @Id;";
-            using IDbConnection db = _factory.CreateConnection();
-            return await db.QuerySingleOrDefaultAsync<TaskEntity>(sql, new { Id = id });
+          
+            return await _dapper.QuerySingleOrDefaultAsync<TaskEntity>(sql, new { Id = id });
         }
 
         // READ BY NUMBER
         public async Task<TaskEntity?> GetTaskByOrderNumberAsync(string orderNumber)
         {
             const string sql = "SELECT * FROM Uniwave_a2p_TaskQueue WHERE OrderNumber = @OrderNumber;";
-            using IDbConnection db = _factory.CreateConnection();
-            return await db.QuerySingleOrDefaultAsync<TaskEntity>(sql, new { OrderNumber = orderNumber });
+        
+            return await _dapper.QuerySingleOrDefaultAsync<TaskEntity>(sql, new { OrderNumber = orderNumber });
         }
 
         // PAGED READ
@@ -80,8 +88,8 @@ namespace a2p.Infrastructure.Persistence.Repositories
                 ORDER BY CreatedUTCDateTime DESC
                 OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
                 SELECT COUNT(*) FROM Uniwave_a2p_TaskQueue;";
-            using IDbConnection db = _factory.CreateConnection();
-            using SqlMapper.GridReader multi = await db.QueryMultipleAsync(sql, new { Offset = (page - 1) * size, PageSize = size });
+
+            SqlMapper.GridReader multi = await _dapper.QueryMultipleAsync(sql, new { Offset = (page - 1) * size, PageSize = size });
             IEnumerable<TaskEntity> tasks = await multi.ReadAsync<TaskEntity>();
             var total = await multi.ReadSingleAsync<int>();
             return (tasks, total);
@@ -121,8 +129,8 @@ namespace a2p.Infrastructure.Persistence.Repositories
                                 , @ModifiedUTCDateTime
                                 , @CreatedBy
                                 , @ModifiedBy)";
-            using IDbConnection db = _factory.CreateConnection();
-            return await db.ExecuteAsync(sql, order);
+           
+            return await _dapper.ExecuteAsync(sql, order);
         }
 
         // UPDATE ONLY DELIVERY ADDRESS
@@ -133,17 +141,16 @@ namespace a2p.Infrastructure.Persistence.Repositories
                 SET OrderState = @State,
                     ModifiedUTCDateTime = GETUTCDATE()
                 WHERE Id = @Id;";
-            using IDbConnection db = _factory.CreateConnection();
-
-            return await db.ExecuteAsync(sql, new { Id = id, OrderState = orderState.ToString() });
+          
+            return await _dapper.ExecuteAsync(sql, new { Id = id, OrderState = orderState.ToString() });
         }
 
         // DELETE
         public async Task<int> DeleteTaskByIdAsync(Guid id)
         {
             const string sql = "DELETE FROM Uniwave_a2p_TaskQueue WHERE Id = @Id;";
-            using IDbConnection db = _factory.CreateConnection();
-            return await db.ExecuteAsync(sql, new { Id = id });
+          
+            return await _dapper.ExecuteAsync(sql, new { Id = id });
         }
     }
 }

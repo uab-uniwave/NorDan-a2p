@@ -1,7 +1,7 @@
-using a2p.Application.DTOs;
-using a2p.Application.Models;
+using Application.DTOs;
+using Application.Models;
 
-namespace a2p.Application.Interfaces.Excel
+namespace Application.Interfaces.Excel
 {
     public interface IExcelParserSchuco
     {

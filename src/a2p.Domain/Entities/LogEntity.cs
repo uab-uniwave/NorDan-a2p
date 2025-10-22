@@ -1,4 +1,4 @@
-namespace a2p.Domain.Entities
+namespace Domain.Entities
 {
 
     public class LogEntity

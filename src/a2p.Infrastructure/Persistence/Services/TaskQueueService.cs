@@ -1,0 +1,122 @@
+using Application.Interfaces.Repositories;
+using Application.Interfaces.Services;
+
+using Domain.Entities;
+using Domain.Enums;
+using Domain.Shared;
+
+using Microsoft.Extensions.Logging;
+
+namespace Application.Services
+{
+    public class TaskQueueService : ITaskQueueService
+    {
+        private readonly ITaskQueueRepository _repo;
+        private readonly ILogger<TaskQueueService> _logger;
+
+        public TaskQueueService(ITaskQueueRepository repo, ILogger<TaskQueueService> logger)
+        {
+            _repo = repo;
+            _logger = logger;
+        }
+
+        public async Task<Result<TaskEntity>> CreateTaskAsync(TaskEntity task)
+        {
+            try
+            {
+                task.CreatedUTCDateTime = DateTime.UtcNow;
+                TaskEntity? created = await _repo.CreateTaskAsync(task);
+                if (created == null || created.Id == Guid.Empty)
+                {
+                    return Result<TaskEntity>.Failure("Failed to create task.");
+                }
+
+                _logger.LogInformation("Task for OrderNumber {OrderNumber} created.", created.OrderNumber);
+                return Result<TaskEntity>.Success(created, "Task created successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "ErrorDto creating task for order {OrderNumber}", task?.OrderNumber);
+                return Result<TaskEntity>.Failure("ErrorDto creating task.");
+            }
+        }
+
+        public async Task<Result<TaskEntity>> GetTaskByIdAsync(Guid id)
+        {
+            try
+            {
+                TaskEntity? task = await _repo.GetTaskByIdAsync(id);
+                return task == null
+                    ? Result<TaskEntity>.Failure($"Task {id} not found.")
+                    : Result<TaskEntity>.Success(task);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "ErrorDto retrieving task {Id}", id);
+                return Result<TaskEntity>.Failure("ErrorDto retrieving task.");
+            }
+        }
+
+        public async Task<Result<TaskEntity>> GetTaskByOrderNumberAsync(string orderNumber)
+        {
+            try
+            {
+                TaskEntity? task = await _repo.GetTaskByOrderNumberAsync(orderNumber);
+                return task == null
+                    ? Result<TaskEntity>.Failure($"Task for order '{orderNumber}' not found.")
+                    : Result<TaskEntity>.Success(task);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "ErrorDto retrieving task for order {OrderNumber}", orderNumber);
+                return Result<TaskEntity>.Failure("ErrorDto retrieving task.");
+            }
+        }
+
+        public async Task<PagedResult<TaskEntity>> GetPagedTasksAsync(int page, int size)
+        {
+            try
+            {
+                (IEnumerable<TaskEntity>? tasks, int total) = await _repo.GetPageTasksAsync(page, size);
+                return PagedResult<TaskEntity>.Success(tasks, total, page, size);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "ErrorDto retrieving paged tasks.");
+                return PagedResult<TaskEntity>.Failure("ErrorDto retrieving paged tasks.");
+            }
+        }
+
+        public async Task<Result<bool>> UpdateTaskStateAsync(Guid id, OrderState state)
+        {
+            try
+            {
+                int rows = await _repo.UpdateTaskStateAsync(id, state);
+                return rows == 0
+                    ? Result<bool>.Failure("Failed to update task state.")
+                    : Result<bool>.Success(true, "Task state updated.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "ErrorDto updating task state for {Id}", id);
+                return Result<bool>.Failure("ErrorDto updating task state.");
+            }
+        }
+
+        public async Task<Result<bool>> DeleteTaskByIdAsync(Guid id)
+        {
+            try
+            {
+                int rows = await _repo.DeleteTaskByIdAsync(id);
+                return rows == 0
+                    ? Result<bool>.Failure("Failed to delete task.")
+                    : Result<bool>.Success(true, "Task deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "ErrorDto deleting task {Id}", id);
+                return Result<bool>.Failure("ErrorDto deleting task.");
+            }
+        }
+    }
+}

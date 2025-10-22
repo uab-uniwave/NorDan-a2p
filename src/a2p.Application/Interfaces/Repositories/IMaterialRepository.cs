@@ -1,6 +1,6 @@
-using a2p.Domain.Entities;
+using Domain.Entities;
 
-namespace a2p.Application.Interfaces.Repositories
+namespace Application.Interfaces.Repositories
 {
     /// <summary>
     /// Repository interface for managing material entities in the system.

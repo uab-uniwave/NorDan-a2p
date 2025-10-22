@@ -1,9 +1,9 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using a2p.Domain.Enums;
+using Domain.Enums;
 
-namespace a2p.Domain.Entities
+namespace Domain.Entities
 {
     public class OrderEntity : BaseEntity
     {
@@ -23,7 +23,7 @@ namespace a2p.Domain.Entities
         public string ResponsibleManager { get; set; } = string.Empty;
 
         //===================================================================================
-        public SourceAppType SourceAppType { get; set; } = Enums.SourceAppType.Unknown;
+        public SourceAppType SourceAppType { get; set; } = SourceAppType.Unknown;
         //===================================================================================
 
         public int ItemCount { get; set; } = 0; //Number of  positions. Single Position can have quantity > 1

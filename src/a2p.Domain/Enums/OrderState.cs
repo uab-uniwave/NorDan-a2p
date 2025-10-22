@@ -1,4 +1,4 @@
-namespace a2p.Domain.Enums
+namespace Domain.Enums
 {
     [Flags]
     public enum OrderState

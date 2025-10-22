@@ -4,12 +4,12 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-using a2p.Application.Interfaces.Services;
-using a2p.Application.Models;
+using Application.Interfaces.Services;
+using Application.Models;
 
 using Microsoft.Extensions.Configuration;
 
-namespace a2p.Infrastructure.Services.SettingsService
+namespace Infrastructure.Services.SettingsService
 {
     public class SettingsService : ISettingsService
     {

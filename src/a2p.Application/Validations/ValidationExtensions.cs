@@ -1,6 +1,6 @@
-using a2p.Domain.Shared;
+using Domain.Shared;
 
-namespace a2p.Application.Validations
+namespace Application.Validations
 {
     public static class ValidationExtensions
     {

@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	<TargetFramework>net9.0</TargetFramework>
+	<ImplicitUsings>enable</ImplicitUsings>
+	<Nullable>enable</Nullable>
+	  <OutputPath>..\..\output\</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<Compile Remove="Abstractions\**" />
+	<EmbeddedResource Remove="Abstractions\**" />
+	<None Remove="Abstractions\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<PackageReference Include="AutoMapper" Version="15.0.1" />
+	<PackageReference Include="Dapper" Version="2.1.66" />
+	<PackageReference Include="FluentValidation" Version="12.0.0" />
+	<PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<ProjectReference Include="..\a2p.Domain\Domain.csproj" />
+  </ItemGroup>
+
+</Project>

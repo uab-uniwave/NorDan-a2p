@@ -3,13 +3,13 @@
 
 using System.Data;
 
-using a2p.Application.Interfaces.Files;
-using a2p.Application.Interfaces.Services;
-using a2p.Application.Models;
+using Application.Interfaces.Files;
+using Application.Interfaces.Services;
+using Application.Models;
 
 using Microsoft.Extensions.Logging;
 
-namespace a2p.Infrastructure.Services.FileServices
+namespace Infrastructure.Services.FileServices
 {
     public class FileService : IFileService
     {

@@ -1,6 +1,6 @@
-using a2p.Domain.Entities;
+using Domain.Entities;
 
-namespace a2p.Application.Interfaces.PrefSuite
+namespace Application.Interfaces.PrefSuite
 {
     public interface IPrefSuiteDataService
     {

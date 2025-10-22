@@ -1,7 +1,6 @@
+using Domain.Entities;
 
-using a2p.Domain.Entities;
-
-namespace a2p.Application.Interfaces.Repositories
+namespace Application.Interfaces.Repositories
 {
     public interface IOrderRepository
     {

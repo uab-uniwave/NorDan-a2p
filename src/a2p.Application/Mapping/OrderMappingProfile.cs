@@ -1,9 +1,10 @@
-using a2p.Application.DTOs;
-using a2p.Domain.Entities;
+using Application.DTOs;
 
 using AutoMapper;
 
-namespace a2p.Application.Mapping
+using Domain.Entities;
+
+namespace Application.Mapping
 {
     public class OrderMappingProfile : Profile
     {
@@ -13,6 +14,9 @@ namespace a2p.Application.Mapping
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.OrderNumber, opt => opt.MapFrom(src => src.OrderNumber))
                 .ForMember(dest => dest.ProjectNumber, opt => opt.MapFrom(src => src.ProjectNumber))
+                .ForMember(dest => dest.SalesDocumentNumber, opt => opt.MapFrom(src => src.SalesDocumentDto.Number))
+                .ForMember(dest => dest.SalesDocumentVersion, opt => opt.MapFrom(src => src.SalesDocumentDto.Version))
+
                 .ForMember(dest => dest.Currency, opt => opt.MapFrom(src => src.Currency))
                 .ForMember(dest => dest.ExchangeRate, opt => opt.MapFrom(src => src.ExchangeRate))
                 .ForMember(dest => dest.ExchangeRateDate, opt => opt.MapFrom(src => src.ExchangeRateDate))

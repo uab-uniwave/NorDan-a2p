@@ -1,4 +1,4 @@
-namespace a2p.Domain.Exceptions
+namespace Domain.Exceptions
 {
     public sealed class OrderExistsException : DomainException
     {

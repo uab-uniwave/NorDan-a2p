@@ -9,5 +9,6 @@
   "languages.cpp.codeCleanup.sortIncludes.suggestionLevel": "suggestion",
   "languages.cpp.codeCleanup.sortIncludes.priorityCaseSensitive": true,
   "languages.csharp.general.wordWrap": false,
-  "languages.csharp.general.virtualSpace": true
+  "languages.csharp.general.virtualSpace": true,
+  "environment.documents.saveDocsAsUnicodeWhenDataLoss": true
 }

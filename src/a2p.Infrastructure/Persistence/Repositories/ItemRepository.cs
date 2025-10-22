@@ -1,130 +1,112 @@
-using System.Data;
-
-using a2p.Application.Interfaces.Repositories;
-using a2p.Domain.Entities;
+using Application.Interfaces.Repositories;
 
 using Dapper;
 
-namespace a2p.Infrastructure.Persistence.Repositories
+using Domain.Entities;
+
+using Infrastructure.Data;
+
+using Microsoft.Extensions.Logging;
+
+namespace Infrastructure.Persistence.Repositories
 {
     public class ItemRepository : IItemRepository
     {
-        private readonly IDbConnectionFactory _factory;
+        private readonly DapperService _dapper;
+        private readonly ILogger<ItemRepository> _logger;
 
-        public ItemRepository(IDbConnectionFactory factory)
+        public ItemRepository(DapperService dapper, ILogger<ItemRepository> logger)
         {
-            _factory = factory;
+            _dapper = dapper;
+            _logger = logger;
         }
 
         // CREATE
         public async Task<ItemEntity?> CreateItemAsync(ItemEntity item)
         {
             const string sql = @"INSERT INTO [dbo].[Uniwave_a2p_Items]  
-                    ( 
-                    [Id], 
-                    [OrderNumber], 
-                    [WorksheetDto], 
-                    [Line], 
-                    [Column], 
-                    [Number], 
-                    [Version], 
-                    [ItemName], 
-                    [SortOrder], 
-                    [Description], 
-                    [Quantity], 
-                    [Width], 
-                    [Height], 
-                    [Weight], 
-                    [WeightWithoutGlass], 
-                    [WeightGlass], 
-                    [TotalWeight], 
-                    [TotalWeightWithoutGlass], 
-                    [TotalWeightGlass], 
-                    [Area], 
-                    [TotalArea], 
-                    [Hours], 
-                    [TotalHours], 
-                    [MaterialCost], 
-                    [LaborCost], 
-                    [Cost], 
-                    [TotalMaterialCost], 
-                    [TotalLaborCost], 
-                    [TotalCost], 
-                    [Price], 
-                    [TotalPrice], 
-                    [CurrencyCode], 
-                    [ExchangeRateEUR], 
-                    [MaterialCostEUR], 
-                    [LaborCostEUR], 
-                    [CostEUR], 
-                    [TotalMaterialCostEUR], 
-                    [TotalLaborCostEUR], 
-                    [TotalCostEUR], 
-                    [PriceEUR], 
-                    [TotalPriceEUR], 
-                    [WorksheetType], 
-                    [CreatedUTCDateTime], 
-                    [ModifiedUTCDateTime] 
-                    )  
-                    OUTPUT INSERTED .*
-                    VALUES  
-                    ( 
-                    @Id, 
-                    @OrderNumber, 
-                    @WorksheetDto, 
-                    @Line, 
-                    @Column, 
-                    @Number, 
-                    @Version, 
-                    @ItemName, 
-                    @SortOrder, 
-                    @Description, 
-                    @Quantity, 
-                    @Width, 
-                    @Height, 
-                    @Weight, 
-                    @WeightWithoutGlass, 
-                    @WeightGlass, 
-                    @TotalWeight, 
-                    @TotalWeightWithoutGlass, 
-                    @TotalWeightGlass, 
-                    @Area, 
-                    @TotalArea, 
-                    @Hours, 
-                    @TotalHours, 
-                    @MaterialCost, 
-                    @LaborCost, 
-                    @Cost, 
-                    @TotalMaterialCost, 
-                    @TotalLaborCost, 
-                    @TotalCost, 
-                    @Price, 
-                    @TotalPrice, 
-                    @CurrencyCode, 
-                    @ExchangeRateEUR, 
-                    @MaterialCostEUR, 
-                    @LaborCostEUR, 
-                    @CostEUR, 
-                    @TotalMaterialCostEUR, 
-                    @TotalLaborCostEUR, 
-                    @TotalCostEUR, 
-                    @PriceEUR, 
-                    @TotalPriceEUR, 
-                    @WorksheetType, 
-                    @CreatedUTCDateTime, 
-                    @ModifiedUTCDateTime 
-                    )";
-            using IDbConnection db = _factory.CreateConnection();
+             ([Id]
+           ,[OrderId]
+           ,[OrderNumber]
+           ,[ProjectNumber]
+           ,[SalesDocumentNumber]
+           ,[SalesDocumentVersion]
+           ,[ItemName]
+           ,[SortOrder]
+           ,[Description]
+           ,[Quantity]
+           ,[Width]
+           ,[Height]
+           ,[Weight]
+           ,[WeightWithoutGlass]
+           ,[WeightGlass]
+           ,[TotalWeight]
+           ,[TotalWeightWithoutGlass]
+           ,[TotalWeightGlass]
+           ,[Area]
+           ,[TotalArea]
+           ,[Hours]
+           ,[TotalHours]
+           ,[MaterialCost]
+           ,[LaborCost]
+           ,[Cost]
+           ,[TotalMaterialCost]
+           ,[TotalLaborCost]
+           ,[TotalCost]
+           ,[Price]
+           ,[TotalPrice]
+           ,[Worksheet]
+           ,[Line]
+           ,[Column]
+           ,[CreatedUTCDateTime]
+           ,[ModifiedUTCDateTime]) 
+            OUTPUT INSERTED .*
+            VALUES  
+            (@Id
+           ,@OrderId
+           ,@OrderNumber
+           ,@ProjectNumber
+           ,@SalesDocumentNumber
+           ,@SalesDocumentVersion
+           ,@ItemName
+           ,@SortOrder
+           ,@Description
+           ,@Quantity
+           ,@Width
+           ,@Height
+           ,@Weight
+           ,@WeightWithoutGlass
+           ,@WeightGlass
+           ,@TotalWeight
+           ,@TotalWeightWithoutGlass
+           ,@TotalWeightGlass
+           ,@Area
+           ,@TotalArea
+           ,@Hours
+           ,@TotalHours
+           ,@MaterialCost
+           ,@LaborCost
+           ,@Cost
+           ,@TotalMaterialCost
+           ,@TotalLaborCost
+           ,@TotalCost
+           ,@Price
+           ,@TotalPrice
+           ,@Worksheet
+           ,@Line
+           ,@Column
+           ,GetUTCDate()
+           ,GetUTCDate()";
 
-            return await db.QuerySingleOrDefaultAsync<ItemEntity>(sql, item);
+            return await _dapper.QuerySingleOrDefaultAsync<ItemEntity>(sql, item);
         }
 
         // READ BY ID
         public async Task<ItemEntity?> GetItemAsync(Guid id)
         {
             const string sql = "SELECT * FROM Uniwave_a2p_Materials WHERE Id = @id;";
-            using IDbConnection db = _factory.CreateConnection();
-            return await db.QuerySingleOrDefaultAsync<ItemEntity>(sql, new { Id = id });
+
+            return await _dapper.QuerySingleOrDefaultAsync<ItemEntity>(sql, new { Id = id });
         }
 
         // PAGED READ BY ORDER NUMBER
@@ -136,8 +118,7 @@ namespace a2p.Infrastructure.Persistence.Repositories
                 OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
                 SELECT COUNT(*) FROM Uniwave_a2p_Material WHERE  OrderId = @id;";
 
-            using IDbConnection db = _factory.CreateConnection();
-            using SqlMapper.GridReader multi = await db.QueryMultipleAsync(sql, new { OrderId = id, Offset = (page - 1) * size, PageSize = size });
+            SqlMapper.GridReader multi = await _dapper.QueryMultipleAsync(sql, new { OrderId = id, Offset = (page - 1) * size, PageSize = size });
             IEnumerable<ItemEntity> items = await multi.ReadAsync<ItemEntity>();
             int total = await multi.ReadSingleAsync<int>();
             return (items, total);
@@ -151,8 +132,8 @@ namespace a2p.Infrastructure.Persistence.Repositories
                 ORDER BY OrderNumber DESC, SortOrder 
                 OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
                 SELECT COUNT(*) FROM Uniwave_a2p_Material;";
-            using IDbConnection db = _factory.CreateConnection();
-            using SqlMapper.GridReader multi = await db.QueryMultipleAsync(sql, new { Offset = (page - 1) * size, PageSize = size });
+
+            using SqlMapper.GridReader multi = await _dapper.QueryMultipleAsync(sql, new { Offset = (page - 1) * size, PageSize = size });
             IEnumerable<ItemEntity> items = await multi.ReadAsync<ItemEntity>();
             int total = await multi.ReadSingleAsync<int>();
             return (items, total);
@@ -161,120 +142,95 @@ namespace a2p.Infrastructure.Persistence.Repositories
         // UPDATE ALL ORDER DETAILS
         public async Task<int> UpdateItemAsync(ItemEntity item)
         {
-            const string sql = @"
-            INSERT INTO [Uniwave_a2p_Items]
-            (
-                    [Id],
-                    [OrderNumber],
-                    [WorksheetDto],
-                    [Line],
-                    [Column],
-                    [Number],
-                    [Version],
-                    [ItemName],
-                    [SortOrder],
-                    [Description],
-                    [Quantity],
-                    [Width],
-                    [Height],
-                    [Weight],
-                    [WeightWithoutGlass],
-                    [WeightGlass],
-                    [TotalWeight],
-                    [TotalWeightWithoutGlass],
-                    [TotalWeightGlass],
-                    [Area],
-                    [TotalArea],
-                    [Hours],
-                    [TotalHours],
-                    [MaterialCost],
-                    [LaborCost],
-                    [Cost],
-                    [TotalMaterialCost],
-                    [TotalLaborCost],
-                    [TotalCost],
-                    [Price],
-                    [TotalPrice],
-                    [CurrencyCode],
-                    [ExchangeRateEUR],
-                    [MaterialCostEUR],
-                    [LaborCostEUR],
-                    [CostEUR],
-                    [TotalMaterialCostEUR],
-                    [TotalLaborCostEUR],
-                    [TotalCostEUR],
-                    [PriceEUR],
-                    [TotalPriceEUR],
-                    [WorksheetType],
-                    [CreatedUTCDateTime],
-                    [ModifiedUTCDateTime]
-                    )
-                    OUTPUT INSERTED .*
-                    VALUES
-                    (
-                    @Id,
-                    @OrderNumber,
-                    @WorksheetDto,
-                    @Line,
-                    @Column,
-                    @Number,
-                    @Version,
-                    @ItemName,
-                    @SortOrder,
-                    @Description,
-                    @Quantity,
-                    @Width,
-                    @Height,
-                    @Weight,
-                    @WeightWithoutGlass,
-                    @WeightGlass,
-                    @TotalWeight,
-                    @TotalWeightWithoutGlass,
-                    @TotalWeightGlass,
-                    @Area,
-                    @TotalArea,
-                    @Hours,
-                    @TotalHours,
-                    @MaterialCost,
-                    @LaborCost,
-                    @Cost,
-                    @TotalMaterialCost,
-                    @TotalLaborCost,
-                    @TotalCost,
-                    @Price,
-                    @TotalPrice,
-                    @CurrencyCode,
-                    @ExchangeRateEUR,
-                    @MaterialCostEUR,
-                    @LaborCostEUR,
-                    @CostEUR,
-                    @TotalMaterialCostEUR,
-                    @TotalLaborCostEUR,
-                    @TotalCostEUR,
-                    @PriceEUR,
-                    @TotalPriceEUR,
-                    @WorksheetType,
-                    @CreatedUTCDateTime,
-                    @ModifiedUTCDateTime
-                    )";
-            using IDbConnection db = _factory.CreateConnection();
-            return await db.ExecuteAsync(sql, item);
+            const string sql = @"INSERT INTO [dbo].[Uniwave_a2p_Items] 
+             ([Id]
+           ,[OrderId]
+           ,[OrderNumber]
+           ,[ProjectNumber]
+           ,[SalesDocumentNumber]
+           ,[SalesDocumentVersion]
+           ,[ItemName]
+           ,[SortOrder]
+           ,[Description]
+           ,[Quantity]
+           ,[Width]
+           ,[Height]
+           ,[Weight]
+           ,[WeightWithoutGlass]
+           ,[WeightGlass]
+           ,[TotalWeight]
+           ,[TotalWeightWithoutGlass]
+           ,[TotalWeightGlass]
+           ,[Area]
+           ,[TotalArea]
+           ,[Hours]
+           ,[TotalHours]
+           ,[MaterialCost]
+           ,[LaborCost]
+           ,[Cost]
+           ,[TotalMaterialCost]
+           ,[TotalLaborCost]
+           ,[TotalCost]
+           ,[Price]
+           ,[TotalPrice]
+           ,[Worksheet]
+           ,[Line]
+           ,[Column]
+           ,[ModifiedUTCDateTime]
+           )
+            OUTPUT UNSERTED .*
+            VALUES  
+            (@Id
+           ,@OrderId
+           ,@OrderNumber
+           ,@ProjectNumber
+           ,@SalesDocumentNumber
+           ,@SalesDocumentVersion
+           ,@ItemName
+           ,@SortOrder
+           ,@Description
+           ,@Quantity
+           ,@Width
+           ,@Height
+           ,@Weight
+           ,@WeightWithoutGlass
+           ,@WeightGlass
+           ,@TotalWeight
+           ,@TotalWeightWithoutGlass
+           ,@TotalWeightGlass
+           ,@Area
+           ,@TotalArea
+           ,@Hours
+           ,@TotalHours
+           ,@MaterialCost
+           ,@LaborCost
+           ,@Cost
+           ,@TotalMaterialCost
+           ,@TotalLaborCost
+           ,@TotalCost
+           ,@Price
+           ,@TotalPrice
+           ,@Worksheet
+           ,@Line
+           ,@Column
+           ,GetUTCDate()
+           )";
+
+            return await _dapper.ExecuteAsync(sql, item);
         }
 
         // DELETE BY ID
         public async Task<int> DeleteItemAsync(Guid id)
         {
-            const string sql = "DELETE FROM Uniwave_a2p_Materials WHERE Id = @id;";
-            using IDbConnection db = _factory.CreateConnection();
-            return await db.ExecuteAsync(sql, new { Id = id });
+            const string sql = "DELETE FROM Uniwave_a2p_Items WHERE Id = @id;";
+            return await _dapper.ExecuteAsync(sql, new { Id = id });
         }
 
         // DELETE BY ORDER ID
         public async Task<int> DeleteItemByOrderIdAsync(Guid id)
         {
-            const string sql = "DELETE FROM Uniwave_a2p_Materials WHERE OrderId = @id;";
-            using IDbConnection db = _factory.CreateConnection();
-            return await db.ExecuteAsync(sql, new { Id = id });
+            const string sql = "DELETE FROM Uniwave_a2p_Items WHERE OrderId = @id;";
+            return await _dapper.ExecuteAsync(sql, new { Id = id });
         }
     }
 }

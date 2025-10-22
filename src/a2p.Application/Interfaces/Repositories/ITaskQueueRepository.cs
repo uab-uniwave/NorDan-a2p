@@ -1,7 +1,7 @@
-using a2p.Domain.Entities;
-using a2p.Domain.Enums;
+using Domain.Entities;
+using Domain.Enums;
 
-namespace a2p.Application.Interfaces.Repositories
+namespace Application.Interfaces.Repositories
 {
     public interface ITaskQueueRepository
     {

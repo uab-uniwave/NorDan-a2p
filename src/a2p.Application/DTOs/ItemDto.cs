@@ -1,19 +1,21 @@
+using Domain.Enums;
+
 using System.ComponentModel.DataAnnotations;
 
-using a2p.Domain.Enums;
-
-namespace a2p.Application.DTOs
+namespace Application.DTOs
 {
     public class ItemDto
     {
         public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid OrderId { get; set; } = Guid.Empty;
+        [MaxLength(50)] public string OrderNumber { get; set; } = string.Empty;
+        [MaxLength(50)] public string ProjectNumber { get; set; } = string.Empty;
+
 
         public int SalesDocumentNumber { get; set; } = -1;
         public int SalesDocumentVersion { get; set; } = -1;
 
         public int SalesDocumentState { get; set; } = -1;
-
-        [MaxLength(50)] public string OrderNumber { get; set; } = string.Empty;
 
         [MaxLength(50)] public string ItemName { get; set; } = string.Empty;
         [MaxLength(255)] public string Worksheet { get; set; } = string.Empty;

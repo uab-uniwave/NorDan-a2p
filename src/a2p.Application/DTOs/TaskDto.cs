@@ -1,4 +1,4 @@
-namespace a2p.Application.DTOs
+namespace Application.DTOs
 {
     public class TaskDto
     {

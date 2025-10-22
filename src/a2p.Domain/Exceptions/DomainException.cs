@@ -1,4 +1,4 @@
-namespace a2p.Domain.Exceptions
+namespace Domain.Exceptions
 {
     public abstract class DomainException : System.Exception
     {

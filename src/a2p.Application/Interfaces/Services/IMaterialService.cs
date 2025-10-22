@@ -1,8 +1,9 @@
-using a2p.Application.DTOs;
-using a2p.Domain.Entities;
-using a2p.Domain.Shared;
+using Application.DTOs;
 
-namespace a2p.Application.Interfaces.Services
+using Domain.Entities;
+using Domain.Shared;
+
+namespace Application.Interfaces.Services
 {
     public interface IMaterialService
     {

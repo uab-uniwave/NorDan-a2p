@@ -2,7 +2,7 @@ using System.Data;
 
 using Microsoft.Data.SqlClient;
 
-namespace a2p.Application.Interfaces.Services
+namespace Application.Interfaces.Services
 {
     public interface ISQLService
     {

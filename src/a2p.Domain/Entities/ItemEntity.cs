@@ -1,18 +1,19 @@
-using a2p.Domain.Enums;
+using Domain.Enums;
 
-namespace a2p.Domain.Entities
+namespace Domain.Entities
 {
     public class ItemEntity : BaseEntity
     {
+        public string ItemName { get; set; } = string.Empty;
+        public Guid OrderId { get; set; }
+
+        public string Worksheet { get; set; } = string.Empty;
         public int Line { get; set; } = -1;
         public int Column { get; set; } = -1;
         //============================================================================================================================
-        public string OrderNumber { get; set; } = string.Empty;
-        public string Worksheet { get; set; } = string.Empty;
-        public int SalesDocumentNumber { get; set; } = -1;
-        public int SalesDocumentVersion { get; set; } = -1;
 
-        public string ItemName { get; set; } = string.Empty;
+
+      
         public int SortOrder { get; set; } = -1;
         public string? Description { get; set; }
         //============================================================================================================================
@@ -59,6 +60,5 @@ namespace a2p.Domain.Entities
         public decimal TotalCostEUR { get; set; } = 0m;
         public decimal PriceEUR { get; set; } = 0m;
         public decimal TotalPriceEUR { get; set; } = 0m;
-        public WorksheetType WorksheetType { get; set; } = 0;
     }
 }

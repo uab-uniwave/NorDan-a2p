@@ -1,24 +1,19 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using a2p.Domain.Enums;
+using Domain.Enums;
 
-namespace a2p.Domain.Entities
+namespace Domain.Entities
 {
     public class MaterialEntity : BaseEntity
     {
         public Guid OrderId { get; set; } = Guid.Empty;
-        public string OrderNumber { get; set; } = string.Empty;
-        public int SalesDocumentNumber { get; set; } = -1;
-
-        public int SalesDocumentVersion { get; set; } = -1;
         public string Worksheet { get; set; } = string.Empty;
         public int Line { get; set; } = -1;
         public int Column { get; set; } = -1;
         //============================================================================================================================
         public string? ItemName { get; set; } = string.Empty;
-
-        public Guid? ItemId { get; set; } = null;
+        public Guid ItemId { get; set; }
 
         public int SortOrder { get; set; } = -1;
         //============================================================================================================================
@@ -67,7 +62,6 @@ namespace a2p.Domain.Entities
         public string? CustomField5 { get; set; } = null;
         //============================================================================================================================
         public MaterialType MaterialType { get; set; } = 0;
-        public WorksheetType WorksheetType { get; set; } = 0;
         //============================================================================================================================
         public string? SourceReference { get; set; } = string.Empty;
         public string? SourceDescription { get; set; } = string.Empty;

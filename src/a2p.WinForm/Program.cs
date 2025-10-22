@@ -1,72 +1,80 @@
-using System.Diagnostics;
-using System.Globalization;
-using System.Text;
+using Infrastructure;
 
-using a2p.Infrastructure.DependencyInjection;
-using a2p.WinForm.Forms;
-
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
-namespace a2p.WinForm
+using WinFormApp.Forms;
+
+namespace WinFormApp
 {
     internal static class Program
     {
-        private static IServiceProvider _services = null!;
-
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
         [STAThread]
-        private static void Main()
+        static void Main()
         {
-            // Get the current culture of the PC
-            CultureInfo currentCulture = CultureInfo.CurrentCulture;
+            ApplicationConfiguration.Initialize();
 
-            // Set the culture globally
-            Thread.CurrentThread.CurrentCulture = currentCulture;
-            Thread.CurrentThread.CurrentUICulture = currentCulture;
+            // ============================================================
+            // 1. Build Configuration from appsettings.json
+            // ============================================================
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production"}.json", optional: true)
+                .Build();
 
-            _ = System.Windows.Forms.Application.SetHighDpiMode(System.Windows.Forms.HighDpiMode.PerMonitorV2);
-            System.Windows.Forms.Application.EnableVisualStyles();
-            System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
+            // ============================================================
+            // 2. Create Host with Dependency Injection
+            // ============================================================
+            IHost host = Host.CreateDefaultBuilder()
+                .ConfigureServices((context, services) =>
+                {
+                    // Register configuration as singleton
+                    services.AddSingleton<IConfiguration>(configuration);
 
-            IServiceCollection services = DependencyInjection.ConfigureServicesCollection();
+                    // Configure logging from appsettings.json
+                    services.AddLogging(builder =>
+                    {
+                        builder.ClearProviders();
+                        builder.AddConfiguration(configuration.GetSection("Logging"));
+                        builder.AddConsole();
+                        builder.AddDebug();
+                        builder.AddEventLog();
+                    });
 
-            // Register WinForm-specific types explicitly so ActivatorUtilities isn't needed
-            _ = services.AddSingleton<FormSplashScreen>();
-            _ = services.AddSingleton<FormMain>();
-            _ = services.AddTransient<ChildFormOrders>();
-            _ = services.AddTransient<ChildFormLog>();
-            _ = services.AddTransient<ChildFormSetting>();
-            _ = services.AddTransient<FormProgressBar>();
-            services.AddLogging(builder => builder.AddConsole());
+                    // ⭐ Register Infrastructure services (SHARED WITH API!)
+                    services.AddInfrastructure(configuration);
 
-            _services = services.BuildServiceProvider();
+                    // Register Forms as transient (new instance each time)
+                    services.AddTransient<MainForm>();
+                    services.AddTransient<LogsForm>();
+                    services.AddTransient<ProgressBarForm>();
+                    services.AddTransient<SettingsForm>();
+                    services.AddTransient<OrdersForm>();
+                    services.AddTransient<SplashScreenForm>();
 
-            Microsoft.Extensions.Logging.ILogger logger = _services.GetRequiredService<Microsoft.Extensions.Logging.ILogger>();
-            Console.SetOut(new DebugTextWriter());
+                })
+                .Build();
 
-
-            logger.LogInformation("Application started.");
-
-            using FormSplashScreen splashScreen = _services.GetRequiredService<FormSplashScreen>();
-            splashScreen.Show();
-            splashScreen.FadeIn();
-            FormMain mainForm = _services.GetRequiredService<FormMain>();
-
-            splashScreen.FadeOut();
-            splashScreen.Close();
-
-            System.Windows.Forms.Application.Run(mainForm);
-        }
-
-
-    }
-
-    public class DebugTextWriter : TextWriter
-    {
-        public override Encoding Encoding => Encoding.UTF8;
-
-        public override void WriteLine(string? message)
-        {
-            Debug.WriteLine(message);
+            // ============================================================
+            // 3. Get MainForm from DI container and run application
+            // ============================================================
+            IServiceScope scope = host.Services.CreateScope();
+            try
+            {
+                MainForm mainForm = scope.ServiceProvider.GetRequiredService<MainForm>();
+                System.Windows.Forms.Application.Run(mainForm);
+            }
+            finally
+            {
+                // Dispose scope after Application.Run returns (when app exits)
+                scope.Dispose();
+                host.Dispose();
+            }
         }
     }
 }

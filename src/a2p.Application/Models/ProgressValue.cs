@@ -1,4 +1,4 @@
-namespace a2p.Application.Models
+namespace Application.Models
 {
     public class ProgressValue
     {

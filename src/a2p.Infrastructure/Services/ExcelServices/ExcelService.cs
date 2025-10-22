@@ -1,30 +1,31 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Globalization;
-
-using a2p.Application.DTOs;
-using a2p.Application.Interfaces.Excel;
-using a2p.Application.Interfaces.Files;
-using a2p.Application.Models;
-using a2p.Domain.Enums;
+using Application.Interfaces.Excel;
+using Application.Interfaces.Files;
+using Application.Models;
 
 using ClosedXML.Excel;
 
+using Domain.Entities;
+using Domain.Enums;
+
 using Microsoft.Extensions.Logging;
 
-namespace a2p.Infrastructure.Services.ExcelServices
+using System.Globalization;
+
+namespace Infrastructure.Services.ExcelServices
 {
     public class ExcelService : IExcelService
     {
 
-        private readonly ILogger _logger;
+        private readonly ILogger<ExcelService> _logger;
         private readonly IFileService _fileService;
         private IProgress<ProgressValue>? _progress;
         private ProgressValue _progressValue;
         private string _currency = string.Empty;
 
-        public ExcelService(ILogger logger, IFileService fileService)
+        public ExcelService(ILogger<ExcelService> logger, IFileService fileService)
         {
 
             _logger = logger;
@@ -48,12 +49,15 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     worksheetCounter++;
 
                     WorksheetDto worksheet = new();
-                    worksheet.Order = file.OrderNumber;
+                    worksheet.OrderNumber = file.OrderNumber;
+                    worksheet.OrderId = file.OrderId;
+                    worksheet.ProjectNumber = file.ProjectNumber;
+                    worksheet.SalesDocumentNumber = file.SalesDocumentNumber;
+                    worksheet.SalesDocumentVersion = file.SalesDocumentVersion;
                     worksheet.WorksheetType = GetWorksheetType(file.FileName, ixlWorksheet.Name);
                     worksheet.Name = ixlWorksheet.Name;
                     worksheet.RowCount = ixlWorksheet.RowsUsed().Count();
                     worksheet.FileName = file.FileName;
-
 
                     //   CultureInfo culture = CultureInfo.InvariantCulture;
                     int totalColumns = ixlWorksheet.LastColumnUsed()?.ColumnNumber() ?? 0;
@@ -146,44 +150,50 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
                 }
 
-                else if (worksheetName.Trim().Contains("Accessories") == true && fileName?.Contains("SumList") == true)
+                else if (worksheetName.Trim().Equals("ND_Accessories") == true && fileName?.Contains("SumList") == true)
 
                 {
 
                     worksheetType = WorksheetType.Materials;
                 }
-                else if (worksheetName.Trim().Contains("Others") == true && fileName?.Contains("SumList") == true)
-
-                {
-
-                    worksheetType = WorksheetType.Materials;
-                }
-
-                else if (worksheetName.Trim().Contains("Gaskets") == true && fileName?.Contains("SumList") == true)
-
-                {
-
-                    worksheetType = WorksheetType.Materials;
-                }
-                else if (worksheetName.Trim().Contains("Profiles") == true && fileName?.Contains("SumList") == true)
+                else if (worksheetName.Trim().Equals("ND_Others") == true && fileName?.Contains("SumList") == true)
 
                 {
 
                     worksheetType = WorksheetType.Materials;
                 }
 
-                else if (worksheetName.Trim().Contains("Glass") == true && fileName?.Contains("SumList") == true)
+                else if (worksheetName.Trim().Equals("ND_Gaskets") == true && fileName?.Contains("SumList") == true)
+
+                {
+
+                    worksheetType = WorksheetType.Materials;
+                }
+                else if (worksheetName.Trim().Equals("ND_Profiles") == true && fileName?.Contains("SumList") == true)
+
+                {
+
+                    worksheetType = WorksheetType.Materials;
+                }
+
+                else if (worksheetName.Trim().Equals("ND_Glasses") == true && fileName?.Contains("SumList") == true)
 
                 {
 
                     worksheetType = WorksheetType.Glasses;
                 }
 
-                else if (worksheetName.Trim().Contains("Panel") == true && fileName?.Contains("SumList") == true)
+                else if (worksheetName.Trim().Equals("ND_Panels") == true && fileName?.Contains("SumList") == true)
 
                 {
 
                     worksheetType = WorksheetType.Panels;
+                }
+
+                else
+                {
+                    _logger.LogError("Excel Service. Unable to determine worksheet type from file {$FileName} and worksheet {$WorksheetName}.", fileName, worksheetName);
+                    worksheetType = WorksheetType.Unknown;
                 }
 
                 return worksheetType;

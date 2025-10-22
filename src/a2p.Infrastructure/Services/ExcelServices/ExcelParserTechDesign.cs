@@ -1,42 +1,41 @@
-using System.Text.RegularExpressions;
+using Application.DTOs;
+using Application.Interfaces.Excel;
+using Application.Interfaces.PrefSuite;
+using Application.Models;
 
-using a2p.Application.DTOs;
-using a2p.Application.Interfaces.Excel;
-using a2p.Application.Interfaces.PrefSuite;
-using a2p.Application.Models;
-using a2p.Domain.Entities;
-using a2p.Domain.Enums;
+using Domain.Enums;
 
 using Microsoft.Extensions.Logging;
-namespace a2p.Infrastructure.Services.ExcelServices
+
+using System.Text.RegularExpressions;
+namespace Infrastructure.Services.ExcelServices
 {
     public class ExcelParserTechDesign : IExcelParserTechDesign
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<ExcelParserTechDesign> _logger;
 
         private IPrefSuiteDataService _prefSuiteDataService;
         private ProgressValue _progressValue;
         private IProgress<ProgressValue>? _progress;
 
-        public ExcelParserTechDesign(ILogger logger, IPrefSuiteDataService prefSuiteDataService)
+        public ExcelParserTechDesign(ILogger<ExcelParserTechDesign> logger, IPrefSuiteDataService prefSuiteDataService)
         {
             _logger = logger;
             _prefSuiteDataService = prefSuiteDataService;
             _progressValue = new ProgressValue();
         }
 
-        public async Task<List<ItemDto>> MapItemsAsync(WorksheetDto worksheet, ProgressValue? progressValue, IProgress<ProgressValue>? progress = null)
+        public async Task<List<ItemDto>> ParseItemsAsync(WorksheetDto worksheet, ProgressValue? progressValue, IProgress<ProgressValue>? progress = null)
         {
             _progressValue = progressValue ?? new ProgressValue();
             _progress = progress;
 
             List<ItemDto> items = [];
             List<ErrorDto> errors = [];
-            List<ItemDto> result = [];
 
             if (worksheet == null || !worksheet.WorksheetData.Any())
             {
-                return result;
+                return items;
             }
 
             try
@@ -48,7 +47,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                 int rowCount = worksheet.WorksheetData.Count;
                 if (rowCount == 0)
                 {
-                    return result;
+                    return items;
                 }
 
                 int lastRow = Math.Max(0, rowCount - 1);
@@ -70,7 +69,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         List<object> row = worksheet.WorksheetData[i];
                         if (row == null)
                         {
-                            _logger.LogWarning("{$Class}.{$Method}. Row {Row} is null. Skipping.", nameof(ExcelParserTechDesign), nameof(MapItemsAsync), i + 1);
+                            _logger.LogWarning("{$Class}.{$Method}. Row {Row} is null. Skipping.", nameof(ExcelParserTechDesign), nameof(ParseItemsAsync), i + 1);
                             continue;
                         }
 
@@ -79,11 +78,11 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         if (row.Count < requiredColumns)
                         {
                             _logger.LogWarning("{$Class}.{$Method}. Row {Row} has {Columns} columns but {Required} are required. Skipping.",
-                                nameof(ExcelParserTechDesign), nameof(MapItemsAsync), i + 1, row.Count, requiredColumns);
+                                nameof(ExcelParserTechDesign), nameof(ParseItemsAsync), i + 1, row.Count, requiredColumns);
 
                             errors.Add(new ErrorDto()
                             {
-                                OrderNumber = worksheet.Order ?? string.Empty,
+                                OrderNumber = worksheet.OrderNumber ?? string.Empty,
                                 Level = ErrorLevel.Error,
                                 Code = ErrorCode.Excel_Material_Parsing,
                                 Message = $"Row {i + 1} has {row.Count} columns; expected at least {requiredColumns}."
@@ -99,8 +98,12 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         _progressValue.ProgressTask3 = $"Reading row {rowCounter} of {rowCount - 2})";
                         _progress?.Report(_progressValue);
 
-                        item.OrderNumber = worksheet.Order ?? string.Empty;
+                        item.OrderNumber = worksheet.OrderNumber ?? string.Empty;
                         item.Worksheet = worksheet.Name ?? string.Empty;
+                        item.OrderId = worksheet.OrderId;
+                        item.ProjectNumber = worksheet.ProjectNumber ?? string.Empty;
+                        item.SalesDocumentNumber = worksheet.SalesDocumentNumber;
+                        item.SalesDocumentVersion = worksheet.SalesDocumentVersion;
                         item.Line = line;
                         item.Column = -1;
                         item.ItemName = GetCell(worksheet.WorksheetData, i, 2) ?? string.Empty;
@@ -125,7 +128,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                            "\nLine {$Line}. ItemName name is missing." +
                            "\nItem {$Data}.",
                           nameof(ExcelParserTechDesign),
-                            nameof(MapItemsAsync),
+                            nameof(ParseItemsAsync),
                            item.OrderNumber ?? string.Empty,
                            item.Worksheet ?? string.Empty,
                            item.Line,
@@ -176,14 +179,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
                         items.Add(item);
 
-                        // Convert to ItemDto
-                        result.Add(new ItemDto
-                        {
-                            // Map necessary fields from item to ItemDto
-                            // Add proper mapping based on ItemDto structure
-                        });
-
-                        await LogMappedItemEntityAsync(item);
+                        await LogParsedItemDtoAsync(item);
                     }
                     catch (Exception ex)
                     {
@@ -196,8 +192,8 @@ namespace a2p.Infrastructure.Services.ExcelServices
                             "\nData {$Data}." +
                             "\nException {$Exception}.",
                            nameof(ExcelParserTechDesign),
-                            nameof(MapItemsAsync),
-                            worksheet.Order ?? string.Empty,
+                            nameof(ParseItemsAsync),
+                            worksheet.OrderNumber ?? string.Empty,
                             worksheet.Name ?? string.Empty,
                             item.Line,
                             item.ItemName ?? string.Empty,
@@ -205,26 +201,11 @@ namespace a2p.Infrastructure.Services.ExcelServices
                             GetRowDataSafe(worksheet.WorksheetData, i),
                         ex.Message ?? string.Empty);
 
-                        errors.Add(new ErrorDto()
-                        {
-                            OrderNumber = worksheet.Order ?? string.Empty,
-                            Level = ErrorLevel.Error,
-                            Code = ErrorCode.Excel_Material_Parsing,
-                            Message = $"Unhandled ErrorDto {nameof(ExcelParserTechDesign)}.{nameof(MapItemsAsync)}, " +
-                          $"\nOrder: {worksheet.Order ?? string.Empty}," +
-                          $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
-                          $"\nLine {item.Line}," +
-                          $"\nItem: {item.ItemName ?? string.Empty}," +
-                          $"\nDescription: {item.Description ?? string.Empty}," +
-                          $"\nData: {GetRowDataSafe(worksheet.WorksheetData, i)}," +
-                          $"\nException: {ex.Message ?? string.Empty}."
-                        });
-
                         continue;
                     }
                 }
 
-                return result;
+                return items;
             }
             catch (Exception ex)
             {
@@ -232,11 +213,11 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     "\nOrder {$OrderNumber}." +
                     "\n{$Exception}",
                nameof(ExcelParserTechDesign),
-                    nameof(MapItemsAsync),
-                    worksheet.Order ?? string.Empty,
+                    nameof(ParseItemsAsync),
+                    worksheet.OrderNumber ?? string.Empty,
                     ex.Message);
 
-                return result;
+                return items;
             }
         }
 
@@ -274,18 +255,17 @@ namespace a2p.Infrastructure.Services.ExcelServices
             return row == null ? string.Empty : string.Join(",", row.Select(o => o?.ToString() ?? string.Empty));
         }
 
-        public async Task<List<MaterialDto>> MapMaterialsAsync(WorksheetDto worksheet, ProgressValue? progressValue, IProgress<ProgressValue>? progress = null)
+        public async Task<List<MaterialDto>> ParseMaterialsAsync(WorksheetDto worksheet, ProgressValue? progressValue, IProgress<ProgressValue>? progress = null)
         {
             _progressValue = progressValue ?? new ProgressValue();
             _progress = progress;
 
             List<MaterialDto> materials = [];
             List<ErrorDto> errors = [];
-            List<MaterialDto> result = [];
 
             if (worksheet == null || !worksheet.WorksheetData.Any())
             {
-                return result;
+                return materials;
             }
 
             try
@@ -294,66 +274,63 @@ namespace a2p.Infrastructure.Services.ExcelServices
                 if (worksheet.Name == "ND_Profiles")
                 {
 
-                    materials.AddRange(await MapProfilesAsync(worksheet));
+                    materials.AddRange(await ParseProfilesAsync(worksheet));
 
                 }
                 else if (worksheet.Name == "ND_Gaskets")
                 {
-                    materials.AddRange(await MapGasketsAsync(worksheet));
+                    materials.AddRange(await ParseGasketsAsync(worksheet));
                 }
 
                 else if (worksheet.Name == "ND_Accessories")
                 {
 
-                    materials.AddRange(await MapAccessoriesAsync(worksheet));
+                    materials.AddRange(await ParseAccessoriesAsync(worksheet));
 
                 }
                 else if (worksheet.Name == "ND_Panels")
                 {
 
-                    materials.AddRange(await MapPanelsAsync(worksheet));
+                    materials.AddRange(await ParsePanelsAsync(worksheet));
 
                 }
                 else if (worksheet.Name == "ND_Glasses")
                 {
 
-                    materials.AddRange(await MapGlassesAsync(worksheet));
+                    materials.AddRange(await ParseGlassesAsync(worksheet));
 
                 }
                 else if (worksheet.Name == "ND_Others")
                 {
 
-                    materials.AddRange(await MapOthersAsync(worksheet));
+                    materials.AddRange(await ParseOthersAsync(worksheet));
 
                 }
 
-                // Convert materials to MaterialsDto
-                foreach (MaterialDto material in materials)
-                {
-                    result.Add(new MaterialDto
-                    {
-                        // Map necessary fields from material to MaterialsDto
-                        // Add proper mapping based on MaterialsDto structure
-                    });
-                }
-
-                return result;
+                return materials;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError("Unhandled error {$Class}.{Method}." +
+                    "\nOrder: {$OrderNumber}." +
+                    "\nWorksheet: {$WorksheetDto}." +
+                    "\nException: {$Exception} ", nameof(ExcelParserTechDesign),
+                    nameof(ParseMaterialsAsync),
+                    worksheet.OrderNumber ?? string.Empty,
+                    worksheet.Name ?? string.Empty,
+                    ex.Message);
 
-                return result;
+                return materials;
             }
         }
 
-        private async Task<List<MaterialDto>> MapProfilesAsync(WorksheetDto worksheet)
+        private async Task<List<MaterialDto>> ParseProfilesAsync(WorksheetDto worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
 
             List<MaterialDto> materials = [];
-            List<ErrorDto> error = [];
             try
             {
 
@@ -364,6 +341,15 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     MaterialDto material = new();
                     try
                     {
+                        material.Worksheet = worksheet.Name ?? string.Empty;
+                        material.MaterialType = MaterialType.Profiles;
+                        material.WorksheetType = WorksheetType.Materials;
+                        material.OrderId = worksheet.OrderId;
+                        material.OrderNumber = worksheet.OrderNumber ?? string.Empty;
+                        material.ProjectNumber = worksheet.ProjectNumber ?? string.Empty;
+                        material.SalesDocumentNumber = worksheet.SalesDocumentNumber;
+                        material.SalesDocumentVersion = worksheet.SalesDocumentVersion;
+
                         //===================================================================================================
                         material.Line = line;
                         //   material.WorksheetType = WorksheetType.Materials;
@@ -379,18 +365,22 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         //===================================================================================================
                         material.ReferenceBase = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
 
-                        (string, ErrorDto?) result = TransformReference(material.ReferenceBase, material.SourceColor ?? string.Empty, worksheet, line);
-                        if (string.IsNullOrEmpty(result.Item1))
+                        string result = TransformReference(material.ReferenceBase, material.SourceColor ?? string.Empty, worksheet, line);
+                        if (string.IsNullOrEmpty(result))
                         {
+                            _logger.LogError("{$Class}.{$Method}. TechDesign article parsing failed." +
+                                     "\nOrder {$OrderNumber}, " +
+                                     "\nWorksheet: {$Worksheet}, " +
+                                     "\nLine: {$Line}, ",
+                                     nameof(ExcelParserTechDesign),
+                                        nameof(ParseProfilesAsync),
+                                        worksheet.OrderNumber ?? string.Empty,
+                                        worksheet.Name ?? string.Empty,
+                                        line);
                             continue;
                         }
 
-                        material.Reference = result.Item1;
-
-                        if (result.Item2 != null)
-                        {
-                            error.Add(result.Item2);
-                        }
+                        material.Reference = result;
 
                         material.Description = worksheet.WorksheetData[i][4].ToString() ?? string.Empty;
 
@@ -473,6 +463,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
                         //===================================================================================================
                         materials.Add(material);
+                        await LogParsedMaterialDtoAsync(material);
 
                         //===================================================================================================
 
@@ -496,7 +487,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
         }
 
-        private async Task<List<MaterialDto>> MapGasketsAsync(WorksheetDto worksheet)
+        private async Task<List<MaterialDto>> ParseGasketsAsync(WorksheetDto worksheet)
         {
 
             int sortOrder = -1;
@@ -515,10 +506,15 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     try
                     {
                         material.Worksheet = worksheet.Name ?? string.Empty;
-                        material.OrderNumber = worksheet.Order ?? string.Empty;
+                        material.MaterialType = MaterialType.Gaskets;
+                        material.WorksheetType = WorksheetType.Materials;
+                        material.OrderId = worksheet.OrderId;
+                        material.OrderNumber = worksheet.OrderNumber ?? string.Empty;
+                        material.ProjectNumber = worksheet.ProjectNumber ?? string.Empty;
+                        material.SalesDocumentNumber = worksheet.SalesDocumentNumber;
+                        material.SalesDocumentVersion = worksheet.SalesDocumentVersion;
                         //===================================================================================================
                         material.Line = line;
-                        material.WorksheetType = WorksheetType.Materials;
                         material.ItemName = null; // not used 
                         material.SortOrder = -1; // not used 
 
@@ -534,28 +530,16 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         if (string.IsNullOrEmpty(material.SourceReference) && string.IsNullOrEmpty(material.SourceColor))
                         {
                             _logger.LogError("{$Class}.{$Method}. Sapa article and color are missing. Line will be skipped." +
-                              "\nOrder {$OrderNumber}, " +
-                            "\nWorksheet: {$WorksheetDto}, " +
-                            "\nDescription {$Description}," +
+                             "\nOrder {$OrderNumber}, " +
+                            "\nWorksheet: {$Worksheet}, " +
+                            "\nDescription {$Description}.",
                             nameof(ExcelParserTechDesign),
-                            nameof(MapGasketsAsync),
-                            worksheet.Order ?? string.Empty,
+                            nameof(ParseGasketsAsync),
+                            worksheet.OrderNumber ?? string.Empty,
                             worksheet.Name ?? string.Empty,
                             material.Description ?? string.Empty
                          );
 
-                            ErrorDtos.Add(new ErrorDto()
-                            {
-                                OrderNumber = worksheet.Order ?? string.Empty,
-                                Level = ErrorLevel.Error,
-                                Code = ErrorCode.Excel_Material_Parsing,
-                                Message = $"Sapa article and color are missing. Line will be skipped." +
-                               $"\nOrder: {worksheet.Order ?? string.Empty}," +
-                               $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
-                               $"\nDescription: {material.Description ?? string.Empty}," +
-                               $"\nData: {worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}"
-                            });
-                            continue;
                         }
                         material.SourceColor = worksheet.WorksheetData[i][2].ToString() == null ? null : worksheet.WorksheetData[i][2].ToString();
 
@@ -568,29 +552,44 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         material.ReferenceBase = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
                         if (material.Color != "Without")
                         {
-                            (string, ErrorDto?) result = TransformReference(material.ReferenceBase, material.Color, worksheet, line);
-                            if (string.IsNullOrEmpty(result.Item1))
+                            string result = TransformReference(material.ReferenceBase, material.Color, worksheet, line);
+                            if (string.IsNullOrEmpty(result))
                             {
+                                _logger.LogError("{$Class}.{$Method}. TechDesign article parsing failed." +
+                                     "\nOrder {$OrderNumber}, " +
+                                     "\nWorksheet: {$Worksheet}, " +
+                                     "\nLine: {$Line}, ",
+                                     nameof(ExcelParserTechDesign),
+                                        nameof(ParseProfilesAsync),
+                                        worksheet.OrderNumber ?? string.Empty,
+                                        worksheet.Name ?? string.Empty,
+                                        line);
                                 continue;
                             }
 
-                            material.Reference = result.Item1;
-                            if (result.Item2 != null)
-                            {
-                                ErrorDtos.Add(result.Item2);
-                            }
+                            material.Reference = result;
 
                         }
 
                         else
                         {
-                            (string, ErrorDto?) result = TransformReference(material.ReferenceBase, "", worksheet, line);
-                            if (string.IsNullOrEmpty(result.Item1))
+                            string result = TransformReference(material.ReferenceBase, "", worksheet, line);
+                            if (string.IsNullOrEmpty(result))
                             {
+
+                                _logger.LogError("{$Class}.{$Method}. TechDesign article parsing failed." +
+                                     "\nOrder {$OrderNumber}, " +
+                                     "\nWorksheet: {$Worksheet}, " +
+                                     "\nLine: {$Line}, ",
+                                     nameof(ExcelParserTechDesign),
+                                        nameof(ParseProfilesAsync),
+                                        worksheet.OrderNumber ?? string.Empty,
+                                        worksheet.Name ?? string.Empty,
+                                        line);
                                 continue;
 
                             }
-                            material.Reference = result.Item1;
+                            material.Reference = result;
                         }
 
                         material.Description = worksheet.WorksheetData[i][4].ToString() ?? string.Empty;
@@ -701,8 +700,8 @@ namespace a2p.Infrastructure.Services.ExcelServices
                             "\nDescription {$Description}," +
                             "\nException  {$Exception}",
                               nameof(ExcelParserTechDesign),
-                            nameof(MapGasketsAsync),
-                            worksheet.Order ?? string.Empty,
+                            nameof(ParseGasketsAsync),
+                            worksheet.OrderNumber ?? string.Empty,
                             worksheet.Name ?? string.Empty,
                             material.SourceReference ?? string.Empty,
                             material.SourceColor ?? string.Empty,
@@ -710,20 +709,6 @@ namespace a2p.Infrastructure.Services.ExcelServices
                             material.Reference ?? string.Empty,
                             material.Description ?? string.Empty,
                              ex.Message ?? string.Empty);
-                        ErrorDtos.Add(new ErrorDto()
-                        {
-                            OrderNumber = worksheet.Order ?? string.Empty,
-                            Level = ErrorLevel.Error,
-                            Code = ErrorCode.Excel_Material_Parsing,
-                            Message = $"Unhandled ErrorDto {nameof(ExcelParserTechDesign)}.{nameof(MapGasketsAsync)}, " +
-                           $"\nOrder: {worksheet.Order ?? string.Empty}," +
-                           $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
-                           $"\nLine {material.Line}," +
-                           $"\nItem: {material.ItemName ?? string.Empty}," +
-                           $"\nDescription: {material.Description ?? string.Empty}," +
-                           $"\nData: {worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}," +
-                           $"\nException: {ex.Message ?? string.Empty}."
-                        });
                         continue;
                     }
 
@@ -739,8 +724,8 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     "\nWorksheet {$WorksheetDto}." +
                     "\n{$Exception}",
                nameof(ExcelParserTechDesign),
-                    nameof(MapGasketsAsync),
-                    worksheet.Order ?? string.Empty,
+                    nameof(ParseGasketsAsync),
+                    worksheet.OrderNumber ?? string.Empty,
                     worksheet.Name ?? string.Empty,
                     ex.Message);
 
@@ -749,13 +734,12 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
         }
 
-        private async Task<List<MaterialDto>> MapAccessoriesAsync(WorksheetDto worksheet)
+        private async Task<List<MaterialDto>> ParseAccessoriesAsync(WorksheetDto worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
 
-            List<ErrorDto> ErrorDtos = [];
             List<MaterialDto> materials = [];
             try
             {
@@ -768,9 +752,15 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     line = i + 1;
                     try
                     {
-
                         material.Worksheet = worksheet.Name ?? string.Empty;
-                        material.OrderNumber = worksheet.Order ?? string.Empty;
+                        material.MaterialType = MaterialType.Piece;
+                        material.WorksheetType = WorksheetType.Materials;
+                        material.OrderId = worksheet.OrderId;
+                        material.OrderNumber = worksheet.OrderNumber ?? string.Empty;
+                        material.ProjectNumber = worksheet.ProjectNumber ?? string.Empty;
+                        material.SalesDocumentNumber = worksheet.SalesDocumentNumber;
+                        material.SalesDocumentVersion = worksheet.SalesDocumentVersion;
+                        //===================================================================================================
 
                         //===================================================================================================
                         material.SourceReference = worksheet.WorksheetData[i][1]?.ToString();
@@ -780,7 +770,6 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
                         //===================================================================================================
                         material.Line = line;
-                        //  material.WorksheetType = WorksheetType.Materials;
                         material.ItemName = string.Empty; // not used 
                         material.SortOrder = -1; // not used           
 
@@ -796,27 +785,42 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         material.ReferenceBase = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
                         if (material.Color != "Without")
                         {
-                            (string, ErrorDto?) result = TransformReference(material.ReferenceBase, material.Color, worksheet, line);
-                            if (string.IsNullOrEmpty(result.Item1))
+                            string result = TransformReference(material.ReferenceBase, material.Color, worksheet, line);
+                            if (string.IsNullOrEmpty(result))
                             {
+                                _logger.LogError("{$Class}.{$Method}. TechDesign article parsing failed." +
+                                     "\nOrder {$OrderNumber}, " +
+                                     "\nWorksheet: {$Worksheet}, " +
+                                     "\nLine: {$Line}, ",
+                                     nameof(ExcelParserTechDesign),
+                                        nameof(ParseAccessoriesAsync),
+                                        worksheet.OrderNumber ?? string.Empty,
+                                        worksheet.Name ?? string.Empty,
+                                        line);
                                 continue;
+
                             }
-                            material.Reference = result.Item1;
-                            if (result.Item2 != null)
-                            {
-                                ErrorDtos.Add(result.Item2);
-                            }
+                            material.Reference = result;
 
                         }
                         else
                         {
-                            (string, ErrorDto?) result = TransformReference(material.ReferenceBase, "", worksheet, line);
-                            if (string.IsNullOrEmpty(result.Item1))
+                            string result = TransformReference(material.ReferenceBase, "", worksheet, line);
+                            if (string.IsNullOrEmpty(result))
                             {
-                                continue;
+
+                                _logger.LogError("{$Class}.{$Method}. TechDesign article parsing failed." +
+                                     "\nOrder {$OrderNumber}, " +
+                                     "\nWorksheet: {$Worksheet}, " +
+                                     "\nLine: {$Line}, ",
+                                     nameof(ExcelParserTechDesign),
+                                        nameof(ParseAccessoriesAsync),
+                                        worksheet.OrderNumber ?? string.Empty,
+                                        worksheet.Name ?? string.Empty,
+                                        line);
 
                             }
-                            material.Reference = result.Item1;
+                            material.Reference = result;
                         }
                         material.Description = worksheet.WorksheetData[i][4].ToString() ?? string.Empty;
 
@@ -910,8 +914,8 @@ namespace a2p.Infrastructure.Services.ExcelServices
                             "\nDescription {$Description}," +
                             "\nException  {$Exception}",
                               nameof(ExcelParserTechDesign),
-                            nameof(MapAccessoriesAsync),
-                            worksheet.Order ?? string.Empty,
+                            nameof(ParseAccessoriesAsync),
+                            worksheet.OrderNumber ?? string.Empty,
                             worksheet.Name ?? string.Empty,
                             material.SourceReference ?? string.Empty,
                             material.SourceColor ?? string.Empty,
@@ -920,19 +924,6 @@ namespace a2p.Infrastructure.Services.ExcelServices
                             material.Description ?? string.Empty,
                              ex.Message ?? string.Empty);
 
-                        ErrorDtos.Add(new ErrorDto()
-                        {
-                            OrderNumber = worksheet.Order ?? string.Empty,
-                            Level = ErrorLevel.Error,
-                            Code = ErrorCode.Excel_Material_Parsing,
-                            Message = $"Unhandled ErrorDto {nameof(ExcelParserTechDesign)}.{nameof(MapAccessoriesAsync)}, " +
-                           $"\nOrder: {worksheet.Order ?? string.Empty}," +
-                           $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
-
-                           $"\nDescription: {material.Description ?? string.Empty}," +
-                           $"\nData: {worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}," +
-                           $"\nException: {ex.Message ?? string.Empty}."
-                        });
                         continue;
                     }
 
@@ -949,8 +940,8 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     "\nWorksheet {$WorksheetDto}." +
                     "\n{$Exception}",
                nameof(ExcelParserTechDesign),
-                    nameof(MapAccessoriesAsync),
-                    worksheet.Order ?? string.Empty,
+                    nameof(ParseAccessoriesAsync),
+                    worksheet.OrderNumber ?? string.Empty,
                     worksheet.Name ?? string.Empty,
                     ex.Message);
 
@@ -959,13 +950,12 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
         }
 
-        private async Task<List<MaterialDto>> MapPanelsAsync(WorksheetDto worksheet)
+        private async Task<List<MaterialDto>> ParsePanelsAsync(WorksheetDto worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
             List<MaterialDto> materials = [];
-            List<ErrorDto> ErrorDtos = [];
 
             try
             {
@@ -980,9 +970,15 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     try
                     {
                         material.Worksheet = worksheet.Name ?? string.Empty;
-                        material.OrderNumber = worksheet.Order ?? string.Empty;
+                        material.MaterialType = MaterialType.Panels;
+                        material.WorksheetType = WorksheetType.Materials;
+                        material.OrderId = worksheet.OrderId;
+                        material.OrderNumber = worksheet.OrderNumber ?? string.Empty;
+                        material.ProjectNumber = worksheet.ProjectNumber ?? string.Empty;
+                        material.SalesDocumentNumber = worksheet.SalesDocumentNumber;
+                        material.SalesDocumentVersion = worksheet.SalesDocumentVersion;
                         //===================================================================================================
-                        //material.SourceReference = null;
+                        material.SourceReference = string.Empty;
                         material.SourceDescription = worksheet.WorksheetData[i][4]?.ToString();
                         material.SourceColor = worksheet.WorksheetData[i][2]?.ToString();
                         material.SourceColorDescription = worksheet.WorksheetData[i][3] == null ? null : worksheet.WorksheetData[i][2].ToString();
@@ -1026,65 +1022,85 @@ namespace a2p.Infrastructure.Services.ExcelServices
                             if (string.IsNullOrEmpty(material.Reference) && (material.Description == "1 mm aluminium sheet" || material.Description == "1mm aluminium sheet"))
                             {
 
-                                (string, ErrorDto?) result = TransformReference("AluSheet1", material.SourceColor ?? string.Empty, worksheet, line);
-                                if (string.IsNullOrEmpty(result.Item1))
+                                string result = TransformReference("AluSheet1", material.SourceColor ?? string.Empty, worksheet, line);
+                                if (string.IsNullOrEmpty(result))
                                 {
-                                    continue;
+                                    _logger.LogError("{$Class}.{$Method}. TechDesign article parsing failed." +
+                                       "\nOrder {$OrderNumber}, " +
+                                       "\nWorksheet: {$Worksheet}, " +
+                                       "\nLine: {$Line}, ",
+                                       nameof(ExcelParserTechDesign),
+                                          nameof(ParsePanelsAsync),
+                                          worksheet.OrderNumber ?? string.Empty,
+                                          worksheet.Name ?? string.Empty,
+                                          line);
                                 }
 
-                                material.Reference = result.Item1;
-
-                                if (result.Item2 != null)
-                                {
-                                    ErrorDtos.Add(result.Item2);
-                                }
+                                material.Reference = result;
+                                material.ReferenceBase = "AluSheet1";
 
                             }
                             else if (string.IsNullOrEmpty(material.Reference) && (material.Description == "1.25 mm aluminium sheet" || material.Description == "1.25mm aluminium sheet"))
                             {
 
-                                (string, ErrorDto?) result = TransformReference("AluSheet1.25", material.SourceColor ?? string.Empty, worksheet, line);
-                                if (string.IsNullOrEmpty(result.Item1))
+                                string result = TransformReference("AluSheet1.25", material.SourceColor ?? string.Empty, worksheet, line);
+                                if (string.IsNullOrEmpty(result))
                                 {
-                                    continue;
+                                    _logger.LogError("{$Class}.{$Method}. TechDesign article parsing failed." +
+                                       "\nOrder {$OrderNumber}, " +
+                                       "\nWorksheet: {$Worksheet}, " +
+                                       "\nLine: {$Line}, ",
+                                       nameof(ExcelParserTechDesign),
+                                          nameof(ParsePanelsAsync),
+                                          worksheet.OrderNumber ?? string.Empty,
+                                          worksheet.Name ?? string.Empty,
+                                          line);
                                 }
-                                material.Reference = result.Item1;
-                                if (result.Item2 != null)
-                                {
-                                    ErrorDtos.Add(result.Item2);
-                                }
+                                material.Reference = result;
+                                material.ReferenceBase = "AluSheet1.25";
 
                             }
                             else if (string.IsNullOrEmpty(material.Reference) && (material.Description == "1.5 mm aluminium sheet" || material.Description == "1.5mm aluminium sheet"))
                             {
 
-                                (string, ErrorDto?) result = TransformReference("AluSheet1.5", material.SourceColor ?? string.Empty, worksheet, line);
-                                if (string.IsNullOrEmpty(result.Item1))
+                                string result = TransformReference("AluSheet1.5", material.SourceColor ?? string.Empty, worksheet, line);
+                                if (string.IsNullOrEmpty(result))
                                 {
-                                    continue;
+                                    _logger.LogError("{$Class}.{$Method}. TechDesign article parsing failed." +
+                                  "\nOrder {$OrderNumber}, " +
+                                   "\nWorksheet: {$Worksheet}, " +
+                                   "\nLine: {$Line}, ",
+                                   nameof(ExcelParserTechDesign),
+                                      nameof(ParsePanelsAsync),
+                                      worksheet.OrderNumber ?? string.Empty,
+                                      worksheet.Name ?? string.Empty,
+                                      line);
                                 }
-                                material.Reference = result.Item1;
-                                if (result.Item2 != null)
-                                {
-                                    ErrorDtos.Add(result.Item2);
-                                }
+
+                                material.Reference = result;
+                                material.ReferenceBase = "AluSheet1.5";
 
                             }
                             else
                             {
-                                (string, ErrorDto?) result = TransformReference(material.SourceReference ?? string.Empty, material.SourceColor ?? string.Empty, worksheet, line);
+                                string result = TransformReference(material.SourceReference ?? string.Empty, material.SourceColor ?? string.Empty, worksheet, line);
 
-                                if (string.IsNullOrEmpty(result.Item1))
+                                if (string.IsNullOrEmpty(result))
                                 {
-                                    continue;
+
+                                    _logger.LogError("{$Class}.{$Method}. TechDesign article parsing failed." +
+                              "\nOrder {$OrderNumber}, " +
+                                "\nWorksheet: {$Worksheet}, " +
+                                "\nLine: {$Line}, ",
+                                nameof(ExcelParserTechDesign),
+                                   nameof(ParsePanelsAsync),
+                                   worksheet.OrderNumber ?? string.Empty,
+                                   worksheet.Name ?? string.Empty,
+                                   line);
                                 }
 
-                                material.Reference = result.Item1;
+                                material.Reference = result;
 
-                                if (result.Item2 != null)
-                                {
-                                    ErrorDtos.Add(result.Item2);
-                                }
                             }
                             material.Color = worksheet.WorksheetData[i][2].ToString() ?? string.Empty;
                         }
@@ -1197,8 +1213,8 @@ namespace a2p.Infrastructure.Services.ExcelServices
                             "\nDescription {$Description}," +
                             "\nException  {$Exception}",
                              nameof(ExcelParserTechDesign),
-                            nameof(MapPanelsAsync),
-                            worksheet.Order ?? string.Empty,
+                            nameof(ParsePanelsAsync),
+                            worksheet.OrderNumber ?? string.Empty,
                             worksheet.Name ?? string.Empty,
                             material.SourceReference ?? string.Empty,
                             material.SourceColor ?? string.Empty,
@@ -1207,20 +1223,6 @@ namespace a2p.Infrastructure.Services.ExcelServices
                             material.Description ?? string.Empty,
                              ex.Message ?? string.Empty);
 
-                        ErrorDtos.Add(new ErrorDto()
-                        {
-                            OrderNumber = worksheet.Order ?? string.Empty,
-                            Level = ErrorLevel.Error,
-                            Code = ErrorCode.Excel_Material_Parsing,
-                            Message = $"Unhandled ErrorDto {nameof(ExcelParserTechDesign)}.{nameof(MapPanelsAsync)}, " +
-                        $"\nOrder: {worksheet.Order ?? string.Empty}," +
-                        $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
-                        $"\nReference: {material.SourceReference ?? string.Empty}," +
-                        $"\nColor: {material.SourceColor ?? string.Empty}," +
-                        $"\nDescription: {material.Description ?? string.Empty}," +
-                        $"\nData: {worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}," +
-                        $"\nException: {ex.Message ?? string.Empty}."
-                        });
                         continue;
                     }
 
@@ -1238,8 +1240,8 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     "\nWorksheet {$WorksheetDto}." +
                     "\n{$Exception}",
                nameof(ExcelParserTechDesign),
-                    nameof(MapPanelsAsync),
-                    worksheet.Order ?? string.Empty,
+                    nameof(ParsePanelsAsync),
+                    worksheet.OrderNumber ?? string.Empty,
                     worksheet.Name ?? string.Empty,
                     ex.Message);
 
@@ -1248,13 +1250,12 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
         }
 
-        private async Task<List<MaterialDto>> MapGlassesAsync(WorksheetDto worksheet)
+        private async Task<List<MaterialDto>> ParseGlassesAsync(WorksheetDto worksheet)
         {
             int sortOrder = -1;
             int line = -1;
 
             List<MaterialDto> materials = [];
-            List<ErrorDto> ErrorDtos = [];
 
             try
             {
@@ -1267,15 +1268,20 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     try
                     {
                         material.Worksheet = worksheet.Name ?? string.Empty;
-                        material.OrderNumber = worksheet.Order ?? string.Empty;
+                        material.MaterialType = MaterialType.Glasses;
+                        material.WorksheetType = WorksheetType.Materials;
+                        material.OrderId = worksheet.OrderId;
+                        material.OrderNumber = worksheet.OrderNumber ?? string.Empty;
+                        material.ProjectNumber = worksheet.ProjectNumber ?? string.Empty;
+                        material.SalesDocumentNumber = worksheet.SalesDocumentNumber;
+                        material.SalesDocumentVersion = worksheet.SalesDocumentVersion;
+                        //===================================================================================================
                         material.SourceReference = null;
                         material.SourceDescription = worksheet.WorksheetData[i][2]?.ToString();
                         material.SourceColor = null;
                         material.SourceColorDescription = null;
                         //===================================================================================================
                         material.Line = line;
-                        material.WorksheetType = WorksheetType.Glasses;
-
                         //===================================================================================================
                         material.ItemName = worksheet.WorksheetData[i][1].ToString() ?? string.Empty;
 
@@ -1294,28 +1300,15 @@ namespace a2p.Infrastructure.Services.ExcelServices
                            "\nOrder {$OrderNumber}, " +
                            "\nWorksheet: {$WorksheetDto}, " +
                            "\nReference {$Reference}, " +
-                           "\nColor {$Color}," +
+                           "\nDescription {$Description},",
 
                            nameof(ExcelParserTechDesign),
-                           nameof(MapGlassesAsync),
-                           worksheet.Order ?? string.Empty,
+                           nameof(ParseGlassesAsync),
+                           worksheet.OrderNumber ?? string.Empty,
                            worksheet.Name ?? string.Empty,
                            material.SourceReference ?? string.Empty,
                            material.Description ?? string.Empty
                             );
-
-                            ErrorDtos.Add(new ErrorDto()
-                            {
-                                OrderNumber = worksheet.Order!,
-                                Level = ErrorLevel.Error,
-                                Code = ErrorCode.Excel_Material_Parsing,
-                                Message = $"Glass description is missing." +
-                                $"\nOrder: {worksheet.Order}, " +
-                                $"\nWorksheet: {worksheet.Name}, " +
-                                $"\nReference: {material.SourceReference ?? "not found"}," +
-                                $"\nDescription: {material.Description ?? "not found"}"
-
-                            });
                             continue;
                         }
                         //===================================================================================================
@@ -1336,25 +1329,12 @@ namespace a2p.Infrastructure.Services.ExcelServices
                           "\nExpected Reference {$ExpectedReference} of glass",
 
                             nameof(ExcelParserTechDesign),
-                              nameof(MapGlassesAsync),
-                              worksheet.Order ?? string.Empty,
+                              nameof(ParseGlassesAsync),
+                              worksheet.OrderNumber ?? string.Empty,
                               worksheet.Name ?? string.Empty,
                               material.SourceReference ?? string.Empty,
                               material.SourceDescription ?? string.Empty,
                               resultPredicted);
-
-                            ErrorDtos.Add(new ErrorDto()
-                            {
-                                OrderNumber = worksheet.Order!,
-                                Level = ErrorLevel.Error,
-                                Code = ErrorCode.Excel_Material_Parsing,
-                                Message = $"Glass not exists in PrefSuite DB." +
-                                $"\nOrder: {worksheet.Order}," +
-                                $"\nWorksheet: {worksheet.Name}." +
-                                $"\nGlass description: {material.SourceDescription}" +
-                                $"\nExpected PrefSuite Reference: {resultPredicted ?? "not found"}."
-
-                            });
                             continue;
                         }
                         material.ReferenceBase = resultGlassReference;
@@ -1420,39 +1400,27 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError("Unhandled error  {$Class}.{Method}" +
+                        _logger.LogError("Unhandled error {$Class}.{Method}" +
                             "\nOrder {$OrderNumber}, " +
                             "\nWorksheet: {$WorksheetDto}, " +
-                            "\nReference {$Reference}, " +
-                            "\nColor {$Color}, " +
-                            "\nPrefSuite Reference {$PrefSuiteReference}," +
-                            "\nPrefSuite Reference Base {$PrefSuiteReferenceBase}," +
+                            "\nSource Reference {$SourceReference}, " +
+                            "\nSource Description {$SourceDescription}, " +
+                            "\nPrefSuite Reference {$ReferenceBase}," +
+                            "\nPrefSuite Reference{$Reference}," +
+                            "\nPrefSuite Description{$Description}," +
                             "\nException  ${Exception}",
+
                               nameof(ExcelParserTechDesign),
-                            nameof(MapGlassesAsync),
-                            worksheet.Order ?? string.Empty,
+                            nameof(ParseGlassesAsync),
+                            worksheet.OrderNumber ?? string.Empty,
                             worksheet.Name ?? string.Empty,
                             material.SourceReference ?? string.Empty,
                             material.SourceDescription ?? string.Empty,
                             material.ReferenceBase ?? string.Empty,
                             material.Reference ?? string.Empty,
                             material.Description ?? string.Empty,
-                             ex.Message ?? string.Empty);
+                            ex.Message ?? string.Empty);
 
-                        ErrorDtos.Add(new ErrorDto()
-                        {
-                            OrderNumber = worksheet.Order ?? string.Empty,
-                            Level = ErrorLevel.Error,
-                            Code = ErrorCode.Excel_Material_Parsing,
-                            Message = $"Unhandled ErrorDto {nameof(ExcelParserTechDesign)}.{nameof(MapGlassesAsync)}, " +
-                     $"\nOrder: {worksheet.Order ?? string.Empty}," +
-                     $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
-                     $"\nReference: {material.SourceReference ?? string.Empty}," +
-                     $"\nColor: {material.SourceColor ?? string.Empty}," +
-                     $"\nItem: {material.ItemName ?? string.Empty}," +
-                     $"\nDescription: {material.Description ?? string.Empty}," +
-                     $"\nException: {ex.Message ?? string.Empty}."
-                        });
                         continue;
                     }
 
@@ -1471,8 +1439,8 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     "\nWorksheet {$WorksheetDto}." +
                     "\n{$Exception}",
                nameof(ExcelParserTechDesign),
-                    nameof(MapGlassesAsync),
-                    worksheet.Order ?? string.Empty,
+                    nameof(ParseGlassesAsync),
+                    worksheet.OrderNumber ?? string.Empty,
                     worksheet.Name ?? string.Empty,
                     ex.Message);
 
@@ -1481,14 +1449,13 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
         }
 
-        private async Task<List<MaterialDto>> MapOthersAsync(WorksheetDto worksheet)
+        private async Task<List<MaterialDto>> ParseOthersAsync(WorksheetDto worksheet)
         {
 
             int sortOrder = -1;
             int line = -1;
 
             List<MaterialDto> materials = [];
-            List<ErrorDto> ErrorDtos = [];
 
             try
             {
@@ -1503,9 +1470,15 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     {
 
                         material.Worksheet = worksheet.Name ?? string.Empty;
-                        material.OrderNumber = worksheet.Order ?? string.Empty;
-                        material.Line = line;
+                        material.MaterialType = MaterialType.Piece;
                         material.WorksheetType = WorksheetType.Materials;
+                        material.OrderId = worksheet.OrderId;
+                        material.OrderNumber = worksheet.OrderNumber ?? string.Empty;
+                        material.ProjectNumber = worksheet.ProjectNumber ?? string.Empty;
+                        material.SalesDocumentNumber = worksheet.SalesDocumentNumber;
+                        material.SalesDocumentVersion = worksheet.SalesDocumentVersion;
+                        //===================================================================================================
+                        material.Line = line;
                         material.ItemName = string.Empty;// not used in others
                         material.SortOrder = -1;// not used in others
                         material.SourceReference = worksheet.WorksheetData[i][1]?.ToString();
@@ -1525,18 +1498,24 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         if (material.Color != "Without")
                         {
 
-                            (string, ErrorDto?) result = TransformReference(material.ReferenceBase, material.Color, worksheet, line);
-                            if (string.IsNullOrEmpty(result.Item1))
+                            string result = TransformReference(material.ReferenceBase, material.Color, worksheet, line);
+                            if (string.IsNullOrEmpty(result))
                             {
-                                continue;
-                            }
-                            material.Reference = result.Item1;
-                            if (result.Item2 != null)
-                            {
-                                ErrorDtos.Add(result.Item2);
+                                _logger.LogError("{$Class}.{$Method}. TechDesign article parsing failed." +
+                         "\nOrder {$OrderNumber}, " +
+                         "\nWorksheet: {$Worksheet}, " +
+                         "\nLine: {$Line}, ",
+                         nameof(ExcelParserTechDesign),
+                            nameof(ParseOthersAsync),
+                            worksheet.OrderNumber ?? string.Empty,
+                            worksheet.Name ?? string.Empty,
+                            line); continue;
+
                             }
 
+                            material.Reference = result;
                         }
+
                         else
                         {
                             material.Reference = material.ReferenceBase;
@@ -1621,8 +1600,8 @@ namespace a2p.Infrastructure.Services.ExcelServices
                             "\nDescription {$Description}," +
                             "\nException  ${Exception}",
                               nameof(ExcelParserTechDesign),
-                            nameof(MapOthersAsync),
-                            worksheet.Order ?? string.Empty,
+                            nameof(ParseOthersAsync),
+                            worksheet.OrderNumber ?? string.Empty,
                             worksheet.Name ?? string.Empty,
                             line,
                             material.ReferenceBase ?? string.Empty,
@@ -1630,20 +1609,6 @@ namespace a2p.Infrastructure.Services.ExcelServices
                             material.Description ?? string.Empty,
                              ex.Message ?? string.Empty);
 
-                        ErrorDtos.Add(new ErrorDto()
-                        {
-                            OrderNumber = worksheet.Order ?? string.Empty,
-                            Level = ErrorLevel.Error,
-                            Code = ErrorCode.Excel_Material_Parsing,
-                            Message = $"Unhandled ErrorDto {nameof(ExcelParserTechDesign)}.{nameof(MapOthersAsync)}, " +
-                             $"\nOrder: {worksheet.Order ?? string.Empty}," +
-                             $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
-                             $"\nLine {material.Line}," +
-                             $"\nItem: {material.ItemName ?? string.Empty}," +
-                             $"\nDescription: {material.Description ?? string.Empty}," +
-                             $"\nData: {worksheet.WorksheetData[i].ToArray().ToString() ?? string.Empty}," +
-                             $"\nException: {ex.Message ?? string.Empty}."
-                        });
                         continue;
                     }
 
@@ -1659,8 +1624,8 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     "\nWorksheet {$WorksheetDto}." +
                     "\n{$Exception}",
                nameof(ExcelParserTechDesign),
-                    nameof(MapOthersAsync),
-                    worksheet.Order ?? string.Empty,
+                    nameof(ParseOthersAsync),
+                    worksheet.OrderNumber ?? string.Empty,
                     worksheet.Name ?? string.Empty,
                     ex.Message);
 
@@ -1669,139 +1634,52 @@ namespace a2p.Infrastructure.Services.ExcelServices
 
         }
 
-        private async Task LogMappedMaterialEntityAsync(MaterialEntity material)
-        {
-            await Task.Run(() =>
-            {
-                _logger.LogDebug("Mapper Sapa 2 Service: Map Materials | OrderNumber : {$OrderNumber} " +
-                                                              "| WorksheetDto {WorksheetDto$} " +
-                                                              "| Line: {$Line} " +
-                                                              "| Sort order: " +
-                                                              "| Reference : {$Reference}  " +
-                                                              "| Message : {$Message} " +
-                                                              "| Color : {$Color} " +
-                                                              "| ColorDescription : {$ColorDescription} " +
-                                                              "| Width : {$Width} " +
-                                                              "| Height : {$Height} " +
-                                                              "| Weight : {$Weight} " +
-                                                              "| Area : {$Area} " +
-                                                              "| Quantity : {$Quantity} " +
-                                                              "| PackageQuantity : {$PackageQuantity} " +
-                                                              "| TotalQuantity : {$TotalQuantity} " +
-                                                              "| RequiredQuantity : {$RequiredQuantity} " +
-                                                              "| LeftOverQuantity : {$LeftOverQuantity} " +
-                                                              "| Waste : {$Waste} " +
-                                                              "| TotalWeight : {$TotalWeight} " +
-                                                              "| RequiredWeight : {$RequiredWeight} " +
-                                                              "| LeftOverWeight : {$LeftOverWeight} " +
-                                                              "| TotalArea : {$TotalArea} " +
-                                                              "| RequiredArea : {$RequiredArea} " +
-                                                              "| LeftOverArea : {$LeftOverArea} " +
-                                                              "| Price : {$Price} " +
-                                                              "| TotalPrice : {$TotalPrice} " +
-                                                              "| RequiredPrice : {$RequiredPrice} " +
-                                                              "| LeftOverPrice : {$LeftOverPrice} " +
-                                                              "| Pallet : {$Pallet} " +
-                                                              "| MaterialType : {$MaterialType} " +
-                                                              "| CustomField1 : {$CustomField1} " +
-                                                              "| CustomField2 : {$CustomField2} " +
-                                                              "| CustomField3 : {$CustomField3} " +
-                                                              "| CustomField4 : {$CustomField4} " +
-                                                              "| CustomField5 : {$CustomField5} " +
-                                                              "| SquareMeterPrice : {$SquareMeterPrice} " +
-                                                              "| SourceReference : {$SourceReference} " +
-                                                              "| SourceDescription : {$SourceDescription} " +
-                                                              "| SourceColor : {$SourceColor} " +
-                                                              "| SourceColorDescription : {$SourceColorDescription} " +
-                                                              "| WorksheetType : {$WorksheetType} " +
-                                                              "|",
-                                                              material.OrderNumber ?? string.Empty,
-                                                              material.Worksheet ?? string.Empty,
-                                                              material.Line,
-                                                              material.Reference ?? string.Empty,
-                                                              material.Description ?? string.Empty,
-                                                              material.Color ?? string.Empty,
-                                                              material.ColorDescription ?? string.Empty,
-                                                              material.Width,
-                                                              material.Height,
-                                                              material.Weight,
-                                                              material.Area,
-                                                              material.Quantity,
-                                                              material.PackageQuantity,
-                                                              material.TotalQuantity,
-                                                              material.RequiredQuantity,
-                                                              material.LeftOverQuantity,
-                                                              material.Waste,
-                                                              material.TotalWeight,
-                                                              material.RequiredWeight,
-                                                              material.LeftOverWeight,
-                                                              material.TotalArea,
-                                                              material.RequiredArea,
-                                                              material.LeftOverArea,
-                                                              material.Price,
-                                                              material.TotalPrice,
-                                                              material.RequiredPrice,
-                                                              material.LeftOverPrice,
-                                                              material.Pallet ?? string.Empty,
-                                                              material.MaterialType.ToString() ?? string.Empty,
-                                                              material.CustomField1 ?? string.Empty,
-                                                              material.CustomField2 ?? string.Empty,
-                                                              material.CustomField3 ?? string.Empty,
-                                                              material.CustomField4 ?? string.Empty,
-                                                              material.CustomField5 ?? string.Empty,
-                                                              material.SquareMeterPrice,
-                                                              material.SourceReference ?? string.Empty,
-                                                              material.SourceDescription ?? string.Empty,
-
-                                                              material.SourceColor ?? string.Empty,
-                                                              material.SourceColorDescription ?? string.Empty,
-                                                           material.WorksheetType);
-            });
-        }
-
-        private async Task LogMappedItemEntityAsync(ItemDto item)
+        private async Task LogParsedItemDtoAsync(ItemDto item)
         {
             await Task.Run(() =>
             {
                 _logger.LogDebug(
+                    "{$Class}.{$Method} " +
                     "Mapper Sapa 2 Service: Map ItemsDto | OrderNumber : {$OrderNumber} " +
-                    "| WorksheetDto {WorksheetDto$} " +
-                    "| Line: {$Line} " +
-                    "| Sort order: " +
-                    "| ItemName : {$ItemName}  " +
-                    "| Sort order : {$SortOrder} " +
-                    "| Description : {$Description} " +
-                    "| Quantity : {$Quantity} " +
-                    "| Width : {$Width} " +
-                    "| Height : {$Height} " +
-                    "| Weight : {$Weight} " +
-                    "| Weight Without Glass : {$WeightWithoutGlass} " +
-                    "| Weight Glass : {$WeightGlass} " +
-                    "| Total Weight : {$TotalWeight} " +
-                    "| Total Weight Glass : {$TotalWeightGlass} " +
-                    "| Area : {$Area} " +
-                    "| Total Area : {$TotalArea} " +
-                    "| Hours : {$Hours} " +
-                    "| Total Hours : {$TotalHours} " +
-                    "| Material Cost : {$MaterialCost}" +
-                    "| Labor Cost : {$LaborCost} " +
-                    "| Cost : {$Cost} " +
-                    "| Total Material Cost : {$TotalMaterialCost} " +
-                    "| Total Labor Cost : {$TotalLaborCost} " +
-                    "| Total Cost : {$TotalCost} " +
-                    "| Price : {$Price} " +
-                    "| Total Price : {$TotalPrice} " +
-                    "| Currency Code : {$CurrencyCode} " +
-                    "| Exchange Rate EUR : {$ExchangeRateEUR} " +
-                    "| Material Cost EUR : {$MaterialCostEUR} " +
-                    "| Labor Cost EUR : {$LaborCostEUR} " +
-                    "| Cost EUR : {$CostEUR} " +
-                    "| Total Material Cost EUR : {$TotalMaterialCostEUR} " +
-                    "| Total Labor Cost EUR : {$TotalLaborCostEUR} " +
-                    "| Total Cost EUR : {$TotalCostEUR} " +
-                    "| Price EUR : {$PriceEUR} " +
-                    "| Total Price EUR : {$TotalPriceEUR} " +
-                    "| WorksheetDto Type : {$WorksheetType} ",
+                    "WorksheetDto {WorksheetDto$} " +
+                    "Line: {$Line} " +
+                    "Sort order: " +
+                    "ItemName : {$ItemName}  " +
+                    "Sort order : {$SortOrder} " +
+                    "Description : {$Description} " +
+                    "Quantity : {$Quantity} " +
+                    "Width : {$Width} " +
+                    "Height : {$Height} " +
+                    "Weight : {$Weight} " +
+                    "Weight Without Glass : {$WeightWithoutGlass} " +
+                    "Weight Glass : {$WeightGlass} " +
+                    "Total Weight : {$TotalWeight} " +
+                    "Total Weight Glass : {$TotalWeightGlass} " +
+                    "Area : {$Area} " +
+                    "Total Area : {$TotalArea} " +
+                    "Hours : {$Hours} " +
+                    "Total Hours : {$TotalHours} " +
+                    "Material Cost : {$MaterialCost}" +
+                    "Labor Cost : {$LaborCost} " +
+                    "Cost : {$Cost} " +
+                    "Total Material Cost : {$TotalMaterialCost} " +
+                    "Total Labor Cost : {$TotalLaborCost} " +
+                    "Total Cost : {$TotalCost} " +
+                    "Price : {$Price} " +
+                    "Total Price : {$TotalPrice} " +
+                    "Currency Code : {$CurrencyCode} " +
+                    "Exchange Rate EUR : {$ExchangeRateEUR} " +
+                    "Material Cost EUR : {$MaterialCostEUR} " +
+                    "Labor Cost EUR : {$LaborCostEUR} " +
+                    "Cost EUR : {$CostEUR} " +
+                    "Total Material Cost EUR : {$TotalMaterialCostEUR} " +
+                    "Total Labor Cost EUR : {$TotalLaborCostEUR} " +
+                    "Total Cost EUR : {$TotalCostEUR} " +
+                    "Price EUR : {$PriceEUR} " +
+                    "Total Price EUR : {$TotalPriceEUR} " +
+                    "WorksheetDto Type : {$WorksheetType} ",
+                    nameof(ExcelParserTechDesign),
+                    nameof(LogParsedItemDtoAsync),
                     item.OrderNumber ?? string.Empty,
                     item.Worksheet ?? string.Empty,
                     item.Line,
@@ -1841,6 +1719,96 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     item.WorksheetType.ToString() ?? string.Empty
                     );
 
+            });
+        }
+        private async Task LogParsedMaterialDtoAsync(MaterialDto material)
+        {
+            await Task.Run(() =>
+            {
+                _logger.LogDebug("{$Class}.{$Method} " +
+                     "OrderNumber : {$OrderNumber} " +
+                     "WorksheetDto {WorksheetDto$} " +
+                     "Line: {$Line} " +
+                     "Sort order: " +
+                     "Reference : {$Reference}  " +
+                     "Message : {$Message} " +
+                     "Color : {$Color} " +
+                     "ColorDescription : {$ColorDescription} " +
+                     "Width : {$Width} " +
+                     "Height : {$Height} " +
+                     "Weight : {$Weight} " +
+                     "Area : {$Area} " +
+                     "Quantity : {$Quantity} " +
+                     "PackageQuantity : {$PackageQuantity} " +
+                     "TotalQuantity : {$TotalQuantity} " +
+                     "RequiredQuantity : {$RequiredQuantity} " +
+                     "LeftOverQuantity : {$LeftOverQuantity} " +
+                     "Waste : {$Waste} " +
+                     "TotalWeight : {$TotalWeight} " +
+                     "RequiredWeight : {$RequiredWeight} " +
+                     "LeftOverWeight : {$LeftOverWeight} " +
+                     "TotalArea : {$TotalArea} " +
+                     "RequiredArea : {$RequiredArea} " +
+                     "LeftOverArea : {$LeftOverArea} " +
+                     "Price : {$Price} " +
+                     "TotalPrice : {$TotalPrice} " +
+                     "RequiredPrice : {$RequiredPrice} " +
+                     "LeftOverPrice : {$LeftOverPrice} " +
+                     "Pallet : {$Pallet} " +
+                     "MaterialType : {$MaterialType} " +
+                     "CustomField1 : {$CustomField1} " +
+                     "CustomField2 : {$CustomField2} " +
+                     "CustomField3 : {$CustomField3} " +
+                     "CustomField4 : {$CustomField4} " +
+                     "CustomField5 : {$CustomField5} " +
+                     "SquareMeterPrice : {$SquareMeterPrice} " +
+                     "SourceReference : {$SourceReference} " +
+                     "SourceDescription : {$SourceDescription} " +
+                     "SourceColor : {$SourceColor} " +
+                     "SourceColorDescription : {$SourceColorDescription} " +
+                     "WorksheetType : {$WorksheetType} ",
+                      nameof(ExcelParserTechDesign),
+                    nameof(LogParsedMaterialDtoAsync),
+                     material.OrderNumber ?? string.Empty,
+                     material.Worksheet ?? string.Empty,
+                     material.Line,
+                     material.Reference ?? string.Empty,
+                     material.Description ?? string.Empty,
+                     material.Color ?? string.Empty,
+                     material.ColorDescription ?? string.Empty,
+                     material.Width,
+                     material.Height,
+                     material.Weight,
+                     material.Area,
+                     material.Quantity,
+                     material.PackageQuantity,
+                     material.TotalQuantity,
+                     material.RequiredQuantity,
+                     material.LeftOverQuantity,
+                     material.Waste,
+                     material.TotalWeight,
+                     material.RequiredWeight,
+                     material.LeftOverWeight,
+                     material.TotalArea,
+                     material.RequiredArea,
+                     material.LeftOverArea,
+                     material.Price,
+                     material.TotalPrice,
+                     material.RequiredPrice,
+                     material.LeftOverPrice,
+                     material.Pallet ?? string.Empty,
+                     material.MaterialType.ToString() ?? string.Empty,
+                     material.CustomField1 ?? string.Empty,
+                     material.CustomField2 ?? string.Empty,
+                     material.CustomField3 ?? string.Empty,
+                     material.CustomField4 ?? string.Empty,
+                     material.CustomField5 ?? string.Empty,
+                     material.SquareMeterPrice,
+                     material.SourceReference ?? string.Empty,
+                     material.SourceDescription ?? string.Empty,
+                     material.SourceColor ?? string.Empty,
+                     material.SourceColorDescription ?? string.Empty,
+                     material.WorksheetType);
             });
         }
 
@@ -1924,7 +1892,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
             }
         }
 
-        private (string, ErrorDto?) TransformReference(string sapaReference, string sapaColor, WorksheetDto worksheet, int line)
+        private string TransformReference(string sapaReference, string sapaColor, WorksheetDto worksheet, int line)
         {
 
             string reference = string.Empty;
@@ -1944,26 +1912,12 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     "\nColor: {$Color}.",
                     nameof(ExcelParserTechDesign),
                     nameof(TransformReference),
-                    worksheet.Order ?? string.Empty,
+                    worksheet.OrderNumber ?? string.Empty,
                     worksheet.Name ?? string.Empty,
                     initialReference ?? string.Empty,
                     initialColor ?? string.Empty);
 
-                    ErrorDto ErrorDto = new()
-                    {
-                        OrderNumber = worksheet.Order ?? string.Empty,
-                        Level = ErrorLevel.Error,
-                        Code = ErrorCode.Excel_Material_Parsing,
-                        Message = $"ErrorDto Sapa article and color are empty" +
-                       $"\nLine will be skipped." +
-                       $"\nOrder: {worksheet.Order ?? string.Empty}, " +
-                       $"\nWorksheet: {worksheet.Name ?? string.Empty}, " +
-                       $"\nReference: {initialReference ?? string.Empty}, " +
-                       $"\nColor: {initialColor ?? string.Empty}"
-
-                    };
-
-                    return (string.Empty, ErrorDto);
+                    return string.Empty;
                 }
 
                 if (worksheet.Name is "ND_Gaskets" or "ND_Accessories")
@@ -1971,7 +1925,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     if (string.IsNullOrEmpty(sapaReference))
                     {
 
-                        return (sapaReference ?? string.Empty, null);
+                        return sapaReference ?? string.Empty;
                     }
 
                     if (sapaReference.StartsWith("S"))
@@ -1984,7 +1938,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                         if (sapaReference.StartsWith("S"))
                         {
                             sapaReference = sapaReference[1..];
-                            return (sapaReference, null);
+                            return sapaReference;
                         }
                     }
                 }
@@ -1995,7 +1949,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     if (string.IsNullOrEmpty(sapaReference))
                     {
 
-                        return (sapaReference ?? string.Empty, null);
+                        return sapaReference ?? string.Empty;
                     }
 
                     if (sapaReference.StartsWith("S"))
@@ -2033,7 +1987,7 @@ namespace a2p.Infrastructure.Services.ExcelServices
                            "\nGenerated PrefSuite Reference: {$PrefSuiteReference}, length:{$PrefSuiteReferenceLength}." +
                            "\nReference inserted into DB Reference {$PrefSuiteTruncatedReference}, length:{$PrefsuiteTrunctaedLength}." +
                            "\n",
-                           worksheet.Order ?? string.Empty,
+                           worksheet.OrderNumber ?? string.Empty,
                            worksheet.Name ?? string.Empty,
                            initialReference ?? string.Empty,
                            initialColor ?? string.Empty,
@@ -2042,29 +1996,13 @@ namespace a2p.Infrastructure.Services.ExcelServices
                            newReference,
                            newReference.Length);
 
-                        ErrorDto ErrorDto = new()
-                        {
-                            OrderNumber = worksheet.Order ?? string.Empty,
-                            Level = ErrorLevel.Error,
-                            Code = ErrorCode.Excel_Material_Parsing,
-                            Message = $"Mapper Sapa 2: Generated material Reference is > 25 characters!" +
-                           $"\nLine will be skipped." +
-                           $"\nOrder: {worksheet.Order ?? string.Empty}," +
-                           $"\nWorksheet: {worksheet.Name ?? string.Empty}, " +
-                           $"\nReference: {initialReference ?? string.Empty}, length:{(initialReference ?? string.Empty).Length})." +
-                           $"\nColor: {sapaColor ?? string.Empty}, length:{(initialColor ?? string.Empty).Length})." +
-                           $"\nGenerated PrefSuite Reference: {reference}, length:{reference.Length}." +
-                           $"\nReference inserted into DB: {newReference}, length{newReference.Length}." +
-                           "\n"
-                        };
-
                         reference = newReference; // Use the new reference
-                        return (reference, ErrorDto);
+                        return reference;
                     }
 
                 }
 
-                return (reference, null);
+                return reference;
             }
             catch (Exception ex)
             {
@@ -2073,22 +2011,10 @@ namespace a2p.Infrastructure.Services.ExcelServices
                     "\nException {$Exception}",
                    nameof(ExcelParserTechDesign),
                     nameof(TransformReference),
-                    worksheet.Order ?? string.Empty,
+                    worksheet.OrderNumber ?? string.Empty,
                     ex.Message);
 
-                ErrorDto ErrorDto = new()
-                {
-                    OrderNumber = worksheet.Order ?? string.Empty,
-                    Level = ErrorLevel.Error,
-                    Code = ErrorCode.Excel_Material_Parsing,
-                    Message = $"Unhandled ErrorDto {nameof(ExcelParserTechDesign)}.{nameof(TransformReference)}, " +
-
-                   $"\nOrder: {worksheet.Order ?? string.Empty}," +
-                   $"\nWorksheet: {worksheet.Name ?? string.Empty}," +
-                   $"\nException: {ex.Message ?? string.Empty}."
-                };
-
-                return (reference, ErrorDto);
+                return reference;
             }
 
         }

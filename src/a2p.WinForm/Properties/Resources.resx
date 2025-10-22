@@ -142,8 +142,8 @@
   <data name="SpalshScreen" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SpalshScreen.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="btnProperties" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btnProperties.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="UniwaveLogoInversed" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UniwaveLogoInversed.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="btnMinimize" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\btnMinimize.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -151,34 +151,37 @@
   <data name="st_red" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\st_red.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="NordanLogoInversed" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\NordanLogoInversed.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="btnCloseHover" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\btnCloseHover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="btnClose" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\btnClose.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="btnMinimizeHover" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btnMinimizeHover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="btnLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\btnLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btnSideBar" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btnSideBar.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="st_grean" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\st_grean.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="NordanLogoInversed" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\NordanLogoInversed.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="UniwaveLogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UniwaveLogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="UniwaveLogoInversed" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UniwaveLogoInversed.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="btnMinimizeHover" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btnMinimizeHover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btnProperties" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btnProperties.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btnSideBar" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btnSideBar.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="UniwaveLogoMini" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UniwaveLogoMini.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="st_grean" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\st_grean.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UniwaveLogo1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UniwaveLogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

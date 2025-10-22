@@ -1,5 +1,4 @@
-
-namespace a2p.Domain.Shared;
+namespace Domain.Shared;
 
 public class Result
 {

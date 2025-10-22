@@ -1,13 +1,14 @@
-using a2p.Application.Models;
-using a2p.Domain.Enums;
-namespace a2p.Application.DTOs
+using Application.Models;
+
+using Domain.Enums;
+namespace Application.DTOs
 
 {
     public class OrderDto
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public string OrderNumber { get; set; } = string.Empty;
-        public string? ProjectNumber { get; set; }
+        public string ProjectNumber { get; set; } = string.Empty;
         public SalesDocumentDto SalesDocumentDto { get; set; } = new();
 
         public List<FileDto> FilesDto { get; set; } = [];

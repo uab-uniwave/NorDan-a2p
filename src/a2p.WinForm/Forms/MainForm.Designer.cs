@@ -352,7 +352,7 @@ namespace WinFormApp.Forms
             btnImport.Name = "btnImport";
             btnImport.Size = new Size(127, 40);
             btnImport.TabIndex = 55;
-            btnImport.Text = "Import FilesDto";
+            btnImport.Text = "Import Files";
             btnImport.TextAlign = ContentAlignment.MiddleLeft;
             btnImport.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnImport.UseVisualStyleBackColor = false;
@@ -372,7 +372,7 @@ namespace WinFormApp.Forms
             btnLoad.Name = "btnLoad";
             btnLoad.Size = new Size(127, 40);
             btnLoad.TabIndex = 54;
-            btnLoad.Text = "Load FilesDto";
+            btnLoad.Text = "Load Files";
             btnLoad.TextAlign = ContentAlignment.MiddleLeft;
             btnLoad.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnLoad.UseVisualStyleBackColor = false;

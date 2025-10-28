@@ -28,6 +28,9 @@ namespace Infrastructure.Persistence.Repositories
         // CREATE
         public async Task<OrderEntity?> CreateOrderAsync(OrderEntity order)
         {
+
+            List<ItemEntity> resultItems = new();
+            List<MaterialEntity> resultMeterials = new();
             const string sql = @"INSERT INTO Uniwave_a2p_Orders 
             ([Id]
            ,[OrderNumber]
@@ -71,18 +74,32 @@ namespace Infrastructure.Persistence.Repositories
             foreach (ItemEntity item in order.Items)
             {
                 item.OrderId = order.Id;
-                await _itemRepository.CreateItemAsync(item);
+                ItemEntity? resultItem = await _itemRepository.CreateItemAsync(item);
+                if (resultItem != null)
+                {
+                    resultItems.Add(resultItem);
+                }
             }
 
             foreach (MaterialEntity material in order.Materials)
             {
                 material.OrderId = order.Id;
-                await _materialRepository.CreateMaterialAsync(material);
+                MaterialEntity? resultMaterial = await _materialRepository.CreateMaterialAsync(material);
+                if (resultMaterial != null)
+                {
+                    resultMeterials.Add(resultMaterial);
+                }
             }
 
-            return await _dapper.QuerySingleOrDefaultAsync<OrderEntity>(sql, order);
-        }
+            OrderEntity? resultOrder = await _dapper.QuerySingleOrDefaultAsync<OrderEntity>(sql, order);
+            if (resultOrder != null)
+            {
+                resultOrder.Items = resultItems;
+                resultOrder.Materials = resultMeterials;
 
+            }
+            return resultOrder;
+        }
         // READ BY ID
         public async Task<OrderEntity?> GetOrderAsync(Guid id)
         {
@@ -98,12 +115,8 @@ namespace Infrastructure.Persistence.Repositories
                 order.Items = items.ToList();
             }
 
-            if (order != null)
-            {
-
-            }
-
-            return await _dapper.QuerySingleOrDefaultAsync<OrderEntity>(sql, new { Id = id });
+            
+            return order;
         }
 
         // PAGED READ
@@ -124,6 +137,8 @@ namespace Infrastructure.Persistence.Repositories
         // UPDATE ALL ORDER DETAILS
         public async Task<int> UpdateOrderAsync(OrderEntity order)
         {
+                        List<ItemEntity> resultItems = new();
+            List<MaterialEntity> resultMeterials = new();
             const string sql = @"INSERT INTO Uniwave_a2p_Orders 
             ([Id]
            , [OrderNumber]
@@ -168,6 +183,12 @@ namespace Infrastructure.Persistence.Repositories
             {
                 await _itemRepository.UpdateItemAsync(item);
             }
+
+            foreach (MaterialEntity material in order.Materials)
+            {
+                await _materialRepository.UpdateMaterialAsync(material);
+            }
+
             return await _dapper.ExecuteAsync(sql, order);
         }
 

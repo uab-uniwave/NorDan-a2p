@@ -86,7 +86,6 @@ namespace Infrastructure.Repositories
             return await _dapper.QuerySingleOrDefaultAsync<SalesDocument>(sql, new { RowId = rowId });
         }
 
-       
         public async Task<string?> GetGlassReferenceAsync(string description)
         {
             const string sql = "SELECT ReferenciaBase FROM MaterialesBase WHERE tipocalculo = 'Superficies' and Nivel1 = '03 Glass' and Descripcion = @Description";
@@ -117,6 +116,7 @@ namespace Infrastructure.Repositories
             return await _dapper.QuerySingleOrDefaultAsync<string?>(sql, new { Color = color });
         }
 
+        //Delete
         public async Task DeleteSalesDocumentDataAsync(int number, int version, bool deleteExisting)
         {
             const string sql = "EXEC [dbo].[Uniwave_a2p_DeleteExistingData] @Number, @Version";
@@ -131,30 +131,39 @@ namespace Infrastructure.Repositories
             }
         }
 
+        //Insert / Update
         public async Task InsertPrefSuiteColorAsync(MaterialEntity material)
         {
             const string sql = "EXEC [dbo].[Uniwave_a2p_InsertPrefSuiteColor] @Color, @ColorDescription";
-            await _dapper.ExecuteAsync(sql, new { Color = material.Color, ColorDescription = material.ColorDescription });
+            await _dapper.ExecuteAsync(sql, new { material.Color, material.ColorDescription });
         }
 
         public async Task InsertPrefSuiteColorConfigurationAsync(MaterialEntity material)
         {
             const string sql = "EXEC [dbo].[Uniwave_a2p_InsertPrefSuiteColorConfiguration] @Color";
-            await _dapper.ExecuteAsync(sql, new { Color = material.Color });
+            await _dapper.ExecuteAsync(sql, new { material.Color });
         }
 
         public async Task InsertPrefSuiteMaterialBaseAsync(MaterialEntity material)
         {
-            // ensure commodity code available like legacy service did
-            int? commodityCode = await GetCommodityCode(material.SourceReference ?? string.Empty);
-            const string sql = "EXEC [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialBase] @ReferenceBase, @Description, @MaterialType, @CommodityCode";
-            await _dapper.ExecuteAsync(sql, new
+            try
             {
-                ReferenceBase = material.ReferenceBase,
-                Description = material.Description ?? string.Empty,
-                MaterialType = material.MaterialType.ToString(),
-                CommodityCode = commodityCode
-            });
+
+                int? commodityCode = await GetCommodityCode(material.SourceReference ?? string.Empty);
+                const string sql = "EXEC [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialBase] @ReferenceBase, @Description, @MaterialType, @CommodityCode";
+                await _dapper.ExecuteAsync(sql, new
+                {
+                    material.ReferenceBase,
+                    material.Description,
+                    material.MaterialType,
+                    commodityCode
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inserting PrefSuite material base for ReferenceBase: {ReferenceBase}", material.ReferenceBase);
+                throw;
+            }
         }
 
         public async Task InsertPrefSuiteMaterialAsync(MaterialEntity material)
@@ -162,12 +171,12 @@ namespace Infrastructure.Repositories
             const string sql = "EXEC [dbo].[Uniwave_a2p_InsertPrefSuiteMaterial] @ReferenceBase, @Reference, @Color, @PackageQuantity, @Weight, @MaterialType";
             await _dapper.ExecuteAsync(sql, new
             {
-                ReferenceBase = material.ReferenceBase,
-                Reference = material.Reference,
-                Color = material.Color,
-                PackageQuantity = material.PackageQuantity,
-                Weight = material.Weight,
-                MaterialType = material.MaterialType.ToString()
+                material.ReferenceBase,
+                material.Reference,
+                material.Color,
+                material.PackageQuantity,
+                material.Weight,
+                material.MaterialType
             });
         }
 
@@ -182,9 +191,9 @@ namespace Infrastructure.Repositories
             const string sql = "EXEC [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialProfile] @ReferenceBase, @PackageQuantity, @Weight";
             await _dapper.ExecuteAsync(sql, new
             {
-                ReferenceBase = material.ReferenceBase,
-                PackageQuantity = material.PackageQuantity,
-                Weight = material.Weight
+                material.ReferenceBase,
+                material.PackageQuantity,
+                material.Weight
             });
         }
 
@@ -199,8 +208,8 @@ namespace Infrastructure.Repositories
             const string sql = "EXEC [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialMeter] @ReferenceBase, @Weight";
             await _dapper.ExecuteAsync(sql, new
             {
-                ReferenceBase = material.ReferenceBase,
-                Weight = material.Weight
+                material.ReferenceBase,
+                material.Weight
             });
         }
 
@@ -215,8 +224,8 @@ namespace Infrastructure.Repositories
             const string sql = "EXEC [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialPiece] @ReferenceBase, @Weight";
             await _dapper.ExecuteAsync(sql, new
             {
-                ReferenceBase = material.ReferenceBase,
-                Weight = material.Weight
+                material.ReferenceBase,
+                material.Weight
             });
         }
 
@@ -232,9 +241,9 @@ namespace Infrastructure.Repositories
             const string sql = "EXEC [dbo].[Uniwave_a2p_InsertPreSuiteMaterialSurface] @ReferenceBase, @Weight, @MaterialType";
             await _dapper.ExecuteAsync(sql, new
             {
-                ReferenceBase = material.ReferenceBase,
-                Weight = material.Weight,
-                MaterialType = material.MaterialType.ToString()
+                material.ReferenceBase,
+                material.Weight,
+                material.MaterialType
             });
         }
 
@@ -243,14 +252,14 @@ namespace Infrastructure.Repositories
             const string sql = "EXEC [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialPurchaseData] @Reference, @Package, @Price, @Description, @Color, @SourceReference, @SourceColor, @MaterialType";
             await _dapper.ExecuteAsync(sql, new
             {
-                Reference = material.Reference,
+                material.Reference,
                 Package = material.PackageQuantity,
-                Price = material.Price,
-                Description = material.Description,
-                Color = material.Color,
-                SourceReference = material.SourceReference,
-                SourceColor = material.SourceColor,
-                MaterialType = material.MaterialType.ToString()
+                material.Price,
+                material.Description,
+                material.Color,
+                material.SourceReference,
+                material.SourceColor,
+                 material.MaterialType
             });
         }
 
@@ -268,16 +277,16 @@ namespace Infrastructure.Repositories
             });
         }
 
-        public async Task InsertPrefSuiteMaterialNeedsMasterAsync(string order, int number, int version)
+        public async Task InsertPrefSuiteMaterialNeedsMasterAsync(Guid? orderId)
         {
-            const string sql = "EXEC [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialNeedsMaster] @Number, @Version";
-            await _dapper.ExecuteAsync(sql, new { Number = number, Version = version });
+            const string sql = "EXEC [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialNeedsMaster] @RowId";
+            await _dapper.ExecuteAsync(sql, new { @RowId = orderId });
         }
 
-        public async Task InsertPrefSuiteMaterialNeedsAsync(string order, int number, int version)
+        public async Task InsertPrefSuiteMaterialNeedsAsync(Guid? orderId)
         {
-            const string sql = "EXEC [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialNeeds] @Number, @Version";
-            await _dapper.ExecuteAsync(sql, new { Number = number, Version = version });
+            const string sql = "EXEC [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialNeeds] @RowId";
+            await _dapper.ExecuteAsync(sql, new { @RowId = orderId });
         }
     }
 }

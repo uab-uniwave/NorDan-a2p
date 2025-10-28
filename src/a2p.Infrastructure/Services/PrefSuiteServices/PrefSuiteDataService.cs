@@ -73,10 +73,10 @@ namespace Infrastructure.Services.PrefSuiteServices
         public async Task UpdateBCMapping(MaterialEntity material)
             => await _repository.UpdateBCMapping(material);
 
-        public async Task InsertPrefSuiteMaterialNeedsMasterAsync(string order, int number, int version)
-            => await _repository.InsertPrefSuiteMaterialNeedsMasterAsync(order, number, version);
+        public async Task InsertPrefSuiteMaterialNeedsMasterAsync(Guid? orderId)
+            => await _repository.InsertPrefSuiteMaterialNeedsMasterAsync(orderId);
 
-        public async Task InsertPrefSuiteMaterialNeedsAsync(string order, int number, int version)
-            => await _repository.InsertPrefSuiteMaterialNeedsAsync(order, number, version);
+        public async Task InsertPrefSuiteMaterialNeedsAsync(Guid? orderId)
+            => await _repository.InsertPrefSuiteMaterialNeedsAsync(orderId);
     }
 }

@@ -231,7 +231,7 @@ namespace WinFormApp.Forms
             lbInfoFiles.Name = "lbInfoFiles";
             lbInfoFiles.Size = new Size(153, 44);
             lbInfoFiles.TabIndex = 4;
-            lbInfoFiles.Text = "FilesDto:";
+            lbInfoFiles.Text = "Files:";
             lbInfoFiles.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // lbInfoFilesCount

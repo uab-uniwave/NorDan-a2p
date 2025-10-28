@@ -33,7 +33,7 @@ namespace Application.Interfaces.Services
 
         Task UpdateBCMapping(MaterialEntity material);
 
-        Task InsertPrefSuiteMaterialNeedsMasterAsync(string order, int number, int version);
-        Task InsertPrefSuiteMaterialNeedsAsync(string order, int number, int version);
+        Task InsertPrefSuiteMaterialNeedsMasterAsync(Guid? orderId);
+        Task InsertPrefSuiteMaterialNeedsAsync(Guid? orderId);
     }
 }

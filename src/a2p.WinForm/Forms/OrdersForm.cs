@@ -93,7 +93,7 @@ namespace WinFormApp.Forms
                     _ = dataGridViewFiles.Columns.Add(new DataGridViewTextBoxColumn
                     {
 
-                        HeaderText = "OrderNumber",
+                        HeaderText = "Order Number",
                         DataPropertyName = "OrderNumber",
                         Name = "OrderNumber",
                         ReadOnly = true,
@@ -101,25 +101,25 @@ namespace WinFormApp.Forms
                     });
                 }
 
-                if (!dataGridViewFiles.Columns.Contains("SalesDocumentDto"))
+                if (!dataGridViewFiles.Columns.Contains("SalesDocument"))
                 {
                     _ = dataGridViewFiles.Columns.Add(new DataGridViewTextBoxColumn
                     {
                         HeaderText = "Sales Document",
-                        DataPropertyName = "SalesDocumentDto",
+                        DataPropertyName = "SalesDocument",
                         Name = "Document",
                         ReadOnly = true,
                         AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
                     });
                 }
 
-                if (!dataGridViewFiles.Columns.Contains("ItemsDto"))
+                if (!dataGridViewFiles.Columns.Contains("Items"))
                 {
                     _ = dataGridViewFiles.Columns.Add(new DataGridViewTextBoxColumn
                     {
-                        HeaderText = "ItemsDto",
-                        DataPropertyName = "ItemsDto",
-                        Name = "ItemsDto",
+                        HeaderText = "Items",
+                        DataPropertyName = "Items",
+                        Name = "Items",
                         ReadOnly = true,
                         AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
                     });
@@ -128,7 +128,7 @@ namespace WinFormApp.Forms
                 {
                     _ = dataGridViewFiles.Columns.Add(new DataGridViewTextBoxColumn
                     {
-                        HeaderText = "ItemName List",
+                        HeaderText = "Items List",
                         DataPropertyName = "ItemList",
                         Name = "ItemList",
                         ReadOnly = true,
@@ -222,7 +222,7 @@ namespace WinFormApp.Forms
                 {
                     _ = dataGridViewFiles.Columns.Add(new DataGridViewTextBoxColumn
                     {
-                        HeaderText = "FilesDto",
+                        HeaderText = "Files",
                         DataPropertyName = "FileCount",
                         Name = "FileCount",
                         ReadOnly = true,
@@ -233,7 +233,7 @@ namespace WinFormApp.Forms
                 {
                     _ = dataGridViewFiles.Columns.Add(new DataGridViewTextBoxColumn
                     {
-                        HeaderText = "OrderNumber List",
+                        HeaderText = "Order List",
                         DataPropertyName = "FileList",
                         Name = "FileList",
                         Visible = false
@@ -423,8 +423,8 @@ namespace WinFormApp.Forms
                 dataGridViewFiles.SuspendLayout();
                 _ = _dataTable.Columns.Add("Image", typeof(Image));
                 _ = _dataTable.Columns.Add("OrderNumber", typeof(string));
-                _ = _dataTable.Columns.Add("SalesDocumentDto", typeof(string));
-                _ = _dataTable.Columns.Add("ItemsDto", typeof(int));
+                _ = _dataTable.Columns.Add("SalesDocument", typeof(string));
+                _ = _dataTable.Columns.Add("Items", typeof(int));
                 _ = _dataTable.Columns.Add("ItemList", typeof(string));
                 _ = _dataTable.Columns.Add("Quantity", typeof(int));
                 _ = _dataTable.Columns.Add("Area", typeof(string));
@@ -528,10 +528,10 @@ namespace WinFormApp.Forms
 
                 dataGridViewFiles.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
-                if (dataGridViewFiles.Columns["ItemsDto"] != null && e.ColumnIndex == dataGridViewFiles.Columns["ItemsDto"].Index && e.Value != null)
+                if (dataGridViewFiles.Columns["Items"] != null && e.ColumnIndex == dataGridViewFiles.Columns["Items"].Index && e.Value != null)
                 {
                     string? itemList = dataGridViewFiles.Rows[e.RowIndex].Cells["ItemList"].Value.ToString();
-                    dataGridViewFiles.Rows[e.RowIndex].Cells["ItemsDto"].ToolTipText = itemList;
+                    dataGridViewFiles.Rows[e.RowIndex].Cells["Items"].ToolTipText = itemList;
                     e.CellStyle.Font = new Font(e.CellStyle.Font, FontStyle.Bold);
                 }
 
@@ -1236,8 +1236,8 @@ namespace WinFormApp.Forms
 
                         image,                         //"Image", typeof(Image));
                         orderRecord.OrderNumber,                       //"OrderNumber", typeof(string));
-                        orderRecord.SalesDocument,                      //"SalesDocumentDto", typeof(string));
-                        orderRecord.Items,                              //"ItemsDto", typeof(int));
+                        orderRecord.SalesDocument,                      //"SalesDocument", typeof(string));
+                        orderRecord.Items,                              //"Items", typeof(int));
                         orderRecord.ItemList,                           //"ItemList", typeof(string));
                         orderRecord.Quantity,                           //"Quantity", typeof(int));
                         Math.Round(orderRecord.Area, 2),    //"Area", typeof(string));

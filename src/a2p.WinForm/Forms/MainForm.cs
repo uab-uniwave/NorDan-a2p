@@ -107,8 +107,8 @@ namespace WinFormApp.Forms
 
         private void InitializeToolTips()
         {
-            _toolTip.SetToolTip(btnLoad, "Refresh FilesDto");
-            _toolTip.SetToolTip(btnImport, "Import FilesDto");
+            _toolTip.SetToolTip(btnLoad, "Refresh Files");
+            _toolTip.SetToolTip(btnImport, "Import Files");
             _toolTip.SetToolTip(btnLog, "Refresh Logs");
             _toolTip.SetToolTip(btnProperties, "Settings");
             _toolTip.SetToolTip(btnExit, "Exit");

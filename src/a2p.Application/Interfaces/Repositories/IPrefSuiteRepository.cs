@@ -45,8 +45,8 @@ namespace Application.Interfaces.Repositories
 
          Task UpdateBCMapping(MaterialEntity material);
 
-         Task InsertPrefSuiteMaterialNeedsMasterAsync(string order, int number, int version);
+         Task InsertPrefSuiteMaterialNeedsMasterAsync(Guid? orderId);
 
-         Task InsertPrefSuiteMaterialNeedsAsync(string order, int number, int version);
+         Task InsertPrefSuiteMaterialNeedsAsync(Guid? orderId);
     }
 }

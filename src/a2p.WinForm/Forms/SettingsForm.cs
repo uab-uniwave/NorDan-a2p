@@ -173,13 +173,13 @@ namespace WinFormApp.Forms
                     Invoke(new Action(() =>
                     {
                         _logger.LogError("Failed to save settings.");
-                        _ = MessageBox.Show($"Failed to save settings: {ex.Message}", "ErrorDto", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        _ = MessageBox.Show($"Failed to save settings: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }));
                 }
                 else
                 {
                     _logger.LogError("Failed to save settings.");
-                    _ = MessageBox.Show($"Failed to save settings: {ex.Message}", "ErrorDto", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _ = MessageBox.Show($"Failed to save settings: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

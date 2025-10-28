@@ -14,10 +14,6 @@ namespace Application.Mapping
             CreateMap<ItemDto, ItemEntity>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                  .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.OrderId))
-                .ForMember(dest => dest.OrderNumber, opt => opt.MapFrom(src => src.OrderNumber))
-                .ForMember(dest => dest.ProjectNumber, opt => opt.MapFrom(src => src.ProjectNumber))
-                .ForMember(dest => dest.SalesDocumentNumber, opt => opt.MapFrom(src => src.SalesDocumentNumber))
-                .ForMember(dest => dest.SalesDocumentVersion, opt => opt.MapFrom(src => src.SalesDocumentVersion))
                 .ForMember(dest => dest.Worksheet, opt => opt.MapFrom(src => src.Worksheet))
                 .ForMember(dest => dest.Line, opt => opt.MapFrom(src => src.Line))
                 .ForMember(dest => dest.Column, opt => opt.MapFrom(src => src.Column))
@@ -44,9 +40,7 @@ namespace Application.Mapping
                 .ForMember(dest => dest.TotalLaborCost, opt => opt.MapFrom(src => src.TotalLaborCost))
                 .ForMember(dest => dest.TotalCost, opt => opt.MapFrom(src => src.TotalCost))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
-                .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice))
-                .ForMember(dest => dest.CurrencyCode, opt => opt.MapFrom(src => src.CurrencyCode));
-                
-                        }
+                .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice));
+        }
     }
 }

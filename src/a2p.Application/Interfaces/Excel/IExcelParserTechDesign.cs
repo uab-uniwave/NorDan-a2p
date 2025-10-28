@@ -8,8 +8,8 @@ namespace Application.Interfaces.Excel
     public interface IExcelParserTechDesign
 
     {
-        Task<List<ItemDto>> ParseItemsAsync(WorksheetDto worksheet, ProgressValue? progressValue, IProgress<ProgressValue>? progress = null);
-        Task<List<MaterialDto>> ParseMaterialsAsync(WorksheetDto worksheet, ProgressValue? progressValue, IProgress<ProgressValue>? progress = null);
+        Task<List<ItemDto>> ParseItemsAsync(Worksheet worksheet, OrderDto orderDto, ProgressValue? progressValue = null, IProgress<ProgressValue>? progress = null);
+        Task<List<MaterialDto>> ParseMaterialsAsync(Worksheet worksheet, OrderDto orderDto, ProgressValue? progressValue = null, IProgress<ProgressValue>? progress = null);
 
     }
 };

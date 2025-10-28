@@ -68,9 +68,9 @@ namespace WinFormApp.Forms
                 });
                 _ = dataGridViewLog.Columns.Add(new DataGridViewTextBoxColumn
                 {
-                    HeaderText = "WorksheetDto",
-                    DataPropertyName = "WorksheetDto",
-                    Name = "WorksheetDto",
+                    HeaderText = "Worksheet",
+                    DataPropertyName = "Worksheet",
+                    Name = "Worksheet",
                     ReadOnly = true,
                     Visible = true,
                     AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
@@ -121,7 +121,7 @@ namespace WinFormApp.Forms
                 });
 
                 //DataGrid Header Style 
-                //===================================================================================================================
+                //=====================================================================================================================================================================================================
                 DataGridViewCellStyle ColumnHeadersDefaultCellStyle = new()
                 {
                     BackColor = Color.FromArgb(56, 57, 60),
@@ -137,7 +137,7 @@ namespace WinFormApp.Forms
                 dataGridViewLog.ColumnHeadersDefaultCellStyle = ColumnHeadersDefaultCellStyle;
 
                 //DataGrid Cell and Alternative Rows default Cells Style 
-                //===================================================================================================================
+                //=====================================================================================================================================================================================================
                 DataGridViewCellStyle DefaultCellStyle = new()
                 {
 
@@ -201,7 +201,7 @@ namespace WinFormApp.Forms
             {
                 // DataTable for log entries
                 _ = _dataTableLog.Columns.Add("OrderNumber", typeof(string));
-                _ = _dataTableLog.Columns.Add("WorksheetDto", typeof(string));
+                _ = _dataTableLog.Columns.Add("Worksheet", typeof(string));
                 _ = _dataTableLog.Columns.Add("Reference", typeof(string));
                 _ = _dataTableLog.Columns.Add("Color", typeof(string));
                 _ = _dataTableLog.Columns.Add("Level", typeof(string));
@@ -217,10 +217,10 @@ namespace WinFormApp.Forms
                 string methodName = nameof(InitializeTable); // Replace with the actual method name if different
 
                 // Log the error
-                _logger.LogError("ErrorDto in {Class}.{Method}. Exception {Message}", className, methodName, ex2.Message);
+                _logger.LogError("Error in {Class}.{Method}. Exception {Message}", className, methodName, ex2.Message);
 
                 // Display the error in a MessageBox
-                _ = MessageBox.Show($@"ErrorDto in {className}.{methodName}: {ex2.Message}", "ErrorDto", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _ = MessageBox.Show($@"Error in {className}.{methodName}: {ex2.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             }
 
@@ -291,7 +291,7 @@ namespace WinFormApp.Forms
                         {
                             e.CellStyle.ForeColor = Color.DarkRed;
                         }
-                        else if (e.Value.ToString() == "ErrorDto")
+                        else if (e.Value.ToString() == "Error")
                         {
                             e.CellStyle.ForeColor = Color.Red;
                         }
@@ -401,7 +401,7 @@ namespace WinFormApp.Forms
                 LogEntity logRecord = new()
                 {
                     Order = propertiesNode["OrderNumber"]?.ToString() ?? string.Empty,
-                    Worksheet = propertiesNode["WorksheetDto"]?.ToString() ?? string.Empty,
+                    Worksheet = propertiesNode["Worksheet"]?.ToString() ?? string.Empty,
                     Reference = propertiesNode["Reference"]?.ToString() ?? string.Empty,
                     Color = propertiesNode["Color"]?.ToString() ?? string.Empty,
                     Level = root["Level"]?.ToString() ?? string.Empty,
@@ -459,7 +459,7 @@ namespace WinFormApp.Forms
         //             .GroupBy(entry => new
         //             {
         //                 entry.OrderNumber,
-        //                 entry.WorksheetDto,
+        //                 entry.Worksheet,
         //                 entry.Reference,
         //                 entry.Color,
         //                 entry.Level,
@@ -471,7 +471,7 @@ namespace WinFormApp.Forms
         //            foreach (LogEntity? logEntry in distinctLogEntries)
         //            {
 
-        //                _ = _dataTableLog.Rows.Add(logEntry.OrderNumber, logEntry.WorksheetDto, logEntry.Reference, logEntry.Color, logEntry.Level, logEntry.Message);
+        //                _ = _dataTableLog.Rows.Add(logEntry.OrderNumber, logEntry.Worksheet, logEntry.Reference, logEntry.Color, logEntry.Level, logEntry.Message);
         //            }
 
         //        }

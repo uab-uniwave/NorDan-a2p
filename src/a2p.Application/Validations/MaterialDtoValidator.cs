@@ -11,10 +11,9 @@ namespace Application.Validations
         public MaterialDtoValidator()
         {
             // --- Required / basic fields ---
-            RuleFor(x => x.OrderNumber)
-                .NotEmpty().WithMessage("OrderNumber number is required.")
-                .MaximumLength(50).WithMessage("OrderNumber number too long, max length 50.");
-
+            RuleFor(x => x.OrderId)
+                 .NotEmpty().WithMessage("OrderId number is required.");
+                
             RuleFor(x => x.ReferenceBase)
                 .NotEmpty().WithMessage("ReferenceBase is required.")
                 .MaximumLength(25).WithMessage("ReferenceBase too long, max length 25.");
@@ -29,7 +28,7 @@ namespace Application.Validations
 
             // --- String length constraints for optional fields ---
             RuleFor(x => x.Worksheet)
-                .MaximumLength(255).WithMessage("WorksheetDto too long, max length 255.");
+                .MaximumLength(255).WithMessage("Worksheet too long, max length 255.");
 
             RuleFor(x => x.Description)
                 .MaximumLength(255).WithMessage("Description too long, max length 255.");

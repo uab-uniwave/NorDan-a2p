@@ -14,31 +14,18 @@ namespace Application.Mapping
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.OrderNumber, opt => opt.MapFrom(src => src.OrderNumber))
                 .ForMember(dest => dest.ProjectNumber, opt => opt.MapFrom(src => src.ProjectNumber))
-                .ForMember(dest => dest.SalesDocumentNumber, opt => opt.MapFrom(src => src.SalesDocumentDto.Number))
-                .ForMember(dest => dest.SalesDocumentVersion, opt => opt.MapFrom(src => src.SalesDocumentDto.Version))
+                .ForMember(dest => dest.SalesDocumentNumber, opt => opt.MapFrom(src => src.SalesDocument.Number))
+                .ForMember(dest => dest.SalesDocumentVersion, opt => opt.MapFrom(src => src.SalesDocument.Version))
+                .ForMember(dest => dest.OrderDate, opt => opt.MapFrom(src => src.OrderDate))
+                .ForMember(dest => dest.CustomerTitle, opt => opt.MapFrom(src => src.CustomerTitle))
+                .ForMember(dest => dest.CustomerNumber, opt => opt.MapFrom(src => src.CustomerNumber))
+                .ForMember(dest => dest.DeliveryAddress, opt => opt.MapFrom(src => src.DeliveryAddress))
+                .ForMember(dest => dest.CorrectionAvailableUntil, opt => opt.MapFrom(src => src.CorrectionAvailableUntil))
+                .ForMember(dest => dest.ResponsibleManager, opt => opt.MapFrom(src => src.ResponsibleManager))
 
                 .ForMember(dest => dest.Currency, opt => opt.MapFrom(src => src.Currency))
                 .ForMember(dest => dest.ExchangeRate, opt => opt.MapFrom(src => src.ExchangeRate))
-                .ForMember(dest => dest.ExchangeRateDate, opt => opt.MapFrom(src => src.ExchangeRateDate))
-
-                // Counts
-                .ForMember(dest => dest.ItemCount, opt => opt.MapFrom(src => src.ItemsDto != null ? src.ItemsDto.Count : 0))
-                .ForMember(dest => dest.ErrorCount, opt => opt.MapFrom(src => src.ErrorsDto != null ? src.ErrorsDto.Count : 0))
-                // Totals calculated from ItemDto collection (defensive null checks)
-                .ForMember(dest => dest.TotalQuantity, opt => opt.MapFrom(src => src.ItemsDto != null ? src.ItemsDto.Sum(i => i.Quantity) : 0))
-                .ForMember(dest => dest.TotalWeight, opt => opt.MapFrom(src => src.ItemsDto != null ? src.ItemsDto.Sum(i => i.TotalWeight) : 0m))
-                .ForMember(dest => dest.TotalWeightWithoutGlass, opt => opt.MapFrom(src => src.ItemsDto != null ? src.ItemsDto.Sum(i => i.TotalWeightWithoutGlass) : 0m))
-                .ForMember(dest => dest.TotalWeightGlass, opt => opt.MapFrom(src => src.ItemsDto != null ? src.ItemsDto.Sum(i => i.TotalWeightGlass) : 0m))
-                .ForMember(dest => dest.TotalArea, opt => opt.MapFrom(src => src.ItemsDto != null ? src.ItemsDto.Sum(i => i.TotalArea) : 0m))
-                .ForMember(dest => dest.TotalHours, opt => opt.MapFrom(src => src.ItemsDto != null ? src.ItemsDto.Sum(i => i.TotalHours) : 0m))
-                .ForMember(dest => dest.TotalMaterialCost, opt => opt.MapFrom(src => src.ItemsDto != null ? src.ItemsDto.Sum(i => i.TotalMaterialCost) : 0m))
-                .ForMember(dest => dest.TotalLaborCost, opt => opt.MapFrom(src => src.ItemsDto != null ? src.ItemsDto.Sum(i => i.TotalLaborCost) : 0m))
-                .ForMember(dest => dest.TotalCost, opt => opt.MapFrom(src => src.ItemsDto != null ? src.ItemsDto.Sum(i => i.TotalCost) : 0m))
-                .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.ItemsDto != null ? src.ItemsDto.Sum(i => i.TotalPrice) : 0m))
-
-                // If you prefer to include material totals (e.g. quantities / prices) from MaterialsDto as well, adjust expressions accordingly.
-                // Source app type
-                .ForMember(dest => dest.SourceAppType, opt => opt.MapFrom(src => src.SourceAppType));
+                .ForMember(dest => dest.ExchangeRateDate, opt => opt.MapFrom(src => src.ExchangeRateDate));
 
         }
     }

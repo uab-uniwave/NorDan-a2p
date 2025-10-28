@@ -3,7 +3,7 @@ namespace Infrastructure.Models
     public class OrderRecord
     {
 
-        public string OrderNumber = string.Empty;
+        public string OrderNumber { get; set; } = string.Empty;
         public string SalesDocument { get; set; } = string.Empty;
         public int Quantity { get; set; } = 0;
         public decimal Area { get; set; } = 0m;

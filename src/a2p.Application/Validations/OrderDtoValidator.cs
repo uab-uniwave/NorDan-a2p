@@ -18,27 +18,23 @@ namespace Application.Validations
                 .Length(3).WithMessage("Currency must be a 3-letter ISO code.");
 
             // SalesDocumentDto basic checks
-            RuleFor(x => x.SalesDocumentDto)
+            RuleFor(x => x.SalesDocument)
                 .NotNull().WithMessage("SalesDocumentDto must be provided.");
 
-            When(x => x.SalesDocumentDto != null, () =>
+            When(x => x.SalesDocument != null, () =>
             {
-                RuleFor(x => x.SalesDocumentDto.Number)
+                RuleFor(x => x.SalesDocument.Number)
                     .GreaterThan(0).WithMessage("SalesDocumentDto.Number must be greater than zero.");
-                RuleFor(x => x.SalesDocumentDto.Version)
+                RuleFor(x => x.SalesDocument.Version)
                     .GreaterThanOrEqualTo(0).WithMessage("SalesDocumentDto.Version must be greater than or equal to zero.");
             });
-
-            // --- Numeric sanity ---
-            RuleFor(x => x.TotalPrice)
-                .GreaterThanOrEqualTo(0).WithMessage("Total price cannot be negative.");
 
             RuleFor(x => x.ExchangeRate)
                 .GreaterThan(0).WithMessage("Exchange rate must be greater than zero.");
 
             // --- Dates ---
-            RuleFor(x => x.ExchangeRateDate)
-                .NotEqual(default(DateOnly)).WithMessage("Exchange rate date is required.");
+            //RuleFor(x => x.ExchangeRateDate)
+            //    .NotEqual(default(DateOnly)).WithMessage("Exchange rate date is required.");
 
             // --- Collections ---
             RuleFor(x => x.ItemsDto)
@@ -53,10 +49,6 @@ namespace Application.Validations
 
             RuleForEach(x => x.MaterialsDto).SetValidator(new MaterialDtoValidator());
 
-            // --- Conditional examples / enums ---
-            RuleFor(x => x.SourceAppType)
-                .NotEqual(Domain.Enums.SourceAppType.Unknown)
-                .WithMessage("SourceAppType must be defined.");
         }
     }
 }

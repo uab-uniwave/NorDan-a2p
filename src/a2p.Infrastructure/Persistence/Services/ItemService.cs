@@ -138,40 +138,24 @@ namespace Infrastructure.Persistence.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "ErrorDto retrieving item {Id}", id);
-                return Result<ItemEntity>.Failure("ErrorDto retrieving item.");
+                _logger.LogError(ex, "Error retrieving item {Id}", id);
+                return Result<ItemEntity>.Failure("Error retrieving item.");
             }
         }
 
-        // GET ORDER ITEMS
-        public async Task<PagedResult<IEnumerable<ItemEntity>?>> GetOrderItemsAsync(Guid id, int page, int size)
+        // GET ORDER BY ORDER ID 
+        public async Task<Result<IEnumerable<ItemEntity>?>> GetOrderItemsAsync(Guid id)
         {
             try
             {
-                (IEnumerable<ItemEntity> Ir, int TotalCount) items = await _repository.GetOrderItems(id, page, size);
-                return PagedResult<IEnumerable<ItemEntity>?>.Failure($"Items for order '{id}' not found.");
+                IEnumerable<ItemEntity> items = await _repository.GetOrderItemsAsync(id);
+                return Result<IEnumerable<ItemEntity>?>.Failure($"Order '{id}' items for not found.");
 
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "ErrorDto retrieving items for order {id}", id);
-                return PagedResult<IEnumerable<ItemEntity>?>.Failure("ErrorDto retrieving order items.");
-            }
-        }
-
-        // PAGED (repository doesn't expose paged; do simple in-memory paging)
-        public async Task<PagedResult<ItemEntity>> GetItemsAsync(int page, int size)
-        {
-            try
-            {
-                (IEnumerable<ItemEntity>? items, int total) = await _repository.GetItemsAsync(page, size);
-
-                return PagedResult<ItemEntity>.Success(items, total, page, size);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "ErrorDto retrieving paged items.");
-                return PagedResult<ItemEntity>.Failure("ErrorDto retrieving paged items.");
+                _logger.LogError(ex, "Error retrieving items for order {id}", id);
+                return Result<IEnumerable<ItemEntity>?>.Failure("Error retrieving order items.");
             }
         }
 
@@ -183,17 +167,39 @@ namespace Infrastructure.Persistence.Services
                 ItemEntity? existing = await _repository.GetItemAsync(id);
                 if (existing == null)
                 {
-                    return Result<bool>.Failure($"OrderNumber {id} not found");
+                    return Result<bool>.Failure($"Item '{id}' not found");
                 }
                 int rows = await _repository.DeleteItemAsync(id);
                 return rows == 0
-                    ? Result<bool>.Failure("Failed to delete order.")
-                    : Result<bool>.Success(true, "OrderNumber deleted successfully.");
+                    ? Result<bool>.Failure("Failed to delete item.")
+                    : Result<bool>.Success(true, "Item deleted successfully.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "ErrorDto deleting order {Id}", id);
-                return Result<bool>.Failure("ErrorDto deleting order.");
+                _logger.LogError(ex, "Error deleting order {Id}", id);
+                return Result<bool>.Failure("Error deleting order.");
+            }
+        }
+
+        // DELETE BY ORDER ID
+        public async Task<Result<bool>> DeleteOrderItemsAsync(Guid id)
+        {
+            try
+            {
+                IEnumerable<ItemEntity>? existing = await _repository.GetOrderItemsAsync(id);
+                if (existing == null)
+                {
+                    return Result<bool>.Failure($"Order '{id}' items not found");
+                }
+                int rows = await _repository.DeleteOrderItemsAsync(id);
+                return rows == 0
+                    ? Result<bool>.Failure("Failed to delete items.")
+                    : Result<bool>.Success(true, "Items deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting order {Id} items", id);
+                return Result<bool>.Failure("Error deleting order items.");
             }
         }
 

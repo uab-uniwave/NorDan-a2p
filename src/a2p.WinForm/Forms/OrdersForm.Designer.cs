@@ -262,7 +262,7 @@ namespace WinFormApp.Forms
             lbInfoWorksheets.Name = "lbInfoWorksheets";
             lbInfoWorksheets.Size = new Size(153, 44);
             lbInfoWorksheets.TabIndex = 0;
-            lbInfoWorksheets.Text = "WorksheetsDto:";
+            lbInfoWorksheets.Text = "Worksheets:";
             lbInfoWorksheets.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // lbInfoWorksheetsCount

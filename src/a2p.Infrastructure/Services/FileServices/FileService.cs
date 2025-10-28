@@ -28,7 +28,7 @@ namespace Infrastructure.Services.FileServices
             _settingsContainer = _settingsService.GetSettings();
         }
 
-        public List<string> GetFiles()
+        public List<string> GetLocalFiles()
         {
             try
             {
@@ -47,7 +47,7 @@ namespace Infrastructure.Services.FileServices
             {
                 _logger.LogError("{$Class}.{$Method}. Unhandled error getting files! Exception: {$Exception}",
                     nameof(FileService),
-                    nameof(GetFiles),
+                    nameof(GetLocalFiles),
                     ex.Message);
                 return [];
 
@@ -113,7 +113,7 @@ namespace Infrastructure.Services.FileServices
             {
                 _logger.LogError("{$Class}.{$Method}. Unhandled error moving files! Exception: {$Exception}",
                      nameof(FileService),
-                     nameof(GetFiles),
+                     nameof(GetLocalFiles),
                      ex.Message);
 
             }
@@ -129,7 +129,7 @@ namespace Infrastructure.Services.FileServices
                 _ = Directory.CreateDirectory(folder);
                 _logger.LogInformation("{$Class}.{$Method}. Created folder for import files: \"{$Folder}\".",
                   nameof(FileService),
-                  nameof(GetFiles),
+                  nameof(GetLocalFiles),
                   folder);
             }
 
@@ -147,7 +147,7 @@ namespace Infrastructure.Services.FileServices
                 _ = Directory.CreateDirectory(folder);
                 _logger.LogInformation("{$Class}.{$Method}. Created folder for fail import files: \"{$Folder}\".",
                      nameof(FileService),
-                     nameof(GetFiles),
+                     nameof(GetLocalFiles),
                      folder);
 
             }
@@ -164,7 +164,7 @@ namespace Infrastructure.Services.FileServices
                 _ = Directory.CreateDirectory(folder);
                 _logger.LogInformation("{$Class}.{$Method}. Created folder for success import files: \"{$Folder}\".",
                      nameof(FileService),
-                     nameof(GetFiles),
+                     nameof(GetLocalFiles),
                      folder);
 
             }
@@ -181,7 +181,7 @@ namespace Infrastructure.Services.FileServices
                 _ = Directory.CreateDirectory(folder);
                 _logger.LogInformation("{$Class}.{$Method}. Created folder for log files: \"{$Folder}\".",
                      nameof(FileService),
-                     nameof(GetFiles),
+                     nameof(GetLocalFiles),
                      folder);
 
             }

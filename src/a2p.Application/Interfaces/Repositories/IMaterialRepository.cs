@@ -13,19 +13,17 @@ namespace Application.Interfaces.Repositories
         // READ BY ID
         Task<MaterialEntity?> GetMaterialAsync(Guid id);
 
-        // PAGED READ BY ORDER NUMBER
-        Task<(IEnumerable<MaterialEntity> Materials, int TotalCount)> GetOrderMaterialsAsync(Guid id, int page, int size);
+        //READ BY ORDER ID
+        Task<IEnumerable<MaterialEntity>> GetOrderMaterialsAsync(Guid id);
 
-        // PAGED READ
-        Task<(IEnumerable<MaterialEntity> Materials, int TotalCount)> GetMaterialsAsync(int page, int size);
 
-        // UPDATE ALL ORDER DETAILS
+        // UPDATE 
         Task<int> UpdateMaterialAsync(MaterialEntity material);
 
         // DELETE BY ID
         Task<int> DeleteMaterialsdAsync(Guid id);
 
         // DELETE BY ORDER ID
-        Task<int> DeleteMaterialByOrderIdAsync(Guid id);
+        Task<int> DeleteOrderMaterialsAsync(Guid id);
     }
 }

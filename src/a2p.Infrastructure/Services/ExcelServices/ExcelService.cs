@@ -35,11 +35,11 @@ namespace Infrastructure.Services.ExcelServices
 
         }
 
-        public async Task<List<WorksheetDto>> GetWorksheetsAsync(Application.Models.FileDto file, ProgressValue progressValue, IProgress<ProgressValue>? progress)
+        public async Task<List<Worksheet>> GetWorksheetsAsync(ExcelFile file, ProgressValue? progressValue = null, IProgress<ProgressValue>? progress = null)
         {
 
             XLWorkbook workbook = new(file.FilePath);
-            List<WorksheetDto> worksheets = [];
+            List<Worksheet> worksheets = [];
             int worksheetCounter = 0;
             try
             {
@@ -48,16 +48,12 @@ namespace Infrastructure.Services.ExcelServices
                 {
                     worksheetCounter++;
 
-                    WorksheetDto worksheet = new();
-                    worksheet.OrderNumber = file.OrderNumber;
-                    worksheet.OrderId = file.OrderId;
-                    worksheet.ProjectNumber = file.ProjectNumber;
-                    worksheet.SalesDocumentNumber = file.SalesDocumentNumber;
-                    worksheet.SalesDocumentVersion = file.SalesDocumentVersion;
+                    Worksheet worksheet = new();
+
+                    worksheet.SourceAppType = GetSourceAppType(file.FileName);
                     worksheet.WorksheetType = GetWorksheetType(file.FileName, ixlWorksheet.Name);
                     worksheet.Name = ixlWorksheet.Name;
                     worksheet.RowCount = ixlWorksheet.RowsUsed().Count();
-                    worksheet.FileName = file.FileName;
 
                     //   CultureInfo culture = CultureInfo.InvariantCulture;
                     int totalColumns = ixlWorksheet.LastColumnUsed()?.ColumnNumber() ?? 0;
@@ -76,17 +72,21 @@ namespace Infrastructure.Services.ExcelServices
                         List<object> rowValues = [];
 
                         //iterate through all Columns
-                        //=======================================================================================================
+                        //======================================================================================================================================================================================================
                         for (int col = 1; col <= totalColumns; col++) // Iterate through all columns
                         {
                             IXLCell cell = row.Cell(col); // Access the cell by column index
                             if (cell != null && !cell.IsEmpty())
                             {
 
-                                if (string.IsNullOrEmpty(file.Currency))
+                                if (string.IsNullOrEmpty(worksheet.Currency))
                                 {
-                                    worksheet.Currency = GetCurrency(cell.Style.NumberFormat.Format).Trim();
-                                    file.Currency = worksheet.Currency;
+                                    string curreny = GetCurrency(cell.Style.NumberFormat.Format).Trim();
+
+                                    if (curreny != string.Empty)
+                                    {
+                                        worksheet.Currency = curreny;
+                                    }
                                 }
 
                                 // Attempt to parse numeric values
@@ -126,6 +126,50 @@ namespace Infrastructure.Services.ExcelServices
 
             }
         }
+
+        private SourceAppType GetSourceAppType(string fileName)
+        {
+            try
+            {
+                SourceAppType sourceAppType = SourceAppType.Unknown;
+
+                if (string.IsNullOrEmpty(fileName))
+                {
+
+                    return SourceAppType.Unknown;
+
+                }
+
+                if (fileName?.Contains("Price_Details") == true || fileName?.Contains("SumList") == true)
+                {
+                    sourceAppType = SourceAppType.TechDesign;
+                }
+                else if (fileName?.Contains("Calculation") == true || fileName?.Contains("Profile_summary") == true || fileName?.Contains("Accessory_summary") == true ||
+                        fileName?.Contains("Glass_panel_composition") == true)
+                {
+                    sourceAppType = SourceAppType.Schuco;
+
+                }
+                else if (fileName?.Contains("CalcSapaLogic") == true || fileName?.Contains("FillingList") == true || fileName?.Contains("MaterialList") == true)
+                {
+                    sourceAppType = SourceAppType.Sapa;
+
+                }
+
+                else
+                {
+                    _logger.LogWarning(@"{$Class}.{$Method}. Unable to determine source application type using filename {$FileName}.", nameof(ExcelService), nameof(GetSourceAppType), fileName);
+                }
+
+                return sourceAppType;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(@"{$Class}.{$Method}.Unhandled error determinating source application type using filename {$FileName}.\nException: {$Exception}", nameof(ExcelService), nameof(GetSourceAppType), fileName, ex.Message);
+
+                return SourceAppType.Unknown;
+            }
+        }
         private WorksheetType GetWorksheetType(string fileName, string worksheetName)
         {
             try
@@ -136,6 +180,7 @@ namespace Infrastructure.Services.ExcelServices
                 {
 
                     return WorksheetType.Unknown;
+
                 }
 
                 if (string.IsNullOrEmpty(worksheetName))
@@ -145,7 +190,6 @@ namespace Infrastructure.Services.ExcelServices
 
                 if (worksheetName.Trim().Contains("Price Details") == true && fileName?.Contains("Price_Details") == true)
                 {
-
                     worksheetType = WorksheetType.Items;
 
                 }
@@ -153,47 +197,40 @@ namespace Infrastructure.Services.ExcelServices
                 else if (worksheetName.Trim().Equals("ND_Accessories") == true && fileName?.Contains("SumList") == true)
 
                 {
-
                     worksheetType = WorksheetType.Materials;
                 }
                 else if (worksheetName.Trim().Equals("ND_Others") == true && fileName?.Contains("SumList") == true)
 
                 {
-
                     worksheetType = WorksheetType.Materials;
                 }
 
                 else if (worksheetName.Trim().Equals("ND_Gaskets") == true && fileName?.Contains("SumList") == true)
 
                 {
-
                     worksheetType = WorksheetType.Materials;
                 }
                 else if (worksheetName.Trim().Equals("ND_Profiles") == true && fileName?.Contains("SumList") == true)
 
                 {
-
                     worksheetType = WorksheetType.Materials;
                 }
 
                 else if (worksheetName.Trim().Equals("ND_Glasses") == true && fileName?.Contains("SumList") == true)
 
                 {
-
                     worksheetType = WorksheetType.Glasses;
                 }
 
                 else if (worksheetName.Trim().Equals("ND_Panels") == true && fileName?.Contains("SumList") == true)
 
                 {
-
                     worksheetType = WorksheetType.Panels;
                 }
 
                 else
                 {
                     _logger.LogError("Excel Service. Unable to determine worksheet type from file {$FileName} and worksheet {$WorksheetName}.", fileName, worksheetName);
-                    worksheetType = WorksheetType.Unknown;
                 }
 
                 return worksheetType;
@@ -240,7 +277,7 @@ namespace Infrastructure.Services.ExcelServices
             }
             catch (Exception ex)
             {
-                _logger.LogError("Excel Service. Unhandled error: Parsing numeric value from cell {Cell} in worksheet {WorksheetDto}. Exception:{$Exception}", cell.Address.ToString() ?? "", worksheet.Name, ex.Message);
+                _logger.LogError("Excel Service. Unhandled error: Parsing numeric value from cell {Cell} in worksheet {Worksheet}. Exception:{$Exception}", cell.Address.ToString() ?? "", worksheet.Name, ex.Message);
                 return 0;
             }
         });

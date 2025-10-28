@@ -295,7 +295,7 @@ namespace WinFormApp.Forms
             }
             catch (Exception ex)
             {
-                _logger.LogError($"ErrorDto loading image resource '{imageName}': {ex.Message}");
+                _logger.LogError($"Error loading image resource '{imageName}': {ex.Message}");
                 return null;
             }
         }
@@ -332,7 +332,7 @@ namespace WinFormApp.Forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred during the import: {ex.Message}", "ErrorDto",
+                MessageBox.Show($"An error occurred during the import: {ex.Message}", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
@@ -363,7 +363,7 @@ namespace WinFormApp.Forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred during the import: {ex.Message}", "ErrorDto",
+                MessageBox.Show($"An error occurred during the import: {ex.Message}", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
@@ -389,7 +389,7 @@ namespace WinFormApp.Forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred refreshing logs: {ex.Message}", "ErrorDto",
+                MessageBox.Show($"An error occurred refreshing logs: {ex.Message}", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally

@@ -8,10 +8,13 @@ namespace Application.Validations
     {
         public ItemDtoValidator()
         {
-            RuleFor(x => x.OrderNumber)
-                .NotEmpty().WithMessage("OrderNumber number is required.")
-                .MaximumLength(50).WithMessage("OrderNumber Number too long, max length 50.");
+            RuleFor(x => x.Id)
+            .NotEmpty().WithMessage("Item Id number is required.");
 
+
+            RuleFor(x => x.OrderId)
+                .NotEmpty().WithMessage("Order Id  is required.");
+                
             RuleFor(x => x.ItemName)
                 .NotEmpty().WithMessage("ItemName is required.")
                 .MaximumLength(50).WithMessage("Item Name too long, max length 50.");
@@ -41,12 +44,6 @@ namespace Application.Validations
 
             RuleFor(x => x.Price).GreaterThanOrEqualTo(0).WithMessage("Price must be greater than 0.");
             RuleFor(x => x.TotalPrice).GreaterThanOrEqualTo(0).WithMessage("Total Price must be greater than or eqaul to 0.");
-
-            RuleFor(x => x.SalesDocumentNumber)
-                .GreaterThan(0).WithMessage("Sales Document Number must be greater than 0.");
-
-            RuleFor(x => x.SalesDocumentVersion)
-                .GreaterThan(0).WithMessage("Sales Document Version must be greater than 0.");
 
             RuleFor(x => x.WorksheetType)
                 .NotEqual(Domain.Enums.WorksheetType.Unknown)

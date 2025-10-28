@@ -36,8 +36,8 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "ErrorDto creating task for order {OrderNumber}", task?.OrderNumber);
-                return Result<TaskEntity>.Failure("ErrorDto creating task.");
+                _logger.LogError(ex, "Error creating task for order {OrderNumber}", task?.OrderNumber);
+                return Result<TaskEntity>.Failure("Error creating task.");
             }
         }
 
@@ -52,8 +52,8 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "ErrorDto retrieving task {Id}", id);
-                return Result<TaskEntity>.Failure("ErrorDto retrieving task.");
+                _logger.LogError(ex, "Error retrieving task {Id}", id);
+                return Result<TaskEntity>.Failure("Error retrieving task.");
             }
         }
 
@@ -68,8 +68,8 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "ErrorDto retrieving task for order {OrderNumber}", orderNumber);
-                return Result<TaskEntity>.Failure("ErrorDto retrieving task.");
+                _logger.LogError(ex, "Error retrieving task for order {OrderNumber}", orderNumber);
+                return Result<TaskEntity>.Failure("Error retrieving task.");
             }
         }
 
@@ -82,8 +82,8 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "ErrorDto retrieving paged tasks.");
-                return PagedResult<TaskEntity>.Failure("ErrorDto retrieving paged tasks.");
+                _logger.LogError(ex, "Error retrieving paged tasks.");
+                return PagedResult<TaskEntity>.Failure("Error retrieving paged tasks.");
             }
         }
 
@@ -98,8 +98,8 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "ErrorDto updating task state for {Id}", id);
-                return Result<bool>.Failure("ErrorDto updating task state.");
+                _logger.LogError(ex, "Error updating task state for {Id}", id);
+                return Result<bool>.Failure("Error updating task state.");
             }
         }
 
@@ -114,8 +114,8 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "ErrorDto deleting task {Id}", id);
-                return Result<bool>.Failure("ErrorDto deleting task.");
+                _logger.LogError(ex, "Error deleting task {Id}", id);
+                return Result<bool>.Failure("Error deleting task.");
             }
         }
     }

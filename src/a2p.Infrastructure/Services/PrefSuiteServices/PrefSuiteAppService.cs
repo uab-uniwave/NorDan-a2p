@@ -6,23 +6,21 @@ using Application.Interfaces.PrefSuite;
 using Application.Interfaces.Services;
 using Application.Models;
 
-using Domain.Enums;
-
 using Microsoft.Extensions.Logging;
 
 using PrefSales;
 namespace Infrastructure.Services.PrefSuiteServices
 {
-    public class PrefSuiteService : IPrefSuiteService
+    public class PrefSuiteAppService : IPrefSuiteAppService
     {
-        private readonly ILogger<PrefSuiteService> _logger;
+        private readonly ILogger<PrefSuiteAppService> _logger;
         private readonly ISQLService _sqlRepository;
 
         private readonly PrefDataManager.IPrefDataSource _prefSuiteOLEDBConnection;
         private ProgressValue _progressValue;
         private IProgress<ProgressValue>? _progress;
 
-        public PrefSuiteService(ILogger<PrefSuiteService> logger, ISQLService sqlRepository)
+        public PrefSuiteAppService(ILogger<PrefSuiteAppService> logger, ISQLService sqlRepository)
         {
             _logger = logger;
             _sqlRepository = sqlRepository;
@@ -53,7 +51,7 @@ namespace Infrastructure.Services.PrefSuiteServices
                     _progressValue.ProgressTask3 = string.Empty;
                     _progress?.Report(_progressValue);
 
-                    salesDoc.Load(orderDto.SalesDocumentDto.Number, orderDto.SalesDocumentDto.Version);
+                    salesDoc.Load(orderDto.SalesDocument.Number ?? 0, orderDto.SalesDocument.Version ?? 0);
 
                     for (int i = 0; i < orderDto.ItemsDto.Count; i++)
                     {
@@ -104,34 +102,22 @@ namespace Infrastructure.Services.PrefSuiteServices
                         {
                             _logger.LogError(
                                 "{$Class}.{$Method}. Unhandled error." +
-                                "\nOrder {$OrderNumber}," +
-                                "\nWorksheet {$WorksheetDto}," +
+                                "\nOrder {$Order}," +
+                                "\nWorksheet {$Worksheet}," +
                                 "\nLine {$Line}," +
                                 "\nItem {ItemName}, " +
                                 "\nDescription {Description}," +
                                 "\nException: {$Exception}",
-                                nameof(PrefSuiteService),
+                                nameof(PrefSuiteAppService),
                                 nameof(InsertItemsAsync),
-                                orderDto.ItemsDto[i].OrderNumber ?? string.Empty,
-                                orderDto.ItemsDto[i].Worksheet ?? string.Empty,
+                                orderDto.ItemsDto[i].OrderId,
+                                orderDto.ItemsDto[i].Worksheet,
                                 orderDto.ItemsDto[i].Line,
-                                orderDto.ItemsDto[i].ItemName ?? string.Empty,
-                                orderDto.ItemsDto[i].Description ?? string.Empty,
-                                ex.Message ?? string.Empty
+                                orderDto.ItemsDto[i].ItemName,
+                                orderDto.ItemsDto[i].Description,
+                                ex.Message
                             );
-                            orderDto.ErrorsDto.Add(new ErrorDto()
-                            {
-                                OrderNumber = orderDto.ItemsDto[i].OrderNumber ?? string.Empty,
-                                Level = ErrorLevel.Error,
-                                Code = ErrorCode.SQL_Data_Write,
-                                Message = $"{nameof(PrefSuiteService)}.{nameof(InsertItemsAsync)}. Unhandled error." +
-                                    $"\nOrder {orderDto.ItemsDto[i].OrderNumber ?? string.Empty}," +
-                                    $"\nWorksheet {orderDto.ItemsDto[i].Worksheet ?? string.Empty}," +
-                                    $"\nLine {orderDto.ItemsDto[i].Line}," +
-                                    $"\nReferenceBase {orderDto.ItemsDto[i].ItemName ?? string.Empty}, " +
-                                    $"\nReference {orderDto.ItemsDto[i].Description ?? string.Empty}," +
-                                    $"\nException: {ex.Message ?? string.Empty}"
-                            });
+
                             continue;
                         }
                     }
@@ -148,23 +134,14 @@ namespace Infrastructure.Services.PrefSuiteServices
             {
                 _logger.LogError(
                     "{$Class}.{$Method}. Unhandled error." +
-                    "\nOrder {$OrderNumber}," +
+                    "\nOrder {$Order}," +
                     "\nException: {$Exception}",
-                    nameof(PrefSuiteService),
+                    nameof(PrefSuiteAppService),
                     nameof(InsertItemsAsync),
                     orderDto.OrderNumber ?? string.Empty,
                     ex.Message ?? string.Empty
                 );
-                orderDto.ErrorsDto.Add(new ErrorDto()
-                {
-                    OrderNumber = orderDto.OrderNumber ?? string.Empty,
-                    Level = ErrorLevel.Error,
-                    Code = ErrorCode.SQL_Data_Write,
-                    Message = $"{nameof(PrefSuiteService)}.{nameof(InsertItemsAsync)}. Unhandled error." +
-                        $"\nOrder {orderDto.OrderNumber ?? string.Empty}," +
-                        $"\nException: {ex.Message ?? string.Empty}"
-                });
-                //     return (orderDto, _progressValue);
+
             }
         }
     }

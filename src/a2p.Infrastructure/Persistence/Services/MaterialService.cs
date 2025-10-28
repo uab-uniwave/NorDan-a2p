@@ -24,10 +24,10 @@ namespace Infrastructure.Persistence.Services
         private readonly ILogger<MaterialService> _logger;
 
         public MaterialService(
-            IMaterialRepository repository,
-            IValidator<MaterialDto> validator,
-            IMapper mapper,
-            ILogger<MaterialService> logger)
+        IMaterialRepository repository,
+        IValidator<MaterialDto> validator,
+        IMapper mapper,
+        ILogger<MaterialService> logger)
         {
             _repository = repository;
             _validator = validator;
@@ -49,13 +49,13 @@ namespace Infrastructure.Persistence.Services
             try
             {
                 MaterialEntity entity = _mapper.Map<MaterialEntity>(dto)
-                    ?? throw new InvalidOperationException("Mapping resulted in null MaterialEntity.");
+                ?? throw new InvalidOperationException("Mapping resulted in null MaterialEntity.");
 
                 MaterialEntity? created = await _repository.CreateMaterialAsync(entity);
                 if (created == null)
                 {
                     return ValidationResult<MaterialEntity>.Failure(
-                        new[] { new ValidationError("Repository", "Failed to create material.") });
+                    new[] { new ValidationError("Repository", "Failed to create material.") });
                 }
 
                 _logger.LogInformation("Material {Reference} created.", created.Reference);
@@ -65,13 +65,13 @@ namespace Infrastructure.Persistence.Services
             {
                 _logger.LogError(ex, "SQL error creating material.");
                 return ValidationResult<MaterialEntity>.Failure(
-                    new[] { new ValidationError("Database", "Database error occurred.") });
+                new[] { new ValidationError("Database", "Database error occurred.") });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error creating material.");
                 return ValidationResult<MaterialEntity>.Failure(
-                    new[] { new ValidationError("System", ex.Message) });
+                new[] { new ValidationError("System", ex.Message) });
             }
         }
 
@@ -89,14 +89,14 @@ namespace Infrastructure.Persistence.Services
             try
             {
                 MaterialEntity material = _mapper.Map<MaterialEntity>(dto)
-                    ?? throw new InvalidOperationException("Mapping resulted in null MaterialEntity.");
+                ?? throw new InvalidOperationException("Mapping resulted in null MaterialEntity.");
 
                 // Repository provides GetMaterialAsync by id
                 MaterialEntity? existing = await _repository.GetMaterialAsync(material.Id);
                 if (existing == null)
                 {
                     return ValidationResult<MaterialEntity>.Failure(
-                        new[] { new ValidationError(nameof(dto.Id), "Material not found.") });
+                    new[] { new ValidationError(nameof(dto.Id), "Material not found.") });
                 }
 
                 material.ModifiedUTCDateTime = DateTime.UtcNow;
@@ -106,7 +106,7 @@ namespace Infrastructure.Persistence.Services
                 if (updated == 0)
                 {
                     return ValidationResult<MaterialEntity>.Failure(
-                        new[] { new ValidationError("Repository", "Failed to update material.") });
+                    new[] { new ValidationError("Repository", "Failed to update material.") });
                 }
                 _logger.LogInformation("Material {Reference} updated successfully.", material.Reference);
                 return ValidationResult<MaterialEntity>.Success(material, "Material updated successfully.");
@@ -115,13 +115,13 @@ namespace Infrastructure.Persistence.Services
             {
                 _logger.LogError(ex, "SQL error updating material.");
                 return ValidationResult<MaterialEntity>.Failure(
-                    new[] { new ValidationError("Database", "Database error.") });
+                new[] { new ValidationError("Database", "Database error.") });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error updating material.");
                 return ValidationResult<MaterialEntity>.Failure(
-                    new[] { new ValidationError("System", ex.Message) });
+                new[] { new ValidationError("System", ex.Message) });
             }
         }
 
@@ -132,49 +132,35 @@ namespace Infrastructure.Persistence.Services
             {
                 MaterialEntity? material = await _repository.GetMaterialAsync(id);
                 return material == null
-                    ? Result<MaterialEntity>.Failure($"Material {id} not found.")
-                    : Result<MaterialEntity>.Success(material);
+                ? Result<MaterialEntity>.Failure($"Material {id} not found.")
+                : Result<MaterialEntity>.Success(material);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "ErrorDto retrieving material {Id}", id);
-                return Result<MaterialEntity>.Failure("ErrorDto retrieving material.");
+                _logger.LogError(ex, "Error retrieving material {Id}", id);
+                return Result<MaterialEntity>.Failure("Error retrieving material.");
             }
         }
 
-        // GET ORDER ITEMS
-        public async Task<PagedResult<IEnumerable<MaterialEntity>?>> GetOrderMaterialsAsync(Guid id, int page, int size)
+        // GET ORDER MATERIALS
+        public async Task<Result<IEnumerable<MaterialEntity>>> GetOrderMaterialsAsync(Guid id)
         {
             try
             {
-                (IEnumerable<MaterialEntity> Materials, int TotalCount) materials = await _repository.GetOrderMaterialsAsync(id, page, size);
-                return PagedResult<IEnumerable<MaterialEntity>?>.Failure($"Materials for order '{id}' not found.");
+                IEnumerable<MaterialEntity>? materials = await _repository.GetOrderMaterialsAsync(id);
+                return materials == null
+                ? Result<IEnumerable<MaterialEntity>>.Failure($"No materials found for order {id}.")
+                : Result<IEnumerable<MaterialEntity>>.Success(materials);
 
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "ErrorDto retrieving materials for order {id}", id);
-                return PagedResult<IEnumerable<MaterialEntity>?>.Failure("ErrorDto retrieving order materials.");
+                _logger.LogError(ex, "Error retrieving materials for order {id}", id);
+                return Result<IEnumerable<MaterialEntity>>.Failure("Error retrieving order materials.");
             }
         }
 
-        // PAGED (repository doesn't expose paged; do simple in-memory paging)
-        public async Task<PagedResult<MaterialEntity>> GetMaterialsAsync(int page, int size)
-        {
-            try
-            {
-                (IEnumerable<MaterialEntity>? materials, int total) = await _repository.GetMaterialsAsync(page, size);
-
-                return PagedResult<MaterialEntity>.Success(materials, total, page, size);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "ErrorDto retrieving paged materials.");
-                return PagedResult<MaterialEntity>.Failure("ErrorDto retrieving paged materials.");
-            }
-        }
-
-        // DELETE
+        // DELETE MATERIAL
         public async Task<Result<bool>> DeleteMaterialAsync(Guid id)
         {
             try
@@ -182,17 +168,39 @@ namespace Infrastructure.Persistence.Services
                 MaterialEntity? existing = await _repository.GetMaterialAsync(id);
                 if (existing == null)
                 {
-                    return Result<bool>.Failure($"OrderNumber {id} not found");
+                    return Result<bool>.Failure($"Material {id} not found.");
                 }
                 int rows = await _repository.DeleteMaterialsdAsync(id);
                 return rows == 0
-                    ? Result<bool>.Failure("Failed to delete order.")
-                    : Result<bool>.Success(true, "OrderNumber deleted successfully.");
+                ? Result<bool>.Failure("Failed to delete material.")
+                : Result<bool>.Success(true, $"Material {id} deleted successfully.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "ErrorDto deleting order {Id}", id);
-                return Result<bool>.Failure("ErrorDto deleting order.");
+                _logger.LogError(ex, "Error deleting material {Id}", id);
+                return Result<bool>.Failure("Error deleting order.");
+            }
+        }
+
+        // DELETE ORDER MATERIALS
+        public async Task<Result<bool>> DeleteOrderMaterialAsync(Guid id)
+        {
+            try
+            {
+                IEnumerable<MaterialEntity>? existing = await _repository.GetOrderMaterialsAsync(id);
+                if (existing == null)
+                {
+                    return Result<bool>.Failure($"Materials for order {id} not found.");
+                }
+                int rows = await _repository.DeleteOrderMaterialsAsync(id);
+                return rows == 0
+                ? Result<bool>.Failure($"Failed to delete order {id} materials.")
+                : Result<bool>.Success(true, $"Materials of order {id} deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting order {Id} materials.", id);
+                return Result<bool>.Failure("Error deleting order.");
             }
         }
 

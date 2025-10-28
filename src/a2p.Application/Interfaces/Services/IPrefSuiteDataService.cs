@@ -1,0 +1,39 @@
+using Application.Models;
+
+using Domain.Entities;
+
+namespace Application.Interfaces.Services
+{
+    public interface IPrefSuiteDataService
+    {
+        // Query
+        Task<SalesDocument?> GetSalesDocumentByOrderNumberAsync(string orderNumber);
+        Task<SalesDocument?> GetSalesDocumentByRowIdAsync(Guid rowId);
+
+        Task<string?> GetGlassReferenceAsync(string description);
+        Task<int?> GetPrefSuiteColorConfigurationAsync(string color);
+        Task<int?> GetCommodityCode(string sourceReference);
+        Task<decimal?> GetTechDesignWeight(string sourceReference);
+        Task<string?> GetSapaColorAsync(string color);
+
+        // Delete
+        Task DeleteSalesDocumentDataAsync(int number, int version, bool deleteExisting);
+
+        // Inserts / updates
+        Task InsertPrefSuiteColorAsync(MaterialEntity material);
+        Task InsertPrefSuiteColorConfigurationAsync(MaterialEntity material);
+        Task InsertPrefSuiteMaterialBaseAsync(MaterialEntity material);
+        Task InsertPrefSuiteMaterialAsync(MaterialEntity material);
+
+        Task InsertPrefSuiteMaterialProfileAsync(MaterialEntity material);
+        Task InsertPrefSuiteMaterialMeterAsync(MaterialEntity material);
+        Task InsertPrefSuiteMaterialPieceAsync(MaterialEntity material);
+        Task InsertPrefSuiteMaterialSurfaceAsync(MaterialEntity material);
+        Task InsertPrefSuiteMaterialPurchaseDataAsync(MaterialEntity material);
+
+        Task UpdateBCMapping(MaterialEntity material);
+
+        Task InsertPrefSuiteMaterialNeedsMasterAsync(string order, int number, int version);
+        Task InsertPrefSuiteMaterialNeedsAsync(string order, int number, int version);
+    }
+}

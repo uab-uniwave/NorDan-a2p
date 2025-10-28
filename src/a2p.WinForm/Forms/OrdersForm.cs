@@ -18,7 +18,7 @@ namespace WinFormApp.Forms
         private readonly ISettingsService _settingsService;
         private SettingsContainer _settingsContainer;
         private AppSettings _appSettings;
-        private readonly ILogger <OrdersForm> _logger;
+        private readonly ILogger<OrdersForm> _logger;
         private readonly IFileService _fileService;
         private readonly IExcelService _excelService;
         private readonly IReadService _readService;
@@ -30,7 +30,7 @@ namespace WinFormApp.Forms
         private IProgress<ProgressValue>? _progress;
         private ProgressValue _progressValue;
         public OrdersForm(ISettingsService userSettingsService,
-                          ILogger<OrdersForm>  logger,
+                          ILogger<OrdersForm> logger,
                           IFileService fileService,
                           IExcelService excelService,
                           IReadService readService,
@@ -244,7 +244,7 @@ namespace WinFormApp.Forms
                 {
                     _ = dataGridViewFiles.Columns.Add(new DataGridViewTextBoxColumn
                     {
-                        HeaderText = "WorksheetsDto",
+                        HeaderText = "Worksheets",
                         DataPropertyName = "WorksheetCount",
                         Name = "WorksheetCount",
                         ReadOnly = true,
@@ -255,7 +255,7 @@ namespace WinFormApp.Forms
                 {
                     _ = dataGridViewFiles.Columns.Add(new DataGridViewTextBoxColumn
                     {
-                        HeaderText = "WorksheetDto List",
+                        HeaderText = "Worksheet List",
                         DataPropertyName = "WorksheetList",
                         Name = "WorksheetList",
                         ReadOnly = true,
@@ -903,7 +903,7 @@ namespace WinFormApp.Forms
                 for (int i = 0; i < importOrdersDto.Count; i++)
                 {
 
-                    _progressValue.ProgressTask1 = $"Inserting OrderNumber {i + 1} of {importOrdersDto.Count} - OrderNumber # {importOrdersDto[i].OrderNumber} ({importOrdersDto[i].SalesDocumentDto.Number}/{importOrdersDto[i].SalesDocumentDto.Number})...";
+                    _progressValue.ProgressTask1 = $"Inserting OrderNumber {i + 1} of {importOrdersDto.Count} - OrderNumber # {importOrdersDto[i].OrderNumber} ({importOrdersDto[i].SalesDocument.Number}/{importOrdersDto[i].SalesDocument.Number})...";
                     _progressValue.ProgressTask3 = string.Empty;
                     progressBarForm.Show();
                     await _writeService.WriteAsync(importOrdersDto[i], _progressValue, _progress);
@@ -931,7 +931,7 @@ namespace WinFormApp.Forms
             {
                 _logger.LogError("OrderNumber Form: Unhandled error loading importing orders. Exception: {$Exception}.", ex.Message);
                 _ = MessageBox.Show($"An ErrorDto occurred while loading the files." +
-                    $"{ex.Message}", "ErrorDto", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    $"{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
@@ -939,7 +939,7 @@ namespace WinFormApp.Forms
             }
         }
 
-        public async Task<OrderRecord> MapToReadOrderDTOAsync(OrderDto exceExcelOrderDto
+        public async Task<OrderRecord> MapToReadOrderDTOAsync(OrderDto OrderDto
             , int type)   // type 1 - read; 2 - write 
         {
             try
@@ -951,22 +951,22 @@ namespace WinFormApp.Forms
 
                 await Task.Run(() =>
                 {
-                    orderRecord.OrderNumber = exceExcelOrderDto.OrderNumber;
-                    orderRecord.SalesDocument = $"{exceExcelOrderDto.SalesDocumentDto.Number}/{exceExcelOrderDto.SalesDocumentDto.Version}";
-                    orderRecord.Items = exceExcelOrderDto.ItemsDto.Count(); // Added line to count ItemsDto
-                    orderRecord.ItemList = string.Join("\n", exceExcelOrderDto.ItemsDto.Select(item => item.ItemName));
-                    orderRecord.Quantity = exceExcelOrderDto.ItemsDto.ToArray().Sum(item => item.Quantity);
-                    orderRecord.Area = exceExcelOrderDto.ItemsDto.ToArray().Sum(item => item.TotalArea);
-                    orderRecord.Weight = exceExcelOrderDto.ItemsDto.ToArray().Sum(item => item.TotalWeight);
-                    orderRecord.Hours = exceExcelOrderDto.ItemsDto.ToArray().Sum(item => item.TotalHours);
-                    orderRecord.Cost = exceExcelOrderDto.ItemsDto.ToArray().Sum(item => item.TotalCost);
-                    orderRecord.Amount = exceExcelOrderDto.ItemsDto.ToArray().Sum(item => item.TotalPrice);
-                    orderRecord.Currency = exceExcelOrderDto.Currency ?? string.Empty;
-                    //  orderRecord.FileCount = exceExcelOrderDto.FilesDto.Count;
-                    //orderRecord.FileList = string.Join("\n", exceExcelOrderDto.FilesDto.Select(file => file.FileName));
-                    // orderRecord.WorksheetCount = exceExcelOrderDto.FilesDto.Sum(file => file.WorksheetsDto?.Count ?? 0);
-                    //  orderRecord.WorksheetList = string.Join("\n", exceExcelOrderDto.FilesDto.SelectMany(file => file.WorksheetsDto).Select(ws => ws.Name));
-                    orderRecord.Materials = exceExcelOrderDto.MaterialsDto.Count(); // Added line to count Materials
+                    orderRecord.OrderNumber = OrderDto.OrderNumber;
+                    orderRecord.SalesDocument = $"{OrderDto.SalesDocument.Number}/{OrderDto.SalesDocument.Version}";
+                    orderRecord.Items = OrderDto.ItemsDto.Count(); // Added line to count ItemsDto
+                    orderRecord.ItemList = string.Join("\n", OrderDto.ItemsDto.Select(item => item.ItemName));
+                    orderRecord.Quantity = OrderDto.ItemsDto.ToArray().Sum(item => item.Quantity);
+                    orderRecord.Area = OrderDto.ItemsDto.ToArray().Sum(item => item.TotalArea);
+                    orderRecord.Weight = OrderDto.ItemsDto.ToArray().Sum(item => item.TotalWeight);
+                    orderRecord.Hours = OrderDto.ItemsDto.ToArray().Sum(item => item.TotalHours);
+                    orderRecord.Cost = OrderDto.ItemsDto.ToArray().Sum(item => item.TotalCost);
+                    orderRecord.Amount = OrderDto.ItemsDto.ToArray().Sum(item => item.TotalPrice);
+                    orderRecord.Currency = OrderDto.Currency ?? string.Empty;
+                    orderRecord.FileCount = OrderDto.ExcelFiles.Count;
+                    orderRecord.FileList = string.Join("\n", OrderDto.ExcelFiles.Select(file => file.FileName));
+                    orderRecord.WorksheetCount = OrderDto.ExcelFiles.Sum(file => file.Worksheets?.Count ?? 0);
+                    orderRecord.WorksheetList = string.Join("\n", OrderDto.ExcelFiles.SelectMany(file => file.Worksheets).Select(ws => ws.Name));
+                    orderRecord.Materials = OrderDto.MaterialsDto.Count(); // Added line to count Materials
 
                     if (type == 1)
                     {
@@ -1074,7 +1074,7 @@ namespace WinFormApp.Forms
                         //                           .Distinct());
 
                     }
-                    orderRecord.Import = CountReadTotalError(exceExcelOrderDto) <= 0;
+                    orderRecord.Import = CountReadTotalError(OrderDto) <= 0;
 
                 });
 
@@ -1167,10 +1167,10 @@ namespace WinFormApp.Forms
             foreach (OrderDto order in ordersDto)
             {
 
-                if (order.FilesDto.SelectMany(f => f.Worksheets).Count(w => w.WorksheetType == WorksheetType.Items) == 0)
+                if (order.ExcelFiles.SelectMany(f => f.Worksheets).Count(w => w.WorksheetType == WorksheetType.Items) == 0)
                 {
 
-                    _logger.LogWarning("Found exceExcelOrderDto {$OrderNumber}, files, but items worksheet  is missing", order.OrderNumber);
+                    _logger.LogWarning("Found exceExcelOrderDto {$Order}, files, but items worksheet  is missing", order.OrderNumber);
 
                     continue;
                 }
@@ -1288,7 +1288,7 @@ namespace WinFormApp.Forms
                     if (type == 2)
                     {
                         // Fix: Select file names as strings, not as chars
-                        List<string> fileNames = order.FilesDto.Select(f => f.FileName).ToList();
+                        List<string> fileNames = order.ExcelFiles.Select(f => f.FileName).ToList();
                         if (orderRecord.ErrorCount + orderRecord.FatalCount > 0)
                         {
                             _fileService.MoveOrderFiles(fileNames, false);
@@ -1302,7 +1302,7 @@ namespace WinFormApp.Forms
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogDebug("ErrorDto adding individual exceExcelOrderDto to data table. Excepton: {$Exceptiom}", ex.Message);
+                    _logger.LogDebug("Error adding individual exceExcelOrderDto to data table. Excepton: {$Exceptiom}", ex.Message);
                 }
             }
             if (InvokeRequired)

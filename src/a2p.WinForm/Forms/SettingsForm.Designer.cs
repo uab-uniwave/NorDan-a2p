@@ -519,7 +519,7 @@ namespace WinFormApp.Forms
             cbxLogLevel.DropDownStyle = ComboBoxStyle.DropDownList;
             cbxLogLevel.FlatStyle = FlatStyle.Flat;
             cbxLogLevel.FormattingEnabled = true;
-            cbxLogLevel.Items.AddRange(new object[] { "Verbose", "Debug", "Information", "Warning", "ErrorDto", "Critical", "Fatal" });
+            cbxLogLevel.Items.AddRange(new object[] { "Verbose", "Debug", "Information", "Warning", "Error", "Critical", "Fatal" });
             cbxLogLevel.Location = new Point(386, 856);
             cbxLogLevel.Margin = new Padding(6);
             cbxLogLevel.Name = "cbxLogLevel";

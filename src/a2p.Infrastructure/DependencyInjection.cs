@@ -15,6 +15,7 @@ using FluentValidation;
 using Infrastructure.Data;
 using Infrastructure.Persistence.Repositories;
 using Infrastructure.Persistence.Services;
+using Infrastructure.Repositories;
 using Infrastructure.Services.ExcelServices;
 using Infrastructure.Services.FileServices;
 using Infrastructure.Services.Orchestartors;
@@ -70,15 +71,16 @@ namespace Infrastructure
             services.AddScoped<IItemRepository, ItemRepository>();
             services.AddScoped<IMaterialRepository, MaterialRepository>();
             services.AddScoped<ITaskQueueRepository, TaskQueueRepository>();
+            services.AddScoped<IPrefSuiteRepository, PrefSuiteRepository>();
 
             // ============================================================
             // 4. Register Application Services (Scoped) DATA SERVICES
             // ============================================================
             services.AddScoped<IOrderService, OrderService>();
-            services.AddScoped<IItemService, ItemService>();
+            services.AddScoped<IItemService, ItemService>();           
             services.AddScoped<IMaterialService, MaterialService>();
-            services.AddScoped<IPrefSuiteDataService, PrefSuiteDataService>(); //TODO: Chnage To Dapper
-            services.AddScoped<IPrefSuiteService, PrefSuiteService>();
+            services.AddScoped<IPrefSuiteDataService, PrefSuiteDataService>(); 
+            services.AddScoped<IPrefSuiteAppService, PrefSuiteAppService>();
 
             // ============================================================
             // 4. Register Application Services (Scoped) File SERVICES

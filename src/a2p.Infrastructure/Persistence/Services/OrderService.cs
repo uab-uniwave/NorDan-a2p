@@ -18,39 +18,98 @@ namespace Infrastructure.Persistence.Services
 {
     public class OrderService : IOrderService
     {
-        private readonly IOrderRepository _repository;
-        private readonly IValidator<OrderDto> _validator;
+        private readonly IOrderRepository _orderRepository;
+        private readonly IValidator<OrderDto> _orderValidator;
+        private readonly IValidator<ItemDto> _itemValidator;
+        private readonly IValidator<MaterialDto> _materialValidator;
         private readonly IMapper _mapper;
         private readonly ILogger<OrderService> _logger;
 
         public OrderService(
-            IOrderRepository repository,
-            IValidator<OrderDto> validator,
+            IOrderRepository orderRepository,
+            IValidator<OrderDto> orderValidator,
+            IValidator<ItemDto> itemValidator,
+            IValidator<MaterialDto> materialValidator,
             IMapper mapper,
             ILogger<OrderService> logger)
         {
-            _repository = repository;
-            _validator = validator;
+            _orderRepository = orderRepository;
+            _orderValidator = orderValidator;
+            _itemValidator = itemValidator;
+            _materialValidator = materialValidator;
             _mapper = mapper;
             _logger = logger;
         }
 
         // CREATE
-        public async Task<ValidationResult<OrderEntity>> CreateOrderAsync(OrderDto dto)
+        public async Task<ValidationResult<OrderEntity>> CreateOrderAsync(OrderDto orderDto)
         {
-            // Step 1. Validate input
-            ValidationResult validation = await _validator.ValidateAsync(dto);
-            ValidationResult<OrderEntity> validationResult = validation.ToValidationResult<OrderEntity>();
-            if (!validationResult.IsSuccess)
-            {
-                return validationResult;
-            }
 
             try
             {
-                OrderEntity entity = _mapper.Map<OrderEntity>(dto)
-                ?? throw new InvalidOperationException("Mapping resulted in null OrderEntity.");
-                OrderEntity? created = await _repository.CreateOrderAsync(entity);
+                // Step 1. Validate order DTO 
+                //===========================================================================================
+                ValidationResult orderValidation = await _orderValidator.ValidateAsync(orderDto);
+                ValidationResult<OrderEntity> orderValidationResult = orderValidation.ToValidationResult<OrderEntity>();
+                if (!orderValidationResult.IsSuccess)
+                {
+                    return orderValidationResult;
+                }
+                // Step 2. mapp order DTO to order entity
+                //===========================================================================================
+                OrderEntity orderEntity = _mapper.Map<OrderEntity>(orderDto);
+                if (orderEntity == null)
+                {
+                    throw new InvalidOperationException("Mapping resulted in null OrderEntity.");
+                }
+                orderEntity.CreatedUTCDateTime = DateTime.UtcNow;
+                orderEntity.ModifiedUTCDateTime = orderEntity.CreatedUTCDateTime;
+
+                // Step 2.1 Validate and mapp items DTOs to item entities  
+                //===========================================================================================
+                for (int i = 0; i < orderDto.ItemsDto.Count; i++)
+                {
+                    // Step 2.1.1 mapp item DTO to item entity
+                    //===========================================================================================
+                    ItemEntity itemEntity = _mapper.Map<ItemEntity>(orderDto.ItemsDto[i]);
+                    itemEntity.CreatedUTCDateTime = orderEntity.CreatedUTCDateTime;
+                    itemEntity.ModifiedUTCDateTime = orderEntity.CreatedUTCDateTime;
+                    if (itemEntity == null)
+                    {
+                        _logger.LogError("Mapping resulted in null ItemEntity for ItemDto at index {Index}.", i);
+                        continue;
+                    }
+
+                    // Step 2.1.2 add item entity to order entity
+                    //===========================================================================================
+                    orderEntity.Items.Add(itemEntity);
+                }
+
+                // Step 2.2 validate and mapp materials DTOs to material entities  
+                //===========================================================================================
+                for (int i = 0; i < orderDto.MaterialsDto.Count; i++)
+                {
+
+                    // Step 2.2.1 mapp material DTO to material entity
+                    //===========================================================================================
+                    MaterialEntity materialEntity = _mapper.Map<MaterialEntity>(orderDto.MaterialsDto[i]);
+                    if (materialEntity == null)
+                    {
+                        _logger.LogError("Mapping resulted in null MaterialEntity for MaterialDto at index {Index}.", i);
+                        continue;
+                    }
+                    materialEntity.CreatedUTCDateTime = orderEntity.CreatedUTCDateTime;
+                    materialEntity.ModifiedUTCDateTime = orderEntity.CreatedUTCDateTime;
+
+                    // Step 2.2.2 add material entity to order entity
+                    //===========================================================================================
+                    orderEntity.Materials.Add(materialEntity);
+
+                }
+
+                // Step 3. Create order entity in repository
+                //===========================================================================================
+                OrderEntity? created = await _orderRepository.CreateOrderAsync(orderEntity);
                 if (created == null)
                 {
                     return ValidationResult<OrderEntity>.Failure(
@@ -75,11 +134,11 @@ namespace Infrastructure.Persistence.Services
         }
 
         // UPDATE
-        public async Task<ValidationResult<OrderEntity>> UpdateOrderAsync(OrderDto dto)
+        public async Task<ValidationResult<OrderEntity>> UpdateOrderAsync(OrderDto orderDto)
         {
             // Step 1. Validate
-            ValidationResult validation = await _validator.ValidateAsync(dto);
-            ValidationResult<OrderEntity> validationResult = validation.ToValidationResult<OrderEntity>();
+            ValidationResult orderValidation = await _orderValidator.ValidateAsync(orderDto);
+            ValidationResult<OrderEntity> validationResult = orderValidation.ToValidationResult<OrderEntity>();
             if (!validationResult.IsSuccess)
             {
                 return validationResult;
@@ -87,26 +146,26 @@ namespace Infrastructure.Persistence.Services
 
             try
             {
-                OrderEntity entity = _mapper.Map<OrderEntity>(dto);
+                OrderEntity orderEntity = _mapper.Map<OrderEntity>(orderDto);
 
-                OrderEntity? existing = await _repository.GetOrderAsync(entity.Id);
+                OrderEntity? existing = await _orderRepository.GetOrderAsync(orderEntity.Id);
                 if (existing == null)
                 {
                     return ValidationResult<OrderEntity>.Failure(
-                        new[] { new ValidationError(nameof(dto.Id), "OrderNumber not found.") });
+                        new[] { new ValidationError(nameof(orderDto.Id), "OrderNumber not found.") });
                 }
 
-                entity.ModifiedUTCDateTime = DateTime.UtcNow;
+                orderEntity.ModifiedUTCDateTime = DateTime.UtcNow;
 
-                int rows = await _repository.UpdateOrderAsync(entity);
+                int rows = await _orderRepository.UpdateOrderAsync(orderEntity);
                 if (rows == 0)
                 {
                     return ValidationResult<OrderEntity>.Failure(
                         new[] { new ValidationError("Repository", "Failed to update order.") });
                 }
 
-                _logger.LogInformation("OrderNumber {OrderNumber} updated successfully.", entity.OrderNumber);
-                return ValidationResult<OrderEntity>.Success(entity, "OrderNumber updated successfully.");
+                _logger.LogInformation("OrderNumber {OrderNumber} updated successfully.", orderEntity.OrderNumber);
+                return ValidationResult<OrderEntity>.Success(orderEntity, "OrderNumber updated successfully.");
             }
             catch (SqlException ex)
             {
@@ -127,15 +186,15 @@ namespace Infrastructure.Persistence.Services
         {
             try
             {
-                OrderEntity? order = await _repository.GetOrderAsync(id);
+                OrderEntity? order = await _orderRepository.GetOrderAsync(id);
                 return order == null
                     ? Result<OrderEntity>.Failure($"OrderNumber {id} not found.")
                     : Result<OrderEntity>.Success(order);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "ErrorDto retrieving order {Id}", id);
-                return Result<OrderEntity>.Failure("ErrorDto retrieving order.");
+                _logger.LogError(ex, "Error retrieving order {Id}", id);
+                return Result<OrderEntity>.Failure("Error retrieving order.");
             }
         }
 
@@ -144,13 +203,13 @@ namespace Infrastructure.Persistence.Services
         {
             try
             {
-                (IEnumerable<OrderEntity>? orders, int total) = await _repository.GetOrdersAsync(page, size);
+                (IEnumerable<OrderEntity>? orders, int total) = await _orderRepository.GetOrdersAsync(page, size);
                 return PagedResult<OrderEntity>.Success(orders, total, page, size);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "ErrorDto retrieving paged orders.");
-                return PagedResult<OrderEntity>.Failure("ErrorDto retrieving paged orders.");
+                _logger.LogError(ex, "Error retrieving paged orders.");
+                return PagedResult<OrderEntity>.Failure("Error retrieving paged orders.");
             }
         }
 
@@ -159,21 +218,21 @@ namespace Infrastructure.Persistence.Services
         {
             try
             {
-                OrderEntity? existing = await _repository.GetOrderAsync(id);
+                OrderEntity? existing = await _orderRepository.GetOrderAsync(id);
                 if (existing == null)
                 {
                     return Result<bool>.Failure($"OrderNumber {id} not found.");
                 }
 
-                int rows = await _repository.UpdateOrderDeliveryAddressAsync(id, deliveryAddress);
+                int rows = await _orderRepository.UpdateOrderDeliveryAddressAsync(id, deliveryAddress);
                 return rows == 0
                     ? Result<bool>.Failure("Failed to update delivery address.")
                     : Result<bool>.Success(true, "Delivery address updated.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "ErrorDto updating delivery address for order {Id}", id);
-                return Result<bool>.Failure("ErrorDto updating delivery address.");
+                _logger.LogError(ex, "Error updating delivery address for order {Id}", id);
+                return Result<bool>.Failure("Error updating delivery address.");
             }
         }
 
@@ -182,20 +241,20 @@ namespace Infrastructure.Persistence.Services
         {
             try
             {
-                OrderEntity? existing = await _repository.GetOrderAsync(id);
+                OrderEntity? existing = await _orderRepository.GetOrderAsync(id);
                 if (existing == null)
                 {
                     return Result<bool>.Failure($"OrderNumber {id} not found.");
                 }
-                int rows = await _repository.DeleteOrderAsync(id);
+                int rows = await _orderRepository.DeleteOrderAsync(id);
                 return rows == 0
                     ? Result<bool>.Failure("Failed to delete order.")
                     : Result<bool>.Success(true, "OrderNumber deleted successfully.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "ErrorDto deleting order {Id}", id);
-                return Result<bool>.Failure("ErrorDto deleting order.");
+                _logger.LogError(ex, "Error deleting order {Id}", id);
+                return Result<bool>.Failure("Error deleting order.");
             }
         }
     }

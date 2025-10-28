@@ -1,7 +1,5 @@
 using Application.Interfaces.Repositories;
 
-using Dapper;
-
 using Domain.Entities;
 
 using Infrastructure.Data;
@@ -28,10 +26,6 @@ namespace Infrastructure.Persistence.Repositories
             const string sql = @"INSERT INTO Uniwave_a2p_Materials 
             ([Id]  
            ,[OrderId]
-           ,[OrderNumber]
-           ,[ProjectNumber]
-           ,[SalesDocumentNumber]
-           ,[SalesDocumentVersion]
            ,[ItemId]
            ,[ItemName]
            ,[SortOrder]
@@ -82,10 +76,6 @@ namespace Infrastructure.Persistence.Repositories
             VALUES
             (@Id  
            ,@OrderId
-           ,@OrderNumber
-           ,@ProjectNumber
-           ,@SalesDocumentNumber
-           ,@SalesDocumentVersion
            ,@ItemId
            ,@ItemName
            ,@SortOrder
@@ -145,33 +135,13 @@ namespace Infrastructure.Persistence.Repositories
         }
 
         // PAGED READ BY ORDER NUMBER
-        public async Task<(IEnumerable<MaterialEntity> Materials, int TotalCount)> GetOrderMaterialsAsync(Guid id, int page, int size)
+        public async Task<IEnumerable<MaterialEntity>> GetOrderMaterialsAsync(Guid id)
         {
             const string sql = @"
                 SELECT * FROM Uniwave_a2p_Materials WHERE OrderId = @id
-                ORDER BY SortOrder
-                OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
-                SELECT COUNT(*) FROM Uniwave_a2p_Material WHERE OrderId = @id;";
+                ORDER BY SortOrder";
 
-            SqlMapper.GridReader multi = await _dapper.QueryMultipleAsync(sql, new { OrderId = @id, Offset = (page - 1) * size, PageSize = size });
-            IEnumerable<MaterialEntity> materials = await multi.ReadAsync<MaterialEntity>();
-            int total = await multi.ReadSingleAsync<int>();
-            return (materials, total);
-        }
-
-        // PAGED READ
-        public async Task<(IEnumerable<MaterialEntity> Materials, int TotalCount)> GetMaterialsAsync(int page, int size)
-        {
-            const string sql = @"
-                SELECT * FROM Uniwave_a2p_Materials
-                ORDER BY OrderNumber DESC, SortOrder 
-                OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
-                SELECT COUNT(*) FROM Uniwave_a2p_Material;";
-
-            SqlMapper.GridReader multi = await _dapper.QueryMultipleAsync(sql, new { Offset = (page - 1) * size, PageSize = size });
-            IEnumerable<MaterialEntity> materials = await multi.ReadAsync<MaterialEntity>();
-            int total = await multi.ReadSingleAsync<int>();
-            return (materials, total);
+            return await _dapper.QueryAsync<MaterialEntity>(sql, new { Id = id });
         }
 
         // UPDATE ALL ORDER DETAILS
@@ -180,10 +150,6 @@ namespace Infrastructure.Persistence.Repositories
             const string sql = @"INSERT INTO Uniwave_a2p_Materials 
            ([Id]  
            ,[OrderId]
-           ,[OrderNumber]
-           ,[ProjectNumber]
-           ,[SalesDocumentNumber]
-           ,[SalesDocumentVersion]
            ,[ItemId]
            ,[ItemName]
            ,[SortOrder]
@@ -232,10 +198,6 @@ namespace Infrastructure.Persistence.Repositories
             VALUES
             (@Id  
            ,@OrderId
-           ,@OrderNumber
-           ,@ProjectNumber
-           ,@SalesDocumentNumber
-           ,@SalesDocumentVersion
            ,@ItemId
            ,@ItemName
            ,@SortOrder
@@ -293,7 +255,7 @@ namespace Infrastructure.Persistence.Repositories
         }
 
         // DELETE BY ORDER ID
-        public async Task<int> DeleteMaterialByOrderIdAsync(Guid id)
+        public async Task<int> DeleteOrderMaterialsAsync(Guid id)
         {
             const string sql = "DELETE FROM Uniwave_a2p_Materials WHERE OrderId = @id;";
 

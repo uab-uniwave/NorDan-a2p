@@ -12,7 +12,7 @@ namespace Application.Interfaces.Files
         string GetSuccessFolder();
         string GetLogFolder();
 
-        List<string> GetFiles();
+        List<string> GetLocalFiles();
 
         bool IsLocked(string filePath);
 

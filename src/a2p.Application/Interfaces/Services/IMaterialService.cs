@@ -13,15 +13,17 @@ namespace Application.Interfaces.Services
 
         // UPDATE
         Task<ValidationResult<MaterialEntity>> UpdateMaterialAsync(MaterialDto dto);
+
+        // GET MATERIAL
         Task<Result<MaterialEntity>> GetMaterialByIdAsync(Guid id);
 
-        // GET ORDER ITEMS
-        Task<PagedResult<IEnumerable<MaterialEntity>?>> GetOrderMaterialsAsync(Guid id, int page, int size);
-
-        // PAGED (repository doesn't expose paged; do simple in-memory paging)
-        Task<PagedResult<MaterialEntity>> GetMaterialsAsync(int page, int size);
+        // GET ORDER MATERIALS
+        Task<Result<IEnumerable<MaterialEntity>?>> GetOrderMaterialsAsync(Guid id);
 
         // DELETE
         Task<Result<bool>> DeleteMaterialAsync(Guid id);
+
+        // DELETE ORDER MATERIALS
+        Task<Result<bool>> DeleteOrderMaterialAsync(Guid id);
     }
 }

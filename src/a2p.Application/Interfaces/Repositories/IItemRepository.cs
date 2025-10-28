@@ -10,20 +10,18 @@ namespace Application.Interfaces.Repositories
         // READ BY ID
         Task<ItemEntity?> GetItemAsync(Guid id);
 
-        // PAGED READ BY ORDER NUMBER
-        Task<(IEnumerable<ItemEntity> Ir, int TotalCount)> GetOrderItems(Guid id, int page, int size);
+        //READ BY ORDER ID
+        Task<IEnumerable<ItemEntity>> GetOrderItemsAsync(Guid id);
 
-        // PAGED READ
-        Task<(IEnumerable<ItemEntity>? Items, int TotalCount)> GetItemsAsync(int page, int size);
 
-        // UPDATE ALL ORDER DETAILS
+        // UPDATE 
         Task<int> UpdateItemAsync(ItemEntity item);
 
         // DELETE BY ID
         Task<int> DeleteItemAsync(Guid id);
 
         // DELETE BY ORDER ID
-        Task<int> DeleteItemByOrderIdAsync(Guid id);
+        Task<int> DeleteOrderItemsAsync(Guid id);
     }
 
 }

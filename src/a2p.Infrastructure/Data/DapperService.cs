@@ -88,9 +88,19 @@ namespace Infrastructure.Data
             {
                 try
                 {
+                
                     using IDbConnection connection = _connectionFactory.CreateConnection();
                     _logger.LogDebug("Executing Scalar: {Sql}", sql);
-                    return await connection.ExecuteScalarAsync<T>(sql, param);
+                     
+                var result = await connection.ExecuteScalarAsync<T>(sql, param);
+                if (result == null)
+                {
+                    _logger.LogWarning("ExecuteScalar returned null for SQL: {Sql}", sql);
+                    throw new InvalidOperationException($"ExecuteScalar returned null for SQL: {sql}");
+                }
+
+                return result;
+                
                 }
                 catch (Exception ex)
                 {

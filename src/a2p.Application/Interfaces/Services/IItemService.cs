@@ -18,11 +18,12 @@ namespace Application.Interfaces.Services
         Task<Result<ItemEntity>> GetItemAsync(Guid id);
 
         // GET ORDER ITEMS
-        Task<PagedResult<IEnumerable<ItemEntity>?>> GetOrderItemsAsync(Guid id, int page, int size);
+        Task<Result<IEnumerable<ItemEntity>?>> GetOrderItemsAsync(Guid id);
 
-        // PAGED (repository doesn't expose paged; do simple in-memory paging)
-        Task<PagedResult<ItemEntity>> GetItemsAsync(int page, int size);
         // DELETE
         Task<Result<bool>> DeleteItemAsync(Guid id);
+
+        // DELETE BY ORDER ID
+        Task<Result<bool>> DeleteOrderItemsAsync(Guid id);
     }
 }

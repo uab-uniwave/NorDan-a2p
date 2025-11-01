@@ -67,6 +67,11 @@ namespace Infrastructure.Persistence.Services
                 return ValidationResult<MaterialEntity>.Failure(
                 new[] { new ValidationError("Database", "Database error occurred.") });
             }
+            catch (InvalidOperationException)
+            {
+                // Let InvalidOperationException propagate - indicates a programming error in mapping
+                throw;
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error creating material.");
@@ -99,7 +104,7 @@ namespace Infrastructure.Persistence.Services
                     new[] { new ValidationError(nameof(dto.Id), "Material not found.") });
                 }
 
-                material.ModifiedUTCDateTime = DateTime.UtcNow;
+                material.ModifiedDateTime = DateTime.Now;
 
                 // MaterialRepository.UpdateMaterialAsync returns updated material (nullable)
                 int updated = await _repository.UpdateMaterialAsync(material);
@@ -116,6 +121,11 @@ namespace Infrastructure.Persistence.Services
                 _logger.LogError(ex, "SQL error updating material.");
                 return ValidationResult<MaterialEntity>.Failure(
                 new[] { new ValidationError("Database", "Database error.") });
+            }
+            catch (InvalidOperationException)
+            {
+                // Let InvalidOperationException propagate - indicates a programming error in mapping
+                throw;
             }
             catch (Exception ex)
             {

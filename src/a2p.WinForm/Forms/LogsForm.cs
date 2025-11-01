@@ -400,12 +400,6 @@ namespace WinFormApp.Forms
 
                 LogEntity logRecord = new()
                 {
-                    Order = propertiesNode["OrderNumber"]?.ToString() ?? string.Empty,
-                    Worksheet = propertiesNode["Worksheet"]?.ToString() ?? string.Empty,
-                    Reference = propertiesNode["Reference"]?.ToString() ?? string.Empty,
-                    Color = propertiesNode["Color"]?.ToString() ?? string.Empty,
-                    Level = root["Level"]?.ToString() ?? string.Empty,
-                    Message = propertiesNode["RenderedMessage"]?.ToString() ?? string.Empty,
 
                 };
 
@@ -429,12 +423,6 @@ namespace WinFormApp.Forms
 
                 _ = _dataTableLog.Rows.Add(
 
-                 logEntry.Order,
-                 logEntry.Worksheet,
-                 logEntry.Reference,
-                 logEntry.Color,
-                 logEntry.Level,
-                 logEntry.Message
                 );
             }
             catch (Exception ex)

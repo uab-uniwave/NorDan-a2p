@@ -1,11 +1,11 @@
 ﻿{
  "profiles": {
  "a2p.WinForm": {
-  "commandName": "Project",
-  "workingDirectory": "$(SolutionDir)",
-  "environmentVariables": {
-  "DOTNET_ENVIRONMENT": "Development"
-  }
+ "commandName": "Project",
+ "workingDirectory": "$(SolutionDir)",
+ "environmentVariables": {
+ "DOTNET_ENVIRONMENT": "Development"
+ }
  }
  }
 }

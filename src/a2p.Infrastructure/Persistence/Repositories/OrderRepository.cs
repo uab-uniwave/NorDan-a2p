@@ -32,44 +32,44 @@ namespace Infrastructure.Persistence.Repositories
             List<ItemEntity> resultItems = new();
             List<MaterialEntity> resultMeterials = new();
             const string sql = @"INSERT INTO Uniwave_a2p_Orders 
-            ([Id]
-           ,[OrderNumber]
-           ,[ProjectNumber]
-           ,[SalesDocumentNumber]
-           ,[SalesDocumentVersion]
-           ,[OrderDate]
-           ,[CustomerTitle]
-           ,[CustomerNumber]
-           ,[DeliveryAddress]
-           ,[CorrectionAvailableUntil]
-           ,[ResponsibleManager]
-           ,[Currency]
-           ,[ExchangeRate]
-           ,[ExchangeRateDate]
-           ,[CreatedUTCDateTime]
-           ,[ModifiedUTCDateTime]
-           ,[CreatedBy]
-           ,[ModifiedBy])
-            OUTPUT INSERTED.*
-            VALUES 
-            (@Id
-           ,@OrderNumber
-           ,@ProjectNumber
-           ,@SalesDocumentNumber
-           ,@SalesDocumentVersion
-           ,@OrderDate
-           ,@CustomerTitle
-           ,@CustomerNumber
-           ,@DeliveryAddress
-           ,@CorrectionAvailableUntil
-           ,@ResponsibleManager
-           ,@Currency
-           ,@ExchangeRate
-           ,@ExchangeRateDate
-           ,@CreatedUTCDateTime
-           ,@ModifiedUTCDateTime
-           ,@CreatedBy
-           ,@ModifiedBy)";
+ ([Id]
+ ,[OrderNumber]
+ ,[ProjectNumber]
+ ,[SalesDocumentNumber]
+ ,[SalesDocumentVersion]
+ ,[OrderDate]
+ ,[CustomerTitle]
+ ,[CustomerNumber]
+ ,[DeliveryAddress]
+ ,[CorrectionAvailableUntil]
+ ,[ResponsibleManager]
+ ,[Currency]
+ ,[ExchangeRate]
+ ,[ExchangeRateDate]
+ ,[CreatedUTCDateTime]
+ ,[ModifiedUTCDateTime]
+ ,[CreatedBy]
+ ,[ModifiedBy])
+ OUTPUT INSERTED.*
+ VALUES 
+ (@Id
+ ,@OrderNumber
+ ,@ProjectNumber
+ ,@SalesDocumentNumber
+ ,@SalesDocumentVersion
+ ,@OrderDate
+ ,@CustomerTitle
+ ,@CustomerNumber
+ ,@DeliveryAddress
+ ,@CorrectionAvailableUntil
+ ,@ResponsibleManager
+ ,@Currency
+ ,@ExchangeRate
+ ,@ExchangeRateDate
+ ,@CreatedUTCDateTime
+ ,@ModifiedUTCDateTime
+ ,@CreatedBy
+ ,@ModifiedBy)";
 
             foreach (ItemEntity item in order.Items)
             {
@@ -115,7 +115,6 @@ namespace Infrastructure.Persistence.Repositories
                 order.Items = items.ToList();
             }
 
-            
             return order;
         }
 
@@ -123,10 +122,10 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<(IEnumerable<OrderEntity> Orders, int TotalCount)> GetOrdersAsync(int page, int size)
         {
             const string sql = @"
-                SELECT * FROM Uniwave_a2p_Orders
-                ORDER BY OrderNumber DESC, SortOrder 
-                OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
-                SELECT COUNT(*) FROM Uniwave_a2p_Order;";
+ SELECT * FROM Uniwave_a2p_Orders
+ ORDER BY OrderNumber DESC, SortOrder 
+ OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
+ SELECT COUNT(*) FROM Uniwave_a2p_Order;";
 
             SqlMapper.GridReader multi = await _dapper.QueryMultipleAsync(sql, new { Offset = (page - 1) * size, PageSize = size });
             IEnumerable<OrderEntity> orders = await multi.ReadAsync<OrderEntity>();
@@ -137,47 +136,47 @@ namespace Infrastructure.Persistence.Repositories
         // UPDATE ALL ORDER DETAILS
         public async Task<int> UpdateOrderAsync(OrderEntity order)
         {
-                        List<ItemEntity> resultItems = new();
+            List<ItemEntity> resultItems = new();
             List<MaterialEntity> resultMeterials = new();
             const string sql = @"INSERT INTO Uniwave_a2p_Orders 
-            ([Id]
-           , [OrderNumber]
-           , [ProjectNumber]
-           , [SalesDocumentNumber]
-           , [SalesDocumentVersion]
-           , [OrderDate]
-           , [CustomerTitle]
-           , [CustomerNumber]
-           , [DeliveryAddress]
-           , [CorrectionAvailableUntil]
-           , [ResponsibleManager]
-           , [Currency]
-           , [ExchangeRate]
-           , [ExchangeRateDate]
-           , [CreatedUTCDateTime]
-           , [ModifiedUTCDateTime]
-           , [CreatedBy]
-           , [ModifiedBy])
-            OUTPUT UNSERTED.*
-            VALUES
-            (@Id
-            ,@OrderNumber
-           , @ProjectNumber
-           , @SalesDocumentNumber
-           , @SalesDocumentVersion
-           , @OrderDate
-           , @CustomerTitle
-           , @CustomerNumber
-           , @DeliveryAddress
-           , @CorrectionAvailableUntil
-           , @ResponsibleManager
-           , @Currency
-           , @ExchangeRate
-           , @ExchangeRateDate
-           , @CreatedUTCDateTime
-           , @ModifiedUTCDateTime
-           , @CreatedBy
-           , @ModifiedBy)";
+ ([Id]
+ , [OrderNumber]
+ , [ProjectNumber]
+ , [SalesDocumentNumber]
+ , [SalesDocumentVersion]
+ , [OrderDate]
+ , [CustomerTitle]
+ , [CustomerNumber]
+ , [DeliveryAddress]
+ , [CorrectionAvailableUntil]
+ , [ResponsibleManager]
+ , [Currency]
+ , [ExchangeRate]
+ , [ExchangeRateDate]
+ , [CreatedUTCDateTime]
+ , [ModifiedUTCDateTime]
+ , [CreatedBy]
+ , [ModifiedBy])
+ OUTPUT UNSERTED.*
+ VALUES
+ (@Id
+ ,@OrderNumber
+ , @ProjectNumber
+ , @SalesDocumentNumber
+ , @SalesDocumentVersion
+ , @OrderDate
+ , @CustomerTitle
+ , @CustomerNumber
+ , @DeliveryAddress
+ , @CorrectionAvailableUntil
+ , @ResponsibleManager
+ , @Currency
+ , @ExchangeRate
+ , @ExchangeRateDate
+ , @CreatedUTCDateTime
+ , @ModifiedUTCDateTime
+ , @CreatedBy
+ , @ModifiedBy)";
 
             foreach (ItemEntity item in order.Items)
             {

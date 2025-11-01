@@ -75,7 +75,7 @@ namespace Infrastructure.Services.ExcelServices
                         if (row == null)
                         {
                             _logger.LogWarning("$Class}.{$Method}. Error parsing TechDesign items worksheet. Rows are missing. Order: {$Order},\nWorksheet: {$Worksheet}",
-                                nameof(ExcelParserTechDesign), nameof(ParseItemsAsync), orderDto.OrderNumber, worksheet.Name);
+                            nameof(ExcelParserTechDesign), nameof(ParseItemsAsync), orderDto.OrderNumber, worksheet.Name);
                             continue;
                         }
 
@@ -83,7 +83,7 @@ namespace Infrastructure.Services.ExcelServices
                         if (row.Count < requiredColumns)
                         {
                             _logger.LogError("{$Class}.{$Method}. Error parsing TechDesign items worksheet row! Column count less then expected!\nOrder: {$Order},\nWorksheet: {$Worksheet},\nLine: {$Line},\nColumns: {$Columns},\nRequired Columns: {$RequiredColumns}",
-                                nameof(ExcelParserTechDesign), nameof(ParseItemsAsync), orderDto.OrderNumber, worksheet.Name, line, row.Count, requiredColumns);
+                            nameof(ExcelParserTechDesign), nameof(ParseItemsAsync), orderDto.OrderNumber, worksheet.Name, line, row.Count, requiredColumns);
 
                             continue;
                         }
@@ -110,7 +110,7 @@ namespace Infrastructure.Services.ExcelServices
                         if (string.IsNullOrEmpty(itemDto.ItemName))
                         {
                             _logger.LogDebug(@"{$Class}.{$Method}.Error parsing items worksheet. ItemName name is missing.\nOrder; {$Order},\nWorksheet: {$Worksheet},\nLine {$Line}.",
-                          nameof(ExcelParserTechDesign), nameof(ParseItemsAsync), orderDto.Id, itemDto.Worksheet, line);
+                            nameof(ExcelParserTechDesign), nameof(ParseItemsAsync), orderDto.Id, itemDto.Worksheet, line);
                             continue;
                         }
 
@@ -151,7 +151,7 @@ namespace Infrastructure.Services.ExcelServices
                     catch (Exception ex)
                     {
                         _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign items worksheet row. \nOrder {$Order},\nWorksheet: {$Worksheet},\nLine: {$Line},\nExecption: {$Exception}",
-                            nameof(ExcelParserTechDesign), nameof(ParseProfilesAsync), orderDto.OrderNumber, worksheet.Name, line, ex.Message);
+                        nameof(ExcelParserTechDesign), nameof(ParseProfilesAsync), orderDto.OrderNumber, worksheet.Name, line, ex.Message);
                         continue;
 
                     }
@@ -165,7 +165,7 @@ namespace Infrastructure.Services.ExcelServices
             catch (Exception ex)
             {
                 _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign profiles worksheet!\nOrder: {$Order},\nWorksheet: {$Worksheet}.\n{$Exception}",
-               nameof(ExcelParserTechDesign), nameof(ParseProfilesAsync), worksheet.Name, worksheet.Name, ex.Message);
+                nameof(ExcelParserTechDesign), nameof(ParseProfilesAsync), worksheet.Name, worksheet.Name, ex.Message);
                 return itemsDto;
             }
         }
@@ -174,8 +174,8 @@ namespace Infrastructure.Services.ExcelServices
             List<MaterialDto> materialsDto = [];
             if (string.IsNullOrEmpty(worksheet.Name) || string.IsNullOrEmpty(orderDto.OrderNumber))
             {
-                _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign materials  worksheet. Worksheet name or order number are missing. \nOrder {$Order},\nWorksheet: {$Worksheet}",
-                             nameof(ExcelParserTechDesign), nameof(ParseProfilesAsync), orderDto.OrderNumber, worksheet.Name);
+                _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign materials worksheet. Worksheet name or order number are missing. \nOrder {$Order},\nWorksheet: {$Worksheet}",
+                 nameof(ExcelParserTechDesign), nameof(ParseProfilesAsync), orderDto.OrderNumber, worksheet.Name);
                 return [];
             }
             _progressValue = progressValue ?? new ProgressValue();
@@ -230,7 +230,7 @@ namespace Infrastructure.Services.ExcelServices
             catch (Exception ex)
             {
                 _logger.LogError(@"{$Class}.{Method}.Unhandled error parsing TechDesign materials worksheet!\nOrder: {$Order},\nWorksheet: {$Worksheet},\nException: {$Exception} ",
-                    nameof(ExcelParserTechDesign), nameof(ParseMaterialsAsync), orderDto.OrderNumber, worksheet.Name, ex.Message);
+                 nameof(ExcelParserTechDesign), nameof(ParseMaterialsAsync), orderDto.OrderNumber, worksheet.Name, ex.Message);
                 return materialsDto;
             }
         }
@@ -244,7 +244,7 @@ namespace Infrastructure.Services.ExcelServices
             if (string.IsNullOrEmpty(worksheet.Name) || string.IsNullOrEmpty(orderDto.OrderNumber))
             {
                 _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign profiles worksheet. Worksheet name or order number are missing. \nOrder {$Order},\nWorksheet: {$Worksheet}",
-                             nameof(ExcelParserTechDesign), nameof(ParseProfilesAsync), orderDto.OrderNumber, worksheet.Name);
+                 nameof(ExcelParserTechDesign), nameof(ParseProfilesAsync), orderDto.OrderNumber, worksheet.Name);
                 return [];
             }
             try
@@ -274,7 +274,7 @@ namespace Infrastructure.Services.ExcelServices
                         if (string.IsNullOrEmpty(result))
                         {
                             _logger.LogError(@"{$Class}.{$Method}. Error parsing TechDesign profile reference.\nOrder: {$Order},\nWorksheet: {$Worksheet},\nLine: {$Line}",
-                                nameof(ExcelParserTechDesign), nameof(ParseProfilesAsync), orderDto.OrderNumber, worksheet.Name, line);
+                            nameof(ExcelParserTechDesign), nameof(ParseProfilesAsync), orderDto.OrderNumber, worksheet.Name, line);
                             continue;
                         }
                         materialDto.Reference = result;
@@ -307,9 +307,9 @@ namespace Infrastructure.Services.ExcelServices
 
                         //==================================================================================================================================================================================================
                         materialDto.Waste = materialDto.RequiredWeight != 0
-                            ? worksheet.WorksheetData[i][9] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][9].ToString(), out decimal lostWeight) ? lostWeight : 0 / materialDto.RequiredWeight * 100
-                            : 0;
-                        //==================================================================================================================================================================================================                                                         
+                        ? worksheet.WorksheetData[i][9] == null ? 0 : decimal.TryParse(worksheet.WorksheetData[i][9].ToString(), out decimal lostWeight) ? lostWeight : 0 / materialDto.RequiredWeight * 100
+                        : 0;
+                        //==================================================================================================================================================================================================    
                         materialDto.Price = decimal.TryParse(worksheet.WorksheetData[i][12].ToString(), out decimal price) ? price : 0;
                         materialDto.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][13].ToString(), out decimal totalPrice) ? totalPrice : 0;
                         materialDto.RequiredPrice = Math.Round(materialDto.Price * (decimal)materialDto.RequiredQuantity, 6);
@@ -336,7 +336,7 @@ namespace Infrastructure.Services.ExcelServices
                     catch (Exception ex)
                     {
                         _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign profiles worksheet row. \nOrder {$Order},\nWorksheet: {$Worksheet},\nLine: {$Line},\nExecption: {$Exception}",
-                            nameof(ExcelParserTechDesign), nameof(ParseProfilesAsync), orderDto.OrderNumber, worksheet.Name, line, ex.Message);
+                        nameof(ExcelParserTechDesign), nameof(ParseProfilesAsync), orderDto.OrderNumber, worksheet.Name, line, ex.Message);
                         continue;
 
                     }
@@ -350,7 +350,7 @@ namespace Infrastructure.Services.ExcelServices
             catch (Exception ex)
             {
                 _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign profiles worksheet!\nOrder: {$Order},\nWorksheet: {$Worksheet}.\n{$Exception}",
-               nameof(ExcelParserTechDesign), nameof(ParseProfilesAsync), worksheet.Name, worksheet.Name, ex.Message);
+                nameof(ExcelParserTechDesign), nameof(ParseProfilesAsync), worksheet.Name, worksheet.Name, ex.Message);
                 return materialsDto;
             }
         }
@@ -364,7 +364,7 @@ namespace Infrastructure.Services.ExcelServices
             if (string.IsNullOrEmpty(worksheet.Name) || string.IsNullOrEmpty(orderDto.OrderNumber))
             {
                 _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign gaskets worksheet. Worksheet name or order number are missing. \nOrder {$Order},\nWorksheet: {$Worksheet}",
-                             nameof(ExcelParserTechDesign), nameof(ParseGasketsAsync), orderDto.OrderNumber, worksheet.Name);
+                 nameof(ExcelParserTechDesign), nameof(ParseGasketsAsync), orderDto.OrderNumber, worksheet.Name);
                 return [];
             }
 
@@ -400,7 +400,7 @@ namespace Infrastructure.Services.ExcelServices
                         if (string.IsNullOrEmpty(materialDto.SourceReference) && string.IsNullOrEmpty(materialDto.SourceColor))
                         {
                             _logger.LogError(@"{$Class}.{$Method}. Error parsing TechDesign gasket reference. Source reference and source color are missing. Order: {$Order},n\Worksheet: {$Worksheet},\nLine: {$Line},\nDescription: {$Description}",
-                                nameof(ExcelParserTechDesign), nameof(ParseGasketsAsync), orderDto.OrderNumber, worksheet.Name, line, materialDto.SourceDescription);
+                            nameof(ExcelParserTechDesign), nameof(ParseGasketsAsync), orderDto.OrderNumber, worksheet.Name, line, materialDto.SourceDescription);
                             continue;
                         }
 
@@ -412,7 +412,7 @@ namespace Infrastructure.Services.ExcelServices
                             if (string.IsNullOrEmpty(result))
                             {
                                 _logger.LogError(@"{$Class}.{$Method}. Error parsing TechDesign gasket reference. Order: {$Order},n\Worksheet: {$Worksheet},\nLine: {$Line},\nDescription: {$Description}",
-                                    nameof(ExcelParserTechDesign), nameof(ParseGasketsAsync), orderDto.OrderNumber, worksheet.Name, line, materialDto.SourceDescription);
+                                 nameof(ExcelParserTechDesign), nameof(ParseGasketsAsync), orderDto.OrderNumber, worksheet.Name, line, materialDto.SourceDescription);
                                 continue;
                             }
 
@@ -458,7 +458,7 @@ namespace Infrastructure.Services.ExcelServices
                             }
                         }
 
-                        //=================================================================================================                                
+                        //=================================================================================================  
                         materialDto.Price = decimal.TryParse(worksheet.WorksheetData[i][10].ToString(), out decimal price) ? price : 0;
                         materialDto.TotalPrice = decimal.TryParse(worksheet.WorksheetData[i][11].ToString(), out decimal totalPrice) ? totalPrice : 0;
                         materialDto.RequiredPrice = Math.Round(materialDto.Price * (decimal)materialDto.RequiredQuantity, 6);
@@ -498,7 +498,7 @@ namespace Infrastructure.Services.ExcelServices
                     catch (Exception ex)
                     {
                         _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign gaskets worksheet row. \nOrder {$Order},\nWorksheet: {$Worksheet},\nLine: {$Line},\nExecption: {$Exception}",
-                            nameof(ExcelParserTechDesign), nameof(ParseGasketsAsync), orderDto.OrderNumber, worksheet.Name, line, ex.Message);
+                        nameof(ExcelParserTechDesign), nameof(ParseGasketsAsync), orderDto.OrderNumber, worksheet.Name, line, ex.Message);
                         continue;
                     }
 
@@ -510,7 +510,7 @@ namespace Infrastructure.Services.ExcelServices
             catch (Exception ex)
             {
                 _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign gaskets worksheet!\nOrder: {$Order},\nWorksheet: {$Worksheet}.\n{$Exception}",
-               nameof(ExcelParserTechDesign), nameof(ParseGasketsAsync), worksheet.Name, worksheet.Name, ex.Message);
+                nameof(ExcelParserTechDesign), nameof(ParseGasketsAsync), worksheet.Name, worksheet.Name, ex.Message);
                 return materialsDto;
             }
         }
@@ -524,7 +524,7 @@ namespace Infrastructure.Services.ExcelServices
             if (string.IsNullOrEmpty(worksheet.Name) || string.IsNullOrEmpty(orderDto.OrderNumber))
             {
                 _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign accessories worksheet. Worksheet name or order number are missing. \nOrder {$Order},\nWorksheet: {$Worksheet}",
-                             nameof(ExcelParserTechDesign), nameof(ParseAccessoriesAsync), orderDto.OrderNumber, worksheet.Name);
+                 nameof(ExcelParserTechDesign), nameof(ParseAccessoriesAsync), orderDto.OrderNumber, worksheet.Name);
                 return [];
             }
 
@@ -567,7 +567,7 @@ namespace Infrastructure.Services.ExcelServices
                                 if (string.IsNullOrEmpty(result))
                                 {
                                     _logger.LogError(@"{$Class}.{$Method}. Error parsing TechDesign accessory reference.\nOrder: {$Order},\nWorksheet: {$Worksheet},\nLine: {$Line}",
-                                        nameof(ExcelParserTechDesign), nameof(ParseAccessoriesAsync), orderDto.OrderNumber, worksheet.Name, line);
+                                    nameof(ExcelParserTechDesign), nameof(ParseAccessoriesAsync), orderDto.OrderNumber, worksheet.Name, line);
                                     continue;
 
                                 }
@@ -583,7 +583,7 @@ namespace Infrastructure.Services.ExcelServices
                                     if (string.IsNullOrEmpty(result))
                                     {
                                         _logger.LogError(@"{$Class}.{$Method}. Error parsing TechDesign accessory reference.\nOrder: {$Order},\nWorksheet: {$Worksheet},\nLine: {$Line}",
-                                            nameof(ExcelParserTechDesign), nameof(ParseAccessoriesAsync), orderDto.OrderNumber, worksheet.Name, line);
+                                        nameof(ExcelParserTechDesign), nameof(ParseAccessoriesAsync), orderDto.OrderNumber, worksheet.Name, line);
                                         continue;
                                     }
 
@@ -634,7 +634,7 @@ namespace Infrastructure.Services.ExcelServices
                     {
 
                         _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign accessories worksheet row. \nOrder {$Order},\nWorksheet: {$Worksheet},\nLine: {$Line},\nExecption: {$Exception}",
-                            nameof(ExcelParserTechDesign), nameof(ParseAccessoriesAsync), orderDto.OrderNumber, worksheet.Name, line, ex.Message);
+                        nameof(ExcelParserTechDesign), nameof(ParseAccessoriesAsync), orderDto.OrderNumber, worksheet.Name, line, ex.Message);
 
                         continue;
 
@@ -649,7 +649,7 @@ namespace Infrastructure.Services.ExcelServices
             catch (Exception ex)
             {
                 _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign accessories worksheet!\nOrder: {$Order},\nWorksheet: {$Worksheet}.\n{$Exception}",
-               nameof(ExcelParserTechDesign), nameof(ParseAccessoriesAsync), worksheet.Name, worksheet.Name, ex.Message);
+                nameof(ExcelParserTechDesign), nameof(ParseAccessoriesAsync), worksheet.Name, worksheet.Name, ex.Message);
                 return materialsDto;
             }
         }
@@ -664,7 +664,7 @@ namespace Infrastructure.Services.ExcelServices
             if (string.IsNullOrEmpty(worksheet.Name) || string.IsNullOrEmpty(orderDto.OrderNumber))
             {
                 _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign panel worksheet. Worksheet name or order number are missing. \nOrder {$Order},\nWorksheet: {$Worksheet}",
-                             nameof(ExcelParserTechDesign), nameof(ParsePanelsAsync), orderDto.OrderNumber, worksheet.Name);
+                 nameof(ExcelParserTechDesign), nameof(ParsePanelsAsync), orderDto.OrderNumber, worksheet.Name);
                 return materialsDto;
             }
 
@@ -705,18 +705,18 @@ namespace Infrastructure.Services.ExcelServices
                         }
                         materialDto.SortOrder = sortOrder;
 
-                        //==================================================================================================================================================================================================                          
+                        //==================================================================================================================================================================================================  
                         materialDto.Description = worksheet.WorksheetData[i][4].ToString() ?? string.Empty;
                         string pattern = @"\(XPS\)\s+\d{1,2}mm$";
                         Match match = Regex.Match(materialDto.Description, pattern);
 
                         materialDto.ReferenceBase = match.Success
-                            ? $"LOB_XPS{match.Groups[0].Value.Replace("(XPS)", "").Replace("mm", "").Trim()}"
-                            : string.Empty;
+                        ? $"LOB_XPS{match.Groups[0].Value.Replace("(XPS)", "").Replace("mm", "").Trim()}"
+                        : string.Empty;
 
                         materialDto.Reference = match.Success
-                            ? $"LOB_XPS{match.Groups[0].Value.Replace("(XPS)", "").Replace("mm", "").Trim()}"
-                            : string.Empty;
+                        ? $"LOB_XPS{match.Groups[0].Value.Replace("(XPS)", "").Replace("mm", "").Trim()}"
+                        : string.Empty;
 
                         materialDto.Color = match.Success ?
                         $"LOB_Surface" : string.Empty;
@@ -733,7 +733,7 @@ namespace Infrastructure.Services.ExcelServices
                                 if (string.IsNullOrEmpty(result))
                                 {
                                     _logger.LogError("@{$Class}.{$Method}. Error parsing TechDesign panel reference!\nOrder {$Order},\nWorksheet: {$Worksheet},\nLine: {$Line}.",
-                                      nameof(ExcelParserTechDesign), nameof(ParsePanelsAsync), orderDto.OrderNumber, worksheet.Name, line);
+                                    nameof(ExcelParserTechDesign), nameof(ParsePanelsAsync), orderDto.OrderNumber, worksheet.Name, line);
                                 }
 
                                 materialDto.Reference = result;
@@ -747,7 +747,7 @@ namespace Infrastructure.Services.ExcelServices
                                 if (string.IsNullOrEmpty(result))
                                 {
                                     _logger.LogError("@{$Class}.{$Method}. TechDesign reference parsing failed!\nOrder {$Order},\nWorksheet: {$Worksheet},\nLine: {$Line}.",
-                                       nameof(ExcelParserTechDesign), nameof(ParsePanelsAsync), orderDto.OrderNumber, worksheet.Name, line);
+                                    nameof(ExcelParserTechDesign), nameof(ParsePanelsAsync), orderDto.OrderNumber, worksheet.Name, line);
                                 }
                                 materialDto.Reference = result;
                                 materialDto.ReferenceBase = "AluSheet1.25";
@@ -760,7 +760,7 @@ namespace Infrastructure.Services.ExcelServices
                                 if (string.IsNullOrEmpty(result))
                                 {
                                     _logger.LogError(@"{$Class}.{$Method}. TechDesign reference parsing failed!\nOrder {$Order},\nWorksheet: {$Worksheet},\nLine: {$Line}.",
-                                   nameof(ExcelParserTechDesign), nameof(ParsePanelsAsync), orderDto.OrderNumber, worksheet.Name, line);
+                                    nameof(ExcelParserTechDesign), nameof(ParsePanelsAsync), orderDto.OrderNumber, worksheet.Name, line);
                                 }
 
                                 materialDto.Reference = result;
@@ -775,7 +775,7 @@ namespace Infrastructure.Services.ExcelServices
                                 {
 
                                     _logger.LogError(@"{$Class}.{$Method}. TechDesign article parsing failed.\nOrder {$Order},\nWorksheet: {$Worksheet},\nLine: {$Line}",
-                                        nameof(ExcelParserTechDesign), nameof(ParsePanelsAsync), orderDto.OrderNumber, worksheet.Name, line);
+                                    nameof(ExcelParserTechDesign), nameof(ParsePanelsAsync), orderDto.OrderNumber, worksheet.Name, line);
                                 }
 
                                 materialDto.Reference = result;
@@ -785,7 +785,7 @@ namespace Infrastructure.Services.ExcelServices
                         }
                         //==================================================================================================================================================================================================
 
-                        materialDto.ColorDescription = worksheet.WorksheetData[i][3].ToString() ?? string.Empty;  // not used
+                        materialDto.ColorDescription = worksheet.WorksheetData[i][3].ToString() ?? string.Empty; // not used
 
                         //==================================================================================================================================================================================================
                         materialDto.Width = decimal.TryParse(worksheet.WorksheetData[i][6].ToString(), out decimal width) ? width : 0;
@@ -852,7 +852,7 @@ namespace Infrastructure.Services.ExcelServices
                     {
 
                         _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign panels worksheet row. \nOrder {$Order},\nWorksheet: {$Worksheet},\nLine: {$Line},\nExecption: {$Exception}",
-                            nameof(ExcelParserTechDesign), nameof(ParsePanelsAsync), orderDto.OrderNumber, worksheet.Name, line, ex.Message);
+                        nameof(ExcelParserTechDesign), nameof(ParsePanelsAsync), orderDto.OrderNumber, worksheet.Name, line, ex.Message);
 
                         continue;
 
@@ -867,7 +867,7 @@ namespace Infrastructure.Services.ExcelServices
             catch (Exception ex)
             {
                 _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign panels worksheet!\nOrder: {$Order},\nWorksheet: {$Worksheet}.\n{$Exception}",
-               nameof(ExcelParserTechDesign), nameof(ParsePanelsAsync), worksheet.Name, worksheet.Name, ex.Message);
+                nameof(ExcelParserTechDesign), nameof(ParsePanelsAsync), worksheet.Name, worksheet.Name, ex.Message);
                 return materialsDto;
             }
 
@@ -881,7 +881,7 @@ namespace Infrastructure.Services.ExcelServices
             if (string.IsNullOrEmpty(worksheet.Name) || string.IsNullOrEmpty(orderDto.OrderNumber))
             {
                 _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign glass worksheet. Worksheet name or order number are missing. \nOrder {$Order},\nWorksheet: {$Worksheet}",
-                             nameof(ExcelParserTechDesign), nameof(ParseGlassesAsync), orderDto.OrderNumber, worksheet.Name);
+                 nameof(ExcelParserTechDesign), nameof(ParseGlassesAsync), orderDto.OrderNumber, worksheet.Name);
                 return materialsDto;
             }
 
@@ -921,7 +921,7 @@ namespace Infrastructure.Services.ExcelServices
                         if (string.IsNullOrEmpty(materialDto.Description))
                         {
                             _logger.LogError("@{$Class}.{$Method}. Error parsing TechDesign glass! Glass source description is missing!\nOrder {$Order},\nWorksheet: {$Worksheet},\nLine: {$Line},\nSapa Reference: {$Reference}.",
-                           nameof(ExcelParserTechDesign), nameof(ParseGlassesAsync), orderDto.OrderNumber, worksheet.Name, line, materialDto.SourceReference);
+                            nameof(ExcelParserTechDesign), nameof(ParseGlassesAsync), orderDto.OrderNumber, worksheet.Name, line, materialDto.SourceReference);
                             continue;
                         }
                         //==================================================================================================================================================================================================
@@ -935,7 +935,7 @@ namespace Infrastructure.Services.ExcelServices
                         if (string.IsNullOrEmpty(resultGlassReference))
                         {
                             _logger.LogError(@"{$Class}.{$Method}.Error finding glass in PrefSuite DB. \nOrder {$Order},\nWorksheet: {$Worksheet},\nLine: {$Line},\nReference: {$Reference},\nDescription: {$Description},\nExpected Reference: {$ExpectedReference}.",
-                                nameof(ExcelParserTechDesign), nameof(ParseGlassesAsync), orderDto.OrderNumber, worksheet.Name, line, materialDto.SourceReference, materialDto.SourceDescription, resultPredicted);
+                            nameof(ExcelParserTechDesign), nameof(ParseGlassesAsync), orderDto.OrderNumber, worksheet.Name, line, materialDto.SourceReference, materialDto.SourceDescription, resultPredicted);
                             continue;
                         }
                         materialDto.ReferenceBase = resultGlassReference;
@@ -981,7 +981,7 @@ namespace Infrastructure.Services.ExcelServices
                     {
 
                         _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign glass worksheet row. \nOrder {$Order},\nWorksheet: {$Worksheet},\nLine: {$Line},\nExecption: {$Exception}",
-                            nameof(ExcelParserTechDesign), nameof(ParseGlassesAsync), orderDto.OrderNumber, worksheet.Name, line, ex.Message);
+                        nameof(ExcelParserTechDesign), nameof(ParseGlassesAsync), orderDto.OrderNumber, worksheet.Name, line, ex.Message);
 
                         continue;
 
@@ -995,8 +995,8 @@ namespace Infrastructure.Services.ExcelServices
             }
             catch (Exception ex)
             {
-                _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign glass  worksheet!\nOrder: {$Order},\nWorksheet: {$Worksheet}.\n{$Exception}",
-               nameof(ExcelParserTechDesign), nameof(ParseGlassesAsync), worksheet.Name, worksheet.Name, ex.Message);
+                _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign glass worksheet!\nOrder: {$Order},\nWorksheet: {$Worksheet}.\n{$Exception}",
+                nameof(ExcelParserTechDesign), nameof(ParseGlassesAsync), worksheet.Name, worksheet.Name, ex.Message);
                 return materialsDto;
             }
 
@@ -1011,7 +1011,7 @@ namespace Infrastructure.Services.ExcelServices
             if (string.IsNullOrEmpty(worksheet.Name) || string.IsNullOrEmpty(orderDto.OrderNumber))
             {
                 _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign other materials worksheet. Worksheet name or order number are missing. \nOrder {$Order},\nWorksheet: {$Worksheet}",
-                             nameof(ExcelParserTechDesign), nameof(ParseGlassesAsync), orderDto.OrderNumber, worksheet.Name);
+                 nameof(ExcelParserTechDesign), nameof(ParseGlassesAsync), orderDto.OrderNumber, worksheet.Name);
                 return materialsDto;
             }
 
@@ -1054,7 +1054,7 @@ namespace Infrastructure.Services.ExcelServices
                             if (string.IsNullOrEmpty(result))
                             {
                                 _logger.LogError(@"{$Class}.{$Method}. TechDesign article parsing failed.\nOrder {$Order},\nWorksheet: {$Worksheet},\nLine: {$Line}",
-                                          nameof(ExcelParserTechDesign), nameof(ParsePanelsAsync), orderDto.OrderNumber, worksheet.Name, line);
+                                 nameof(ExcelParserTechDesign), nameof(ParsePanelsAsync), orderDto.OrderNumber, worksheet.Name, line);
 
                                 continue;
 
@@ -1095,7 +1095,7 @@ namespace Infrastructure.Services.ExcelServices
                             //==================================================================================================================================================================================================
                             materialDto.MaterialType = MaterialType.Piece;
                             //==================================================================================================================================================================================================
-                            _progressValue.ProgressTask3 = $"Other materialsDto {sortOrder} of {worksheet.RowCount - 5} -  {materialDto.ReferenceBase}_{materialDto.Color}";
+                            _progressValue.ProgressTask3 = $"Other materialsDto {sortOrder} of {worksheet.RowCount - 5} - {materialDto.ReferenceBase}_{materialDto.Color}";
                             _progress?.Report(_progressValue);
 
                             materialsDto.Add(materialDto);
@@ -1106,7 +1106,7 @@ namespace Infrastructure.Services.ExcelServices
                     {
 
                         _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign other materialsDto worksheet row. \nOrder {$Order},\nWorksheet: {$Worksheet},\nLine: {$Line},\nExecption: {$Exception}",
-                            nameof(ExcelParserTechDesign), nameof(ParseGlassesAsync), orderDto.OrderNumber, worksheet.Name, line, ex.Message);
+                        nameof(ExcelParserTechDesign), nameof(ParseGlassesAsync), orderDto.OrderNumber, worksheet.Name, line, ex.Message);
 
                         continue;
 
@@ -1120,8 +1120,8 @@ namespace Infrastructure.Services.ExcelServices
             }
             catch (Exception ex)
             {
-                _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign other materialsDto  worksheet!\nOrder: {$Order},\nWorksheet: {$Worksheet}.\n{$Exception}",
-               nameof(ExcelParserTechDesign), nameof(ParseOthersAsync), worksheet.Name, worksheet.Name, ex.Message);
+                _logger.LogError(@"{$Class}.{$Method}. Unhandled error parsing TechDesign other materialsDto worksheet!\nOrder: {$Order},\nWorksheet: {$Worksheet}.\n{$Exception}",
+                nameof(ExcelParserTechDesign), nameof(ParseOthersAsync), worksheet.Name, worksheet.Name, ex.Message);
                 return materialsDto;
             }
 
@@ -1148,18 +1148,18 @@ namespace Infrastructure.Services.ExcelServices
         // Safe row-to-string helper for logging
         private static string GetRowDataSafe(List<List<object>> sheet, int rowIdx)
         {
-            if (sheet == null)
-            {
-                return string.Empty;
-            }
+        if (sheet == null)
+        {
+        return string.Empty;
+        }
 
-            if (rowIdx < 0 || rowIdx >= sheet.Count)
-            {
-                return string.Empty;
-            }
+        if (rowIdx < 0 || rowIdx >= sheet.Count)
+        {
+        return string.Empty;
+        }
 
-            List<object> row = sheet[rowIdx];
-            return row == null ? string.Empty : string.Join(",", row.Select(o => o?.ToString() ?? string.Empty));
+        List<object> row = sheet[rowIdx];
+        return row == null ? string.Empty : string.Join(",", row.Select(o => o?.ToString() ?? string.Empty));
         }
 
         */
@@ -1205,14 +1205,14 @@ namespace Infrastructure.Services.ExcelServices
             catch (Exception ex)
             {
                 _logger.LogError("Unhandled error {$Class}.{Method}." +
-                    "\nGlass description: {$GlassDescription}." +
-                    "\nGlass predicted reference:  {$PredictedReference}." +
-                    "\nException {$Exception}",
-               nameof(ExcelParserTechDesign),
-                    nameof(GetGlassPredictedReferenceAsync),
-                    description ?? string.Empty,
-                    tempString ?? string.Empty,
-                    ex.Message);
+                 "\nGlass description: {$GlassDescription}." +
+                 "\nGlass predicted reference: {$PredictedReference}." +
+                 "\nException {$Exception}",
+                nameof(ExcelParserTechDesign),
+                 nameof(GetGlassPredictedReferenceAsync),
+                 description ?? string.Empty,
+                 tempString ?? string.Empty,
+                 ex.Message);
 
                 return tempString;
             }
@@ -1231,12 +1231,12 @@ namespace Infrastructure.Services.ExcelServices
             catch (Exception ex)
             {
                 _logger.LogError("Unhandled error {$Class}.{Method}." +
-                    "\nPredicted glass reference: {$PredictedReference}," +
-                    "\nException {$Exception}",
-               nameof(ExcelParserTechDesign),
-                    nameof(GetGlassReferenceAsync),
-                        description ?? string.Empty,
-                    ex.Message);
+                 "\nPredicted glass reference: {$PredictedReference}," +
+                 "\nException {$Exception}",
+                nameof(ExcelParserTechDesign),
+                 nameof(GetGlassReferenceAsync),
+                 description ?? string.Empty,
+                 ex.Message);
 
                 return null;
 
@@ -1324,20 +1324,20 @@ namespace Infrastructure.Services.ExcelServices
                         string newReference = $"*{reference[..24]}";
 
                         _logger.LogError(@"{$Class}.($Method}. Error generating reference.Reference > 25 characters!\nOrder: {$OrderNumber}\nWorksheet: {$Worksheet},\nLine: {$Line},\nReference: {$Reference},
-                                                \nColor: {$Color},\nGenerated PrefSuite Reference: {$PrefSuiteReference}, length:{$PrefSuiteReferenceLength}.
-                                                \nReference inserted into DB Reference {$PrefSuiteTruncatedReference}, length:{$PrefsuiteTrunctaedLength}." +
-                           "\n",
-                             nameof(ExcelParserTechDesign),
-                           nameof(TransformReference),
-                           orderNumber,
-                           worksheet,
-                           line,
-                           initialReference,
-                           initialColor,
-                           reference,
-                           reference.Length,
-                           newReference,
-                           newReference.Length);
+   \nColor: {$Color},\nGenerated PrefSuite Reference: {$PrefSuiteReference}, length:{$PrefSuiteReferenceLength}.
+   \nReference inserted into DB Reference {$PrefSuiteTruncatedReference}, length:{$PrefsuiteTrunctaedLength}." +
+                        "\n",
+                        nameof(ExcelParserTechDesign),
+                        nameof(TransformReference),
+                        orderNumber,
+                        worksheet,
+                        line,
+                        initialReference,
+                        initialColor,
+                        reference,
+                        reference.Length,
+                        newReference,
+                        newReference.Length);
 
                         reference = newReference; // Use the new reference
                         return reference;
@@ -1407,8 +1407,8 @@ namespace Infrastructure.Services.ExcelServices
 
                 string[] complexColor = sourceColor.Split('|');
                 (string, string)? colorParts = (complexColor.Length == 2) ?
-                    (complexColor[0].Trim(), complexColor[1].Trim()) :
-                    (complexColor[0].Trim(), string.Empty);
+                 (complexColor[0].Trim(), complexColor[1].Trim()) :
+                 (complexColor[0].Trim(), string.Empty);
 
                 return colorParts;
             }

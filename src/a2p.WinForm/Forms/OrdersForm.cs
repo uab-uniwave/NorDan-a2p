@@ -30,11 +30,11 @@ namespace WinFormApp.Forms
         private IProgress<ProgressValue>? _progress;
         private ProgressValue _progressValue;
         public OrdersForm(ISettingsService userSettingsService,
-                          ILogger<OrdersForm> logger,
-                          IFileService fileService,
-                          IExcelService excelService,
-                          IReadService readService,
-                          IWriteService writeService)
+         ILogger<OrdersForm> logger,
+         IFileService fileService,
+         IExcelService excelService,
+         IReadService readService,
+         IWriteService writeService)
 
         {
 
@@ -360,7 +360,7 @@ namespace WinFormApp.Forms
                 {
                     BackColor = Color.FromArgb(56, 57, 60),
                     ForeColor = Color.FromArgb(239, 112, 32),
-                    //    SelectionBackColor = Color.FromArgb(239, 112, 32),
+                    // SelectionBackColor = Color.FromArgb(239, 112, 32),
                     SelectionForeColor = Color.WhiteSmoke,
 
                     Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0),
@@ -577,10 +577,10 @@ namespace WinFormApp.Forms
 
                 }
                 if (Convert.ToInt32(dataGridViewFiles.Rows[e.RowIndex].Cells["FatalCount"].Value) +
-                    Convert.ToInt32(dataGridViewFiles.Rows[e.RowIndex].Cells["ErrorCount"].Value) +
+                 Convert.ToInt32(dataGridViewFiles.Rows[e.RowIndex].Cells["ErrorCount"].Value) +
 
-                    Convert.ToInt32(dataGridViewFiles.Rows[e.RowIndex].Cells["WarningCount"].Value) +
-                    Convert.ToInt32(dataGridViewFiles.Rows[e.RowIndex].Cells["WarningCount"].Value) == 0)
+                 Convert.ToInt32(dataGridViewFiles.Rows[e.RowIndex].Cells["WarningCount"].Value) +
+                 Convert.ToInt32(dataGridViewFiles.Rows[e.RowIndex].Cells["WarningCount"].Value) == 0)
                 {
                     e.CellStyle.ForeColor = Color.YellowGreen;
                 }
@@ -700,9 +700,9 @@ namespace WinFormApp.Forms
                 progressBarForm.Load += (sender, args) =>
                 {
                     progressBarForm.Location = new Point(
-                        Location.X + ((Width - progressBarForm.Width) / 2),
-                        Location.Y + ((Height - progressBarForm.Height) / 2)
-                    );
+     Location.X + ((Width - progressBarForm.Width) / 2),
+     Location.Y + ((Height - progressBarForm.Height) / 2)
+     );
                 };
                 Progress<ProgressValue> progress = new(progressBarForm.UpdateProgress);
                 _progress = progress;
@@ -776,7 +776,7 @@ namespace WinFormApp.Forms
         public async Task ImportAsync()
         {
             List<OrderDto> importOrdersDto
-                = [];
+            = [];
 
             try
             {
@@ -799,12 +799,12 @@ namespace WinFormApp.Forms
                                 {
 
                                     DialogResult result
-                                        = MessageBox.Show($"OrderNumber {_orders[j].OrderNumber} contains data!\n" +
-                               "\nYes - Positions and Material Needs will be deleted." +
-                               "\nNo - Positions and Material Needs will kept." +
-                               "\n         Attention!!! Positions and Material Needs could be duplicated!" +
-                               "\nCancel - OrderNumber will not be imported.", "Warning",
-                                                                 MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error);
+                                    = MessageBox.Show($"OrderNumber {_orders[j].OrderNumber} contains data!\n" +
+                                   "\nYes - Positions and Material Needs will be deleted." +
+                                   "\nNo - Positions and Material Needs will kept." +
+                                   "\n Attention!!! Positions and Material Needs could be duplicated!" +
+                                   "\nCancel - OrderNumber will not be imported.", "Warning",
+                                      MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error);
                                     if (result == DialogResult.Yes)
                                     {
                                         _orders[j].DeleteExistsing = true;
@@ -837,7 +837,7 @@ namespace WinFormApp.Forms
 
                 }
 
-                //ProgressBar. Create a new instance of the ProgressBarForm   
+                //ProgressBar. Create a new instance of the ProgressBarForm 
                 //=======================================================================================================
                 using ProgressBarForm progressBarForm = new()
                 {
@@ -846,9 +846,9 @@ namespace WinFormApp.Forms
                 progressBarForm.Load += (sender, args) =>
                 {
                     progressBarForm.Location = new Point(
-                        Location.X + ((Width - progressBarForm.Width) / 2),
-                        Location.Y + ((Height - progressBarForm.Height) / 2)
-                        );
+     Location.X + ((Width - progressBarForm.Width) / 2),
+     Location.Y + ((Height - progressBarForm.Height) / 2)
+     );
                     progressBarForm.progressBar.Style = ProgressBarStyle.Continuous;
                     progressBarForm.progressBar.ForeColor = Color.FromArgb(239, 112, 32);
                 };
@@ -873,21 +873,21 @@ namespace WinFormApp.Forms
                 _progressValue.MaxValue = 100;
                 _progressValue.MinValue = 0;
 
-                //20pts x1   single per import- exceExcelOrderDto Form Preparing Import 
+                //20pts x1 single per import- exceExcelOrderDto Form Preparing Import 
 
-                //30 pts x 1  per OrderNumber - Write Service  Deletig existinfg data
+                //30 pts x 1 per OrderNumber - Write Service Deletig existinfg data
 
-                //100  x1 per OrderNumber - PrefsuiteService  Save Doc
-                //30 pts x 1  per OrderNumber - Write Service  inserting material needa
-                //100  x1 per OrderNumber - PrefsuiteService  Load Doc
-                //100  x1 per ItemName  - PrefsuiteService  Insert ItemName
+                //100 x1 per OrderNumber - PrefsuiteService Save Doc
+                //30 pts x 1 per OrderNumber - Write Service inserting material needa
+                //100 x1 per OrderNumber - PrefsuiteService Load Doc
+                //100 x1 per ItemName - PrefsuiteService Insert ItemName
 
-                //10pts. x 1 per  ItemName -  Write service -   Inserting data into DB
-                //1 pts x per material   Write service 
+                //10pts. x 1 per ItemName - Write service - Inserting data into DB
+                //1 pts x per material Write service 
 
-                //20pts x1   single per import- exceExcelOrderDto Form finishing
+                //20pts x1 single per import- exceExcelOrderDto Form finishing
 
-                _progressValue.CurrentValue = _progressValue.CurrentValue + 30; //x20 / x1  
+                _progressValue.CurrentValue = _progressValue.CurrentValue + 30; //x20 / x1 
                 _progressValue.ProgressTitle = "Importing orders ... ";
                 _progressValue.ProgressTask1 = $"Orders Count {totalOrders} pending import";
                 _progressValue.ProgressTask2 = $"ItemsDto Count {totalItems} pending import";
@@ -917,7 +917,7 @@ namespace WinFormApp.Forms
 
                 await UpdateDatable(importOrdersDto, 2);
 
-                _progressValue.CurrentValue = _progressValue.CurrentValue + 20; //x20 /x2  
+                _progressValue.CurrentValue = _progressValue.CurrentValue + 20; //x20 /x2 
                 _progressValue.ProgressTitle = "Importing orders ... ";
                 _progressValue.ProgressTask1 = "Import Finished";
                 _progressValue.ProgressTask2 = string.Empty;
@@ -931,7 +931,7 @@ namespace WinFormApp.Forms
             {
                 _logger.LogError("OrderNumber Form: Unhandled error loading importing orders. Exception: {$Exception}.", ex.Message);
                 _ = MessageBox.Show($"An ErrorDto occurred while loading the files." +
-                    $"{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                 $"{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
@@ -940,7 +940,7 @@ namespace WinFormApp.Forms
         }
 
         public async Task<OrderRecord> MapToReadOrderDTOAsync(OrderDto OrderDto
-            , int type)   // type 1 - read; 2 - write 
+        , int type) // type 1 - read; 2 - write 
         {
             try
             {
@@ -971,7 +971,7 @@ namespace WinFormApp.Forms
                     if (type == 1)
                     {
 
-                        //       exceExcelOrderDto.Errors
+                        // exceExcelOrderDto.Errors
                         //.Where(error => error.Level is ErrorLevel.Warning)
                         //.Where(error => (int)error.Code < 3000)
                         //.Select(error => new { error.Level, error.Code, error.Message })
@@ -979,25 +979,25 @@ namespace WinFormApp.Forms
                         //.Count();
 
                         orderRecord.WarningCount = 0;
-                        //      warningCount;
+                        // warningCount;
                         //orderRecord.WarningList = string.Join("\n", exceExcelOrderDto.Errors
-                        //            .Where(error => error.Level is ErrorLevel.Warning)
-                        //            .Select(error => $"ErrorLevel: {error.Level}, ErrorCode: {error.Code}, Message: {error.Message}")
-                        //            .Distinct());
+                        // .Where(error => error.Level is ErrorLevel.Warning)
+                        // .Select(error => $"ErrorLevel: {error.Level}, ErrorCode: {error.Code}, Message: {error.Message}")
+                        // .Distinct());
 
                         errorCount = 0;
                         //exceExcelOrderDto.Errors
-                        //    .Where(error => error.Level is ErrorLevel.ErrorDto)
-                        //    .Select(error => new { error.Level, error.Code, error.Message })
-                        //    .Distinct()
-                        //    .Count();
+                        // .Where(error => error.Level is ErrorLevel.ErrorDto)
+                        // .Select(error => new { error.Level, error.Code, error.Message })
+                        // .Distinct()
+                        // .Count();
 
                         orderRecord.ErrorCount = errorCount;
 
                         //orderRecord.ErrorList = string.Join("\n", exceExcelOrderDto.Errors
-                        //    .Where(error => error.Level is ErrorLevel.ErrorDto or ErrorLevel.Fatal)
-                        //    .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
-                        //    .Distinct());
+                        // .Where(error => error.Level is ErrorLevel.ErrorDto or ErrorLevel.Fatal)
+                        // .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
+                        // .Distinct());
 
                         //fatalCount = exceExcelOrderDto.Errors
                         //.Where(error => error.Level is ErrorLevel.Fatal)
@@ -1007,9 +1007,9 @@ namespace WinFormApp.Forms
 
                         //orderRecord.FatalCount = fatalCount;
                         //orderRecord.FatalList = string.Join("\n", exceExcelOrderDto.Errors
-                        //    .Where(error => error.Level is ErrorLevel.Fatal)
-                        //    .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
-                        //    .Distinct());
+                        // .Where(error => error.Level is ErrorLevel.Fatal)
+                        // .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
+                        // .Distinct());
 
                     }
 
@@ -1017,40 +1017,40 @@ namespace WinFormApp.Forms
                     {
 
                         //warningCount = exceExcelOrderDto.Errors
-                        //     .Where(error => error.Level is ErrorLevel.Warning)
-                        //     .Where(error => (int)error.Code > 3000)
-                        //     .Select(error => new { error.Level, error.Code, error.Message })
+                        // .Where(error => error.Level is ErrorLevel.Warning)
+                        // .Where(error => (int)error.Code > 3000)
+                        // .Select(error => new { error.Level, error.Code, error.Message })
 
-                        //     .Distinct()
-                        //     .Count();
+                        // .Distinct()
+                        // .Count();
                         //orderRecord.WarningCount = warningCount;
                         //orderRecord.WarningList = string.Join("\n", exceExcelOrderDto.Errors
-                        //            .Where(error => error.Level is ErrorLevel.Warning)
-                        //            .Select(error => $"ErrorLevel: {error.Level}, ErrorCode: {error.Code}, Message: {error.Message}")
-                        //            .Distinct());
+                        // .Where(error => error.Level is ErrorLevel.Warning)
+                        // .Select(error => $"ErrorLevel: {error.Level}, ErrorCode: {error.Code}, Message: {error.Message}")
+                        // .Distinct());
 
                         //errorCount = exceExcelOrderDto.Errors
-                        //    .Where(error => error.Level is ErrorLevel.ErrorDto)
-                        //    .Select(error => new { error.Level, error.Code, error.Message })
-                        //    .Distinct()
-                        //    .Count()
+                        // .Where(error => error.Level is ErrorLevel.ErrorDto)
+                        // .Select(error => new { error.Level, error.Code, error.Message })
+                        // .Distinct()
+                        // .Count()
                         //+ exceExcelOrderDto.Errors
-                        //    .Where(error => error.Level is ErrorLevel.ErrorDto)
-                        //    .Select(error => new { error.Level, error.Code, error.Message })
-                        //    .Distinct()
-                        //    .Count();
+                        // .Where(error => error.Level is ErrorLevel.ErrorDto)
+                        // .Select(error => new { error.Level, error.Code, error.Message })
+                        // .Distinct()
+                        // .Count();
 
                         //orderRecord.ErrorCount = errorCount;
 
                         //orderRecord.ErrorList = string.Join("\n", exceExcelOrderDto.Errors
-                        //    .Where(error => error.Level is ErrorLevel.ErrorDto or ErrorLevel.Fatal)
-                        //    .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
-                        //    .Distinct()) +
+                        // .Where(error => error.Level is ErrorLevel.ErrorDto or ErrorLevel.Fatal)
+                        // .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
+                        // .Distinct()) +
 
                         //string.Join("\n", exceExcelOrderDto.Errors
-                        //    .Where(error => error.Level is ErrorLevel.ErrorDto or ErrorLevel.Fatal)
-                        //    .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
-                        //    .Distinct());
+                        // .Where(error => error.Level is ErrorLevel.ErrorDto or ErrorLevel.Fatal)
+                        // .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
+                        // .Distinct());
 
                         //fatalCount = exceExcelOrderDto.Errors
                         //.Where(error => error.Level is ErrorLevel.Fatal)
@@ -1064,14 +1064,14 @@ namespace WinFormApp.Forms
 
                         //orderRecord.FatalCount = fatalCount;
                         //orderRecord.FatalList = string.Join("\n", exceExcelOrderDto.Errors
-                        //    .Where(error => error.Level is ErrorLevel.Fatal)
-                        //    .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
-                        //    .Distinct()) +
-                        //                    string.Join("\n", exceExcelOrderDto.Errors
-                        //                           .Where(error => error.Level is ErrorLevel.Fatal)
-                        //                           .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
+                        // .Where(error => error.Level is ErrorLevel.Fatal)
+                        // .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
+                        // .Distinct()) +
+                        //  string.Join("\n", exceExcelOrderDto.Errors
+                        //  .Where(error => error.Level is ErrorLevel.Fatal)
+                        //  .Select(error => $"Level: {error.Level}, Code: {(int)error.Code}, Message: {error.Message}")
 
-                        //                           .Distinct());
+                        //  .Distinct());
 
                     }
                     orderRecord.Import = CountReadTotalError(OrderDto) <= 0;
@@ -1093,44 +1093,44 @@ namespace WinFormApp.Forms
         //===============================================================
         private int CountReadWarning(OrderDto order)
         {
-            //        return exceExcelOrderDto.Errors.Count(error => error.Level == ErrorLevel.Warning);
+            // return exceExcelOrderDto.Errors.Count(error => error.Level == ErrorLevel.Warning);
             return 0;
         }
 
         private int CountReadError(OrderDto order)
 
         {
-            //      return exceExcelOrderDto.Errors.Count(error => error.Level == ErrorLevel.ErrorDto);
+            // return exceExcelOrderDto.Errors.Count(error => error.Level == ErrorLevel.ErrorDto);
             return 0;
         }
 
         private int CountReadFatal(OrderDto order)
         {
-            //     return exceExcelOrderDto.Errors.Count(error => error.Level == ErrorLevel.Fatal);
+            // return exceExcelOrderDto.Errors.Count(error => error.Level == ErrorLevel.Fatal);
             return 0;
         }
 
         private int CountReadExistsError(OrderDto order)
         {
-            //  return exceExcelOrderDto.Errors.Count(error => error.Code == ErrorCode.DatabaseRead_OrderAlreadyImported);
+            // return exceExcelOrderDto.Errors.Count(error => error.Code == ErrorCode.DatabaseRead_OrderAlreadyImported);
             return 0;
         }
 
         private int CountReadTotalError(OrderDto order)
         {
-            //      return exceExcelOrderDto.Errors.Count(error => error.Level is ErrorLevel.Warning or ErrorLevel.ErrorDto or ErrorLevel.Fatal);
+            // return exceExcelOrderDto.Errors.Count(error => error.Level is ErrorLevel.Warning or ErrorLevel.ErrorDto or ErrorLevel.Fatal);
             return 0;
         }
 
         private int CountWriteFatal(OrderDto order)
         {
-            //      return exceExcelOrderDto.Errors.Count(error => error.Level == ErrorLevel.Fatal);
+            // return exceExcelOrderDto.Errors.Count(error => error.Level == ErrorLevel.Fatal);
             return 0;
         }
 
         private int CountWriteError(OrderDto order)
         {
-            //        return exceExcelOrderDto.Errors.Count(error => error.Level == ErrorLevel.ErrorDto);
+            // return exceExcelOrderDto.Errors.Count(error => error.Level == ErrorLevel.ErrorDto);
             return 0;
         }
 
@@ -1170,7 +1170,7 @@ namespace WinFormApp.Forms
                 if (order.ExcelFiles.SelectMany(f => f.Worksheets).Count(w => w.WorksheetType == WorksheetType.Items) == 0)
                 {
 
-                    _logger.LogWarning("Found exceExcelOrderDto {$Order}, files, but items worksheet  is missing", order.OrderNumber);
+                    _logger.LogWarning("Found exceExcelOrderDto {$Order}, files, but items worksheet is missing", order.OrderNumber);
 
                     continue;
                 }
@@ -1201,7 +1201,7 @@ namespace WinFormApp.Forms
                     lbInfoWarningCount.Text = warningCount.ToString();
                     lbInfoErrorCount.Text = errorCount.ToString();
 
-                    OrderRecord orderRecord = await MapToReadOrderDTOAsync(order, type);   // 2 means import and should be used write errors
+                    OrderRecord orderRecord = await MapToReadOrderDTOAsync(order, type); // 2 means import and should be used write errors
 
                     Image image;
 
@@ -1234,30 +1234,30 @@ namespace WinFormApp.Forms
                     _ = _dataTable.Rows.Add
                     (
 
-                        image,                         //"Image", typeof(Image));
-                        orderRecord.OrderNumber,                       //"OrderNumber", typeof(string));
-                        orderRecord.SalesDocument,                      //"SalesDocument", typeof(string));
-                        orderRecord.Items,                              //"Items", typeof(int));
-                        orderRecord.ItemList,                           //"ItemList", typeof(string));
-                        orderRecord.Quantity,                           //"Quantity", typeof(int));
-                        Math.Round(orderRecord.Area, 2),    //"Area", typeof(string));
-                        Math.Round(orderRecord.Weight, 2),  //"Weight", typeof(string));
-                        Math.Round(orderRecord.Hours, 2),   //"Hours", typeof(string));
-                        Math.Round(orderRecord.Cost, 2),     //"Cost", typeof(string));
-                        Math.Round(orderRecord.Amount, 2),   //"Amount", typeof(string));
-                        orderRecord.Currency,                           //"Currency", typeof(string));
-                        orderRecord.FileCount,                          //"FileList", typeof(string));
-                        orderRecord.FileList,                           //"WorksheetCount", typeof(int));
-                        orderRecord.WorksheetCount,                     //"WorksheetList", typeof(string));
-                        orderRecord.WorksheetList,                      //"Materials", typeof(int));
-                        orderRecord.Materials,                          //"Import", typeof(bool));
-                        orderRecord.Import,                             //"WarningCount", typeof(string));
-                        orderRecord.WarningCount,                       //"WarningList", typeof(string));
-                        orderRecord.WarningList,                        //"ErrorCount", typeof(string));
-                        orderRecord.ErrorCount,                         //"ErrorList", typeof(string));
-                        orderRecord.ErrorList,                          //"FatalCount", typeof(string));
-                        orderRecord.FatalCount,                         //"FatalList", typeof(string));
-                    orderRecord.FatalList            //
+                    image,  //"Image", typeof(Image));
+                    orderRecord.OrderNumber,  //"OrderNumber", typeof(string));
+                    orderRecord.SalesDocument,  //"SalesDocument", typeof(string));
+                    orderRecord.Items,  //"Items", typeof(int));
+                    orderRecord.ItemList,  //"ItemList", typeof(string));
+                    orderRecord.Quantity,  //"Quantity", typeof(int));
+                    Math.Round(orderRecord.Area, 2), //"Area", typeof(string));
+                    Math.Round(orderRecord.Weight, 2), //"Weight", typeof(string));
+                    Math.Round(orderRecord.Hours, 2), //"Hours", typeof(string));
+                    Math.Round(orderRecord.Cost, 2), //"Cost", typeof(string));
+                    Math.Round(orderRecord.Amount, 2), //"Amount", typeof(string));
+                    orderRecord.Currency,  //"Currency", typeof(string));
+                    orderRecord.FileCount,  //"FileList", typeof(string));
+                    orderRecord.FileList,  //"WorksheetCount", typeof(int));
+                    orderRecord.WorksheetCount,  //"WorksheetList", typeof(string));
+                    orderRecord.WorksheetList,  //"Materials", typeof(int));
+                    orderRecord.Materials,  //"Import", typeof(bool));
+                    orderRecord.Import,  //"WarningCount", typeof(string));
+                    orderRecord.WarningCount,  //"WarningList", typeof(string));
+                    orderRecord.WarningList,  //"ErrorCount", typeof(string));
+                    orderRecord.ErrorCount,  //"ErrorList", typeof(string));
+                    orderRecord.ErrorList,  //"FatalCount", typeof(string));
+                    orderRecord.FatalCount,  //"FatalList", typeof(string));
+                    orderRecord.FatalList //
 
                     );
 
@@ -1295,7 +1295,7 @@ namespace WinFormApp.Forms
                         }
                         else
                         {
-                            //    _fileService.MoveOrderFiles(fileNames, true);
+                            // _fileService.MoveOrderFiles(fileNames, true);
                         }
                     }
 

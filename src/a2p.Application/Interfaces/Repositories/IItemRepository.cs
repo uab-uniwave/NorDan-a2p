@@ -13,7 +13,6 @@ namespace Application.Interfaces.Repositories
         //READ BY ORDER ID
         Task<IEnumerable<ItemEntity>> GetOrderItemsAsync(Guid id);
 
-
         // UPDATE 
         Task<int> UpdateItemAsync(ItemEntity item);
 

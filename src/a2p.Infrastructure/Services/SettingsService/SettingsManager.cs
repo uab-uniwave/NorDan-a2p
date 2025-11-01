@@ -28,28 +28,28 @@ string logFile = Path.Combine(logFolder, "a2pLog.json");
 
 
 
-           
+ 
 
-            try
-            {
+ try
+ {
 
-                bool fileExists = false;
+ bool fileExists = false;
 
-                if (FileDto.Exists(logFile))
-                {
-                    fileExists = true;
-                }
+ if (FileDto.Exists(logFile))
+ {
+  fileExists = true;
+ }
 
 
-                if (fileExists)
-                {
-                    FileDto.Delete(logFile);
-                }
-            }
+ if (fileExists)
+ {
+  FileDto.Delete(logFile);
+ }
+ }
 
-            catch (IOException ex)
-            {
-                Debug.WriteLine($"PR. Deleting file: {logFile} failed. Exception: {ex.Message}");
-                throw;
-            }
+ catch (IOException ex)
+ {
+ Debug.WriteLine($"PR. Deleting file: {logFile} failed. Exception: {ex.Message}");
+ throw;
+ }
 */

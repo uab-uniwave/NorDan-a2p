@@ -32,7 +32,7 @@ BEGIN
 	)
 	VALUES
 	( NEWID(), -- RowId - uniqueidentifier
-		@Code,  -- CodigoProveedor - int
+		@Code, -- CodigoProveedor - int
 		@Name, -- Nombre - nvarchar(60)
 		@Currency, -- Divisa - nchar(25)
 		@Currency -- Divisa2 - nchar(25)
@@ -129,22 +129,22 @@ CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertItem]
 	--================== 
 	@Quantity [int],
 	--================== 
-	@Width  decimal (38,6) null , 
-	@Height  decimal (38,6)  null,
+	@Width decimal (38,6) null , 
+	@Height decimal (38,6) null,
 	--================== 
-	@Weight  decimal (38,6)  null,
-	@WeightWithoutGlass  decimal (38,6)  null,
-	@WeightGlass  decimal (38,6)  null,
+	@Weight decimal (38,6) null,
+	@WeightWithoutGlass decimal (38,6) null,
+	@WeightGlass decimal (38,6) null,
 	--================== 
-	@TotalWeight  decimal (38,6)  null,
-	@TotalWeightWithoutGlass  decimal (38,6)  null,
-	@TotalWeightGlass  decimal (38,6)  null,
+	@TotalWeight decimal (38,6) null,
+	@TotalWeightWithoutGlass decimal (38,6) null,
+	@TotalWeightGlass decimal (38,6) null,
 	--================== 
-	@Area  decimal (38,6)  null,
-	@TotalArea  decimal (38,6)  null,
+	@Area decimal (38,6) null,
+	@TotalArea decimal (38,6) null,
 	--================== 
-	@Hours  decimal (38,6)  null,
-	@TotalHours  decimal (38,6)  null, 
+	@Hours decimal (38,6) null,
+	@TotalHours decimal (38,6) null, 
 	--================== 
 	@MaterialCost [decimal](38, 6) null,
 	@LaborCost [decimal](38, 6) null,
@@ -285,7 +285,7 @@ BEGIN
 		@TotalMaterialCost,
 		@TotalLaborCost,
 		@TotalCost,
-		 --==================  
+		 --================== 
 		@Price,
 		@TotalPrice,
 		--==================
@@ -312,8 +312,8 @@ BEGIN
 END;
 GO
 
-CREATE OR ALTER   PROCEDURE [dbo].[Uniwave_a2p_InsertMaterial] 
-	  @RowId [nvarchar] (37)
+CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertMaterial] 
+	 @RowId [nvarchar] (37)
 	, @SalesDocumentNumber [int]
 	, @SalesDocumentVersion [int]
 	--==============================
@@ -332,26 +332,26 @@ CREATE OR ALTER   PROCEDURE [dbo].[Uniwave_a2p_InsertMaterial]
 	, @Color [nvarchar] (50) null
 	, @ColorDescription [nvarchar] (120) null
 	--==============================
-	, @Width  decimal (38,6)  null
-	, @Height  decimal (38,6)  null
+	, @Width decimal (38,6) null
+	, @Height decimal (38,6) null
 	--==============================
 	, @Quantity [int]
-	, @PackageQuantity  decimal (38,6)  null
-	, @TotalQuantity  decimal (38,6)  null
+	, @PackageQuantity decimal (38,6) null
+	, @TotalQuantity decimal (38,6) null
 	, @RequiredQuantity decimal(38,6)
-	, @LeftOverQuantity  decimal (38,6)  null
+	, @LeftOverQuantity decimal (38,6) null
 	--==============================
-	, @Weight  decimal (38,6)  null
-	, @TotalWeight  decimal (38,6)  null
-	, @RequiredWeight  decimal (38,6)  null
-	, @LeftOverWeight  decimal (38,6)  null
+	, @Weight decimal (38,6) null
+	, @TotalWeight decimal (38,6) null
+	, @RequiredWeight decimal (38,6) null
+	, @LeftOverWeight decimal (38,6) null
 	--============================== 
-	, @Area  decimal (38,6)  null
-	, @TotalArea  decimal (38,6)  null
-	, @RequiredArea  decimal (38,6)  null
-	, @LeftOverArea  decimal (38,6)  null
+	, @Area decimal (38,6) null
+	, @TotalArea decimal (38,6) null
+	, @RequiredArea decimal (38,6) null
+	, @LeftOverArea decimal (38,6) null
 	--============================== 
-	, @Waste  decimal (38,6)  null
+	, @Waste decimal (38,6) null
 	--============================== 
 	, @Price [decimal] (38 , 6) null
 	, @TotalPrice [decimal] (38 , 6) null
@@ -383,7 +383,7 @@ CREATE OR ALTER   PROCEDURE [dbo].[Uniwave_a2p_InsertMaterial]
 AS
 BEGIN
 	INSERT INTO [dbo].[Uniwave_a2p_Materials] (
-	   	  [RowId]	
+	 	 [RowId]	
 		, [SalesDocumentNumber]
 		, [SalesDocumentVersion]
 		--============================== 
@@ -452,7 +452,7 @@ BEGIN
 		, [ModifiedUTCDateTime]
 		)
 	VALUES (
-		  @RowId
+		 @RowId
 		, @SalesDocumentNumber
 		, @SalesDocumentVersion 
 		--============================== 
@@ -546,16 +546,16 @@ INSERT INTO dbo.MaterialNeedsMaster
 	[dbo].[ComponentsAssemblyUTCDate],
 	[dbo].[CalculationUTCDate]
 )
- VALUES (@Number,  -- Number - int
-		@Version,  -- Version - int
-	 -1,  -- ProductionSet - int
-	 -1,  -- ReproductionNeedsCode - int
-	 1,  -- MNSet - smallint
+ VALUES (@Number, -- Number - int
+		@Version, -- Version - int
+	 -1, -- ProductionSet - int
+	 -1, -- ReproductionNeedsCode - int
+	 1, -- MNSet - smallint
 	 GETDATE(), -- CalculationDate - datetime
-	 0,  -- Obsolete - smallint
+	 0, -- Obsolete - smallint
 	 N'1.- ' +CAST (GETDATE() AS NVARCHAR(16)) , -- Description - nvarchar(50)
-	 0,  -- Discounted - smallint
-	 1,  -- TypeMNSet - smallint
+	 0, -- Discounted - smallint
+	 1, -- TypeMNSet - smallint
 	 NULL, -- ComponentsAssemblyUTCDate - datetime
 	 GETUTCDATE() -- CalculationUTCDate - datetime
 	 )
@@ -565,7 +565,7 @@ GO
 
 -- Insert Order Material Needs 
 --==============================================================================
-CREATE OR ALTER   PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialNeeds] 
+CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialNeeds] 
 	-- Add the parameters for the stored procedure here
 	@Number INT, 
 	@Version INT
@@ -634,8 +634,8 @@ SELECT
 		-1, -- SquareId - int -- 
 		-1, -- HoleId - int -- 
 		CASE WHEN MaterialType = '5' THEN 'G'+RTRIM(CAST(SortOrder AS NVARCHAR(9))) 
-			 ELSE ''  
-			 END,  
+			 ELSE '' 
+			 END, 
 		CASE WHEN MaterialType = 1 THEN 1 -- Profiles - Barras --
 			 WHEN MaterialType = 2 THEN 3 -- Gaskets - Metros --
 			 WHEN MaterialType = 3 THEN 2 -- Piece - Piezas --
@@ -647,8 +647,8 @@ SELECT
 		(dbo.Uniwave_a2p_GetColorConfiguration(Uniwave_a2p_Materials.Color)), -- colorConfiguration int
 		0, -- RawMaterialColorConfiguration - int -- 
 		N'', -- RawReference - nchar(25) -- 
-		CASE WHEN MaterialType = 1   THEN Quantity  
-		     WHEN MaterialType = 2  OR MaterialType=3 THEN CEILING(RequiredQuantity)  
+		CASE WHEN MaterialType = 1 THEN Quantity 
+		 WHEN MaterialType = 2 OR MaterialType=3 THEN CEILING(RequiredQuantity) 
 		ELSE TotalQuantity END, --float -- 
 		Round(Width,0), -- Length - real -- 
 		Round(Height,0), -- Height - real -- 
@@ -657,12 +657,12 @@ SELECT
 		ISNULL((SELECT TOP 1 Almacen FROM dbo.Materiales WHERE Referencia = Reference),980), -- WarehouseCode - smallint -- 
 		 N'', -- XMLDoc - ntext -- 
 		
-		CASE WHEN (MaterialType = 2  OR MaterialType=3) AND RequiredQuantity <= (SELECT UP2/2 FROM Compras Where Proveedor=979 and APartir=1 and UP1=1 and ByDefault =1 and Referencia = Reference)   THEN 0
+		CASE WHEN (MaterialType = 2 OR MaterialType=3) AND RequiredQuantity <= (SELECT UP2/2 FROM Compras Where Proveedor=979 and APartir=1 and UP1=1 and ByDefault =1 and Referencia = Reference) THEN 0
 		ELSE 1 END, -- AllowToOrder,
 		
 		CASE WHEN MaterialType = 1 THEN Quantity
-		     WHEN MaterialType = 2 THEN CEILING(RequiredQuantity)  
-			 WHEN MaterialType=3 THEN CEILING(RequiredQuantity)  
+		 WHEN MaterialType = 2 THEN CEILING(RequiredQuantity) 
+			 WHEN MaterialType=3 THEN CEILING(RequiredQuantity) 
 		ELSE TotalQuantity END, 	-- QuantityToOrder
 		
 		RequiredQuantity, -- QuantityToDiscount,
@@ -1021,26 +1021,26 @@ BEGIN
 		@ReferenceBase, -- ReferenciaBase - nchar(25)
 		@Reference, -- Referencia - nchar(25)
 		@Color, -- Color - nchar(50)
-		980,  -- Almacen - smallint
-		1,  -- UE1 - int
-		@PackageQuantity,  -- UE2 - int
-		1,  -- ControlDeStock - smallint
-		1,  -- PedirBajoDemanda - smallint
-		0,  -- ManageRemnants - smallint
+		980, -- Almacen - smallint
+		1, -- UE1 - int
+		@PackageQuantity, -- UE2 - int
+		1, -- ControlDeStock - smallint
+		1, -- PedirBajoDemanda - smallint
+		0, -- ManageRemnants - smallint
 		Case When @MaterialType = 1 -- LongitudBarra - real
 		THEN @PackageQuantity*1000
 		ELSE 0
 		END,
 		0.000000, -- WastageAllowance - double (19, 6)
-		0,  -- UseWastageAllowanceInMN - smallint
-		0,  -- UseFullRodsInMN - smallint
-		0,  -- IsModel - smallint
-		1,  -- TargetLevel - int
-		0,  -- PrefShopStatus - smallint
-		0,  -- DefaultValue - smallint
-		979,  -- MaterialSupplierCode - int
-		1,  -- ProductionPreparationTime - int
-		14  -- AverageDeliveryTime - smallint
+		0, -- UseWastageAllowanceInMN - smallint
+		0, -- UseFullRodsInMN - smallint
+		0, -- IsModel - smallint
+		1, -- TargetLevel - int
+		0, -- PrefShopStatus - smallint
+		0, -- DefaultValue - smallint
+		979, -- MaterialSupplierCode - int
+		1, -- ProductionPreparationTime - int
+		14 -- AverageDeliveryTime - smallint
 		)
 
 END	
@@ -1470,7 +1470,7 @@ GO
 
 -- Insert Materials purchase details into PrefSuite DB tables 
 --==============================================================================
-CREATE OR  ALTER   PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialPurchaseData] 
+CREATE OR ALTER PROCEDURE [dbo].[Uniwave_a2p_InsertPrefSuiteMaterialPurchaseData] 
 	-- Add the parameters for the stored procedure here
 	@Reference NVARCHAR(25), 
 	@Package INT,
@@ -1515,10 +1515,10 @@ BEGIN
 	)
 	VALUES
 	( @Reference, -- Referencia - nchar(25)
-		979,  -- Proveedor - int
-		1,  -- APartir - int
-		1,  -- UP1 - int
-		CASE WHEN @MaterialType = 1 THEN 1 ELSE  @Package END, -- UP2 - float
+		979, -- Proveedor - int
+		1, -- APartir - int
+		1, -- UP1 - int
+		CASE WHEN @MaterialType = 1 THEN 1 ELSE @Package END, -- UP2 - float
 		GETDATE(), -- FechaUltimaCompra - datetime
 		ISNULL(@Price,0), --PrecioUltimaCompra - float
 		@SourceReference, -- ReferenciaProveedor - nchar(50)
@@ -1527,27 +1527,27 @@ BEGIN
 		NULL, -- FechaEVPrecioSC - datetime
 		0, -- PrecioSC - float
 		N'NOK', -- DivisaPrecioSC - nchar(25)
-		14,  -- EntregaMedia - int
+		14, -- EntregaMedia - int
 		N'', -- CodigoEAN13 - nchar(13)
 		CASE WHEN @MaterialType = 1 THEN 'Bar'
-			 WHEN @MaterialType = 2 and @Package =1  THEN 'Meter'
-			 WHEN @MaterialType = 2 and @Package >1  THEN 'Roll'
-			 WHEN @MaterialType = 3 and @Package =1  THEN 'Piece'
-			 WHEN @MaterialType = 3 and @Package >1  THEN 'Box'
-		     WHEN @MaterialType = 4 and @Package =1  THEN 'Piece'
+			 WHEN @MaterialType = 2 and @Package =1 THEN 'Meter'
+			 WHEN @MaterialType = 2 and @Package >1 THEN 'Roll'
+			 WHEN @MaterialType = 3 and @Package =1 THEN 'Piece'
+			 WHEN @MaterialType = 3 and @Package >1 THEN 'Box'
+		 WHEN @MaterialType = 4 and @Package =1 THEN 'Piece'
 
 		ELSE N'' END, -- DescripcionUP1 - nvarchar(50)
 
 		CASE WHEN @MaterialType = 1 THEN 'Bar'
-			 WHEN @MaterialType = 2 and @Package =1  THEN 'Meter'
-			 WHEN @MaterialType = 2 and @Package >1  THEN 'Meters'
-			 WHEN @MaterialType = 3 and @Package =1  THEN 'Piece'
-			 WHEN @MaterialType = 3 and @Package >1  THEN 'Pieces'
-			 WHEN @MaterialType = 4 and @Package =1  THEN 'Piece'
+			 WHEN @MaterialType = 2 and @Package =1 THEN 'Meter'
+			 WHEN @MaterialType = 2 and @Package >1 THEN 'Meters'
+			 WHEN @MaterialType = 3 and @Package =1 THEN 'Piece'
+			 WHEN @MaterialType = 3 and @Package >1 THEN 'Pieces'
+			 WHEN @MaterialType = 4 and @Package =1 THEN 'Piece'
 		ELSE N'' END, -- DescripcionUP2 - nvarchar(50)
-		1,  -- ByDefault - smallint
-		14,  -- SchedulerTime - int
-		0  -- ReorderingTime - int
+		1, -- ByDefault - smallint
+		14, -- SchedulerTime - int
+		0 -- ReorderingTime - int
 		)
 
 

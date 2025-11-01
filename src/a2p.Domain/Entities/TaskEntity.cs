@@ -13,6 +13,6 @@ namespace Domain.Entities
         public int SalesDocumentVersion { get; set; } = -1;
         public string PayloadJson { get; set; } = string.Empty;
         public int State { get; set; } = 0;
-        public DateTime? ProcessedUTCDateTime { get; set; }
+        public DateTime? ProcessedDateTime { get; set; }
     }
 }

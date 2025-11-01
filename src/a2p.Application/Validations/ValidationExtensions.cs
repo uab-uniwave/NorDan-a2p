@@ -5,8 +5,8 @@ namespace Application.Validations
     public static class ValidationExtensions
     {
         public static ValidationResult<T> ToValidationResult<T>(
-            this FluentValidation.Results.ValidationResult fluentResult,
-            T? value = default)
+        this FluentValidation.Results.ValidationResult fluentResult,
+        T? value = default)
         {
             if (fluentResult.IsValid)
             {
@@ -14,8 +14,8 @@ namespace Application.Validations
             }
 
             List<ValidationError> errors = fluentResult.Errors
-                .Select(e => new ValidationError(e.PropertyName, e.ErrorMessage))
-                .ToList();
+            .Select(e => new ValidationError(e.PropertyName, e.ErrorMessage))
+            .ToList();
 
             return ValidationResult<T>.Failure(errors);
         }

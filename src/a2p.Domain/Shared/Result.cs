@@ -14,10 +14,10 @@ public class Result
     }
 
     public static Result Success(string? message = null)
-        => new(true, message);
+    => new(true, message);
 
     public static Result Failure(string message, string? errorCode = null)
-        => new(false, message, errorCode);
+    => new(false, message, errorCode);
 }
 
 public class Result<T> : Result
@@ -26,14 +26,14 @@ public class Result<T> : Result
 
     // 🔹 must be protected so derived classes (PagedResult, ValidationResult) can call it
     protected Result(bool isSuccess, T? value, string? message = null, string? errorCode = null)
-        : base(isSuccess, message, errorCode)
+    : base(isSuccess, message, errorCode)
     {
         Value = value;
     }
 
     public static Result<T> Success(T value, string? message = null)
-        => new(true, value, message);
+    => new(true, value, message);
 
     public static new Result<T> Failure(string message, string? errorCode = null)
-        => new(false, default, message, errorCode);
+    => new(false, default, message, errorCode);
 }

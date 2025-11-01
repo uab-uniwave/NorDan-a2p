@@ -17,29 +17,21 @@ namespace Infrastructure.Services.Orchestartors
 
         private readonly IPrefSuiteAppService _prefSuiteService;
         private readonly IPrefSuiteDataService _prefSuiteDataService;
-        //  private readonly IItemService _itemService;
-        //  private readonly IMaterialService _materialService;
+        // private readonly IItemService _itemService;
+        // private readonly IMaterialService _materialService;
         private readonly IOrderService _orderService;
 
         private IProgress<ProgressValue>? _progress;
         private ProgressValue _progressValue;
 
         public WriteService(ILogger<WriteService> logger,
-                            IPrefSuiteAppService prefSuiteService,
-                            IPrefSuiteDataService prefSuiteDataService,
-                            //      IFileService fileService,
-                            //      IExcelService excelService,
-                            //         IPrefSuiteDataService prefSuiteDataService,
-                            //         IItemService itemService,
-                            //         IMaterialService materialService,
-                            IOrderService orderService
-            )
+         IPrefSuiteAppService prefSuiteService,
+         IPrefSuiteDataService prefSuiteDataService,
+         IOrderService orderService)
         {
 
             _logger = logger;
             _prefSuiteService = prefSuiteService;
-            //      _itemService = itemService;
-            //      _materialService = materialService;
             _orderService = orderService;
             _prefSuiteDataService = prefSuiteDataService;
             _progressValue = new ProgressValue();
@@ -55,7 +47,7 @@ namespace Infrastructure.Services.Orchestartors
 
             try
             {
-                _progressValue.CurrentValue = _progressValue.CurrentValue + 30;   //30pts. x 1 per OrderNumber               
+                _progressValue.CurrentValue = _progressValue.CurrentValue + 30; //30pts. x 1 per OrderNumber 
                 _progressValue.ProgressTask2 = "Deleting any existing data import pending order.....";
                 _progressValue.ProgressTask3 = string.Empty;
                 _progress?.Report(_progressValue);
@@ -95,7 +87,7 @@ namespace Infrastructure.Services.Orchestartors
                     await _prefSuiteDataService.UpdateBCMapping(materials[i]);
                 }
 
-                _progressValue.CurrentValue = _progressValue.CurrentValue + 30; //30 pts x 2  per OrderNumber
+                _progressValue.CurrentValue = _progressValue.CurrentValue + 30; //30 pts x 2 per OrderNumber
                 _progressValue.ProgressTask2 = $"Inserting material needs in to PrefSuite... ";
                 _progressValue.ProgressTask3 = string.Empty;
                 _progress?.Report(_progressValue);

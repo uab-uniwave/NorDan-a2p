@@ -4,7 +4,7 @@ namespace Application.Models
     {
 
         public int MinValue { get; set; } = 0;
-        public int MaxValue { get; set; } = 100;
+        public int MaxValue { get; set; } = 0;
         public float Value { get; set; } = 0;
         public int CurrentValue { get; set; } = 0;
         public int TotalValue { get; set; } = 0;

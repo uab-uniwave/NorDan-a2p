@@ -33,7 +33,7 @@ namespace WinFormApp.Forms
             this.ResumeLayout(false);
             this.PerformLayout();
         }
-        #endregion  -== Form Events ==-
+        #endregion -== Form Events ==-
 
         #region -== Methods ==-
         public void FadeIn()

@@ -35,8 +35,8 @@ namespace Infrastructure
         /// This method is called by BOTH WinForms and API projects
         /// </summary>
         public static IServiceCollection AddInfrastructure(
-            this IServiceCollection services,
-            IConfiguration configuration)
+        this IServiceCollection services,
+        IConfiguration configuration)
         {
             // ============================================================
             // 1. Register IDbConnectionFactory (Singleton)
@@ -77,9 +77,9 @@ namespace Infrastructure
             // 4. Register Application Services (Scoped) DATA SERVICES
             // ============================================================
             services.AddScoped<IOrderService, OrderService>();
-            services.AddScoped<IItemService, ItemService>();           
+            services.AddScoped<IItemService, ItemService>();
             services.AddScoped<IMaterialService, MaterialService>();
-            services.AddScoped<IPrefSuiteDataService, PrefSuiteDataService>(); 
+            services.AddScoped<IPrefSuiteDataService, PrefSuiteDataService>();
             services.AddScoped<IPrefSuiteAppService, PrefSuiteAppService>();
 
             // ============================================================

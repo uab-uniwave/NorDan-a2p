@@ -1,13 +1,13 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Data;
-
 using Application.Interfaces.Files;
 using Application.Interfaces.Services;
 using Application.Models;
 
 using Microsoft.Extensions.Logging;
+
+using System.Data;
 
 namespace Infrastructure.Services.FileServices
 {
@@ -19,7 +19,7 @@ namespace Infrastructure.Services.FileServices
         private SettingsContainer _settingsContainer;
 
         public FileService(ISettingsService settingsService,
-                           ILogger<FileService> logger)
+         ILogger<FileService> logger)
 
         {
             _logger = logger;
@@ -36,19 +36,18 @@ namespace Infrastructure.Services.FileServices
                 List<string> _files = Directory.GetFiles(GetRootFolder()).ToList() ?? []; // Get all files in the root destinationFolder
 
                 return _files
-                    .Where(f => f != null && !f.Contains("~$") && f.EndsWith("xlsx"))
-                    .OrderBy(file => file)
-                    .ToList() ?? [];
-
+                 .Where(f => f != null && !f.Contains("~$") && f.EndsWith("xlsx"))
+                 .OrderBy(file => file)
+                 .ToList() ?? [];
 
             }
 
             catch (Exception ex)
             {
                 _logger.LogError("{$Class}.{$Method}. Unhandled error getting files! Exception: {$Exception}",
-                    nameof(FileService),
-                    nameof(GetLocalFiles),
-                    ex.Message);
+                 nameof(FileService),
+                 nameof(GetLocalFiles),
+                 ex.Message);
                 return [];
 
             }
@@ -65,10 +64,10 @@ namespace Infrastructure.Services.FileServices
             {
 
                 _logger.LogError("{$Class}.{$Method}. File \"{$File}\" is locked Exception: {$Exception}",
-                   nameof(FileService),
-                   nameof(IsLocked),
-                   filePath,
-                   ex.Message);
+                 nameof(FileService),
+                 nameof(IsLocked),
+                 filePath,
+                 ex.Message);
                 return true;
             }
         }
@@ -112,9 +111,9 @@ namespace Infrastructure.Services.FileServices
             catch (Exception ex)
             {
                 _logger.LogError("{$Class}.{$Method}. Unhandled error moving files! Exception: {$Exception}",
-                     nameof(FileService),
-                     nameof(GetLocalFiles),
-                     ex.Message);
+                 nameof(FileService),
+                 nameof(GetLocalFiles),
+                 ex.Message);
 
             }
         }
@@ -128,9 +127,9 @@ namespace Infrastructure.Services.FileServices
             {
                 _ = Directory.CreateDirectory(folder);
                 _logger.LogInformation("{$Class}.{$Method}. Created folder for import files: \"{$Folder}\".",
-                  nameof(FileService),
-                  nameof(GetLocalFiles),
-                  folder);
+                 nameof(FileService),
+                 nameof(GetLocalFiles),
+                 folder);
             }
 
             return folder;
@@ -146,9 +145,9 @@ namespace Infrastructure.Services.FileServices
             {
                 _ = Directory.CreateDirectory(folder);
                 _logger.LogInformation("{$Class}.{$Method}. Created folder for fail import files: \"{$Folder}\".",
-                     nameof(FileService),
-                     nameof(GetLocalFiles),
-                     folder);
+                 nameof(FileService),
+                 nameof(GetLocalFiles),
+                 folder);
 
             }
 
@@ -163,9 +162,9 @@ namespace Infrastructure.Services.FileServices
             {
                 _ = Directory.CreateDirectory(folder);
                 _logger.LogInformation("{$Class}.{$Method}. Created folder for success import files: \"{$Folder}\".",
-                     nameof(FileService),
-                     nameof(GetLocalFiles),
-                     folder);
+                 nameof(FileService),
+                 nameof(GetLocalFiles),
+                 folder);
 
             }
 
@@ -180,9 +179,9 @@ namespace Infrastructure.Services.FileServices
             {
                 _ = Directory.CreateDirectory(folder);
                 _logger.LogInformation("{$Class}.{$Method}. Created folder for log files: \"{$Folder}\".",
-                     nameof(FileService),
-                     nameof(GetLocalFiles),
-                     folder);
+                 nameof(FileService),
+                 nameof(GetLocalFiles),
+                 folder);
 
             }
 

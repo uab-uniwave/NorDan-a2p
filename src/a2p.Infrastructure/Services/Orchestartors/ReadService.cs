@@ -7,8 +7,6 @@ using Application.Models;
 
 using Domain.Enums;
 
-using Infrastructure.Services.FileServices;
-
 using Microsoft.Extensions.Logging;
 
 using System.Data;
@@ -28,12 +26,12 @@ namespace Infrastructure.Services.Orchestartors
         private ProgressValue _progressValue;
         private IProgress<ProgressValue> _progress;
         public ReadService(ILogger<ReadService> logger,
-                           IFileService fileService,
-                           IExcelService excelService,
-                           IPrefSuiteDataService prefSuiteDataService,
-                            IExcelParserTechDesign excelparserTechesign,
-                           IExcelParserSchuco excelParserSchuco
-                   )
+         IFileService fileService,
+         IExcelService excelService,
+         IPrefSuiteDataService prefSuiteDataService,
+         IExcelParserTechDesign excelparserTechesign,
+         IExcelParserSchuco excelParserSchuco
+         )
         {
 
             _logger = logger;
@@ -72,7 +70,7 @@ namespace Infrastructure.Services.Orchestartors
                 List<string> orders = GetOrders(files);
 
                 //===================================================================================================================================================================================================================================================================================================================
-                //🔵 Create OrdersDto List   
+                //🔵 Create OrdersDto List 
                 //===================================================================================================================================================================================================================================================================================================================
 
                 for (int i = 0; i < orders.Count; i++)
@@ -138,7 +136,6 @@ namespace Infrastructure.Services.Orchestartors
                     _ordersDto[i] = await GetOrderMaterialsAsync(_ordersDto[i]);
                     _ordersDto[i] = await SetSalesDocumentReadErrors(_ordersDto[i]);
 
-
                 }
                 return await Task.Run(() => _ordersDto);
             }
@@ -156,17 +153,17 @@ namespace Infrastructure.Services.Orchestartors
             try
             {
                 List<string> orders = files
-                    .Select(f => Path.GetFileName(f).Split(' ', '_')[0]) // Assuming orderDto number is before the first underscore
-                    .Distinct()
-                    .ToList() ?? [];
+                 .Select(f => Path.GetFileName(f).Split(' ', '_')[0]) // Assuming orderDto number is before the first underscore
+                 .Distinct()
+                 .ToList() ?? [];
                 return orders;
             }
             catch (Exception ex)
             {
                 _logger.LogError("{$Class}.{$Method}. Unhandled error getting orders! Exception: {$Exception}",
-                    nameof(FileService),
-                    nameof(GetOrders),
-                    ex.Message);
+                 nameof(ReadService),
+                 nameof(GetOrders),
+                 ex.Message);
                 return [];
             }
         }
@@ -183,9 +180,9 @@ namespace Infrastructure.Services.Orchestartors
             catch (Exception ex)
             {
                 _logger.LogError("{$Class}.{$Method}. Unhandled error getting ordr files! Exception: {$Exception}",
-                    nameof(FileService),
-                    nameof(GetOrderFiles),
-                    ex.Message);
+                 nameof(ReadService),
+                 nameof(GetOrderFiles),
+                 ex.Message);
                 return [];
             }
         }
@@ -197,7 +194,7 @@ namespace Infrastructure.Services.Orchestartors
                 for (int i = 0; i < orderDto.ExcelFiles.Count; i++)
                 {
 
-                    List<Worksheet> worksheetsDto = await _excelService.GetWorksheetsAsync(orderDto.ExcelFiles[i], _progressValue, _progress);
+                    List<Worksheet> worksheetsDto = await _excelService.ReadWorkbook(orderDto.ExcelFiles[i], _progressValue, _progress);
 
                     if (worksheetsDto == null)
                     {
@@ -337,7 +334,7 @@ namespace Infrastructure.Services.Orchestartors
                 if (orderDto.SalesDocument.State.HasFlag(OrderState.PurchaseOrdersExist))
                 {
                     _logger.LogError(@"Error processing order {$Order}. Sales Document {$Number}/{$Version} has purchase orders!. \nRemove all purchase orders and try again",
-                        orderDto.OrderNumber, orderDto.SalesDocument.Number, orderDto.SalesDocument.Version);
+                    orderDto.OrderNumber, orderDto.SalesDocument.Number, orderDto.SalesDocument.Version);
                     return await Task.Run(() => orderDto);
 
                 }
@@ -345,7 +342,7 @@ namespace Infrastructure.Services.Orchestartors
                 if (orderDto.SalesDocument.State.HasFlag(OrderState.MaterialNeedsInserted))
                 {
                     _logger.LogWarning(@"Warning processing order {$Order}. Sales Document {$Number}/{$Version} has material needs calculated!.\nIf you proceed, existing material needs will be deleted!",
-                orderDto.OrderNumber, orderDto.SalesDocument.Number, orderDto.SalesDocument.Version);
+                   orderDto.OrderNumber, orderDto.SalesDocument.Number, orderDto.SalesDocument.Version);
                     return await Task.Run(() => orderDto);
 
                 }
@@ -353,7 +350,7 @@ namespace Infrastructure.Services.Orchestartors
                 if (orderDto.SalesDocument.State.HasFlag(OrderState.ItemsCreated) || orderDto.SalesDocument.State.HasFlag(OrderState.A2PItemsImported))
                 {
                     _logger.LogWarning(@"Warning processing order {$Order}. Sales Document {$Number}/{$Version} has items !.\nIf you proceed, existing items will be kept and new items will be inserted!",
-                orderDto.OrderNumber, orderDto.SalesDocument.Number, orderDto.SalesDocument.Version);
+                   orderDto.OrderNumber, orderDto.SalesDocument.Number, orderDto.SalesDocument.Version);
                     return await Task.Run(() => orderDto);
 
                 }
@@ -363,7 +360,7 @@ namespace Infrastructure.Services.Orchestartors
             catch (Exception ex)
             {
                 _logger.LogError(@"{$Class}.{$Method}.Unhandled error getting sales document!\nOrder: {$Order},\nException: {$Exception}",
-                       nameof(ReadService), nameof(SetSalesDocumentReadErrors), orderDto.OrderNumber, ex.Message);
+                 nameof(ReadService), nameof(SetSalesDocumentReadErrors), orderDto.OrderNumber, ex.Message);
                 return orderDto;
             }
 

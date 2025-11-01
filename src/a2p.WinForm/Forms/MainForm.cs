@@ -56,11 +56,11 @@ namespace WinFormApp.Forms
         private bool _isResizing;
 
         public MainForm(IReadService readService,
-                       IExcelService excelService,
-                       ILoggerFactory loggerFactory, // changed: accept ILoggerFactory
-                       IFileService fileService,
-                       ISettingsService settingsService,
-                       IWriteService writeService)
+         IExcelService excelService,
+         ILoggerFactory loggerFactory, // changed: accept ILoggerFactory
+         IFileService fileService,
+         ISettingsService settingsService,
+         IWriteService writeService)
         {
             _readService = readService ?? throw new ArgumentNullException(nameof(readService));
             _writeService = writeService ?? throw new ArgumentNullException(nameof(writeService));
@@ -76,20 +76,20 @@ namespace WinFormApp.Forms
 
             // Initialize child forms with correct logger types
             _orderForm = new OrdersForm(
-                _settingsService,
-                _loggerFactory.CreateLogger<OrdersForm>(),
-                _fileService,
-                _excelService,
-                _readService,
-                _writeService);
+            _settingsService,
+            _loggerFactory.CreateLogger<OrdersForm>(),
+            _fileService,
+            _excelService,
+            _readService,
+            _writeService);
 
             _logForm = new LogsForm(
-                _settingsService,
-                _loggerFactory.CreateLogger<LogsForm>());
+            _settingsService,
+            _loggerFactory.CreateLogger<LogsForm>());
 
             _settingForm = new SettingsForm(
-                _loggerFactory.CreateLogger<SettingsForm>(),
-                _settingsService);
+            _loggerFactory.CreateLogger<SettingsForm>(),
+            _settingsService);
 
             this.AutoScaleMode = AutoScaleMode.Dpi;
             this.SuspendLayout();
@@ -147,7 +147,7 @@ namespace WinFormApp.Forms
             try
             {
                 await ShowFormAsync(_orderForm,
-                    () => new OrdersForm(_settingsService, _loggerFactory.CreateLogger<OrdersForm>(), _fileService, _excelService, _readService, _writeService));
+                 () => new OrdersForm(_settingsService, _loggerFactory.CreateLogger<OrdersForm>(), _fileService, _excelService, _readService, _writeService));
 
                 if (_appSettings.RefreshFilesOnStartup)
                 {
@@ -303,8 +303,8 @@ namespace WinFormApp.Forms
         private void btMaximize_Click(object sender, EventArgs e)
         {
             this.WindowState = this.WindowState == FormWindowState.Maximized
-                ? FormWindowState.Normal
-                : FormWindowState.Maximized;
+            ? FormWindowState.Normal
+            : FormWindowState.Maximized;
             base.OnResize(e);
         }
 
@@ -326,14 +326,14 @@ namespace WinFormApp.Forms
             try
             {
                 await ShowFormAsync(_orderForm,
-                    () => new OrdersForm(_settingsService, _loggerFactory.CreateLogger<OrdersForm>(), _fileService, _excelService, _readService, _writeService));
+                 () => new OrdersForm(_settingsService, _loggerFactory.CreateLogger<OrdersForm>(), _fileService, _excelService, _readService, _writeService));
 
                 await _orderForm.OrdersLoad();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"An error occurred during the import: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                 MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
@@ -358,13 +358,13 @@ namespace WinFormApp.Forms
                 await Task.Run(DisableButtons);
 
                 await ShowFormAsync(_orderForm,
-                    () => new OrdersForm(_settingsService, _loggerFactory.CreateLogger<OrdersForm>(), _fileService, _excelService, _readService, _writeService));
+                 () => new OrdersForm(_settingsService, _loggerFactory.CreateLogger<OrdersForm>(), _fileService, _excelService, _readService, _writeService));
                 await _orderForm.ImportAsync();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"An error occurred during the import: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                 MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
@@ -383,14 +383,14 @@ namespace WinFormApp.Forms
                 await Task.Run(DisableButtons);
 
                 await ShowFormAsync(_logForm,
-                    () => new LogsForm(_settingsService, _loggerFactory.CreateLogger<LogsForm>()));
+                 () => new LogsForm(_settingsService, _loggerFactory.CreateLogger<LogsForm>()));
 
-                //     await _log_form.LogRefreshAsync();
+                // await _log_form.LogRefreshAsync();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"An error occurred refreshing logs: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                 MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
@@ -401,7 +401,7 @@ namespace WinFormApp.Forms
         private async void BtnProperties_Click(object sender, EventArgs e)
         {
             await ShowFormAsync(_settingForm,
-                () => new SettingsForm(_loggerFactory.CreateLogger<SettingsForm>(), _settingsService));
+            () => new SettingsForm(_loggerFactory.CreateLogger<SettingsForm>(), _settingsService));
         }
 
         private void BtnExit_Click(object sender, EventArgs e)
@@ -445,7 +445,7 @@ namespace WinFormApp.Forms
 
             btnLoad.Enabled = true;
             btnImport.Enabled = _orderForm?.dataGridViewFiles.Rows.Count > 0 &&
-                              _orderForm?.lbTitle.Text != "IMPORTED";
+             _orderForm?.lbTitle.Text != "IMPORTED";
             btnLog.Enabled = true;
             btnProperties.Enabled = true;
             btnExit.Enabled = true;
@@ -505,8 +505,8 @@ namespace WinFormApp.Forms
 
             Control[] controls = new Control[]
             {
-                tplHeader, plTBPanel, statusStrip, plFormContainer,
-                plNordanHeaderLogo, plSideBarMain
+ tplHeader, plTBPanel, statusStrip, plFormContainer,
+ plNordanHeaderLogo, plSideBarMain
             };
 
             foreach (Control control in controls)
@@ -524,8 +524,8 @@ namespace WinFormApp.Forms
             if (plFormContainer != null)
             {
                 plFormContainer.Size = new Size(
-                    this.ClientSize.Width - plFormContainer.Left,
-                    this.ClientSize.Height - plFormContainer.Top);
+                 this.ClientSize.Width - plFormContainer.Left,
+                 this.ClientSize.Height - plFormContainer.Top);
             }
         }
 
@@ -535,10 +535,10 @@ namespace WinFormApp.Forms
             {
                 using Graphics g = CreateGraphics();
                 MessageBox.Show(
-                    $"Current DPI: {g.DpiX} x {g.DpiY}",
-                    "DPI Debug",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                 $"Current DPI: {g.DpiX} x {g.DpiY}",
+                 "DPI Debug",
+                 MessageBoxButtons.OK,
+                 MessageBoxIcon.Information);
             }
         }
 
@@ -568,8 +568,8 @@ namespace WinFormApp.Forms
 
             Control[] controls = new Control[]
             {
-                tplHeader, plTBPanel, statusStrip, plFormContainer,
-                plNordanHeaderLogo, plSideBarMain
+ tplHeader, plTBPanel, statusStrip, plFormContainer,
+ plNordanHeaderLogo, plSideBarMain
             };
 
             foreach (Control control in controls)

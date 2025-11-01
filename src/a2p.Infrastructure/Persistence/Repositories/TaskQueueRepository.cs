@@ -1,4 +1,3 @@
-using Application.Interfaces;
 using Application.Interfaces.Repositories;
 
 using Dapper;
@@ -9,8 +8,6 @@ using Domain.Enums;
 using Infrastructure.Data;
 
 using Microsoft.Extensions.Logging;
-
-using System.Data;
 
 namespace Infrastructure.Persistence.Repositories
 {
@@ -29,37 +26,35 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<TaskEntity?> CreateTaskAsync(TaskEntity order)
         {
             const string sql = @"
-                                INSERT INTO  Uniwave_a2p_TaskQueue
-                                (Id 
-                                , OrderId 
-                                , OrderNumber 
-                                , ProjectNumber 
-                                , Number 
-                                , Version 
-                                , State 
-                                , PayloadJson 
-                                , ProcessedUTCDateTime 
-                                , CreatedUTCDateTime 
-                                , ModifiedUTCDateTime 
-                                , CreatedBy 
-                                , ModifiedBy)
-                                OUTPUT INSERTED.*
-                                VALUES
-                                (@Id
-                                ,@rderId 
-                                ,@OrderNumber
-                                ,@ProjectNumber 
-                                ,@Number
-                                ,@Version 
-                                ,@State
-                                ,@PayloadJson
-                                ,@ProcessedUTCDateTime
-                                ,@CreatedUTCDateTime
-                                ,@ModifiedUTCDateTime
-                                ,@CreatedBy
-                                ,@ModifiedBy)";
-
-         
+  INSERT INTO Uniwave_a2p_TaskQueue
+  (Id 
+  , OrderId 
+  , OrderNumber 
+  , ProjectNumber 
+  , Number 
+  , Version 
+  , State 
+  , PayloadJson 
+  , ProcessedUTCDateTime 
+  , CreatedUTCDateTime 
+  , ModifiedUTCDateTime 
+  , CreatedBy 
+  , ModifiedBy)
+  OUTPUT INSERTED.*
+  VALUES
+  (@Id
+  ,@rderId 
+  ,@OrderNumber
+  ,@ProjectNumber 
+  ,@Number
+  ,@Version 
+  ,@State
+  ,@PayloadJson
+  ,@ProcessedUTCDateTime
+  ,@CreatedUTCDateTime
+  ,@ModifiedUTCDateTime
+  ,@CreatedBy
+  ,@ModifiedBy)";
 
             return await _dapper.QuerySingleOrDefaultAsync<TaskEntity>(sql, order);
         }
@@ -68,7 +63,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<TaskEntity?> GetTaskByIdAsync(Guid id)
         {
             const string sql = "SELECT * FROM Uniwave_a2p_TaskQueue WHERE Id = @Id;";
-          
+
             return await _dapper.QuerySingleOrDefaultAsync<TaskEntity>(sql, new { Id = id });
         }
 
@@ -76,7 +71,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<TaskEntity?> GetTaskByOrderNumberAsync(string orderNumber)
         {
             const string sql = "SELECT * FROM Uniwave_a2p_TaskQueue WHERE OrderNumber = @OrderNumber;";
-        
+
             return await _dapper.QuerySingleOrDefaultAsync<TaskEntity>(sql, new { OrderNumber = orderNumber });
         }
 
@@ -84,14 +79,14 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<(IEnumerable<TaskEntity> Tasks, int TotalCount)> GetPageTasksAsync(int page, int size)
         {
             const string sql = @"
-                SELECT * FROM Uniwave_a2p_TaskQueue
-                ORDER BY CreatedUTCDateTime DESC
-                OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
-                SELECT COUNT(*) FROM Uniwave_a2p_TaskQueue;";
+ SELECT * FROM Uniwave_a2p_TaskQueue
+ ORDER BY CreatedUTCDateTime DESC
+ OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
+ SELECT COUNT(*) FROM Uniwave_a2p_TaskQueue;";
 
             SqlMapper.GridReader multi = await _dapper.QueryMultipleAsync(sql, new { Offset = (page - 1) * size, PageSize = size });
             IEnumerable<TaskEntity> tasks = await multi.ReadAsync<TaskEntity>();
-            var total = await multi.ReadSingleAsync<int>();
+            int total = await multi.ReadSingleAsync<int>();
             return (tasks, total);
         }
 
@@ -99,37 +94,37 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<int> UpdateTaskAsync(OrderEntity order)
         {
             const string sql = @"
-        
-                                UINSERT INTO  Uniwave_a2p_TaskQueue
-                                (Id
-                                , OrderId
-                                , OrderNumber
-                                , ProjectNumber
-                                , Number
-                                , Version
-                                , State
-                                , PayloadJson
-                                , ProcessedUTCDateTime
-                                , CreatedUTCDateTime
-                                , ModifiedUTCDateTime
-                                , CreatedBy
-                                , ModifiedBy)
-                                OUTPUT INSERTED.*
-                                VALUES
-                                (@Id
-                                , @rderId
-                                , @OrderNumber
-                                , @ProjectNumber
-                                , @Number
-                                , @Version
-                                , @State
-                                , @PayloadJson
-                                , @ProcessedUTCDateTime
-                                , @CreatedUTCDateTime
-                                , @ModifiedUTCDateTime
-                                , @CreatedBy
-                                , @ModifiedBy)";
-           
+ 
+  UINSERT INTO Uniwave_a2p_TaskQueue
+  (Id
+  , OrderId
+  , OrderNumber
+  , ProjectNumber
+  , Number
+  , Version
+  , State
+  , PayloadJson
+  , ProcessedUTCDateTime
+  , CreatedUTCDateTime
+  , ModifiedUTCDateTime
+  , CreatedBy
+  , ModifiedBy)
+  OUTPUT INSERTED.*
+  VALUES
+  (@Id
+  , @rderId
+  , @OrderNumber
+  , @ProjectNumber
+  , @Number
+  , @Version
+  , @State
+  , @PayloadJson
+  , @ProcessedUTCDateTime
+  , @CreatedUTCDateTime
+  , @ModifiedUTCDateTime
+  , @CreatedBy
+  , @ModifiedBy)";
+
             return await _dapper.ExecuteAsync(sql, order);
         }
 
@@ -137,11 +132,11 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<int> UpdateTaskStateAsync(Guid id, OrderState orderState)
         {
             const string sql = @"
-                UPDATE Uniwave_a2p_TaskQueue
-                SET OrderState = @State,
-                    ModifiedUTCDateTime = GETUTCDATE()
-                WHERE Id = @Id;";
-          
+ UPDATE Uniwave_a2p_TaskQueue
+ SET OrderState = @State,
+  ModifiedUTCDateTime = GETUTCDATE()
+ WHERE Id = @Id;";
+
             return await _dapper.ExecuteAsync(sql, new { Id = id, OrderState = orderState.ToString() });
         }
 
@@ -149,7 +144,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<int> DeleteTaskByIdAsync(Guid id)
         {
             const string sql = "DELETE FROM Uniwave_a2p_TaskQueue WHERE Id = @Id;";
-          
+
             return await _dapper.ExecuteAsync(sql, new { Id = id });
         }
     }

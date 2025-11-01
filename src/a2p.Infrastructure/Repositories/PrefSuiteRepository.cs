@@ -33,27 +33,27 @@ namespace Infrastructure.Repositories
         public async Task<SalesDocument?> GetSalesDocumentByOrderAsync(string orderNumber)
         {
             const string sql = @"SELECT 
-                                [PAF].[RowId] AS RowId, 
-                                [PAF].[Numero] AS Number,  
-                                [PAF].[Version], 
-                                [PAF].[FechaSolicitud]AS  CreationDate, 
-                                [PAF].[FechaSalidaTaller] AS ShopExitDate, 
-                                [PAF].[FechaDespiece] AS BreakdownDate, 
-                                [PAF].[Referencia] Reference, 
-                                [PAF].[PriceCurrency] PriceCurrency,  
-                                [PAF].[Nombre] CustomerName,  
-                                [PAF].[CodigoCliente] CustomerCode, 
-                                [PAF].[User1], 
-                                [PAF].[Domicilio] AS CustomerAddress1, 
-                                [PAF].[CodigoPostal] AS CustomerPostalCode, 
-                                [PAF].[Localidad] AS CustomerCity, 
-                                [PAF].[Provincia] AS CustomerProvince, 
-                                [PAF].[Pais] AS CustomerCountry, 
-                                (SELECT [dbo].[Uniwave_a2p_GetOrderState] (RowId)) AS State,
-                                [PAF].[SalesmanCode],
-                                [CO].[Nombre] SalesmanName 
-                                FROM PAF  LEFT OUTER JOIN Comerciales CO ON PAF.SalesmanCode = CO.Codigo 
-                                WHERE [PAF].[Referencia] = @OrderNumber";
+  [PAF].[RowId] AS RowId, 
+  [PAF].[Numero] AS Number, 
+  [PAF].[Version], 
+  [PAF].[FechaSolicitud]AS CreationDate, 
+  [PAF].[FechaSalidaTaller] AS ShopExitDate, 
+  [PAF].[FechaDespiece] AS BreakdownDate, 
+  [PAF].[Referencia] Reference, 
+  [PAF].[PriceCurrency] PriceCurrency, 
+  [PAF].[Nombre] CustomerName, 
+  [PAF].[CodigoCliente] CustomerCode, 
+  [PAF].[User1], 
+  [PAF].[Domicilio] AS CustomerAddress1, 
+  [PAF].[CodigoPostal] AS CustomerPostalCode, 
+  [PAF].[Localidad] AS CustomerCity, 
+  [PAF].[Provincia] AS CustomerProvince, 
+  [PAF].[Pais] AS CustomerCountry, 
+  (SELECT [dbo].[Uniwave_a2p_GetOrderState] (RowId)) AS State,
+  [PAF].[SalesmanCode],
+  [CO].[Nombre] SalesmanName 
+  FROM PAF LEFT OUTER JOIN Comerciales CO ON PAF.SalesmanCode = CO.Codigo 
+  WHERE [PAF].[Referencia] = @OrderNumber";
 
             return await _dapper.QuerySingleOrDefaultAsync<SalesDocument>(sql, new { OrderNumber = orderNumber });
         }
@@ -61,27 +61,27 @@ namespace Infrastructure.Repositories
         public async Task<SalesDocument?> GetSalesDocumentByRowIdAsync(Guid rowId)
         {
             const string sql = @"SELECT 
-                                [PAF].[RowId] AS RowId, 
-                                [PAF].[Numero] AS Number,  
-                                [PAF].[Version], 
-                                [PAF].[FechaSolicitud]AS  CreationDate, 
-                                [PAF].[FechaSalidaTaller] AS ShopExitDate, 
-                                [PAF].[FechaDespiece] AS BreakdownDate, 
-                                [PAF].[Referencia] Reference, 
-                                [PAF].[PriceCurrency] PriceCurrency,  
-                                [PAF].[Nombre] CustomerName,  
-                                [PAF].[CodigoCliente] CustomerCode, 
-                                [PAF].[User1], 
-                                [PAF].[Domicilio] AS CustomerAddress1, 
-                                [PAF].[CodigoPostal] AS CustomerPostalCode, 
-                                [PAF].[Localidad] AS CustomerCity, 
-                                [PAF].[Provincia] AS CustomerProvince, 
-                                [PAF].[Pais] AS CustomerCountry, 
-                                (SELECT [dbo].[Uniwave_a2p_GetOrderState] (RowId)) AS State,
-                                [PAF].[SalesmanCode],
-                                [CO].[Nombre] SalesmanName 
-                                FROM PAF  LEFT OUTER JOIN Comerciales CO ON PAF.SalesmanCode = CO.Codigo 
-                                WHERE [PAF].[RowId] = @RowId";
+  [PAF].[RowId] AS RowId, 
+  [PAF].[Numero] AS Number, 
+  [PAF].[Version], 
+  [PAF].[FechaSolicitud]AS CreationDate, 
+  [PAF].[FechaSalidaTaller] AS ShopExitDate, 
+  [PAF].[FechaDespiece] AS BreakdownDate, 
+  [PAF].[Referencia] Reference, 
+  [PAF].[PriceCurrency] PriceCurrency, 
+  [PAF].[Nombre] CustomerName, 
+  [PAF].[CodigoCliente] CustomerCode, 
+  [PAF].[User1], 
+  [PAF].[Domicilio] AS CustomerAddress1, 
+  [PAF].[CodigoPostal] AS CustomerPostalCode, 
+  [PAF].[Localidad] AS CustomerCity, 
+  [PAF].[Provincia] AS CustomerProvince, 
+  [PAF].[Pais] AS CustomerCountry, 
+  (SELECT [dbo].[Uniwave_a2p_GetOrderState] (RowId)) AS State,
+  [PAF].[SalesmanCode],
+  [CO].[Nombre] SalesmanName 
+  FROM PAF LEFT OUTER JOIN Comerciales CO ON PAF.SalesmanCode = CO.Codigo 
+  WHERE [PAF].[RowId] = @RowId";
 
             return await _dapper.QuerySingleOrDefaultAsync<SalesDocument>(sql, new { RowId = rowId });
         }
@@ -259,7 +259,7 @@ namespace Infrastructure.Repositories
                 material.Color,
                 material.SourceReference,
                 material.SourceColor,
-                 material.MaterialType
+                material.MaterialType
             });
         }
 

@@ -22,71 +22,71 @@ namespace Infrastructure.Persistence.Repositories
         // CREATE
         public async Task<ItemEntity?> CreateItemAsync(ItemEntity item)
         {
-            const string sql = @"INSERT INTO [dbo].[Uniwave_a2p_Items]  
-            ([Id]
-           ,[OrderId]
-           ,[ItemName]
-           ,[SortOrder]
-           ,[Description]
-           ,[Quantity]
-           ,[Width]
-           ,[Height]
-           ,[Weight]
-           ,[WeightWithoutGlass]
-           ,[WeightGlass]
-           ,[TotalWeight]
-           ,[TotalWeightWithoutGlass]
-           ,[TotalWeightGlass]
-           ,[Area]
-           ,[TotalArea]
-           ,[Hours]
-           ,[TotalHours]
-           ,[MaterialCost]
-           ,[LaborCost]
-           ,[Cost]
-           ,[TotalMaterialCost]
-           ,[TotalLaborCost]
-           ,[TotalCost]
-           ,[Price]
-           ,[TotalPrice]
-           ,[Worksheet]
-           ,[Line]
-           ,[Column]
-           ,[CreatedUTCDateTime]
-           ,[ModifiedUTCDateTime]) 
-            OUTPUT INSERTED .*
-            VALUES  
-            (@Id
-           ,@OrderId
-           ,@ItemName
-           ,@SortOrder
-           ,@Description
-           ,@Quantity
-           ,@Width
-           ,@Height
-           ,@Weight
-           ,@WeightWithoutGlass
-           ,@WeightGlass
-           ,@TotalWeight
-           ,@TotalWeightWithoutGlass
-           ,@TotalWeightGlass
-           ,@Area
-           ,@TotalArea
-           ,@Hours
-           ,@TotalHours
-           ,@MaterialCost
-           ,@LaborCost
-           ,@Cost
-           ,@TotalMaterialCost
-           ,@TotalLaborCost
-           ,@TotalCost
-           ,@Price
-           ,@TotalPrice
-           ,@Worksheet
-           ,@Line
-           ,@Column
-           ,@CreatedUTCDateTime
-           ,@ModifiedUTCDateTime)";
+            const string sql = @"INSERT INTO [dbo].[Uniwave_a2p_Items] 
+ ([Id]
+ ,[OrderId]
+ ,[ItemName]
+ ,[SortOrder]
+ ,[Description]
+ ,[Quantity]
+ ,[Width]
+ ,[Height]
+ ,[Weight]
+ ,[WeightWithoutGlass]
+ ,[WeightGlass]
+ ,[TotalWeight]
+ ,[TotalWeightWithoutGlass]
+ ,[TotalWeightGlass]
+ ,[Area]
+ ,[TotalArea]
+ ,[Hours]
+ ,[TotalHours]
+ ,[MaterialCost]
+ ,[LaborCost]
+ ,[Cost]
+ ,[TotalMaterialCost]
+ ,[TotalLaborCost]
+ ,[TotalCost]
+ ,[Price]
+ ,[TotalPrice]
+ ,[Worksheet]
+ ,[Line]
+ ,[Column]
+ ,[CreatedUTCDateTime]
+ ,[ModifiedUTCDateTime]) 
+ OUTPUT INSERTED .*
+ VALUES 
+ (@Id
+ ,@OrderId
+ ,@ItemName
+ ,@SortOrder
+ ,@Description
+ ,@Quantity
+ ,@Width
+ ,@Height
+ ,@Weight
+ ,@WeightWithoutGlass
+ ,@WeightGlass
+ ,@TotalWeight
+ ,@TotalWeightWithoutGlass
+ ,@TotalWeightGlass
+ ,@Area
+ ,@TotalArea
+ ,@Hours
+ ,@TotalHours
+ ,@MaterialCost
+ ,@LaborCost
+ ,@Cost
+ ,@TotalMaterialCost
+ ,@TotalLaborCost
+ ,@TotalCost
+ ,@Price
+ ,@TotalPrice
+ ,@Worksheet
+ ,@Line
+ ,@Column
+ ,@CreatedUTCDateTime
+ ,@ModifiedUTCDateTime)";
 
             return await _dapper.QuerySingleOrDefaultAsync<ItemEntity>(sql, item);
         }
@@ -103,8 +103,8 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<IEnumerable<ItemEntity>> GetOrderItemsAsync(Guid id)
         {
             const string sql = @"
-                SELECT * FROM Uniwave_a2p_Materials WHERE OrderId = @id
-                ORDER BY SortOrder";
+ SELECT * FROM Uniwave_a2p_Materials WHERE OrderId = @id
+ ORDER BY SortOrder";
 
             return await _dapper.QueryAsync<ItemEntity>(sql, new { Id = id });
         }
@@ -113,70 +113,70 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<int> UpdateItemAsync(ItemEntity item)
         {
             const string sql = @"INSERT INTO [dbo].[Uniwave_a2p_Items] 
-             ([Id]
-           ,[OrderId]
-           ,[ItemName]
-           ,[SortOrder]
-           ,[Description]
-           ,[Quantity]
-           ,[Width]
-           ,[Height]
-           ,[Weight]
-           ,[WeightWithoutGlass]
-           ,[WeightGlass]
-           ,[TotalWeight]
-           ,[TotalWeightWithoutGlass]
-           ,[TotalWeightGlass]
-           ,[Area]
-           ,[TotalArea]
-           ,[Hours]
-           ,[TotalHours]
-           ,[MaterialCost]
-           ,[LaborCost]
-           ,[Cost]
-           ,[TotalMaterialCost]
-           ,[TotalLaborCost]
-           ,[TotalCost]
-           ,[Price]
-           ,[TotalPrice]
-           ,[Worksheet]
-           ,[Line]
-           ,[Column]
-           ,[ModifiedUTCDateTime]
-           )
-            OUTPUT UNSERTED .*
-            VALUES  
-            (@Id
-           ,@OrderId
-           ,@ItemName
-           ,@SortOrder
-           ,@Description
-           ,@Quantity
-           ,@Width
-           ,@Height
-           ,@Weight
-           ,@WeightWithoutGlass
-           ,@WeightGlass
-           ,@TotalWeight
-           ,@TotalWeightWithoutGlass
-           ,@TotalWeightGlass
-           ,@Area
-           ,@TotalArea
-           ,@Hours
-           ,@TotalHours
-           ,@MaterialCost
-           ,@LaborCost
-           ,@Cost
-           ,@TotalMaterialCost
-           ,@TotalLaborCost
-           ,@TotalCost
-           ,@Price
-           ,@TotalPrice
-           ,@Worksheet
-           ,@Line
-           ,@Column
-           ,@ModifiedUTCDateTime
-           )";
+ ([Id]
+ ,[OrderId]
+ ,[ItemName]
+ ,[SortOrder]
+ ,[Description]
+ ,[Quantity]
+ ,[Width]
+ ,[Height]
+ ,[Weight]
+ ,[WeightWithoutGlass]
+ ,[WeightGlass]
+ ,[TotalWeight]
+ ,[TotalWeightWithoutGlass]
+ ,[TotalWeightGlass]
+ ,[Area]
+ ,[TotalArea]
+ ,[Hours]
+ ,[TotalHours]
+ ,[MaterialCost]
+ ,[LaborCost]
+ ,[Cost]
+ ,[TotalMaterialCost]
+ ,[TotalLaborCost]
+ ,[TotalCost]
+ ,[Price]
+ ,[TotalPrice]
+ ,[Worksheet]
+ ,[Line]
+ ,[Column]
+ ,[ModifiedUTCDateTime]
+ )
+ OUTPUT UNSERTED .*
+ VALUES 
+ (@Id
+ ,@OrderId
+ ,@ItemName
+ ,@SortOrder
+ ,@Description
+ ,@Quantity
+ ,@Width
+ ,@Height
+ ,@Weight
+ ,@WeightWithoutGlass
+ ,@WeightGlass
+ ,@TotalWeight
+ ,@TotalWeightWithoutGlass
+ ,@TotalWeightGlass
+ ,@Area
+ ,@TotalArea
+ ,@Hours
+ ,@TotalHours
+ ,@MaterialCost
+ ,@LaborCost
+ ,@Cost
+ ,@TotalMaterialCost
+ ,@TotalLaborCost
+ ,@TotalCost
+ ,@Price
+ ,@TotalPrice
+ ,@Worksheet
+ ,@Line
+ ,@Column
+ ,@ModifiedUTCDateTime
+ )";
 
             return await _dapper.ExecuteAsync(sql, item);
         }

@@ -24,10 +24,10 @@ namespace Infrastructure.Persistence.Services
         private readonly ILogger<ItemService> _logger;
 
         public ItemService(
-            IItemRepository repository,
-            IValidator<ItemDto> validator,
-            IMapper mapper,
-            ILogger<ItemService> logger)
+         IItemRepository repository,
+         IValidator<ItemDto> validator,
+         IMapper mapper,
+         ILogger<ItemService> logger)
         {
             _repository = repository;
             _validator = validator;
@@ -50,13 +50,13 @@ namespace Infrastructure.Persistence.Services
             {
 
                 ItemEntity entity = _mapper.Map<ItemEntity>(dto)
-                    ?? throw new InvalidOperationException("Mapping resulted in null ItemEntity.");
+                 ?? throw new InvalidOperationException("Mapping resulted in null ItemEntity.");
 
                 ItemEntity? created = await _repository.CreateItemAsync(entity);
                 if (created == null)
                 {
                     return ValidationResult<ItemEntity>.Failure(
-                        new[] { new ValidationError("Repository", "Failed to create item.") });
+                     new[] { new ValidationError("Repository", "Failed to create item.") });
                 }
 
                 _logger.LogInformation("Item {ItemName} created.", created.ItemName);
@@ -66,13 +66,17 @@ namespace Infrastructure.Persistence.Services
             {
                 _logger.LogError(ex, "SQL error creating item.");
                 return ValidationResult<ItemEntity>.Failure(
-                    new[] { new ValidationError("Database", "Database error occurred.") });
+                 new[] { new ValidationError("Database", "Database error occurred.") });
+            }
+            catch (InvalidOperationException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error creating item.");
                 return ValidationResult<ItemEntity>.Failure(
-                    new[] { new ValidationError("System", ex.Message) });
+                 new[] { new ValidationError("System", ex.Message) });
             }
         }
 
@@ -90,24 +94,24 @@ namespace Infrastructure.Persistence.Services
             try
             {
                 ItemEntity item = _mapper.Map<ItemEntity>(dto)
-                    ?? throw new InvalidOperationException("Mapping resulted in null ItemEntity.");
+                 ?? throw new InvalidOperationException("Mapping resulted in null ItemEntity.");
 
                 // Repository provides GetItemAsync by id
                 ItemEntity? existing = await _repository.GetItemAsync(item.Id);
                 if (existing == null)
                 {
                     return ValidationResult<ItemEntity>.Failure(
-                        new[] { new ValidationError(nameof(dto.Id), "Item not found.") });
+                     new[] { new ValidationError(nameof(dto.Id), "Item not found.") });
                 }
 
-                item.ModifiedUTCDateTime = DateTime.UtcNow;
+                item.ModifiedDateTime = DateTime.Now;
 
                 // ItemRepository.UpdateItemAsync returns updated item (nullable)
                 int updated = await _repository.UpdateItemAsync(item);
                 if (updated == 0)
                 {
                     return ValidationResult<ItemEntity>.Failure(
-                        new[] { new ValidationError("Repository", "Failed to update item.") });
+                     new[] { new ValidationError("Repository", "Failed to update item.") });
                 }
                 _logger.LogInformation("Item {ItemName} updated successfully.", item.ItemName);
                 return ValidationResult<ItemEntity>.Success(item, "Item updated successfully.");
@@ -116,13 +120,17 @@ namespace Infrastructure.Persistence.Services
             {
                 _logger.LogError(ex, "SQL error updating item.");
                 return ValidationResult<ItemEntity>.Failure(
-                    new[] { new ValidationError("Database", "Database error.") });
+                 new[] { new ValidationError("Database", "Database error.") });
+            }
+            catch (InvalidOperationException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error updating item.");
                 return ValidationResult<ItemEntity>.Failure(
-                    new[] { new ValidationError("System", ex.Message) });
+                 new[] { new ValidationError("System", ex.Message) });
             }
         }
 
@@ -133,8 +141,8 @@ namespace Infrastructure.Persistence.Services
             {
                 ItemEntity? item = await _repository.GetItemAsync(id);
                 return item == null
-                    ? Result<ItemEntity>.Failure($"Item {id} not found.")
-                    : Result<ItemEntity>.Success(item);
+                 ? Result<ItemEntity>.Failure($"Item {id} not found.")
+                 : Result<ItemEntity>.Success(item);
             }
             catch (Exception ex)
             {
@@ -149,8 +157,9 @@ namespace Infrastructure.Persistence.Services
             try
             {
                 IEnumerable<ItemEntity> items = await _repository.GetOrderItemsAsync(id);
-                return Result<IEnumerable<ItemEntity>?>.Failure($"Order '{id}' items for not found.");
-
+                return items == null || !items.Any()
+                 ? Result<IEnumerable<ItemEntity>?>.Failure($"Order '{id}' items not found.")
+                 : Result<IEnumerable<ItemEntity>?>.Success(items);
             }
             catch (Exception ex)
             {
@@ -171,8 +180,8 @@ namespace Infrastructure.Persistence.Services
                 }
                 int rows = await _repository.DeleteItemAsync(id);
                 return rows == 0
-                    ? Result<bool>.Failure("Failed to delete item.")
-                    : Result<bool>.Success(true, "Item deleted successfully.");
+                 ? Result<bool>.Failure("Failed to delete item.")
+                 : Result<bool>.Success(true, "Item deleted successfully.");
             }
             catch (Exception ex)
             {
@@ -193,8 +202,8 @@ namespace Infrastructure.Persistence.Services
                 }
                 int rows = await _repository.DeleteOrderItemsAsync(id);
                 return rows == 0
-                    ? Result<bool>.Failure("Failed to delete items.")
-                    : Result<bool>.Success(true, "Items deleted successfully.");
+                 ? Result<bool>.Failure("Failed to delete items.")
+                 : Result<bool>.Success(true, "Items deleted successfully.");
             }
             catch (Exception ex)
             {

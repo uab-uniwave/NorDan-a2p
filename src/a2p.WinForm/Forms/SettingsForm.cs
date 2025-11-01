@@ -22,7 +22,7 @@ namespace WinFormApp.Forms
             _settingsService = userSettingsService;
 
             IConfigurationBuilder builder = new ConfigurationBuilder()
-                .AddUserSecrets<SettingsForm>();
+            .AddUserSecrets<SettingsForm>();
             _configuration = builder.Build();
 
             this.AutoScaleMode = AutoScaleMode.Dpi;
@@ -99,8 +99,8 @@ namespace WinFormApp.Forms
         {
             string connectionString = BuildConnectionStringFromForm();
             _ = TestSqlConnection(connectionString, out string error)
-                ? MessageBox.Show("Connection successful!")
-                : MessageBox.Show($"Connection failed: {error}");
+            ? MessageBox.Show("Connection successful!")
+            : MessageBox.Show($"Connection failed: {error}");
         }
 
         private async void btnSave_Click(object sender, EventArgs e)
@@ -111,20 +111,20 @@ namespace WinFormApp.Forms
 
                 // Check if folders exist
                 string[] folders = {
-                        Path.Combine(_currentSettings.Folders.RootFolder, _currentSettings.Folders.ImportSuccess),
-                        Path.Combine(_currentSettings.Folders.RootFolder, _currentSettings.Folders.ImportFailed),
-                        Path.Combine(_currentSettings.Folders.RootFolder, _currentSettings.Folders.Log),
-                    };
+  Path.Combine(_currentSettings.Folders.RootFolder, _currentSettings.Folders.ImportSuccess),
+  Path.Combine(_currentSettings.Folders.RootFolder, _currentSettings.Folders.ImportFailed),
+  Path.Combine(_currentSettings.Folders.RootFolder, _currentSettings.Folders.Log),
+  };
 
                 bool allFoldersExist = folders.All(Directory.Exists);
 
                 if (!allFoldersExist)
                 {
                     DialogResult result = MessageBox.Show(
-                        "One or more folders do not exist. Do you want to create them?",
-                        "Create Folders",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question
+                    "One or more folders do not exist. Do you want to create them?",
+                    "Create Folders",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question
                     );
 
                     if (result == DialogResult.No)
@@ -195,12 +195,12 @@ namespace WinFormApp.Forms
         {
             txbWorkingFolder.Text = settings.Folders.RootFolder;
             txbSuccessFolder.Text = string.IsNullOrEmpty(settings.Folders.ImportSuccess.ToString()) == true
-                ? "Import_Success" : settings.Folders.ImportSuccess.ToString();
+            ? "Import_Success" : settings.Folders.ImportSuccess.ToString();
             txbFailedFolder.Text = string.IsNullOrEmpty(settings.Folders.ImportFailed.ToString()) == true
-               ? "Import_Failed" : settings.Folders.ImportFailed.ToString();
+            ? "Import_Failed" : settings.Folders.ImportFailed.ToString();
 
             txbLogFolder.Text = string.IsNullOrEmpty(settings.Folders.Log.ToString()) == true
-               ? "Log" : settings.Folders.Log.ToString();
+            ? "Log" : settings.Folders.Log.ToString();
 
             cbxLogLevel.SelectedItem = _settingsService.GetSerilogLevel();
             chxTrusted.Checked = IsIntegratedSecurityEnabled();

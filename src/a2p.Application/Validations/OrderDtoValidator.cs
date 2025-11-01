@@ -10,45 +10,43 @@ namespace Application.Validations
         {
             // --- Required fields ---
             RuleFor(x => x.OrderNumber)
-                .NotEmpty().WithMessage("OrderNumber number is required.")
-                .MaximumLength(50).WithMessage("OrderNumber number too long.");
+            .NotEmpty().WithMessage("OrderNumber number is required.")
+            .MaximumLength(50).WithMessage("OrderNumber number too long.");
 
-            RuleFor(x => x.Currency)
-                .NotEmpty().WithMessage("Currency is required.")
-                .Length(3).WithMessage("Currency must be a 3-letter ISO code.");
-
-            // SalesDocumentDto basic checks
-            RuleFor(x => x.SalesDocument)
-                .NotNull().WithMessage("SalesDocumentDto must be provided.");
-
-            When(x => x.SalesDocument != null, () =>
+            // --- Optional fields with conditional validation ---
+            // Currency is only validated if provided
+            When(x => !string.IsNullOrEmpty(x.Currency), () =>
             {
-                RuleFor(x => x.SalesDocument.Number)
-                    .GreaterThan(0).WithMessage("SalesDocumentDto.Number must be greater than zero.");
-                RuleFor(x => x.SalesDocument.Version)
-                    .GreaterThanOrEqualTo(0).WithMessage("SalesDocumentDto.Version must be greater than or equal to zero.");
+                RuleFor(x => x.Currency)
+                .Length(3).WithMessage("Currency must be a 3-letter ISO code.");
             });
 
-            RuleFor(x => x.ExchangeRate)
+            // SalesDocumentDto basic checks - only if Number > 0 (meaning it was explicitly set)
+            When(x => x.SalesDocument?.Number > 0, () =>
+            {
+                RuleFor(x => x.SalesDocument.Number)
+                .GreaterThan(0).WithMessage("SalesDocumentDto.Number must be greater than zero.");
+                RuleFor(x => x.SalesDocument.Version)
+                .GreaterThanOrEqualTo(0).WithMessage("SalesDocumentDto.Version must be greater than or equal to zero.");
+            });
+
+            // ExchangeRate is only validated if greater than 0
+            When(x => x.ExchangeRate > 0, () =>
+            {
+                RuleFor(x => x.ExchangeRate)
                 .GreaterThan(0).WithMessage("Exchange rate must be greater than zero.");
+            });
 
-            // --- Dates ---
-            //RuleFor(x => x.ExchangeRateDate)
-            //    .NotEqual(default(DateOnly)).WithMessage("Exchange rate date is required.");
+            // --- Collections - validate only if provided with items ---
+            When(x => x.ItemsDto != null && x.ItemsDto.Count > 0, () =>
+            {
+                RuleForEach(x => x.ItemsDto).SetValidator(new ItemDtoValidator());
+            });
 
-            // --- Collections ---
-            RuleFor(x => x.ItemsDto)
-                .NotNull().WithMessage("Items list must be provided.")
-                .Must(i => i.Count > 0).WithMessage("Item quantity must be greater than zero.");
-
-            RuleForEach(x => x.ItemsDto).SetValidator(new ItemDtoValidator());
-
-            RuleFor(x => x.MaterialsDto)
-                .NotNull().WithMessage("Materials list must be provided.")
-                .Must(m => m.Count > 0).WithMessage("Materials quantity must be greater than zero.");
-
-            RuleForEach(x => x.MaterialsDto).SetValidator(new MaterialDtoValidator());
-
+            When(x => x.MaterialsDto != null && x.MaterialsDto.Count > 0, () =>
+            {
+                RuleForEach(x => x.MaterialsDto).SetValidator(new MaterialDtoValidator());
+            });
         }
     }
 }

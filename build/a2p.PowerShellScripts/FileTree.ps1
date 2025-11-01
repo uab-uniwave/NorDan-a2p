@@ -18,34 +18,34 @@ $excludedFolders = @("Obj", "Output", ".vs", ".vscode", ".git", "Solution_Items"
 # Function to generate the file tree
 function Get-FileTree {
  param (
-  [string]$Path,
-  [string]$Prefix = ""
+ [string]$Path,
+ [string]$Prefix = ""
  )
 
  # Get all directories and files in the current path
  $items = Get-ChildItem -Path $Path -Force | Sort-Object -Property PSIsContainer, Name
 
  foreach ($item in $items) {
-  # Skip excluded folders and their contents
-  if ($item.PSIsContainer -and $excludedFolders -contains $item.Name) {
-   continue
-  }
+ # Skip excluded folders and their contents
+ if ($item.PSIsContainer -and $excludedFolders -contains $item.Name) {
+ continue
+ }
 
-  if ($item.PSIsContainer) {
-   # Directory - Write to output file and show in console
-   $line = "$Prefix├── $($item.Name)/"
-   Write-Output $line
-   $line | Out-File -Append -FilePath $outputFile
+ if ($item.PSIsContainer) {
+ # Directory - Write to output file and show in console
+ $line = "$Prefix├── $($item.Name)/"
+ Write-Output $line
+ $line | Out-File -Append -FilePath $outputFile
 
-   # Recursively process the directory
-   Get-FileTree -Path $item.FullName -Prefix "$Prefix│ "
-  }
-  else {
-   # File - Write to output file and show in console
-   $line = "$Prefix├── $($item.Name)"
-   Write-Output $line
-   $line | Out-File -Append -FilePath $outputFile
-  }
+ # Recursively process the directory
+ Get-FileTree -Path $item.FullName -Prefix "$Prefix│ "
+ }
+ else {
+ # File - Write to output file and show in console
+ $line = "$Prefix├── $($item.Name)"
+ Write-Output $line
+ $line | Out-File -Append -FilePath $outputFile
+ }
  }
 }
 

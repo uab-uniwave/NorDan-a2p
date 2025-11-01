@@ -26,12 +26,12 @@ namespace Infrastructure.Persistence.Services
         private readonly ILogger<OrderService> _logger;
 
         public OrderService(
-            IOrderRepository orderRepository,
-            IValidator<OrderDto> orderValidator,
-            IValidator<ItemDto> itemValidator,
-            IValidator<MaterialDto> materialValidator,
-            IMapper mapper,
-            ILogger<OrderService> logger)
+        IOrderRepository orderRepository,
+        IValidator<OrderDto> orderValidator,
+        IValidator<ItemDto> itemValidator,
+        IValidator<MaterialDto> materialValidator,
+        IMapper mapper,
+        ILogger<OrderService> logger)
         {
             _orderRepository = orderRepository;
             _orderValidator = orderValidator;
@@ -62,18 +62,18 @@ namespace Infrastructure.Persistence.Services
                 {
                     throw new InvalidOperationException("Mapping resulted in null OrderEntity.");
                 }
-                orderEntity.CreatedUTCDateTime = DateTime.UtcNow;
-                orderEntity.ModifiedUTCDateTime = orderEntity.CreatedUTCDateTime;
+                orderEntity.CreatedDateTime = DateTime.Now;
+                orderEntity.ModifiedDateTime = orderEntity.CreatedDateTime;
 
-                // Step 2.1 Validate and mapp items DTOs to item entities  
+                // Step 2.1 Validate and mapp items DTOs to item entities 
                 //===========================================================================================
                 for (int i = 0; i < orderDto.ItemsDto.Count; i++)
                 {
                     // Step 2.1.1 mapp item DTO to item entity
                     //===========================================================================================
                     ItemEntity itemEntity = _mapper.Map<ItemEntity>(orderDto.ItemsDto[i]);
-                    itemEntity.CreatedUTCDateTime = orderEntity.CreatedUTCDateTime;
-                    itemEntity.ModifiedUTCDateTime = orderEntity.CreatedUTCDateTime;
+                    itemEntity.CreatedDateTime = orderEntity.CreatedDateTime;
+                    itemEntity.ModifiedDateTime = orderEntity.CreatedDateTime;
                     if (itemEntity == null)
                     {
                         _logger.LogError("Mapping resulted in null ItemEntity for ItemDto at index {Index}.", i);
@@ -85,7 +85,7 @@ namespace Infrastructure.Persistence.Services
                     orderEntity.Items.Add(itemEntity);
                 }
 
-                // Step 2.2 validate and mapp materials DTOs to material entities  
+                // Step 2.2 validate and mapp materials DTOs to material entities 
                 //===========================================================================================
                 for (int i = 0; i < orderDto.MaterialsDto.Count; i++)
                 {
@@ -98,8 +98,8 @@ namespace Infrastructure.Persistence.Services
                         _logger.LogError("Mapping resulted in null MaterialEntity for MaterialDto at index {Index}.", i);
                         continue;
                     }
-                    materialEntity.CreatedUTCDateTime = orderEntity.CreatedUTCDateTime;
-                    materialEntity.ModifiedUTCDateTime = orderEntity.CreatedUTCDateTime;
+                    materialEntity.CreatedDateTime = orderEntity.CreatedDateTime;
+                    materialEntity.ModifiedDateTime = orderEntity.CreatedDateTime;
 
                     // Step 2.2.2 add material entity to order entity
                     //===========================================================================================
@@ -113,7 +113,7 @@ namespace Infrastructure.Persistence.Services
                 if (created == null)
                 {
                     return ValidationResult<OrderEntity>.Failure(
-                        new[] { new ValidationError("Repository", "Failed to create order.") });
+                    new[] { new ValidationError("Repository", "Failed to create order.") });
                 }
 
                 _logger.LogInformation("OrderNumber {OrderNumber} created.", created.OrderNumber);
@@ -123,13 +123,7 @@ namespace Infrastructure.Persistence.Services
             {
                 _logger.LogError(ex, "SQL error creating order.");
                 return ValidationResult<OrderEntity>.Failure(
-                    new[] { new ValidationError("Database", "Database error occurred.") });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unexpected error creating order.");
-                return ValidationResult<OrderEntity>.Failure(
-                    new[] { new ValidationError("System", ex.Message) });
+                 new[] { new ValidationError("Database", "Database error occurred.") });
             }
         }
 
@@ -152,16 +146,16 @@ namespace Infrastructure.Persistence.Services
                 if (existing == null)
                 {
                     return ValidationResult<OrderEntity>.Failure(
-                        new[] { new ValidationError(nameof(orderDto.Id), "OrderNumber not found.") });
+                    new[] { new ValidationError(nameof(orderDto.Id), "OrderNumber not found.") });
                 }
 
-                orderEntity.ModifiedUTCDateTime = DateTime.UtcNow;
+                orderEntity.ModifiedDateTime = DateTime.Now;
 
                 int rows = await _orderRepository.UpdateOrderAsync(orderEntity);
                 if (rows == 0)
                 {
                     return ValidationResult<OrderEntity>.Failure(
-                        new[] { new ValidationError("Repository", "Failed to update order.") });
+                    new[] { new ValidationError("Repository", "Failed to update order.") });
                 }
 
                 _logger.LogInformation("OrderNumber {OrderNumber} updated successfully.", orderEntity.OrderNumber);
@@ -171,13 +165,13 @@ namespace Infrastructure.Persistence.Services
             {
                 _logger.LogError(ex, "SQL error updating order.");
                 return ValidationResult<OrderEntity>.Failure(
-                    new[] { new ValidationError("Database", "Database error.") });
+                 new[] { new ValidationError("Database", "Database error.") });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error updating order.");
                 return ValidationResult<OrderEntity>.Failure(
-                    new[] { new ValidationError("System", ex.Message) });
+                 new[] { new ValidationError("System", ex.Message) });
             }
         }
 
@@ -188,8 +182,8 @@ namespace Infrastructure.Persistence.Services
             {
                 OrderEntity? order = await _orderRepository.GetOrderAsync(id);
                 return order == null
-                    ? Result<OrderEntity>.Failure($"OrderNumber {id} not found.")
-                    : Result<OrderEntity>.Success(order);
+                 ? Result<OrderEntity>.Failure($"OrderNumber {id} not found.")
+                 : Result<OrderEntity>.Success(order);
             }
             catch (Exception ex)
             {
@@ -226,8 +220,8 @@ namespace Infrastructure.Persistence.Services
 
                 int rows = await _orderRepository.UpdateOrderDeliveryAddressAsync(id, deliveryAddress);
                 return rows == 0
-                    ? Result<bool>.Failure("Failed to update delivery address.")
-                    : Result<bool>.Success(true, "Delivery address updated.");
+                 ? Result<bool>.Failure("Failed to update delivery address.")
+                 : Result<bool>.Success(true, "Delivery address updated.");
             }
             catch (Exception ex)
             {
@@ -248,8 +242,8 @@ namespace Infrastructure.Persistence.Services
                 }
                 int rows = await _orderRepository.DeleteOrderAsync(id);
                 return rows == 0
-                    ? Result<bool>.Failure("Failed to delete order.")
-                    : Result<bool>.Success(true, "OrderNumber deleted successfully.");
+                 ? Result<bool>.Failure("Failed to delete order.")
+                 : Result<bool>.Success(true, "OrderNumber deleted successfully.");
             }
             catch (Exception ex)
             {

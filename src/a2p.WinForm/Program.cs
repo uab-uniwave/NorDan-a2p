@@ -22,43 +22,43 @@ namespace WinFormApp
             // 1. Build Configuration from appsettings.json
             // ============================================================
             IConfigurationRoot configuration = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production"}.json", optional: true)
-                .Build();
+            .SetBasePath(AppContext.BaseDirectory)
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production"}.json", optional: true)
+            .Build();
 
             // ============================================================
             // 2. Create Host with Dependency Injection
             // ============================================================
             IHost host = Host.CreateDefaultBuilder()
-                .ConfigureServices((context, services) =>
-                {
-                    // Register configuration as singleton
-                    services.AddSingleton<IConfiguration>(configuration);
+            .ConfigureServices((context, services) =>
+            {
+                // Register configuration as singleton
+                services.AddSingleton<IConfiguration>(configuration);
 
-                    // Configure logging from appsettings.json
-                    services.AddLogging(builder =>
-                    {
-                        builder.ClearProviders();
-                        builder.AddConfiguration(configuration.GetSection("Logging"));
-                        builder.AddConsole();
-                        builder.AddDebug();
-                        builder.AddEventLog();
-                    });
+                // Configure logging from appsettings.json
+                services.AddLogging(builder =>
+     {
+         builder.ClearProviders();
+         builder.AddConfiguration(configuration.GetSection("Logging"));
+         builder.AddConsole();
+         builder.AddDebug();
+         builder.AddEventLog();
+     });
 
-                    // ⭐ Register Infrastructure services (SHARED WITH API!)
-                    services.AddInfrastructure(configuration);
+                // ⭐ Register Infrastructure services (SHARED WITH API!)
+                services.AddInfrastructure(configuration);
 
-                    // Register Forms as transient (new instance each time)
-                    services.AddTransient<MainForm>();
-                    services.AddTransient<LogsForm>();
-                    services.AddTransient<ProgressBarForm>();
-                    services.AddTransient<SettingsForm>();
-                    services.AddTransient<OrdersForm>();
-                    services.AddTransient<SplashScreenForm>();
+                // Register Forms as transient (new instance each time)
+                services.AddTransient<MainForm>();
+                services.AddTransient<LogsForm>();
+                services.AddTransient<ProgressBarForm>();
+                services.AddTransient<SettingsForm>();
+                services.AddTransient<OrdersForm>();
+                services.AddTransient<SplashScreenForm>();
 
-                })
-                .Build();
+            })
+            .Build();
 
             // ============================================================
             // 3. Get MainForm from DI container and run application

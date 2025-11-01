@@ -1,13 +1,13 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Text.Json;
-using System.Text.Json.Nodes;
-
 using Application.Interfaces.Services;
 using Application.Models;
 
 using Microsoft.Extensions.Configuration;
+
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace Infrastructure.Services.SettingsService
 {
@@ -41,8 +41,8 @@ namespace Infrastructure.Services.SettingsService
         {
             AppSettings settings = new();
             IConfigurationRoot config = new ConfigurationBuilder()
-                .AddJsonFile(_settingsFile, optional: false, reloadOnChange: false)
-                .Build();
+            .AddJsonFile(_settingsFile, optional: false, reloadOnChange: false)
+            .Build();
 
             config.GetSection("AppSettings").Bind(settings);
             return settings;
@@ -96,16 +96,12 @@ namespace Infrastructure.Services.SettingsService
         {
             SettingsContainer settings = new();
             IConfigurationRoot config = new ConfigurationBuilder()
-                .AddJsonFile(_settingsFile, optional: false, reloadOnChange: true)
-                .Build();
+            .AddJsonFile(_settingsFile, optional: false, reloadOnChange: true)
+            .Build();
 
             config.Bind(settings); // Binds both AppSettings and ConnectionStrings at root level
             return settings;
         }
-
-
-
-
 
         public void SetSerilogLevel(string level)
         {

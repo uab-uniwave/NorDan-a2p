@@ -46,12 +46,26 @@ namespace Infrastructure.Services.PrefSuiteServices
                         ConnectionString = _prefSuiteOLEDBConnection.ConnectionString
                     };
 
-                    _progressValue.CurrentValue += 100; //100  x1 
+                    _progressValue.CurrentValue += 100; //100 x1 
                     _progressValue.ProgressTask2 = $"Loading PrefSuite sales document ...";
                     _progressValue.ProgressTask3 = string.Empty;
                     _progress?.Report(_progressValue);
 
-                    salesDoc.Load(orderDto.SalesDocument.Number ?? 0, orderDto.SalesDocument.Version ?? 0);
+                    if (orderDto.SalesDocument == null)
+                    {
+                        _logger.LogError(
+         $"{nameof(PrefSuiteAppService)}.{nameof(InsertItemsAsync)}. SalesDocument information is missing in OrderDto.");
+                        throw new InvalidOperationException("SalesDocument information is missing in OrderDto.");
+                    }
+
+                    if (orderDto.SalesDocument.Number < 0 || orderDto.SalesDocument.Version < 0)
+                    {
+                        _logger.LogError(
+         $"{nameof(PrefSuiteAppService)}.{nameof(InsertItemsAsync)}. SalesDocument information is missing in OrderDto.");
+                        throw new InvalidOperationException("SalesDocument information is missing in OrderDto.");
+                    }
+
+                    salesDoc.Load(orderDto.SalesDocument.Number, orderDto.SalesDocument.Version);
 
                     for (int i = 0; i < orderDto.ItemsDto.Count; i++)
                     {
@@ -59,29 +73,39 @@ namespace Infrastructure.Services.PrefSuiteServices
                         {
                             if (string.IsNullOrEmpty(orderDto.ItemsDto[i].ItemName))
                             {
+
+                                _logger.LogWarning(
+                  "{$Class}.{$Method}. ItemName is missing.",
+                  nameof(PrefSuiteAppService),
+                  nameof(InsertItemsAsync));
                                 continue;
+
                             }
-                            _progressValue.CurrentValue += 10; //10  x2 
+
+                            string roundedWeight = Math.Round(orderDto.ItemsDto[i].Weight, 4, MidpointRounding.AwayFromZero).ToString(System.Globalization.CultureInfo.InvariantCulture);
+                            string roundedWidth = Math.Round(orderDto.ItemsDto[i].Width, 4, MidpointRounding.AwayFromZero).ToString(System.Globalization.CultureInfo.InvariantCulture);
+                            string roundedHeight = Math.Round(orderDto.ItemsDto[i].Height, 4, MidpointRounding.AwayFromZero).ToString(System.Globalization.CultureInfo.InvariantCulture);
+                            _progressValue.CurrentValue += 10; //10 x2 
 
                             _progressValue.ProgressTask2 = $"Inserting items {i + 1} of {orderDto.ItemsDto.Count} models into PrefSuite...";
                             _progressValue.ProgressTask3 = $"ItemName # {orderDto.ItemsDto[i].ItemName}";
                             _progress?.Report(_progressValue);
 
                             string Command = "<cmd:Commands name=\"CommandName\" xmlns:cmd=\"http://www.preference.com/XMLSchemas/2006/PrefCAD.Command\">" +
-                                              "<cmd:Command name=\"Model.SetDimensions\">" +
-                                              $"<cmd:Parameter name=\"dimensions\" type=\"string\" value=\"W={Math.Ceiling(orderDto.ItemsDto[i].Width)};H={Math.Ceiling(orderDto.ItemsDto[i].Height)};\"/>" +
-                                              "</cmd:Command>" +
-                                              "<cmd:Command name=\"Model.SetModelVariables\">" +
-                                              "<cmd:Parameter name=\"variables\" type=\"list\">" +
-                                              "<cmd:ItemName type=\"set\">" +
-                                              "<cmd:ItemValue name=\"name\" type=\"string\" value=\"Weight\"/>" +
-                                              "<cmd:ItemValue name=\"namespace\" type=\"string\" value=\"\"/>" +
-                                              $"<cmd:ItemValue name=\"value\" type=\"real\" value=\"{Math.Round(orderDto.ItemsDto[i].Weight, 4)}\"/>" +
-                                              "</cmd:ItemName>" +
-                                              "</cmd:Parameter>" +
-                                              "</cmd:Command>" +
-                                              "<cmd:Command name=\"Model.Regenerate\"/>" +
-                                              "</cmd:Commands>";
+              "<cmd:Command name=\"Model.SetDimensions\">" +
+              $"<cmd:Parameter name=\"dimensions\" type=\"string\" value=\"W={roundedWidth};H={roundedHeight};\"/>" +
+              "</cmd:Command>" +
+              "<cmd:Command name=\"Model.SetModelVariables\">" +
+              "<cmd:Parameter name=\"variables\" type=\"list\">" +
+              "<cmd:ItemName type=\"set\">" +
+              "<cmd:ItemValue name=\"name\" type=\"string\" value=\"Weight\"/>" +
+              "<cmd:ItemValue name=\"namespace\" type=\"string\" value=\"\"/>" +
+              $"<cmd:ItemValue name=\"value\" type=\"real\" value=\"{roundedWeight}\"/>" +
+              "</cmd:ItemName>" +
+              "</cmd:Parameter>" +
+              "</cmd:Command>" +
+              "<cmd:Command name=\"Model.Regenerate\"/>" +
+              "</cmd:Commands>";
 
                             SalesDocItem sdi = salesDoc.Items.Add(orderDto.ItemsDto[i].Id.ToString());
                             sdi.SetCode("Sapa_ALU", false);
@@ -101,45 +125,45 @@ namespace Infrastructure.Services.PrefSuiteServices
                         catch (Exception ex)
                         {
                             _logger.LogError(
-                                "{$Class}.{$Method}. Unhandled error." +
-                                "\nOrder {$Order}," +
-                                "\nWorksheet {$Worksheet}," +
-                                "\nLine {$Line}," +
-                                "\nItem {ItemName}, " +
-                                "\nDescription {Description}," +
-                                "\nException: {$Exception}",
-                                nameof(PrefSuiteAppService),
-                                nameof(InsertItemsAsync),
-                                orderDto.ItemsDto[i].OrderId,
-                                orderDto.ItemsDto[i].Worksheet,
-                                orderDto.ItemsDto[i].Line,
-                                orderDto.ItemsDto[i].ItemName,
-                                orderDto.ItemsDto[i].Description,
-                                ex.Message
-                            );
+             "{$Class}.{$Method}. Unhandled error." +
+             "\nOrder {$Order}," +
+             "\nWorksheet {$Worksheet}," +
+             "\nLine {$Line}," +
+             "\nItem {ItemName}, " +
+             "\nDescription {Description}," +
+             "\nException: {$Exception}",
+             nameof(PrefSuiteAppService),
+             nameof(InsertItemsAsync),
+             orderDto.ItemsDto[i].OrderId,
+             orderDto.ItemsDto[i].Worksheet,
+             orderDto.ItemsDto[i].Line,
+             orderDto.ItemsDto[i].ItemName,
+             orderDto.ItemsDto[i].Description,
+             ex.Message
+             );
 
                             continue;
                         }
                     }
 
-                    _progressValue.CurrentValue += 100; //100  x2 
+                    _progressValue.CurrentValue += 100; //100 x2 
                     _progressValue.ProgressTask2 = $"Saving PrefSuite sales document ...";
                     _progressValue.ProgressTask3 = string.Empty;
                     _progress?.Report(_progressValue);
                     salesDoc.Save();
                 });
-                //  return (orderDto, _progressValue);
+                // return (orderDto, _progressValue);
             }
             catch (Exception ex)
             {
                 _logger.LogError(
-                    "{$Class}.{$Method}. Unhandled error." +
-                    "\nOrder {$Order}," +
-                    "\nException: {$Exception}",
-                    nameof(PrefSuiteAppService),
-                    nameof(InsertItemsAsync),
-                    orderDto.OrderNumber ?? string.Empty,
-                    ex.Message ?? string.Empty
+                 "{$Class}.{$Method}. Unhandled error." +
+                 "\nOrder {$Order}," +
+                 "\nException: {$Exception}",
+                 nameof(PrefSuiteAppService),
+                 nameof(InsertItemsAsync),
+                 orderDto.OrderNumber ?? string.Empty,
+                 ex.Message ?? string.Empty
                 );
 
             }

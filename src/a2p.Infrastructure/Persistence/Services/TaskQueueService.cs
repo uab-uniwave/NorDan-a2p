@@ -7,7 +7,7 @@ using Domain.Shared;
 
 using Microsoft.Extensions.Logging;
 
-namespace Application.Services
+namespace Infrastructure.Persistence.Services
 {
     public class TaskQueueService : ITaskQueueService
     {
@@ -24,7 +24,7 @@ namespace Application.Services
         {
             try
             {
-                task.CreatedUTCDateTime = DateTime.UtcNow;
+                task.CreatedDateTime = DateTime.Now;
                 TaskEntity? created = await _repo.CreateTaskAsync(task);
                 if (created == null || created.Id == Guid.Empty)
                 {
@@ -47,8 +47,8 @@ namespace Application.Services
             {
                 TaskEntity? task = await _repo.GetTaskByIdAsync(id);
                 return task == null
-                    ? Result<TaskEntity>.Failure($"Task {id} not found.")
-                    : Result<TaskEntity>.Success(task);
+                 ? Result<TaskEntity>.Failure($"Task {id} not found.")
+                 : Result<TaskEntity>.Success(task);
             }
             catch (Exception ex)
             {
@@ -63,8 +63,8 @@ namespace Application.Services
             {
                 TaskEntity? task = await _repo.GetTaskByOrderNumberAsync(orderNumber);
                 return task == null
-                    ? Result<TaskEntity>.Failure($"Task for order '{orderNumber}' not found.")
-                    : Result<TaskEntity>.Success(task);
+                 ? Result<TaskEntity>.Failure($"Task for order '{orderNumber}' not found.")
+                 : Result<TaskEntity>.Success(task);
             }
             catch (Exception ex)
             {
@@ -93,8 +93,8 @@ namespace Application.Services
             {
                 int rows = await _repo.UpdateTaskStateAsync(id, state);
                 return rows == 0
-                    ? Result<bool>.Failure("Failed to update task state.")
-                    : Result<bool>.Success(true, "Task state updated.");
+                 ? Result<bool>.Failure("Failed to update task state.")
+                 : Result<bool>.Success(true, "Task state updated.");
             }
             catch (Exception ex)
             {
@@ -109,8 +109,8 @@ namespace Application.Services
             {
                 int rows = await _repo.DeleteTaskByIdAsync(id);
                 return rows == 0
-                    ? Result<bool>.Failure("Failed to delete task.")
-                    : Result<bool>.Success(true, "Task deleted successfully.");
+                 ? Result<bool>.Failure("Failed to delete task.")
+                 : Result<bool>.Success(true, "Task deleted successfully.");
             }
             catch (Exception ex)
             {

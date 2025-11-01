@@ -11,16 +11,16 @@ namespace Domain.Entities
         //===============================================
         public string? OrderNumber { get; set; }
         public string? ProjectNumber { get; set; }
-        public int? SalesDocumentNumber { get; set; }
-        public int? SalesDocumentVersion { get; set; }
+        public int SalesDocumentNumber { get; set; }
+        public int SalesDocumentVersion { get; set; }
         public DateTime? OrderDate { get; set; }
 
-        public string? CustomerTitle { get; set; } 
+        public string? CustomerTitle { get; set; }
         public string? CustomerNumber { get; set; }
-        public string? DeliveryAddress { get; set; } 
+        public string? DeliveryAddress { get; set; }
         public DateTime? CorrectionAvailableUntil { get; set; }
 
-        public string? ResponsibleManager { get; set; } 
+        public string? ResponsibleManager { get; set; }
 
         //===================================================================================
         public SourceAppType SourceAppType { get; set; } = SourceAppType.Unknown;
@@ -41,17 +41,17 @@ namespace Domain.Entities
 GO
 
 SELECT [Id]
-      ,[OrderNumber]
-      ,[OrderDate]
-      ,[CustomerTitle]
-      ,[CustomerNumber]
-      ,[ProjectNumber]
-      ,[DeliveryAddress]
-      ,[CorrectionAvailableUnitil]
-      ,[ResponsibleManager]
-      ,[SalesDocumentNumber]
-      ,[SalesDocumentVersion]
-  FROM [dbo].[Uniwave_a2p_Order]
+ ,[OrderNumber]
+ ,[OrderDate]
+ ,[CustomerTitle]
+ ,[CustomerNumber]
+ ,[ProjectNumber]
+ ,[DeliveryAddress]
+ ,[CorrectionAvailableUnitil]
+ ,[ResponsibleManager]
+ ,[SalesDocumentNumber]
+ ,[SalesDocumentVersion]
+ FROM [dbo].[Uniwave_a2p_Order]
 
 GO
 

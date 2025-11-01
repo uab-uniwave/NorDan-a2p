@@ -24,7 +24,6 @@ namespace Infrastructure.Data
                 _settingsContainer = _settingsService.GetSettings();
                 _connectionString = _settingsContainer.ConnectionStrings["DefaultConnection"] ?? string.Empty;
 
-
             }
             catch (Exception ex)
             {
@@ -111,11 +110,11 @@ namespace Infrastructure.Data
             catch (Exception ex)
             {
                 _logger.LogError(
-           "{$Class}.{$Method}. Unhandled error getting result from method. sException: {Exception}.",
-           nameof(SQLService),
-           nameof(ExecuteQueryTupleValuesAsync),
-            ex.Message
-          );
+                "{$Class}.{$Method}. Unhandled error getting result from method. sException: {Exception}.",
+                nameof(SQLService),
+                nameof(ExecuteQueryTupleValuesAsync),
+                ex.Message
+                );
 
                 return result;
             }

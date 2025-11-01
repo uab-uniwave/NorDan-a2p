@@ -7,7 +7,7 @@ namespace Domain.Shared
         public int PageSize { get; }
 
         private PagedResult(IEnumerable<T> items, int totalCount, int pageIndex, int pageSize)
-            : base(true, items) // ✅ now works because base ctor is protected
+        : base(true, items) // ✅ now works because base ctor is protected
         {
             TotalCount = totalCount;
             PageIndex = pageIndex;
@@ -15,9 +15,9 @@ namespace Domain.Shared
         }
 
         public static PagedResult<T> Success(IEnumerable<T> items, int totalCount, int pageIndex, int pageSize)
-            => new(items, totalCount, pageIndex, pageSize);
+        => new(items, totalCount, pageIndex, pageSize);
 
         public static new PagedResult<T> Failure(string message)
-            => new(Array.Empty<T>(), 0, 0, 0);
+        => new(Array.Empty<T>(), 0, 0, 0);
     }
 }

@@ -16,7 +16,6 @@ namespace Application.Interfaces.Repositories
         //READ BY ORDER ID
         Task<IEnumerable<MaterialEntity>> GetOrderMaterialsAsync(Guid id);
 
-
         // UPDATE 
         Task<int> UpdateMaterialAsync(MaterialEntity material);
 

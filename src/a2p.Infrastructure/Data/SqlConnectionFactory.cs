@@ -1,8 +1,8 @@
-using System.Data;
-
 using Application.Interfaces;
 
 using Microsoft.Data.SqlClient;
+
+using System.Data;
 
 namespace Infrastructure.Data
 {
@@ -16,7 +16,7 @@ namespace Infrastructure.Data
         public SqlConnectionFactory(string connectionString)
         {
             _connectionString = connectionString
-                ?? throw new ArgumentNullException(nameof(connectionString));
+            ?? throw new ArgumentNullException(nameof(connectionString));
         }
 
         /// <summary>

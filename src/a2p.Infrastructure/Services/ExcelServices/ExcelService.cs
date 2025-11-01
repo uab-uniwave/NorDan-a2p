@@ -7,7 +7,6 @@ using Application.Models;
 
 using ClosedXML.Excel;
 
-using Domain.Entities;
 using Domain.Enums;
 
 using Microsoft.Extensions.Logging;
@@ -35,7 +34,7 @@ namespace Infrastructure.Services.ExcelServices
 
         }
 
-        public async Task<List<Worksheet>> GetWorksheetsAsync(ExcelFile file, ProgressValue? progressValue = null, IProgress<ProgressValue>? progress = null)
+        public async Task<List<Worksheet>> ReadWorkbook(ExcelFile file, ProgressValue? progressValue = null, IProgress<ProgressValue>? progress = null)
         {
 
             XLWorkbook workbook = new(file.FilePath);
@@ -50,12 +49,12 @@ namespace Infrastructure.Services.ExcelServices
 
                     Worksheet worksheet = new();
 
-                    worksheet.SourceAppType = GetSourceAppType(file.FileName);
-                    worksheet.WorksheetType = GetWorksheetType(file.FileName, ixlWorksheet.Name);
+                    worksheet.SourceAppType = DetermineSourceFormat(file.FileName);
+                    worksheet.WorksheetType = DetermineWorksheetType(file.FileName, ixlWorksheet.Name);
                     worksheet.Name = ixlWorksheet.Name;
                     worksheet.RowCount = ixlWorksheet.RowsUsed().Count();
 
-                    //   CultureInfo culture = CultureInfo.InvariantCulture;
+                    // CultureInfo culture = CultureInfo.InvariantCulture;
                     int totalColumns = ixlWorksheet.LastColumnUsed()?.ColumnNumber() ?? 0;
                     string tempTask3 = _progressValue.ProgressTask3;
                     IEnumerable<IXLRow> rows = ixlWorksheet.RowsUsed() ?? Enumerable.Empty<IXLRow>();
@@ -127,7 +126,7 @@ namespace Infrastructure.Services.ExcelServices
             }
         }
 
-        private SourceAppType GetSourceAppType(string fileName)
+        private SourceAppType DetermineSourceFormat(string fileName)
         {
             try
             {
@@ -145,7 +144,7 @@ namespace Infrastructure.Services.ExcelServices
                     sourceAppType = SourceAppType.TechDesign;
                 }
                 else if (fileName?.Contains("Calculation") == true || fileName?.Contains("Profile_summary") == true || fileName?.Contains("Accessory_summary") == true ||
-                        fileName?.Contains("Glass_panel_composition") == true)
+                 fileName?.Contains("Glass_panel_composition") == true)
                 {
                     sourceAppType = SourceAppType.Schuco;
 
@@ -158,19 +157,19 @@ namespace Infrastructure.Services.ExcelServices
 
                 else
                 {
-                    _logger.LogWarning(@"{$Class}.{$Method}. Unable to determine source application type using filename {$FileName}.", nameof(ExcelService), nameof(GetSourceAppType), fileName);
+                    _logger.LogWarning(@"{$Class}.{$Method}. Unable to determine source application type using filename {$FileName}.", nameof(ExcelService), nameof(DetermineSourceFormat), fileName);
                 }
 
                 return sourceAppType;
             }
             catch (Exception ex)
             {
-                _logger.LogError(@"{$Class}.{$Method}.Unhandled error determinating source application type using filename {$FileName}.\nException: {$Exception}", nameof(ExcelService), nameof(GetSourceAppType), fileName, ex.Message);
+                _logger.LogError(@"{$Class}.{$Method}.Unhandled error determinating source application type using filename {$FileName}.\nException: {$Exception}", nameof(ExcelService), nameof(DetermineSourceFormat), fileName, ex.Message);
 
                 return SourceAppType.Unknown;
             }
         }
-        private WorksheetType GetWorksheetType(string fileName, string worksheetName)
+        private WorksheetType DetermineWorksheetType(string fileName, string worksheetName)
         {
             try
             {
@@ -333,39 +332,6 @@ namespace Infrastructure.Services.ExcelServices
             return currency;
         }
 
-        public void WriteExcelErrorLog(string file, List<ErrorEntity> errors)
-        {
-
-            List<ErrorEntity> criticalErrors = errors
-                .Where(e => e.Level is ErrorLevel.Fatal or ErrorLevel.Error)
-                .ToList();
-
-            file = file.Replace(".xslx", " Errors.xslx");
-
-            if (criticalErrors.Count > 0)
-            {
-                System.Data.DataTable dataTable = new();
-
-                _ = dataTable.Columns.Add("OrderNumber", typeof(string));
-                _ = dataTable.Columns.Add("Level", typeof(string));
-                _ = dataTable.Columns.Add("Code", typeof(string));
-                _ = dataTable.Columns.Add("Message", typeof(string));
-
-                using XLWorkbook workbook = new();
-
-                foreach (ErrorEntity error in criticalErrors)
-                {
-                    _ = dataTable.Rows.Add(error.OrderNumber, error.Level.ToString(), error.Code.ToString(), error.Message);
-
-                    _logger.LogInformation(",.Log saved successfully to {FileName}", file);
-                }
-
-                _ = workbook.Worksheets.Add(dataTable, "LogRecords");
-
-                workbook.SaveAs(file);
-
-            }
-        }
     }
 
 }

@@ -86,66 +86,28 @@
         <Component>
             <File Source="..\Release\Microsoft.Data.SqlClient.dll" />
         </Component>
-        <Component>
-            <File Source="..\Release\Microsoft.Extensions.Caching.Abstractions.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\Microsoft.Extensions.Caching.Memory.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\Microsoft.Extensions.Configuration.Abstractions.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\Microsoft.Extensions.Configuration.Binder.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\Microsoft.Extensions.Configuration.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\Microsoft.Extensions.Configuration.FileExtensions.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\Microsoft.Extensions.Configuration.Json.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\Microsoft.Extensions.DependencyInjection.Abstractions.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\Microsoft.Extensions.DependencyInjection.dll" />
-        </Component>
+        
+        
+        
+        
+        
+        
+        
+        
+        
         <Component>
             <File Source="..\Release\Microsoft.Extensions.DependencyModel.dll" />
         </Component>
-        <Component>
-            <File Source="..\Release\Microsoft.Extensions.Diagnostics.Abstractions.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\Microsoft.Extensions.FileProviders.Abstractions.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\Microsoft.Extensions.FileProviders.Physical.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\Microsoft.Extensions.FileSystemGlobbing.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\Microsoft.Extensions.Hosting.Abstractions.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\Microsoft.Extensions.Logging.Abstractions.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\Microsoft.Extensions.Logging.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\Microsoft.Extensions.Logging.EventLog.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\Microsoft.Extensions.Options.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\Microsoft.Extensions.Primitives.dll" />
-        </Component>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         <Component>
             <File Source="..\Release\Microsoft.Identity.Client.dll" />
         </Component>
@@ -239,62 +201,32 @@
         <Component>
             <File Source="..\Release\System.ClientModel.dll" />
         </Component>
-        <Component>
-            <File Source="..\Release\System.Configuration.ConfigurationManager.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\System.Diagnostics.DiagnosticSource.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\System.Diagnostics.EventLog.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\System.Formats.Asn1.dll" />
-        </Component>
+        
+        
+        
+        
         <Component>
             <File Source="..\Release\System.IdentityModel.Tokens.Jwt.dll" />
         </Component>
-        <Component>
-            <File Source="..\Release\System.IO.Packaging.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\System.IO.Pipelines.dll" />
-        </Component>
+        
+        
         <Component>
             <File Source="..\Release\System.Memory.Data.dll" />
         </Component>
-        <Component>
-            <File Source="..\Release\System.Security.Cryptography.Pkcs.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\System.Security.Cryptography.ProtectedData.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\System.Text.Encodings.Web.dll" />
-        </Component>
-        <Component>
-            <File Source="..\Release\System.Text.Json.dll" />
-        </Component>
+        
+        
+        
+        
     </ComponentGroup>
           <!--<ComponentGroup Id="PrefSuiteBackupFile" Directory="PrefSuiteBackupFolder">
-              <Component>
-                  <File Source="..\Release\PrefSuiteBackup\PrefSuiteTestCases.bkp" />
-              </Component>
+              
 
       </ComponentGroup>-->
       <ComponentGroup Id="RuntimeWin" Directory="net8_0Folder">
-          <Component>
-              <File Source="..\Release\runtimes\win\lib\net8.0\Microsoft.Data.SqlClient.dll" />
-          </Component>
-                  <Component>
-              <File Source="..\Release\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.dll" />
-          </Component>
-          <Component>
-              <File Source="..\Release\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.Messages.dll" />
-          </Component>
-          <Component>
-              <File Source="..\Release\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll" />
-          </Component>
+          
+                  
+          
+          
       </ComponentGroup>
       <ComponentGroup Id="RuntimeWinx64" Directory="nativeFolder">
           <Component>
@@ -431,3 +363,4 @@
      </ComponentGroup>
   </Fragment>
 </Wix>
+

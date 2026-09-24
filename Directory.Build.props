@@ -1,0 +1,36 @@
+<Project>
+  <PropertyGroup>
+	<ReleaseVersionFile>$(MSBuildThisFileDirectory)version.txt</ReleaseVersionFile>
+	<AppVersion Condition="'$(AppVersion)' == '' and Exists('$(ReleaseVersionFile)')">$([System.IO.File]::ReadAllText('$(ReleaseVersionFile)').Trim())</AppVersion>
+	<AppVersion Condition="'$(AppVersion)' == ''">1.0.0.23</AppVersion>
+	<Version>$(AppVersion)</Version>
+	<AssemblyVersion>$(AppVersion)</AssemblyVersion>
+	<FileVersion>$(AppVersion)</FileVersion>
+	<InformationalVersion>$(AppVersion)</InformationalVersion>
+	<PackageVersion>$(AppVersion)</PackageVersion>
+  </PropertyGroup>
+
+  <Target Name="BumpReleaseVersion" BeforeTargets="PrepareForBuild" Condition="'$(Configuration)' == 'Release' and Exists('$(ReleaseVersionFile)')">
+	<ReadLinesFromFile File="$(ReleaseVersionFile)">
+	  <Output TaskParameter="Lines" ItemName="_CurrentVersionLines" />
+	</ReadLinesFromFile>
+	<PropertyGroup>
+	  <_CurrentVersion>@(_CurrentVersionLines)</_CurrentVersion>
+	  <_CurrentVersion Condition="'$(_CurrentVersion)' == ''">$(AppVersion)</_CurrentVersion>
+	  <_Major>$([System.Version]::Parse('$(_CurrentVersion)').Major)</_Major>
+	  <_Minor>$([System.Version]::Parse('$(_CurrentVersion)').Minor)</_Minor>
+	  <_Build>$([System.Version]::Parse('$(_CurrentVersion)').Build)</_Build>
+	  <_Revision>$([System.Version]::Parse('$(_CurrentVersion)').Revision)</_Revision>
+	  <_NextRevision>$([MSBuild]::Add($([System.Int32]::Parse('$(_Revision)')),$([System.Int32]::Parse('1'))))</_NextRevision>
+	  <_NextVersion>$(_Major).$(_Minor).$(_Build).$(_NextRevision)</_NextVersion>
+	</PropertyGroup>
+	<WriteLinesToFile File="$(ReleaseVersionFile)" Lines="$(_NextVersion)" Overwrite="true" />
+	<PropertyGroup>
+	  <Version>$(_NextVersion)</Version>
+	  <AssemblyVersion>$(_NextVersion)</AssemblyVersion>
+	  <FileVersion>$(_NextVersion)</FileVersion>
+	  <InformationalVersion>$(_NextVersion)</InformationalVersion>
+	  <PackageVersion>$(_NextVersion)</PackageVersion>
+	</PropertyGroup>
+  </Target>
+</Project>

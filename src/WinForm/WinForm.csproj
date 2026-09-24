@@ -6,6 +6,11 @@
  <Nullable>enable</Nullable>
  <UseWindowsForms>true</UseWindowsForms>
  <ImplicitUsings>enable</ImplicitUsings>
+ <Version>$(AppVersion)</Version>
+ <AssemblyVersion>$(AppVersion)</AssemblyVersion>
+ <FileVersion>$(AppVersion)</FileVersion>
+ <InformationalVersion>$(AppVersion)</InformationalVersion>
+ <NoWarn>$(NoWarn);CS0618;CS0649;CS8765;CS8600;CS8601;CS8602;CS8603;CS8604;CS8625;CS8629</NoWarn>
 
 	 <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
 
@@ -21,8 +26,8 @@
 
   <PropertyGroup>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	<BaseOutputPath>..\..\output\</BaseOutputPath>
-	<OutputPath>$(BaseOutputPath)\$(Configuration)\$(ProjectName)\</OutputPath>
+	<OutputPath>..\..\output\WinForm\</OutputPath>
+	<!--<OutputPath>$(BaseOutputPath)\$(Configuration)\$(ProjectName)\</OutputPath>-->
 	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	<PackageIcon>128_128.png</PackageIcon>
   </PropertyGroup>
@@ -34,20 +39,8 @@
  <Compile Remove="ThemeColor.cs" />
  </ItemGroup>
 
+
  <ItemGroup>
-   <COMReference Include="PrefSales">
-	 <WrapperTool>tlbimp</WrapperTool>
-	 <VersionMinor>0</VersionMinor>
-	 <VersionMajor>1</VersionMajor>
-	 <Guid>c1694be9-8281-4ae9-805c-f536fbc09377</Guid>
-	 <Lcid>0</Lcid>
-	 <Isolated>false</Isolated>
-	 <EmbedInteropTypes>true</EmbedInteropTypes>
-   </COMReference>
- </ItemGroup>
-
-
-	<ItemGroup>
 
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.0-preview3.24332.3" />
 

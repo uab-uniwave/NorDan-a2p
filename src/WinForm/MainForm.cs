@@ -9,6 +9,7 @@ using a2p.WinForm.ChildForms;
 
 using Newtonsoft.Json;
 
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace a2p.WinForm
@@ -54,13 +55,19 @@ namespace a2p.WinForm
 
         #endregion -== Custom Form Design Componenets ==-
 
+        private static string GetApplicationVersion()
+        {
+            Version? version = typeof(MainForm).Assembly.GetName().Version;
+            return version is null ? "1.0.0.23" : version.ToString();
+        }
+
         public MainForm(IReadService readService,
-                        IExcelService excelService,
-                        ISQLRepository sqlRepository,
-                        ILogService logService,
-                        IFileService fileService,
-                        IUserSettingsService userSettingsService,
-                        IWriteService writeService)
+                         IExcelService excelService,
+                         ISQLRepository sqlRepository,
+                         ILogService logService,
+                         IFileService fileService,
+                         IUserSettingsService userSettingsService,
+                         IWriteService writeService)
         {
             _readService = readService;
             _writeService = writeService;
@@ -83,6 +90,7 @@ namespace a2p.WinForm
             this.AutoScaleMode = AutoScaleMode.Dpi;
             this.SuspendLayout();
             InitializeComponent();
+            Text = $"A2P v{GetApplicationVersion()}";
             SetupButtons();
             InitializeToolTip();
             this.ResumeLayout(true); // Resume layout

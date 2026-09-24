@@ -5,6 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<OutputType>Library</OutputType>
+		<OutputPath>..\..\output\Shared\</OutputPath>
 		<Version>$(VersionPrefix)</Version>
 		<Configurations>Debug;Release</Configurations>
 		<Platforms>x64</Platforms>
@@ -76,6 +77,9 @@
 
 
 	<ItemGroup>
+		<None Update="appsettings.example.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="appsettings.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

@@ -1,9 +1,16 @@
-﻿using System.Drawing.Drawing2D;
+using System.Drawing.Drawing2D;
+using System.Reflection;
 
 namespace a2p.WinForm
 {
     public partial class SplashScreenForm : Form
     {
+        private static string GetApplicationVersion()
+        {
+            Version? version = typeof(SplashScreenForm).Assembly.GetName().Version;
+            return version is null ? "1.0.0.23" : version.ToString();
+        }
+
         public SplashScreenForm()
         {
 
@@ -11,6 +18,7 @@ namespace a2p.WinForm
             this.AutoScaleMode = AutoScaleMode.Dpi;
             this.AutoScaleDimensions = new SizeF(96F, 96F);
             InitializeComponent();
+            label1.Text = $"v.{GetApplicationVersion()}";
             this.Opacity = 0; // Start fully transparent
         }
 

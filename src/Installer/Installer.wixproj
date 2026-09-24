@@ -1,4 +1,4 @@
-﻿<Project Sdk="WixToolset.Sdk/5.0.2">
+﻿<Project Sdk="WixToolset.Sdk/7.0.0">
   <PropertyGroup>
     <BaseOutputPath>..\..\</BaseOutputPath>
     <OutputPath>$(BaseOutputPath)\build\</OutputPath>
@@ -8,10 +8,10 @@
     <BindVariable Include="WixUILicenseRtf=EULA\a2p_EULA.rtf" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="WixToolset.Netfx.wixext" Version="5.0.2" />
-    <PackageReference Include="WixToolset.Sql.wixext" Version="5.0.2" />
-    <PackageReference Include="WixToolset.UI.wixext" Version="5.0.2" />
-    <PackageReference Include="WixToolset.Util.wixext" Version="5.0.2" />
+    <PackageReference Include="WixToolset.Netfx.wixext" Version="7.0.0" />
+    <PackageReference Include="WixToolset.Sql.wixext" Version="7.0.0" />
+    <PackageReference Include="WixToolset.UI.wixext" Version="7.0.0" />
+    <PackageReference Include="WixToolset.Util.wixext" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\Shared.csproj" />

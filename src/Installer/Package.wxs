@@ -10,7 +10,6 @@
         <ComponentGroupRef Id="FilesRoot" />
         <ComponentGroupRef Id="FilesExcel" />
         <ComponentGroupRef Id="FilesSQL" />
-        <ComponentGroupRef Id="FilesPrefSuiteBackup" />
         <ComponentGroupRef Id="FilesCs" />
         <ComponentGroupRef Id="FilesDe" />
         <ComponentGroupRef Id="FilesEs" />

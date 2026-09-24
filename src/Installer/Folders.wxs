@@ -5,7 +5,6 @@
         <Directory Id="INSTALLFOLDER" Name="!(bind.Property.ProductName)">
           <Directory Id="ExcelFolder" Name="Excel" />
           <Directory Id="SQLFolder" Name="SQL" />
-          <Directory Id="PrefSuiteBackupFolder" Name="PrefSuiteBackup" />
           <Directory Id="csFolder" Name="cs" />
           <Directory Id="deFolder" Name="de" />
           <Directory Id="esFolder" Name="es" />

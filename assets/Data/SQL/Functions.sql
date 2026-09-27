@@ -156,13 +156,6 @@ GO
 
 
 
-/****** Object:  UserDefinedFunction [a2p].[fn_GetSapaColor]    Script Date: 27/09/2026 15:58:30 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
 
 --====================================================================
 -- Function: a2p.fn_GetSapaColor 
@@ -182,6 +175,13 @@ BEGIN
 		@SapaColor = 'SAPA_' + [SapaLogicColor]
 	FROM [a2p].[NorDan_ColorMapping]
 	WHERE [TechDesignColor] = @TechDesignColor
+
+	RETURN @SapaColor
+END
+GO
+
+
+
 
 	CREATE OR ALTER FUNCTION [dbo].[Uniwave_a2p_GetOrderState] 
 	(

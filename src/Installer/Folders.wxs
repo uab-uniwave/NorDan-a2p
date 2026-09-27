@@ -1,0 +1,49 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+    <StandardDirectory Id="ProgramFiles6432Folder">
+      <Directory Id="ManufacturerFolder" Name="!(bind.Property.Manufacturer)">
+        <Directory Id="INSTALLFOLDER" Name="!(bind.Property.ProductName)">
+          <Directory Id="ExcelFolder" Name="Excel" />
+          <Directory Id="SQLFolder" Name="SQL" />
+          <Directory Id="csFolder" Name="cs" />
+          <Directory Id="deFolder" Name="de" />
+          <Directory Id="esFolder" Name="es" />
+          <Directory Id="frFolder" Name="fr" />
+          <Directory Id="itFolder" Name="it" />
+          <Directory Id="jaFolder" Name="ja" />
+          <Directory Id="koFolder" Name="ko" />
+          <Directory Id="plFolder" Name="pl" />
+          <Directory Id="pt_BRFolder" Name="pt-BR" />
+          <Directory Id="ruFolder" Name="ru" />
+          <Directory Id="trFolder" Name="tr" />
+          <Directory Id="zh_HansFolder" Name="zh-Hans" />
+          <Directory Id="zh_HantFolder" Name="zh-Hant" />
+          <Directory Id="runtimesFolder" Name="runtimes">
+            <Directory Id="unixFolder" Name="unix">
+              <Directory Id="unixLibFolder" Name="lib">
+                <Directory Id="unixNet9_0Folder" Name="net9.0" />
+              </Directory>
+            </Directory>
+            <Directory Id="winArmFolder" Name="win-arm">
+              <Directory Id="winArmNativeFolder" Name="native" />
+            </Directory>
+            <Directory Id="winArm64Folder" Name="win-arm64">
+              <Directory Id="winArm64NativeFolder" Name="native" />
+            </Directory>
+            <Directory Id="winX64Folder" Name="win-x64">
+              <Directory Id="winX64NativeFolder" Name="native" />
+            </Directory>
+            <Directory Id="winX86Folder" Name="win-x86">
+              <Directory Id="winX86NativeFolder" Name="native" />
+            </Directory>
+            <Directory Id="winFolder" Name="win">
+              <Directory Id="winLibFolder" Name="lib">
+                <Directory Id="winNet9_0Folder" Name="net9.0" />
+              </Directory>
+            </Directory>
+          </Directory>
+        </Directory>
+      </Directory>
+    </StandardDirectory>
+  </Fragment>
+</Wix>

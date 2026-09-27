@@ -1,0 +1,298 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Directory Id="Dir_cs" Name="cs">
+        <Component Id="cmp_cs_Microsoft_Data_SqlClient_resources_dll" Guid="{69e066f2-9915-4429-9124-66c9a9c6ea8f}">
+          <File Source="../../output/WinForm/cs/Microsoft.Data.SqlClient.resources.dll" />
+        </Component>
+      </Directory>
+      <Directory Id="Dir_de" Name="de">
+        <Component Id="cmp_de_Microsoft_Data_SqlClient_resources_dll" Guid="{ed6e4895-c039-43f3-bc02-24ba481fa181}">
+          <File Source="../../output/WinForm/de/Microsoft.Data.SqlClient.resources.dll" />
+        </Component>
+      </Directory>
+      <Directory Id="Dir_es" Name="es">
+        <Component Id="cmp_es_Microsoft_Data_SqlClient_resources_dll" Guid="{2421f410-d6f9-42e5-939f-b8d567461fc8}">
+          <File Source="../../output/WinForm/es/Microsoft.Data.SqlClient.resources.dll" />
+        </Component>
+      </Directory>
+      <Directory Id="Dir_Excel" Name="Excel">
+        <Component Id="cmp_Excel_0000Z000001_14_Price_Details_xlsx" Guid="{2abaa014-d653-4b77-9bea-79fee607a3d7}">
+          <File Source="../../output/WinForm/Excel/0000Z000001-14 Price_Details.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z000001_14_SumList_xlsx" Guid="{a9cf7bb8-2f64-48bc-9b36-705a701d5998}">
+          <File Source="../../output/WinForm/Excel/0000Z000001-14 SumList.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00001_1_Price_Details_xlsx" Guid="{71c1f842-104e-46c7-b136-00a4c81c0b10}">
+          <File Source="../../output/WinForm/Excel/0000Z00001-1 Price_Details.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00001_1_SumList_xlsx" Guid="{f2bbcc26-c5cb-498a-b7d1-1cb1f23c32a4}">
+          <File Source="../../output/WinForm/Excel/0000Z00001-1 SumList.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00001_13_Price_Details_xlsx" Guid="{a7f086b6-0fc9-4ea0-9e18-c72e25063297}">
+          <File Source="../../output/WinForm/Excel/0000Z00001-13 Price_Details.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00001_13_SumList_xlsx" Guid="{ec981495-9575-4b45-b060-5b4de0b495ef}">
+          <File Source="../../output/WinForm/Excel/0000Z00001-13 SumList.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00001_2_Price_Details_xlsx" Guid="{1af7ab24-a94e-45a4-a7f2-5236eaa5c540}">
+          <File Source="../../output/WinForm/Excel/0000Z00001-2 Price_Details.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00001_2_SumList_xlsx" Guid="{d862ce99-dbe7-405e-9713-13a66617a38a}">
+          <File Source="../../output/WinForm/Excel/0000Z00001-2 SumList.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00001_3_Price_Details_xlsx" Guid="{c08f48a2-2e94-4a3e-84e8-02cd47868a5e}">
+          <File Source="../../output/WinForm/Excel/0000Z00001-3 Price_Details.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00001_3_SumList_xlsx" Guid="{ef6a195d-29bb-4e0c-9901-4883fe9cd5f3}">
+          <File Source="../../output/WinForm/Excel/0000Z00001-3 SumList.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00001_4_Price_Details_xlsx" Guid="{079c0df7-cfac-4c92-b27d-c81ac8151075}">
+          <File Source="../../output/WinForm/Excel/0000Z00001-4 Price_Details.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00001_4_SumList_xlsx" Guid="{e6c3f3e7-31c5-4c97-a3a2-3d4f09d6b4b1}">
+          <File Source="../../output/WinForm/Excel/0000Z00001-4 SumList.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00001_5_Price_Details_xlsx" Guid="{3ce74b4c-ba26-465a-9718-f44d241c6834}">
+          <File Source="../../output/WinForm/Excel/0000Z00001-5 Price_Details.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00001_5_SumList_xlsx" Guid="{db6b3312-22a8-4df5-8d93-7684f8a4f42d}">
+          <File Source="../../output/WinForm/Excel/0000Z00001-5 SumList.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00001_6_Price_Details_xlsx" Guid="{2894cb02-7a39-4e0d-84e6-36feea33f6c2}">
+          <File Source="../../output/WinForm/Excel/0000Z00001-6 Price_Details.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00001_6_SumList_xlsx" Guid="{42cae148-563c-44d1-a917-d9f27344b2a7}">
+          <File Source="../../output/WinForm/Excel/0000Z00001-6 SumList.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00001_7_Price_Details_xlsx" Guid="{77776e27-e550-44f8-8bd1-6909e5f92200}">
+          <File Source="../../output/WinForm/Excel/0000Z00001-7 Price_Details.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00001_7_SumList_xlsx" Guid="{7d63f4eb-2c52-4bf2-b952-29324fc685b7}">
+          <File Source="../../output/WinForm/Excel/0000Z00001-7 SumList.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00001_8_Price_Details_xlsx" Guid="{d315ae66-3570-472b-82aa-7e99f48e37cb}">
+          <File Source="../../output/WinForm/Excel/0000Z00001-8 Price_Details.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00001_8_SumList_xlsx" Guid="{96cdee54-36d3-4498-90cb-dd2998ed0132}">
+          <File Source="../../output/WinForm/Excel/0000Z00001-8 SumList.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00001_9_Price_Details_xlsx" Guid="{56b93e02-b1c8-4820-8107-0b8fc4de9a3e}">
+          <File Source="../../output/WinForm/Excel/0000Z00001-9 Price_Details.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00001_9_SumList_xlsx" Guid="{c37524e8-b19c-4464-b37c-63ff47eefa9e}">
+          <File Source="../../output/WinForm/Excel/0000Z00001-9 SumList.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00021_1_Price_Details_decimal_LT_xlsx" Guid="{86883327-2b8a-4ac0-b61b-66786605869c}">
+          <File Source="../../output/WinForm/Excel/0000Z00021-1 Price_Details_decimal_LT.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00021_1_SumList_decimal_LT_xlsx" Guid="{8e82ddbb-4627-4cec-b566-37d46929ad00}">
+          <File Source="../../output/WinForm/Excel/0000Z00021-1 SumList_decimal_LT.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00021_2_Price_Details_decimal_US_xlsx" Guid="{c9a30f1d-3940-4246-b55d-86cfbe9b67ab}">
+          <File Source="../../output/WinForm/Excel/0000Z00021-2 Price_Details_decimal_US.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00021_2_SumList_decimal_US__xlsx" Guid="{541485f8-b604-4070-8445-30eb630703df}">
+          <File Source="../../output/WinForm/Excel/0000Z00021-2 SumList_decimal_US_.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00021_3_Price_Details_decimal_Mix_xlsx" Guid="{6a160b66-209a-4761-802f-f1fb2683428f}">
+          <File Source="../../output/WinForm/Excel/0000Z00021-3 Price_Details_decimal_Mix.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_0000Z00021_3_SumList__decimal_Mix_xlsx" Guid="{9be9b7dd-4545-4aca-93e0-3f0997620c5e}">
+          <File Source="../../output/WinForm/Excel/0000Z00021-3 SumList__decimal_Mix.xlsx" />
+        </Component>
+        <Component Id="cmp_Excel_NorDan_a2p_ColorMapping_csv" Guid="{66c2cd0d-f03e-4b81-860d-783c1992f0a7}">
+          <File Source="../../output/WinForm/Excel/NorDan_a2p_ColorMapping.csv" />
+        </Component>
+      </Directory>
+      <Directory Id="Dir_fr" Name="fr">
+        <Component Id="cmp_fr_Microsoft_Data_SqlClient_resources_dll" Guid="{b504bfb3-8b9f-4169-9072-6bcdd92eee91}">
+          <File Source="../../output/WinForm/fr/Microsoft.Data.SqlClient.resources.dll" />
+        </Component>
+      </Directory>
+      <Directory Id="Dir_it" Name="it">
+        <Component Id="cmp_it_Microsoft_Data_SqlClient_resources_dll" Guid="{7b5185cb-6b13-4e2f-8211-2b17980e89f6}">
+          <File Source="../../output/WinForm/it/Microsoft.Data.SqlClient.resources.dll" />
+        </Component>
+      </Directory>
+      <Directory Id="Dir_ja" Name="ja">
+        <Component Id="cmp_ja_Microsoft_Data_SqlClient_resources_dll" Guid="{126164b7-29d2-4215-886a-dc7ff9539125}">
+          <File Source="../../output/WinForm/ja/Microsoft.Data.SqlClient.resources.dll" />
+        </Component>
+      </Directory>
+      <Directory Id="Dir_ko" Name="ko">
+        <Component Id="cmp_ko_Microsoft_Data_SqlClient_resources_dll" Guid="{2a947499-3d54-4d89-b522-f3e5357b7331}">
+          <File Source="../../output/WinForm/ko/Microsoft.Data.SqlClient.resources.dll" />
+        </Component>
+      </Directory>
+      <Directory Id="Dir_pl" Name="pl">
+        <Component Id="cmp_pl_Microsoft_Data_SqlClient_resources_dll" Guid="{75deae53-0839-419f-acea-8824f303cc80}">
+          <File Source="../../output/WinForm/pl/Microsoft.Data.SqlClient.resources.dll" />
+        </Component>
+      </Directory>
+      <Directory Id="Dir_pt_BR" Name="pt-BR">
+        <Component Id="cmp_pt_BR_Microsoft_Data_SqlClient_resources_dll" Guid="{101a1595-d5c8-4666-99db-eefe7f8cbaf6}">
+          <File Source="../../output/WinForm/pt-BR/Microsoft.Data.SqlClient.resources.dll" />
+        </Component>
+      </Directory>
+      <Directory Id="Dir_ru" Name="ru">
+        <Component Id="cmp_ru_Microsoft_Data_SqlClient_resources_dll" Guid="{09c4847e-839d-4d78-af23-2e1b340e0c8e}">
+          <File Source="../../output/WinForm/ru/Microsoft.Data.SqlClient.resources.dll" />
+        </Component>
+      </Directory>
+      <Directory Id="Dir_runtimes" Name="runtimes">
+        <Directory Id="Dir_runtimes_unix" Name="unix">
+          <Directory Id="Dir_runtimes_unix_lib" Name="lib">
+            <Directory Id="Dir_runtimes_unix_lib_net9_0" Name="net9.0">
+              <Component Id="cmp_runtimes_unix_lib_net9_0_Microsoft_Data_SqlClient_dll" Guid="{ca16cf05-8205-4514-a3ad-9751a9b9976d}">
+                <File Source="../../output/WinForm/runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll" />
+              </Component>
+            </Directory>
+          </Directory>
+        </Directory>
+        <Directory Id="Dir_runtimes_win" Name="win">
+          <Directory Id="Dir_runtimes_win_lib" Name="lib">
+            <Directory Id="Dir_runtimes_win_lib_net9_0" Name="net9.0">
+              <Component Id="cmp_runtimes_win_lib_net9_0_Microsoft_Data_SqlClient_dll" Guid="{aa275006-1d70-483d-85ce-b45a68d85614}">
+                <File Source="../../output/WinForm/runtimes/win/lib/net9.0/Microsoft.Data.SqlClient.dll" />
+              </Component>
+            </Directory>
+          </Directory>
+        </Directory>
+        <Directory Id="Dir_runtimes_win_arm" Name="win-arm">
+          <Directory Id="Dir_runtimes_win_arm_native" Name="native">
+            <Component Id="cmp_runtimes_win_arm_native_Microsoft_Data_SqlClient_SNI_dll" Guid="{9607d2a5-f85e-464b-b8ae-4e1fc57e03ec}">
+              <File Source="../../output/WinForm/runtimes/win-arm/native/Microsoft.Data.SqlClient.SNI.dll" />
+            </Component>
+          </Directory>
+        </Directory>
+        <Directory Id="Dir_runtimes_win_arm64" Name="win-arm64">
+          <Directory Id="Dir_runtimes_win_arm64_native" Name="native">
+            <Component Id="cmp_runtimes_win_arm64_native_Microsoft_Data_SqlClient_SNI_dll" Guid="{6f0ad75b-e355-4600-8f94-9cbd7886486c}">
+              <File Source="../../output/WinForm/runtimes/win-arm64/native/Microsoft.Data.SqlClient.SNI.dll" />
+            </Component>
+          </Directory>
+        </Directory>
+        <Directory Id="Dir_runtimes_win_x64" Name="win-x64">
+          <Directory Id="Dir_runtimes_win_x64_native" Name="native">
+            <Component Id="cmp_runtimes_win_x64_native_Microsoft_Data_SqlClient_SNI_dll" Guid="{1b59276c-33ba-4b91-91ca-a7620cbcee11}">
+              <File Source="../../output/WinForm/runtimes/win-x64/native/Microsoft.Data.SqlClient.SNI.dll" />
+            </Component>
+          </Directory>
+        </Directory>
+        <Directory Id="Dir_runtimes_win_x86" Name="win-x86">
+          <Directory Id="Dir_runtimes_win_x86_native" Name="native">
+            <Component Id="cmp_runtimes_win_x86_native_Microsoft_Data_SqlClient_SNI_dll" Guid="{8993e7bf-a850-4e60-9f8d-da1739966765}">
+              <File Source="../../output/WinForm/runtimes/win-x86/native/Microsoft.Data.SqlClient.SNI.dll" />
+            </Component>
+          </Directory>
+        </Directory>
+      </Directory>
+      <Directory Id="Dir_SQL" Name="SQL">
+        <Component Id="cmp_SQL_CleanDB_sql" Guid="{6c971b10-ed5c-48de-a05b-5d30f2b00795}">
+          <File Source="../../output/WinForm/SQL/CleanDB.sql" />
+        </Component>
+        <Component Id="cmp_SQL_Functions_sql" Guid="{5acc3d8b-f6f7-4d43-bda7-4b1824288dbb}">
+          <File Source="../../output/WinForm/SQL/Functions.sql" />
+        </Component>
+        <Component Id="cmp_SQL_NorDan_ColorMapping_sql" Guid="{f062e3f7-b2c7-4d8e-abb5-ed2322467960}">
+          <File Source="../../output/WinForm/SQL/NorDan_ColorMapping.sql" />
+        </Component>
+        <Component Id="cmp_SQL_NorDan_Glasses_sql" Guid="{1f6bacad-90ba-4d53-aa14-7d231eba70ca}">
+          <File Source="../../output/WinForm/SQL/NorDan_Glasses.sql" />
+        </Component>
+        <Component Id="cmp_SQL_NorDan_TechDesign_sql" Guid="{1c267fdf-e4b5-43c2-a4fa-635313b78217}">
+          <File Source="../../output/WinForm/SQL/NorDan_TechDesign.sql" />
+        </Component>
+        <Component Id="cmp_SQL_Procedures_sql" Guid="{69bbe482-76f5-4f7f-980c-1ec1051ff32d}">
+          <File Source="../../output/WinForm/SQL/Procedures.sql" />
+        </Component>
+        <Component Id="cmp_SQL_Tables_sql" Guid="{8b6d47f6-712e-41bc-b407-055701df028d}">
+          <File Source="../../output/WinForm/SQL/Tables.sql" />
+        </Component>
+        <Component Id="cmp_SQL_Test_sql" Guid="{1489913e-9334-41b7-8394-3cd0b2a23402}">
+          <File Source="../../output/WinForm/SQL/Test.sql" />
+        </Component>
+        <Component Id="cmp_SQL_Triggers_sql" Guid="{ae1b3de3-7c5b-4c57-b51f-88e04bb1f805}">
+          <File Source="../../output/WinForm/SQL/Triggers.sql" />
+        </Component>
+      </Directory>
+      <Directory Id="Dir_tr" Name="tr">
+        <Component Id="cmp_tr_Microsoft_Data_SqlClient_resources_dll" Guid="{de80fe42-eb85-4b2d-8a67-21b9404c55cc}">
+          <File Source="../../output/WinForm/tr/Microsoft.Data.SqlClient.resources.dll" />
+        </Component>
+      </Directory>
+      <Directory Id="Dir_zh_Hans" Name="zh-Hans">
+        <Component Id="cmp_zh_Hans_Microsoft_Data_SqlClient_resources_dll" Guid="{0c831f55-c71b-4256-a34b-1a5c3666a9be}">
+          <File Source="../../output/WinForm/zh-Hans/Microsoft.Data.SqlClient.resources.dll" />
+        </Component>
+      </Directory>
+      <Directory Id="Dir_zh_Hant" Name="zh-Hant">
+        <Component Id="cmp_zh_Hant_Microsoft_Data_SqlClient_resources_dll" Guid="{d6f95e8f-c01a-478f-b9ac-9a6330b3d02a}">
+          <File Source="../../output/WinForm/zh-Hant/Microsoft.Data.SqlClient.resources.dll" />
+        </Component>
+      </Directory>
+    </DirectoryRef>
+    <ComponentGroup Id="HarvestedFiles">
+      <ComponentRef Id="cmp_cs_Microsoft_Data_SqlClient_resources_dll" />
+      <ComponentRef Id="cmp_de_Microsoft_Data_SqlClient_resources_dll" />
+      <ComponentRef Id="cmp_es_Microsoft_Data_SqlClient_resources_dll" />
+      <ComponentRef Id="cmp_Excel_0000Z000001_14_Price_Details_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z000001_14_SumList_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00001_1_Price_Details_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00001_1_SumList_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00001_13_Price_Details_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00001_13_SumList_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00001_2_Price_Details_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00001_2_SumList_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00001_3_Price_Details_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00001_3_SumList_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00001_4_Price_Details_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00001_4_SumList_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00001_5_Price_Details_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00001_5_SumList_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00001_6_Price_Details_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00001_6_SumList_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00001_7_Price_Details_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00001_7_SumList_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00001_8_Price_Details_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00001_8_SumList_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00001_9_Price_Details_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00001_9_SumList_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00021_1_Price_Details_decimal_LT_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00021_1_SumList_decimal_LT_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00021_2_Price_Details_decimal_US_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00021_2_SumList_decimal_US__xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00021_3_Price_Details_decimal_Mix_xlsx" />
+      <ComponentRef Id="cmp_Excel_0000Z00021_3_SumList__decimal_Mix_xlsx" />
+      <ComponentRef Id="cmp_Excel_NorDan_a2p_ColorMapping_csv" />
+      <ComponentRef Id="cmp_fr_Microsoft_Data_SqlClient_resources_dll" />
+      <ComponentRef Id="cmp_it_Microsoft_Data_SqlClient_resources_dll" />
+      <ComponentRef Id="cmp_ja_Microsoft_Data_SqlClient_resources_dll" />
+      <ComponentRef Id="cmp_ko_Microsoft_Data_SqlClient_resources_dll" />
+      <ComponentRef Id="cmp_pl_Microsoft_Data_SqlClient_resources_dll" />
+      <ComponentRef Id="cmp_pt_BR_Microsoft_Data_SqlClient_resources_dll" />
+      <ComponentRef Id="cmp_ru_Microsoft_Data_SqlClient_resources_dll" />
+      <ComponentRef Id="cmp_runtimes_unix_lib_net9_0_Microsoft_Data_SqlClient_dll" />
+      <ComponentRef Id="cmp_runtimes_win_lib_net9_0_Microsoft_Data_SqlClient_dll" />
+      <ComponentRef Id="cmp_runtimes_win_arm_native_Microsoft_Data_SqlClient_SNI_dll" />
+      <ComponentRef Id="cmp_runtimes_win_arm64_native_Microsoft_Data_SqlClient_SNI_dll" />
+      <ComponentRef Id="cmp_runtimes_win_x64_native_Microsoft_Data_SqlClient_SNI_dll" />
+      <ComponentRef Id="cmp_runtimes_win_x86_native_Microsoft_Data_SqlClient_SNI_dll" />
+      <ComponentRef Id="cmp_SQL_CleanDB_sql" />
+      <ComponentRef Id="cmp_SQL_Functions_sql" />
+      <ComponentRef Id="cmp_SQL_NorDan_ColorMapping_sql" />
+      <ComponentRef Id="cmp_SQL_NorDan_Glasses_sql" />
+      <ComponentRef Id="cmp_SQL_NorDan_TechDesign_sql" />
+      <ComponentRef Id="cmp_SQL_Procedures_sql" />
+      <ComponentRef Id="cmp_SQL_Tables_sql" />
+      <ComponentRef Id="cmp_SQL_Test_sql" />
+      <ComponentRef Id="cmp_SQL_Triggers_sql" />
+      <ComponentRef Id="cmp_tr_Microsoft_Data_SqlClient_resources_dll" />
+      <ComponentRef Id="cmp_zh_Hans_Microsoft_Data_SqlClient_resources_dll" />
+      <ComponentRef Id="cmp_zh_Hant_Microsoft_Data_SqlClient_resources_dll" />
+    </ComponentGroup>
+  </Fragment>
+</Wix>
+

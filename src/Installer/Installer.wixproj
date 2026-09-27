@@ -1,0 +1,40 @@
+﻿<Project Sdk="WixToolset.Sdk/7.0.0">
+  <PropertyGroup>
+    <OutputPath>..\..\output\</OutputPath>
+    <Platforms>x64</Platforms>
+    <Version>$(AppVersion)</Version>
+    <PackageVersion>$(AppVersion)</PackageVersion>
+    <DefineConstants>$(DefineConstants);Version=$(AppVersion)</DefineConstants>
+  </PropertyGroup>
+  <Target Name="HarvestWinFormOutput" BeforeTargets="Build">
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildThisFileDirectory)harvest.ps1&quot;" />
+  </Target>
+
+  <Target Name="RenameInstallerMsi" AfterTargets="Build">
+    <Delete Files="$(OutputPath)a2p.installer_*.msi" />
+    <ItemGroup>
+      <GeneratedInstaller Include="$(OutputPath)a2p.Installer.msi" />
+    </ItemGroup>
+    <Move SourceFiles="@(GeneratedInstaller)" DestinationFiles="$(OutputPath)a2p.installer_$(Version).msi" Condition="Exists('$(OutputPath)a2p.Installer.msi')" />
+  </Target>
+  <ItemGroup>
+    <Compile Remove="Components.wxs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <BindVariable Include="WixUILicenseRtf=EULA\a2p_EULA.rtf" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="harvest.ps1" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="WixToolset.Netfx.wixext" Version="7.0.0" />
+    <PackageReference Include="WixToolset.Sql.wixext" Version="7.0.0" />
+    <PackageReference Include="WixToolset.UI.wixext" Version="7.0.0" />
+    <PackageReference Include="WixToolset.Util.wixext" Version="7.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.csproj" />
+    <ProjectReference Include="..\WinForm\WinForm.csproj" />
+  </ItemGroup>
+</Project>

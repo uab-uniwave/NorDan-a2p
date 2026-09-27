@@ -1,0 +1,13 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+      xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+  <Package Name="Alu2PrefSuite" Manufacturer="Uniwave UAB" Version="$(var.Version)" UpgradeCode="E2417A15-E990-4DA0-AB71-6C85A7A8DA4B">
+      <ui:WixUI Id="WixUI_Minimal" />
+      <WixVariable Id="WixUIDialogBmp" Value="Images\WixUIDialogBmp_493_312.png" />
+      <WixVariable Id="WixUIBannerBmp" Value="Images\WixUIBannerBmp_493_58.png" />
+      <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+      <MediaTemplate EmbedCab="yes" />
+      <Feature Id="ApplicationFeature">
+        <ComponentGroupRef Id="HarvestedFiles" />
+      </Feature>
+  </Package>
+</Wix>

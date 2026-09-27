@@ -1,0 +1,99 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+ <PropertyGroup>
+ <OutputType>WinExe</OutputType>
+ <OutputPath>..\..\output\WinForm\</OutputPath>
+ <TargetFramework>net10.0-windows</TargetFramework>
+ <Nullable>enable</Nullable>
+ <UseWindowsForms>true</UseWindowsForms>
+ <ImplicitUsings>enable</ImplicitUsings>
+ <Version>$(AppVersion)</Version>
+ <AssemblyVersion>$(AppVersion)</AssemblyVersion>
+ <FileVersion>$(AppVersion)</FileVersion>
+ <InformationalVersion>$(AppVersion)</InformationalVersion>
+	 
+
+	 <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+
+ 
+
+ 
+ <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+ <ApplicationIcon>Icon.ico</ApplicationIcon>
+ <Configurations>Debug;Release</Configurations>
+ <Platforms>x64</Platforms>
+ </PropertyGroup>
+
+
+  <PropertyGroup>
+	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	<OutputPath>..\..\output\WinForm\</OutputPath>
+	<!--<OutputPath>$(BaseOutputPath)\$(Configuration)\$(ProjectName)\</OutputPath>-->
+	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	<PackageIcon>128_128.png</PackageIcon>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+ <Compile Remove="ChildForms\MainForm.cs" />
+ <Compile Remove="ChildForms\MainForm.Designer.cs" />
+ <Compile Remove="ThemeColor.cs" />
+ </ItemGroup>
+
+
+ <ItemGroup>
+
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.0-preview3.24332.3" />
+
+		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.12" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.12" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.12" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.12" />
+		<PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="10.0.12" />
+		<PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+		<PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+		<PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+		<PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
+		<PackageReference Include="Serilog.Expressions" Version="5.1.0-dev-00186" />
+		<PackageReference Include="Serilog.Extensions.Logging" Version="9.0.1-dev-02308" />
+		<PackageReference Include="Serilog.Extensions.Logging.File" Version="9.0.0-dev-02302" />
+		<PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
+		<PackageReference Include="Serilog.Formatting.Compact.Reader" Version="4.1.0-dev-00085" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+		<PackageReference Include="Serilog.Sinks.EventLog" Version="4.0.1-dev-00087" />
+		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+		<PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
+	</ItemGroup>
+
+ <ItemGroup>
+ <Compile Update="Properties\Resources.Designer.cs">
+  <DesignTime>True</DesignTime>
+  <AutoGen>True</AutoGen>
+  <DependentUpon>Resources.resx</DependentUpon>
+ </Compile>
+ </ItemGroup>
+
+ <ItemGroup>
+ <EmbeddedResource Update="Properties\Resources.resx">
+  <Generator>PublicResXFileCodeGenerator</Generator>
+  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+ </EmbeddedResource>
+ </ItemGroup>
+
+	<ItemGroup>
+		<None Update="..\Shared\appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Shared\Shared.csproj" />
+	</ItemGroup>
+
+   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+	<Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -Command &quot;$src = (Resolve-Path '..\..\assets\Data').Path; $dest = '$(OutputPath)'; if (Test-Path $src) { New-Item -ItemType Directory -Force -Path $dest | Out-Null; Get-ChildItem -Path $src -Force | Copy-Item -Destination $dest -Recurse -Force }&quot;" />
+	<Exec Command="xcopy /Y /I ..\..\README.md $(OutputPath)\" />
+  </Target>
+
+</Project>

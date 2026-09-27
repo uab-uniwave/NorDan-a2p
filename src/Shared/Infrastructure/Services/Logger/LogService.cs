@@ -5,14 +5,14 @@ using System.Collections.Concurrent;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-using a2p.Shared.Application.Domain.Entities;
-using a2p.Shared.Infrastructure.Interfaces;
-
 using Microsoft.Extensions.Configuration;
 
 using Serilog;
 
-namespace a2p.Shared.Infrastructure.Services.Logger
+using Shared.Application.Domain.Entities;
+using Shared.Infrastructure.Interfaces;
+
+namespace Shared.Infrastructure.Services.Logger
 {
     public class LogService : ILogService
     {

@@ -1,15 +1,15 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using a2p.Shared.Application.Domain.Entities;
-using a2p.Shared.Application.Domain.Enums;
-using a2p.Shared.Infrastructure.Interfaces;
-
 using ClosedXML.Excel;
+
+using Shared.Application.Domain.Entities;
+using Shared.Application.Domain.Enums;
+using Shared.Infrastructure.Interfaces;
 
 using System.Globalization;
 
-namespace a2p.Shared.Infrastructure.Services
+namespace Shared.Infrastructure.Services
 {
     public class ExcelService : IExcelService
     {

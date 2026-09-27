@@ -1,8 +1,8 @@
-using a2p.Shared.Application.Domain.Entities;
-using a2p.Shared.Application.DTO;
-using a2p.Shared.Application.Interfaces;
+using Shared.Application.Domain.Entities;
+using Shared.Application.DTO;
+using Shared.Application.Interfaces;
 
-namespace a2p.Shared.Application.Services
+namespace Shared.Application.Services
 {
     public class MapperSapa : IMapperSapa
     {

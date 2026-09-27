@@ -1,15 +1,15 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-using a2p.Shared.Application.Models;
-using a2p.Shared.Infrastructure.Interfaces;
-
 using Microsoft.Extensions.Configuration;
 
-namespace a2p.Shared.Infrastructure.Services
+using Shared.Application.Models;
+using Shared.Infrastructure.Interfaces;
+
+namespace Shared.Infrastructure.Services
 {
     public class UserSettingsService : IUserSettingsService
     {

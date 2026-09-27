@@ -1,11 +1,11 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 
 using Microsoft.Extensions.Configuration;
 
 using Serilog;
 using Serilog.Exceptions;
 
-namespace a2p.Shared.Infrastructure.Services.Logger
+namespace Shared.Infrastructure.Services.Logger
 {
     public static class LoggerSetup
     {

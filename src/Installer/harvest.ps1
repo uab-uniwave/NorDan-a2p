@@ -48,7 +48,13 @@ function Get-RelativePath {
 		[string]$TargetPath
 	)
 
-	$baseUri = New-Object System.Uri(([System.IO.Path]::GetFullPath($BasePath)).TrimEnd('\','/') + [System.IO.Path]::DirectorySeparatorChar)
+	$normalizedBase = ([System.IO.Path]::GetFullPath($BasePath)).TrimEnd('\','/')
+	$normalizedTarget = ([System.IO.Path]::GetFullPath($TargetPath)).TrimEnd('\','/')
+	if ([string]::Equals($normalizedBase, $normalizedTarget, [System.StringComparison]::OrdinalIgnoreCase)) {
+		return ''
+	}
+
+	$baseUri = New-Object System.Uri($normalizedBase + [System.IO.Path]::DirectorySeparatorChar)
 	$targetUri = New-Object System.Uri([System.IO.Path]::GetFullPath($TargetPath))
 	$relative = [System.Uri]::UnescapeDataString($baseUri.MakeRelativeUri($targetUri).ToString())
 	return $relative.Replace('/', [System.IO.Path]::DirectorySeparatorChar)
@@ -74,7 +80,8 @@ $files = Get-ChildItem -Path $resolvedSourceRoot -Recurse -File | Where-Object {
 $filesByDirectory = @{}
 foreach ($file in $files) {
 	$relativeDirectory = Get-RelativePath -BasePath $resolvedSourceRoot -TargetPath $file.DirectoryName
-	if ($relativeDirectory -eq '.') {
+	$relativeDirectory = $relativeDirectory.Replace('/', [System.IO.Path]::DirectorySeparatorChar)
+	if ($relativeDirectory -eq '.' -or $relativeDirectory -eq [System.IO.Path]::DirectorySeparatorChar.ToString()) {
 		$relativeDirectory = ''
 	}
 
@@ -142,7 +149,8 @@ $writeDirectoryContent = {
 		$relativePath = Get-RelativePath -BasePath $projectDirectory -TargetPath $file.FullName
 		$relativePath = $relativePath -replace '\\', '/'
 
-		$componentId = 'cmp_' + (ConvertTo-WixId ($file.FullName.Substring($resolvedSourceRoot.Length + 1).Replace('\', '_').Replace('/', '_')))
+		$relativeFilePath = Get-RelativePath -BasePath $resolvedSourceRoot -TargetPath $file.FullName
+		$componentId = 'cmp_' + (ConvertTo-WixId ($relativeFilePath.Replace([System.IO.Path]::DirectorySeparatorChar, '_').Replace([System.IO.Path]::AltDirectorySeparatorChar, '_')))
 		$componentIds.Add($componentId) | Out-Null
 		$guid = [Guid]::NewGuid().ToString('B')
 

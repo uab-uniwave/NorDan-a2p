@@ -5,17 +5,17 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 
-using a2p.Shared;
-using a2p.Shared.Application.Interfaces;
-using a2p.Shared.Application.Services;
-using a2p.Shared.Infrastructure.Interfaces;
-using a2p.Shared.Infrastructure.Services;
-using a2p.Shared.Infrastructure.Services.Logger;
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace a2p.WinForm
+using Shared;
+using Shared.Application.Interfaces;
+using Shared.Application.Services;
+using Shared.Infrastructure.Interfaces;
+using Shared.Infrastructure.Services;
+using Shared.Infrastructure.Services.Logger;
+
+namespace WinForm
 {
     internal static class Program
     {

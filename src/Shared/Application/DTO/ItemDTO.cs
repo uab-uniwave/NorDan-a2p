@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-using a2p.Shared.Application.Domain.Enums;
+using Shared.Application.Domain.Enums;
 
-namespace a2p.Shared.Application.DTO
+namespace Shared.Application.DTO
 {
     public class ItemDTO
     {

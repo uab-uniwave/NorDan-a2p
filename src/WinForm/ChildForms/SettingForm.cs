@@ -1,15 +1,15 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using a2p.Shared.Application.Models;
-using a2p.Shared.Infrastructure.Interfaces;
-
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
+using Shared.Application.Models;
+using Shared.Infrastructure.Interfaces;
+
 using System.Text.Json;
 
-namespace a2p.WinForm.ChildForms
+namespace WinForm.ChildForms
 {
     public partial class SettingForm : Form
     {

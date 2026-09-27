@@ -1,6 +1,6 @@
-namespace a2p.Shared.Core.DTO
+namespace Shared.Core.DTO
 {
-    namespace a2p.Shared.Core.DTO
+    namespace Shared.Core.DTO
 
     {
         public class OrderDTO

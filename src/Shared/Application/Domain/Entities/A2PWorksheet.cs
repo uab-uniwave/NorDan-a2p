@@ -1,6 +1,6 @@
-﻿using a2p.Shared.Application.Domain.Enums;
+using Shared.Application.Domain.Enums;
 
-namespace a2p.Shared.Application.Domain.Entities
+namespace Shared.Application.Domain.Entities
 {
     public class A2PWorksheet
     {

@@ -1,16 +1,16 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using a2p.Shared.Application.Domain.Entities;
-using a2p.Shared.Application.Models;
-using a2p.Shared.Infrastructure.Interfaces;
-
 using ClosedXML.Excel;
+
+using Shared.Application.Domain.Entities;
+using Shared.Application.Models;
+using Shared.Infrastructure.Interfaces;
 
 using System.Data;
 using System.Text.Json.Nodes;
 
-namespace a2p.WinForm.ChildForms
+namespace WinForm.ChildForms
 {
     public partial class LogForm : Form
     {

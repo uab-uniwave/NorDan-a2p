@@ -1,8 +1,8 @@
-﻿using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 using System.Data;
 
-namespace a2p.Shared.Infrastructure.Interfaces
+namespace Shared.Infrastructure.Interfaces
 {
     public interface ISQLService
     {

@@ -1,6 +1,6 @@
-using a2p.Shared.Application.Domain.Entities;
+using Shared.Application.Domain.Entities;
 
-namespace a2p.Shared.Infrastructure.Interfaces
+namespace Shared.Infrastructure.Interfaces
 {
     public interface IExcelService
     {

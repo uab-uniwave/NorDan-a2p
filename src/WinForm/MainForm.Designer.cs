@@ -1,12 +1,12 @@
-using a2p.WinForm;
-using a2p.WinForm.Properties;
+using WinForm;
+using WinForm.Properties;
 
 using System.Windows.Forms;
 using System.Windows;
 using System.Drawing;
 
 
-namespace a2p.WinForm
+namespace WinForm
     {
     partial class MainForm
     {

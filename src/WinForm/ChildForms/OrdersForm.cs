@@ -1,13 +1,14 @@
-using a2p.Shared.Application.Domain.Entities;
-using a2p.Shared.Application.Domain.Enums;
-using a2p.Shared.Application.Interfaces;
-using a2p.Shared.Application.Models;
-using a2p.Shared.Core.DTO.a2p.Shared.Core.DTO;
-using a2p.Shared.Infrastructure.Interfaces;
+using Shared.Core.DTO.Shared.Core.DTO;
+
+using Shared.Application.Domain.Entities;
+using Shared.Application.Domain.Enums;
+using Shared.Application.Interfaces;
+using Shared.Application.Models;
+using Shared.Infrastructure.Interfaces;
 
 using System.Data;
 
-namespace a2p.WinForm.ChildForms
+namespace WinForm.ChildForms
 {
     public partial class OrdersForm : Form
     {

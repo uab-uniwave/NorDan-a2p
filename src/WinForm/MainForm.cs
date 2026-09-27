@@ -1,18 +1,19 @@
-// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements. 
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using a2p.Shared.Application.Domain.Entities;
-using a2p.Shared.Application.Interfaces;
-using a2p.Shared.Application.Models;
-using a2p.Shared.Infrastructure.Interfaces;
-using a2p.WinForm.ChildForms;
+using WinForm.ChildForms;
 
 using Newtonsoft.Json;
+
+using Shared.Application.Domain.Entities;
+using Shared.Application.Interfaces;
+using Shared.Application.Models;
+using Shared.Infrastructure.Interfaces;
 
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-namespace a2p.WinForm
+namespace WinForm
 {
     public partial class MainForm : Form
     {

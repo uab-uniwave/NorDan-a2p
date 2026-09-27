@@ -1,4 +1,4 @@
-﻿namespace a2p.Shared.Application.Models.BaseModels
+namespace Shared.Application.Models.BaseModels
 {
  public abstract class BaseGlass : BaseMaterial
  {

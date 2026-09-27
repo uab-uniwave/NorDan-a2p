@@ -1,5 +1,5 @@
-using a2p.Shared.Application.Domain.Entities;
-using a2p.Shared.Infrastructure.Interfaces;
+using Shared.Application.Domain.Entities;
+using Shared.Infrastructure.Interfaces;
 
 public class DataCache
 {

@@ -1,7 +1,7 @@
 using System.Drawing.Drawing2D;
 using System.Reflection;
 
-namespace a2p.WinForm
+namespace WinForm
 {
     public partial class SplashScreenForm : Form
     {

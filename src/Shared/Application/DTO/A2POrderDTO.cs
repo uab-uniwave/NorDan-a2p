@@ -1,4 +1,4 @@
-﻿namespace a2p.Shared.Application.DTO
+namespace Shared.Application.DTO
 {
     public class A2POrderDTO
     {

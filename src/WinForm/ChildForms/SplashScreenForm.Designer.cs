@@ -1,8 +1,8 @@
-using a2p.WinForm.Properties;
+using WinForm.Properties;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace a2p.WinForm
+namespace WinForm
 {
     partial class SplashScreenForm
     {

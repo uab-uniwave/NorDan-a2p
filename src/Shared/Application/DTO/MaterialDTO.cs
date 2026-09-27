@@ -1,11 +1,11 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using a2p.Shared.Application.Domain.Enums;
+using Shared.Application.Domain.Enums;
 
 using System.ComponentModel.DataAnnotations;
 
-namespace a2p.Shared.Application.DTO
+namespace Shared.Application.DTO
 {
     public class MaterialDTO
     {

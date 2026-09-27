@@ -1,4 +1,4 @@
-﻿namespace a2p.WinForm.ChildForms
+namespace WinForm.ChildForms
 
 {
  partial class SettingForm

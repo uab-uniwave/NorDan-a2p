@@ -1,4 +1,4 @@
-﻿namespace a2p.Shared.Application.Models.BaseModels
+namespace Shared.Application.Models.BaseModels
 {
  // Base class for all materials
  public abstract class BaseMaterial

@@ -1,19 +1,19 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using a2p.Shared.Application.Domain.Entities;
-using a2p.Shared.Application.Domain.Enums;
-using a2p.Shared.Application.DTO;
-using a2p.Shared.Application.Interfaces;
-using a2p.Shared.Infrastructure.Interfaces;
-
 using DocumentFormat.OpenXml.Drawing.Charts;
 
 using Microsoft.Data.SqlClient;
 
+using Shared.Application.Domain.Entities;
+using Shared.Application.Domain.Enums;
+using Shared.Application.DTO;
+using Shared.Application.Interfaces;
+using Shared.Infrastructure.Interfaces;
+
 using System.Data;
 
-namespace a2p.Shared.Application.Services
+namespace Shared.Application.Services
 {
     // ======================================================================================================================
     // Repository for querying and writing sales-document and PrefSuite material data.

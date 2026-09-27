@@ -1,4 +1,4 @@
-namespace a2p.Shared.Application.Domain.Enums
+namespace Shared.Application.Domain.Enums
 {
     public enum SourceAppType
     {

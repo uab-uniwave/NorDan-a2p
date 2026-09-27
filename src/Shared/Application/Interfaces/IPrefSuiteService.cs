@@ -1,7 +1,6 @@
+using Shared.Application.Domain.Entities;
 
-using a2p.Shared.Application.Domain.Entities;
-
-namespace a2p.Shared.Application.Interfaces
+namespace Shared.Application.Interfaces
 {
     public interface IPrefSuiteService
     {

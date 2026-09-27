@@ -1,6 +1,6 @@
 ﻿{
  "profiles": {
- "a2p.WinForm": {
+ "WinForm": {
   "commandName": "Project",
   "workingDirectory": "$(SolutionDir)",
   "environmentVariables": {

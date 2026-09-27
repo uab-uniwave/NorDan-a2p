@@ -1,8 +1,8 @@
-﻿using a2p.Shared.Application.Models.BaseModels;
+using Shared.Application.Models.BaseModels;
 
-namespace a2p.Shared.Core.Entities
+namespace Shared.Core.Entities
 {
- namespace a2p.Shared.Core.Entities
+ namespace Shared.Core.Entities
  {
   public class ItemSchuco : BaseItem
   {

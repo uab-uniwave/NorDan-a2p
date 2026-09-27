@@ -1,7 +1,7 @@
-using a2p.Shared.Application.Domain.Entities;
-using a2p.Shared.Application.DTO;
+using Shared.Application.Domain.Entities;
+using Shared.Application.DTO;
 
-namespace a2p.Shared.Application.Interfaces
+namespace Shared.Application.Interfaces
 {
     public interface ISQLRepository
     {

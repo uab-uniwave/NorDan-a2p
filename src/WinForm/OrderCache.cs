@@ -1,6 +1,6 @@
-﻿using a2p.Shared.Application.Domain.Entities;
-
 using DocumentFormat.OpenXml.Drawing.Charts;
+
+using Shared.Application.Domain.Entities;
 
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace a2p.WinForm
+namespace WinForm
 {
 
         public static class OrderCache

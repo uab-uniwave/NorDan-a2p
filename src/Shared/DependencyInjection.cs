@@ -1,18 +1,18 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using a2p.Shared.Application.Interfaces;
-using a2p.Shared.Application.Services;
-using a2p.Shared.Infrastructure.Interfaces;
-using a2p.Shared.Infrastructure.Services;
-using a2p.Shared.Infrastructure.Services.Logger;
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using Serilog;
 
-namespace a2p.Shared
+using Shared.Application.Interfaces;
+using Shared.Application.Services;
+using Shared.Infrastructure.Interfaces;
+using Shared.Infrastructure.Services;
+using Shared.Infrastructure.Services.Logger;
+
+namespace Shared
 {
     public static class DependencyInjection
     {

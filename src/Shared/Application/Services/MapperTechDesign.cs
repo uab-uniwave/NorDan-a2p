@@ -1,15 +1,15 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using a2p.Shared.Application.Domain.Entities;
-using a2p.Shared.Application.Domain.Enums;
-using a2p.Shared.Application.DTO;
-using a2p.Shared.Application.Interfaces;
-using a2p.Shared.Infrastructure.Interfaces;
+using Shared.Application.Domain.Entities;
+using Shared.Application.Domain.Enums;
+using Shared.Application.DTO;
+using Shared.Application.Interfaces;
+using Shared.Infrastructure.Interfaces;
 
 using System.Text.RegularExpressions;
 
-namespace a2p.Shared.Application.Services
+namespace Shared.Application.Services
 {
     public class MapperTechDesign : IMapperTechDesign
     {

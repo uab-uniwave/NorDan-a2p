@@ -1,10 +1,10 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using a2p.Shared.Application.Domain.Enums;
-using a2p.Shared.Application.DTO;
+using Shared.Application.Domain.Enums;
+using Shared.Application.DTO;
 
-namespace a2p.Shared.Application.Domain.Entities
+namespace Shared.Application.Domain.Entities
 {
     public class A2POrder
     {

@@ -1,6 +1,6 @@
-using a2p.Shared.Application.Models.BaseModels;
+using Shared.Application.Models.BaseModels;
 
-namespace a2p.Shared.Application.Models
+namespace Shared.Application.Models
 {
 
 

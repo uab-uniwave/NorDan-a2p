@@ -3,141 +3,280 @@
   <Fragment>
     <DirectoryRef Id="INSTALLFOLDER">
       <Directory Id="Dir_cs" Name="cs">
-        <Component Id="cmp_cs_Microsoft_Data_SqlClient_resources_dll" Guid="{69e066f2-9915-4429-9124-66c9a9c6ea8f}">
+        <Component Id="cmp_cs_Microsoft_Data_SqlClient_resources_dll" Guid="{09632328-4841-46cc-b523-b4b5b0e9bf1f}">
           <File Source="../../output/WinForm/cs/Microsoft.Data.SqlClient.resources.dll" />
         </Component>
       </Directory>
       <Directory Id="Dir_de" Name="de">
-        <Component Id="cmp_de_Microsoft_Data_SqlClient_resources_dll" Guid="{ed6e4895-c039-43f3-bc02-24ba481fa181}">
+        <Component Id="cmp_de_Microsoft_Data_SqlClient_resources_dll" Guid="{f10b4e59-5c53-4f6f-883a-838389b72c45}">
           <File Source="../../output/WinForm/de/Microsoft.Data.SqlClient.resources.dll" />
         </Component>
       </Directory>
       <Directory Id="Dir_es" Name="es">
-        <Component Id="cmp_es_Microsoft_Data_SqlClient_resources_dll" Guid="{2421f410-d6f9-42e5-939f-b8d567461fc8}">
+        <Component Id="cmp_es_Microsoft_Data_SqlClient_resources_dll" Guid="{d58c6616-f2ff-4bf2-8e68-db1b0956cdb8}">
           <File Source="../../output/WinForm/es/Microsoft.Data.SqlClient.resources.dll" />
         </Component>
       </Directory>
       <Directory Id="Dir_Excel" Name="Excel">
-        <Component Id="cmp_Excel_0000Z000001_14_Price_Details_xlsx" Guid="{2abaa014-d653-4b77-9bea-79fee607a3d7}">
+        <Component Id="cmp_Excel_0000Z000001_14_Price_Details_xlsx" Guid="{17514089-e1b1-4398-9e1f-f6988783cde6}">
           <File Source="../../output/WinForm/Excel/0000Z000001-14 Price_Details.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z000001_14_SumList_xlsx" Guid="{a9cf7bb8-2f64-48bc-9b36-705a701d5998}">
+        <Component Id="cmp_Excel_0000Z000001_14_SumList_xlsx" Guid="{3010eaa7-88fb-4964-8065-52dcb024fcc7}">
           <File Source="../../output/WinForm/Excel/0000Z000001-14 SumList.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00001_1_Price_Details_xlsx" Guid="{71c1f842-104e-46c7-b136-00a4c81c0b10}">
+        <Component Id="cmp_Excel_0000Z00001_1_Price_Details_xlsx" Guid="{078814e3-3253-496e-9fe7-5e938107da7f}">
           <File Source="../../output/WinForm/Excel/0000Z00001-1 Price_Details.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00001_1_SumList_xlsx" Guid="{f2bbcc26-c5cb-498a-b7d1-1cb1f23c32a4}">
+        <Component Id="cmp_Excel_0000Z00001_1_SumList_xlsx" Guid="{339f67e9-a984-43cf-b9af-3081cabb56bf}">
           <File Source="../../output/WinForm/Excel/0000Z00001-1 SumList.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00001_13_Price_Details_xlsx" Guid="{a7f086b6-0fc9-4ea0-9e18-c72e25063297}">
+        <Component Id="cmp_Excel_0000Z00001_13_Price_Details_xlsx" Guid="{ed59bb5a-a761-4caf-a5b6-19aa1a07ca74}">
           <File Source="../../output/WinForm/Excel/0000Z00001-13 Price_Details.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00001_13_SumList_xlsx" Guid="{ec981495-9575-4b45-b060-5b4de0b495ef}">
+        <Component Id="cmp_Excel_0000Z00001_13_SumList_xlsx" Guid="{1915b56f-06d4-4898-abe5-637862459e3b}">
           <File Source="../../output/WinForm/Excel/0000Z00001-13 SumList.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00001_2_Price_Details_xlsx" Guid="{1af7ab24-a94e-45a4-a7f2-5236eaa5c540}">
+        <Component Id="cmp_Excel_0000Z00001_2_Price_Details_xlsx" Guid="{6a5cba18-aa96-4932-bb94-48b43564d4b3}">
           <File Source="../../output/WinForm/Excel/0000Z00001-2 Price_Details.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00001_2_SumList_xlsx" Guid="{d862ce99-dbe7-405e-9713-13a66617a38a}">
+        <Component Id="cmp_Excel_0000Z00001_2_SumList_xlsx" Guid="{6056e184-5388-4cfc-b562-9ea17d74d7a1}">
           <File Source="../../output/WinForm/Excel/0000Z00001-2 SumList.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00001_3_Price_Details_xlsx" Guid="{c08f48a2-2e94-4a3e-84e8-02cd47868a5e}">
+        <Component Id="cmp_Excel_0000Z00001_3_Price_Details_xlsx" Guid="{476332b5-b15f-4241-83a8-f2bca6849a16}">
           <File Source="../../output/WinForm/Excel/0000Z00001-3 Price_Details.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00001_3_SumList_xlsx" Guid="{ef6a195d-29bb-4e0c-9901-4883fe9cd5f3}">
+        <Component Id="cmp_Excel_0000Z00001_3_SumList_xlsx" Guid="{b973dbbe-eda6-4da5-8f77-dc7a8d38e3ee}">
           <File Source="../../output/WinForm/Excel/0000Z00001-3 SumList.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00001_4_Price_Details_xlsx" Guid="{079c0df7-cfac-4c92-b27d-c81ac8151075}">
+        <Component Id="cmp_Excel_0000Z00001_4_Price_Details_xlsx" Guid="{416324fb-11e3-4441-8e59-f74cf3f3d4e2}">
           <File Source="../../output/WinForm/Excel/0000Z00001-4 Price_Details.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00001_4_SumList_xlsx" Guid="{e6c3f3e7-31c5-4c97-a3a2-3d4f09d6b4b1}">
+        <Component Id="cmp_Excel_0000Z00001_4_SumList_xlsx" Guid="{a046701d-56f6-4771-970b-e1b0c304c96a}">
           <File Source="../../output/WinForm/Excel/0000Z00001-4 SumList.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00001_5_Price_Details_xlsx" Guid="{3ce74b4c-ba26-465a-9718-f44d241c6834}">
+        <Component Id="cmp_Excel_0000Z00001_5_Price_Details_xlsx" Guid="{5548bbf9-a808-4528-9e29-0079956bb5b7}">
           <File Source="../../output/WinForm/Excel/0000Z00001-5 Price_Details.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00001_5_SumList_xlsx" Guid="{db6b3312-22a8-4df5-8d93-7684f8a4f42d}">
+        <Component Id="cmp_Excel_0000Z00001_5_SumList_xlsx" Guid="{9f0d3fc1-d123-42d8-af7b-9ae73e1d1ab6}">
           <File Source="../../output/WinForm/Excel/0000Z00001-5 SumList.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00001_6_Price_Details_xlsx" Guid="{2894cb02-7a39-4e0d-84e6-36feea33f6c2}">
+        <Component Id="cmp_Excel_0000Z00001_6_Price_Details_xlsx" Guid="{1ba3284a-ddb3-4f58-a3d9-f48cc3f90963}">
           <File Source="../../output/WinForm/Excel/0000Z00001-6 Price_Details.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00001_6_SumList_xlsx" Guid="{42cae148-563c-44d1-a917-d9f27344b2a7}">
+        <Component Id="cmp_Excel_0000Z00001_6_SumList_xlsx" Guid="{66f9e386-cb5d-4d94-b571-a48e78ababe0}">
           <File Source="../../output/WinForm/Excel/0000Z00001-6 SumList.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00001_7_Price_Details_xlsx" Guid="{77776e27-e550-44f8-8bd1-6909e5f92200}">
+        <Component Id="cmp_Excel_0000Z00001_7_Price_Details_xlsx" Guid="{737cc64d-1757-44bf-988f-2883532c417b}">
           <File Source="../../output/WinForm/Excel/0000Z00001-7 Price_Details.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00001_7_SumList_xlsx" Guid="{7d63f4eb-2c52-4bf2-b952-29324fc685b7}">
+        <Component Id="cmp_Excel_0000Z00001_7_SumList_xlsx" Guid="{ab1a3489-a3f2-4479-81ea-a9e0f22a1102}">
           <File Source="../../output/WinForm/Excel/0000Z00001-7 SumList.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00001_8_Price_Details_xlsx" Guid="{d315ae66-3570-472b-82aa-7e99f48e37cb}">
+        <Component Id="cmp_Excel_0000Z00001_8_Price_Details_xlsx" Guid="{91926b25-ac2c-4f50-9a46-05d65e44dff0}">
           <File Source="../../output/WinForm/Excel/0000Z00001-8 Price_Details.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00001_8_SumList_xlsx" Guid="{96cdee54-36d3-4498-90cb-dd2998ed0132}">
+        <Component Id="cmp_Excel_0000Z00001_8_SumList_xlsx" Guid="{1112665f-02e4-4691-9ff7-c76265c35dd2}">
           <File Source="../../output/WinForm/Excel/0000Z00001-8 SumList.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00001_9_Price_Details_xlsx" Guid="{56b93e02-b1c8-4820-8107-0b8fc4de9a3e}">
+        <Component Id="cmp_Excel_0000Z00001_9_Price_Details_xlsx" Guid="{e637d0c4-d65f-495a-bb8f-131bddc5f9e4}">
           <File Source="../../output/WinForm/Excel/0000Z00001-9 Price_Details.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00001_9_SumList_xlsx" Guid="{c37524e8-b19c-4464-b37c-63ff47eefa9e}">
+        <Component Id="cmp_Excel_0000Z00001_9_SumList_xlsx" Guid="{a528e063-d67d-4676-a2ad-51d85299666e}">
           <File Source="../../output/WinForm/Excel/0000Z00001-9 SumList.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00021_1_Price_Details_decimal_LT_xlsx" Guid="{86883327-2b8a-4ac0-b61b-66786605869c}">
+        <Component Id="cmp_Excel_0000Z00021_1_Price_Details_decimal_LT_xlsx" Guid="{efc01c3a-7cfc-416c-a4e1-d5f6ce9624ca}">
           <File Source="../../output/WinForm/Excel/0000Z00021-1 Price_Details_decimal_LT.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00021_1_SumList_decimal_LT_xlsx" Guid="{8e82ddbb-4627-4cec-b566-37d46929ad00}">
+        <Component Id="cmp_Excel_0000Z00021_1_SumList_decimal_LT_xlsx" Guid="{a5ca461d-7f56-4597-9eb6-bd4e2502509c}">
           <File Source="../../output/WinForm/Excel/0000Z00021-1 SumList_decimal_LT.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00021_2_Price_Details_decimal_US_xlsx" Guid="{c9a30f1d-3940-4246-b55d-86cfbe9b67ab}">
+        <Component Id="cmp_Excel_0000Z00021_2_Price_Details_decimal_US_xlsx" Guid="{902a4ab8-63d5-48ce-a735-c4aa3075a11c}">
           <File Source="../../output/WinForm/Excel/0000Z00021-2 Price_Details_decimal_US.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00021_2_SumList_decimal_US__xlsx" Guid="{541485f8-b604-4070-8445-30eb630703df}">
+        <Component Id="cmp_Excel_0000Z00021_2_SumList_decimal_US__xlsx" Guid="{0a790644-2866-4685-bd48-235b566004d0}">
           <File Source="../../output/WinForm/Excel/0000Z00021-2 SumList_decimal_US_.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00021_3_Price_Details_decimal_Mix_xlsx" Guid="{6a160b66-209a-4761-802f-f1fb2683428f}">
+        <Component Id="cmp_Excel_0000Z00021_3_Price_Details_decimal_Mix_xlsx" Guid="{eeb31d72-ce4a-4ecf-9512-480cc41f962c}">
           <File Source="../../output/WinForm/Excel/0000Z00021-3 Price_Details_decimal_Mix.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_0000Z00021_3_SumList__decimal_Mix_xlsx" Guid="{9be9b7dd-4545-4aca-93e0-3f0997620c5e}">
+        <Component Id="cmp_Excel_0000Z00021_3_SumList__decimal_Mix_xlsx" Guid="{1912d766-801b-449e-bdfd-0528e8f588c3}">
           <File Source="../../output/WinForm/Excel/0000Z00021-3 SumList__decimal_Mix.xlsx" />
         </Component>
-        <Component Id="cmp_Excel_NorDan_a2p_ColorMapping_csv" Guid="{66c2cd0d-f03e-4b81-860d-783c1992f0a7}">
+        <Component Id="cmp_Excel_NorDan_a2p_ColorMapping_csv" Guid="{ce0e4814-f959-4581-a0bb-73d749459978}">
           <File Source="../../output/WinForm/Excel/NorDan_a2p_ColorMapping.csv" />
         </Component>
+        <Component Id="cmp_Excel_NorDan_a2p_IntrastatData_csv" Guid="{5fd68c6a-c21f-4984-9ee6-09ed1f3d1377}">
+          <File Source="../../output/WinForm/Excel/NorDan_a2p_IntrastatData.csv" />
+        </Component>
+        <Directory Id="Dir_Excel_Schuco" Name="Schuco">
+          <Component Id="cmp_Excel_Schuco_2408Z03867_1_ALU_Accessory_summary_xlsx" Guid="{69bfa102-1424-412b-9370-17eb61f9e851}">
+            <File Source="../../output/WinForm/Excel/Schuco/2408Z03867-1_ALU_Accessory_summary.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_Schuco_2408Z03867_1_ALU_Calculation_xlsx" Guid="{b65dc629-ee2d-469d-9c25-1809045bda48}">
+            <File Source="../../output/WinForm/Excel/Schuco/2408Z03867-1_ALU_Calculation.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_Schuco_2408Z03867_1_ALU_Glass_panel_composition_xlsx" Guid="{2600b117-c33e-43f9-8300-af0acf31f1d3}">
+            <File Source="../../output/WinForm/Excel/Schuco/2408Z03867-1_ALU_Glass_panel_composition.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_Schuco_2408Z03867_1_ALU_Profile_summary_xlsx" Guid="{38c6a0fb-370e-49a1-982d-effa2430904d}">
+            <File Source="../../output/WinForm/Excel/Schuco/2408Z03867-1_ALU_Profile_summary.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_Schuco_2408Z03932_8_ALU_Accessory_summary_xlsx" Guid="{d006539e-ffa7-48a5-9d0c-0dd9c75fe4ad}">
+            <File Source="../../output/WinForm/Excel/Schuco/2408Z03932-8_ALU_Accessory_summary.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_Schuco_2408Z03932_8_ALU_CalcSapaLogic_IX1_xlsx" Guid="{83b0236b-3921-4c37-8280-72ed31af4448}">
+            <File Source="../../output/WinForm/Excel/Schuco/2408Z03932-8_ALU_CalcSapaLogic_IX1.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_Schuco_2408Z03932_8_ALU_Calculation_Schuco_xlsx" Guid="{9b0c6e58-dc21-4ec9-9d54-0a32cc009e1b}">
+            <File Source="../../output/WinForm/Excel/Schuco/2408Z03932-8_ALU_Calculation_Schuco.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_Schuco_2408Z03932_8_ALU_FillingList_xlsx" Guid="{52d9f09c-4bf4-44da-94d6-83ea674547a3}">
+            <File Source="../../output/WinForm/Excel/Schuco/2408Z03932-8_ALU_FillingList.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_Schuco_2408Z03932_8_ALU_Glass_panel_composition_xlsx" Guid="{cd3ea19b-aee4-457c-9392-2fe89d261c17}">
+            <File Source="../../output/WinForm/Excel/Schuco/2408Z03932-8_ALU_Glass_panel_composition.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_Schuco_2408Z03932_8_ALU_MaterialList_xlsx" Guid="{b2dedbaa-22eb-4538-8ee8-5c201e8d19d0}">
+            <File Source="../../output/WinForm/Excel/Schuco/2408Z03932-8_ALU_MaterialList.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_Schuco_2408Z03932_8_ALU_Profile_summary_xlsx" Guid="{b9a9278e-b103-4a1a-b6e7-8339032eb40b}">
+            <File Source="../../output/WinForm/Excel/Schuco/2408Z03932-8_ALU_Profile_summary.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_Schuco_2409Z04081_5_ALU_Accessory_summary_xlsx" Guid="{8a9c508d-c6e9-49f9-b6ab-82e16caf3f9e}">
+            <File Source="../../output/WinForm/Excel/Schuco/2409Z04081-5_ALU_Accessory_summary.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_Schuco_2409Z04081_5_ALU_Calculation_xlsx" Guid="{647e7ee1-5adb-45b8-a42f-d899a7146a9b}">
+            <File Source="../../output/WinForm/Excel/Schuco/2409Z04081-5_ALU_Calculation.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_Schuco_2409Z04081_5_ALU_Glass_panel_composition_xlsx" Guid="{240c9f6b-bc98-484a-beaa-b8ef5dc0156b}">
+            <File Source="../../output/WinForm/Excel/Schuco/2409Z04081-5_ALU_Glass_panel_composition.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_Schuco_2409Z04081_5_ALU_Profile_summary_xlsx" Guid="{759c7107-b856-4ec2-9f2a-db189294a34d}">
+            <File Source="../../output/WinForm/Excel/Schuco/2409Z04081-5_ALU_Profile_summary.xlsx" />
+          </Component>
+        </Directory>
+        <Directory Id="Dir_Excel_TechDesign" Name="TechDesign">
+          <Component Id="cmp_Excel_TechDesign_0000Z000001_14_Price_Details_xlsx" Guid="{1c2ad2e4-a5c6-49d6-b163-b929fcbe5d3e}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z000001-14 Price_Details.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z000001_14_SumList_xlsx" Guid="{23db5da8-e9a7-4009-ac49-300dcac28a49}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z000001-14 SumList.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00001_1_Price_Details_xlsx" Guid="{1042f273-f9a9-4f1c-a190-c6ae93d499fe}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00001-1 Price_Details.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00001_1_SumList_xlsx" Guid="{a63975ce-2210-49bd-bd82-7382120d09b1}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00001-1 SumList.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00001_13_Price_Details_xlsx" Guid="{ff802953-1ba0-49eb-969d-ab2dd82d94d0}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00001-13 Price_Details.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00001_13_SumList_xlsx" Guid="{7103b735-f93d-44f8-8446-282b2dba6811}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00001-13 SumList.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00001_2_Price_Details_xlsx" Guid="{58ff115b-eea3-4920-b3c4-74ad6f515ad1}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00001-2 Price_Details.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00001_2_SumList_xlsx" Guid="{018833d0-c563-4af6-901e-e8da2cb1f0ce}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00001-2 SumList.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00001_3_Price_Details_xlsx" Guid="{45ff6bce-8b10-4243-b962-dce807e06dcc}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00001-3 Price_Details.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00001_3_SumList_xlsx" Guid="{989f4e36-1e09-4e9f-9008-901684a3e12b}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00001-3 SumList.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00001_4_Price_Details_xlsx" Guid="{f9fb2b8d-62f6-425f-86d7-14a55e2543a2}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00001-4 Price_Details.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00001_4_SumList_xlsx" Guid="{4c9371a6-36d9-4c77-a197-670461bd9b81}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00001-4 SumList.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00001_5_Price_Details_xlsx" Guid="{e8af3356-3a22-4c64-bb3e-8c245e438fdc}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00001-5 Price_Details.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00001_5_SumList_xlsx" Guid="{6c057a72-6f4c-4cc2-9ed5-31e28c96ad74}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00001-5 SumList.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00001_6_Price_Details_xlsx" Guid="{02d023b7-0f3b-452d-a6b4-7dd65b461476}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00001-6 Price_Details.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00001_6_SumList_xlsx" Guid="{0cc812c6-ce94-40a5-934c-ddf2aab4c9bd}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00001-6 SumList.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00001_7_Price_Details_xlsx" Guid="{9a0e21a1-9b24-4b2a-8752-88bc3cf86070}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00001-7 Price_Details.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00001_7_SumList_xlsx" Guid="{f3fa0f20-889c-4a19-9d9c-4e0663b65bbb}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00001-7 SumList.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00001_8_Price_Details_xlsx" Guid="{c5eb8d4c-0b13-440b-9116-c6e303e5d8ea}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00001-8 Price_Details.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00001_8_SumList_xlsx" Guid="{6c3436c0-30c9-4a0c-82cf-6e276d2741c8}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00001-8 SumList.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00001_9_Price_Details_xlsx" Guid="{804b8919-5ca0-4efb-bb7a-541d7a62ea6b}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00001-9 Price_Details.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00001_9_SumList_xlsx" Guid="{ca1a7dc6-5d80-493f-a1aa-103c21caf49a}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00001-9 SumList.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00021_1_Price_Details_decimal_LT_xlsx" Guid="{c49daf88-d7fd-4481-bb97-1b7b69e1ea18}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00021-1 Price_Details_decimal_LT.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00021_1_SumList_decimal_LT_xlsx" Guid="{b61ece25-5e1a-4478-9f80-89d8c6010334}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00021-1 SumList_decimal_LT.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00021_2_Price_Details_decimal_US_xlsx" Guid="{3688c3b1-f158-4160-9fa1-d6677aa16675}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00021-2 Price_Details_decimal_US.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00021_2_SumList_decimal_US__xlsx" Guid="{6de33cb2-dd5c-4847-9583-0116f57816e3}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00021-2 SumList_decimal_US_.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00021_3_Price_Details_decimal_Mix_xlsx" Guid="{ffaaa3a0-e28c-42e7-884f-69606b407d62}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00021-3 Price_Details_decimal_Mix.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_0000Z00021_3_SumList__decimal_Mix_xlsx" Guid="{b108b37e-49ec-40ea-ae40-b74bce444e77}">
+            <File Source="../../output/WinForm/Excel/TechDesign/0000Z00021-3 SumList__decimal_Mix.xlsx" />
+          </Component>
+          <Component Id="cmp_Excel_TechDesign_NorDan_a2p_ColorMapping_csv" Guid="{13e3b443-7601-43bd-81d8-38e11d138f7a}">
+            <File Source="../../output/WinForm/Excel/TechDesign/NorDan_a2p_ColorMapping.csv" />
+          </Component>
+        </Directory>
       </Directory>
       <Directory Id="Dir_fr" Name="fr">
-        <Component Id="cmp_fr_Microsoft_Data_SqlClient_resources_dll" Guid="{b504bfb3-8b9f-4169-9072-6bcdd92eee91}">
+        <Component Id="cmp_fr_Microsoft_Data_SqlClient_resources_dll" Guid="{80bcca24-33eb-4c85-8d22-d012dfe5bd0c}">
           <File Source="../../output/WinForm/fr/Microsoft.Data.SqlClient.resources.dll" />
         </Component>
       </Directory>
       <Directory Id="Dir_it" Name="it">
-        <Component Id="cmp_it_Microsoft_Data_SqlClient_resources_dll" Guid="{7b5185cb-6b13-4e2f-8211-2b17980e89f6}">
+        <Component Id="cmp_it_Microsoft_Data_SqlClient_resources_dll" Guid="{2e24ba00-4740-4a9a-986f-89f9ac0b30e3}">
           <File Source="../../output/WinForm/it/Microsoft.Data.SqlClient.resources.dll" />
         </Component>
       </Directory>
       <Directory Id="Dir_ja" Name="ja">
-        <Component Id="cmp_ja_Microsoft_Data_SqlClient_resources_dll" Guid="{126164b7-29d2-4215-886a-dc7ff9539125}">
+        <Component Id="cmp_ja_Microsoft_Data_SqlClient_resources_dll" Guid="{903e0a2a-b2ea-4cf5-9831-fb807f1b8897}">
           <File Source="../../output/WinForm/ja/Microsoft.Data.SqlClient.resources.dll" />
         </Component>
       </Directory>
       <Directory Id="Dir_ko" Name="ko">
-        <Component Id="cmp_ko_Microsoft_Data_SqlClient_resources_dll" Guid="{2a947499-3d54-4d89-b522-f3e5357b7331}">
+        <Component Id="cmp_ko_Microsoft_Data_SqlClient_resources_dll" Guid="{bf946ddf-34e7-4b74-9547-b15519151184}">
           <File Source="../../output/WinForm/ko/Microsoft.Data.SqlClient.resources.dll" />
         </Component>
       </Directory>
       <Directory Id="Dir_pl" Name="pl">
-        <Component Id="cmp_pl_Microsoft_Data_SqlClient_resources_dll" Guid="{75deae53-0839-419f-acea-8824f303cc80}">
+        <Component Id="cmp_pl_Microsoft_Data_SqlClient_resources_dll" Guid="{ce78921a-71e5-4afb-bc43-560224fc660f}">
           <File Source="../../output/WinForm/pl/Microsoft.Data.SqlClient.resources.dll" />
         </Component>
       </Directory>
       <Directory Id="Dir_pt_BR" Name="pt-BR">
-        <Component Id="cmp_pt_BR_Microsoft_Data_SqlClient_resources_dll" Guid="{101a1595-d5c8-4666-99db-eefe7f8cbaf6}">
+        <Component Id="cmp_pt_BR_Microsoft_Data_SqlClient_resources_dll" Guid="{ca928b8f-50b8-436b-abd6-31ef596abbef}">
           <File Source="../../output/WinForm/pt-BR/Microsoft.Data.SqlClient.resources.dll" />
         </Component>
       </Directory>
       <Directory Id="Dir_ru" Name="ru">
-        <Component Id="cmp_ru_Microsoft_Data_SqlClient_resources_dll" Guid="{09c4847e-839d-4d78-af23-2e1b340e0c8e}">
+        <Component Id="cmp_ru_Microsoft_Data_SqlClient_resources_dll" Guid="{25044426-e708-4d4c-9c53-00faa03eef33}">
           <File Source="../../output/WinForm/ru/Microsoft.Data.SqlClient.resources.dll" />
         </Component>
       </Directory>
@@ -145,7 +284,7 @@
         <Directory Id="Dir_runtimes_unix" Name="unix">
           <Directory Id="Dir_runtimes_unix_lib" Name="lib">
             <Directory Id="Dir_runtimes_unix_lib_net9_0" Name="net9.0">
-              <Component Id="cmp_runtimes_unix_lib_net9_0_Microsoft_Data_SqlClient_dll" Guid="{ca16cf05-8205-4514-a3ad-9751a9b9976d}">
+              <Component Id="cmp_runtimes_unix_lib_net9_0_Microsoft_Data_SqlClient_dll" Guid="{e93f6361-ce6a-4ed5-98bd-8f9e16eb40de}">
                 <File Source="../../output/WinForm/runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll" />
               </Component>
             </Directory>
@@ -154,7 +293,7 @@
         <Directory Id="Dir_runtimes_win" Name="win">
           <Directory Id="Dir_runtimes_win_lib" Name="lib">
             <Directory Id="Dir_runtimes_win_lib_net9_0" Name="net9.0">
-              <Component Id="cmp_runtimes_win_lib_net9_0_Microsoft_Data_SqlClient_dll" Guid="{aa275006-1d70-483d-85ce-b45a68d85614}">
+              <Component Id="cmp_runtimes_win_lib_net9_0_Microsoft_Data_SqlClient_dll" Guid="{5d4e69e6-524e-4834-bece-400fd3572aff}">
                 <File Source="../../output/WinForm/runtimes/win/lib/net9.0/Microsoft.Data.SqlClient.dll" />
               </Component>
             </Directory>
@@ -162,74 +301,74 @@
         </Directory>
         <Directory Id="Dir_runtimes_win_arm" Name="win-arm">
           <Directory Id="Dir_runtimes_win_arm_native" Name="native">
-            <Component Id="cmp_runtimes_win_arm_native_Microsoft_Data_SqlClient_SNI_dll" Guid="{9607d2a5-f85e-464b-b8ae-4e1fc57e03ec}">
+            <Component Id="cmp_runtimes_win_arm_native_Microsoft_Data_SqlClient_SNI_dll" Guid="{9708e11f-e236-49bf-95de-c358749b43c3}">
               <File Source="../../output/WinForm/runtimes/win-arm/native/Microsoft.Data.SqlClient.SNI.dll" />
             </Component>
           </Directory>
         </Directory>
         <Directory Id="Dir_runtimes_win_arm64" Name="win-arm64">
           <Directory Id="Dir_runtimes_win_arm64_native" Name="native">
-            <Component Id="cmp_runtimes_win_arm64_native_Microsoft_Data_SqlClient_SNI_dll" Guid="{6f0ad75b-e355-4600-8f94-9cbd7886486c}">
+            <Component Id="cmp_runtimes_win_arm64_native_Microsoft_Data_SqlClient_SNI_dll" Guid="{e17a363b-e5e3-4bba-943e-7bab1664da6d}">
               <File Source="../../output/WinForm/runtimes/win-arm64/native/Microsoft.Data.SqlClient.SNI.dll" />
             </Component>
           </Directory>
         </Directory>
         <Directory Id="Dir_runtimes_win_x64" Name="win-x64">
           <Directory Id="Dir_runtimes_win_x64_native" Name="native">
-            <Component Id="cmp_runtimes_win_x64_native_Microsoft_Data_SqlClient_SNI_dll" Guid="{1b59276c-33ba-4b91-91ca-a7620cbcee11}">
+            <Component Id="cmp_runtimes_win_x64_native_Microsoft_Data_SqlClient_SNI_dll" Guid="{80ed97e2-4ec0-42fc-af37-6a6a77cdbbca}">
               <File Source="../../output/WinForm/runtimes/win-x64/native/Microsoft.Data.SqlClient.SNI.dll" />
             </Component>
           </Directory>
         </Directory>
         <Directory Id="Dir_runtimes_win_x86" Name="win-x86">
           <Directory Id="Dir_runtimes_win_x86_native" Name="native">
-            <Component Id="cmp_runtimes_win_x86_native_Microsoft_Data_SqlClient_SNI_dll" Guid="{8993e7bf-a850-4e60-9f8d-da1739966765}">
+            <Component Id="cmp_runtimes_win_x86_native_Microsoft_Data_SqlClient_SNI_dll" Guid="{24ab3629-b5db-4fc0-a2bf-cde4b3c7c929}">
               <File Source="../../output/WinForm/runtimes/win-x86/native/Microsoft.Data.SqlClient.SNI.dll" />
             </Component>
           </Directory>
         </Directory>
       </Directory>
       <Directory Id="Dir_SQL" Name="SQL">
-        <Component Id="cmp_SQL_CleanDB_sql" Guid="{6c971b10-ed5c-48de-a05b-5d30f2b00795}">
+        <Component Id="cmp_SQL_CleanDB_sql" Guid="{0fe1eef0-8fee-47e7-91d9-bb91dd2a90c3}">
           <File Source="../../output/WinForm/SQL/CleanDB.sql" />
         </Component>
-        <Component Id="cmp_SQL_Functions_sql" Guid="{5acc3d8b-f6f7-4d43-bda7-4b1824288dbb}">
+        <Component Id="cmp_SQL_Functions_sql" Guid="{a73117f3-2ad1-4e2d-9fc0-2b60d1eb619f}">
           <File Source="../../output/WinForm/SQL/Functions.sql" />
         </Component>
-        <Component Id="cmp_SQL_NorDan_ColorMapping_sql" Guid="{f062e3f7-b2c7-4d8e-abb5-ed2322467960}">
+        <Component Id="cmp_SQL_NorDan_ColorMapping_sql" Guid="{0f6afe7b-4d61-45e9-ac61-6101de18baff}">
           <File Source="../../output/WinForm/SQL/NorDan_ColorMapping.sql" />
         </Component>
-        <Component Id="cmp_SQL_NorDan_Glasses_sql" Guid="{1f6bacad-90ba-4d53-aa14-7d231eba70ca}">
+        <Component Id="cmp_SQL_NorDan_Glasses_sql" Guid="{8735f8d9-0073-4630-8b1b-518babbacfc5}">
           <File Source="../../output/WinForm/SQL/NorDan_Glasses.sql" />
         </Component>
-        <Component Id="cmp_SQL_NorDan_TechDesign_sql" Guid="{1c267fdf-e4b5-43c2-a4fa-635313b78217}">
+        <Component Id="cmp_SQL_NorDan_TechDesign_sql" Guid="{6d322252-fca3-4659-8fac-c4bdc9326707}">
           <File Source="../../output/WinForm/SQL/NorDan_TechDesign.sql" />
         </Component>
-        <Component Id="cmp_SQL_Procedures_sql" Guid="{69bbe482-76f5-4f7f-980c-1ec1051ff32d}">
+        <Component Id="cmp_SQL_Procedures_sql" Guid="{32248165-471b-454c-b334-a2e9a9851a6c}">
           <File Source="../../output/WinForm/SQL/Procedures.sql" />
         </Component>
-        <Component Id="cmp_SQL_Tables_sql" Guid="{8b6d47f6-712e-41bc-b407-055701df028d}">
+        <Component Id="cmp_SQL_Tables_sql" Guid="{a8e7aca6-5ab0-4086-982c-d406a8f9f68c}">
           <File Source="../../output/WinForm/SQL/Tables.sql" />
         </Component>
-        <Component Id="cmp_SQL_Test_sql" Guid="{1489913e-9334-41b7-8394-3cd0b2a23402}">
+        <Component Id="cmp_SQL_Test_sql" Guid="{91663d4a-6245-450b-bcd6-1cf9c8a1e949}">
           <File Source="../../output/WinForm/SQL/Test.sql" />
         </Component>
-        <Component Id="cmp_SQL_Triggers_sql" Guid="{ae1b3de3-7c5b-4c57-b51f-88e04bb1f805}">
+        <Component Id="cmp_SQL_Triggers_sql" Guid="{e33c6eec-8bc6-4854-9382-7437eee5fecb}">
           <File Source="../../output/WinForm/SQL/Triggers.sql" />
         </Component>
       </Directory>
       <Directory Id="Dir_tr" Name="tr">
-        <Component Id="cmp_tr_Microsoft_Data_SqlClient_resources_dll" Guid="{de80fe42-eb85-4b2d-8a67-21b9404c55cc}">
+        <Component Id="cmp_tr_Microsoft_Data_SqlClient_resources_dll" Guid="{855163ef-67d2-468c-b5fd-2447bcbd5d17}">
           <File Source="../../output/WinForm/tr/Microsoft.Data.SqlClient.resources.dll" />
         </Component>
       </Directory>
       <Directory Id="Dir_zh_Hans" Name="zh-Hans">
-        <Component Id="cmp_zh_Hans_Microsoft_Data_SqlClient_resources_dll" Guid="{0c831f55-c71b-4256-a34b-1a5c3666a9be}">
+        <Component Id="cmp_zh_Hans_Microsoft_Data_SqlClient_resources_dll" Guid="{8c64567f-1079-4a2d-9575-63e773c07644}">
           <File Source="../../output/WinForm/zh-Hans/Microsoft.Data.SqlClient.resources.dll" />
         </Component>
       </Directory>
       <Directory Id="Dir_zh_Hant" Name="zh-Hant">
-        <Component Id="cmp_zh_Hant_Microsoft_Data_SqlClient_resources_dll" Guid="{d6f95e8f-c01a-478f-b9ac-9a6330b3d02a}">
+        <Component Id="cmp_zh_Hant_Microsoft_Data_SqlClient_resources_dll" Guid="{282fde55-e9b8-43a4-9853-9c900ab334bb}">
           <File Source="../../output/WinForm/zh-Hant/Microsoft.Data.SqlClient.resources.dll" />
         </Component>
       </Directory>
@@ -267,6 +406,51 @@
       <ComponentRef Id="cmp_Excel_0000Z00021_3_Price_Details_decimal_Mix_xlsx" />
       <ComponentRef Id="cmp_Excel_0000Z00021_3_SumList__decimal_Mix_xlsx" />
       <ComponentRef Id="cmp_Excel_NorDan_a2p_ColorMapping_csv" />
+      <ComponentRef Id="cmp_Excel_NorDan_a2p_IntrastatData_csv" />
+      <ComponentRef Id="cmp_Excel_Schuco_2408Z03867_1_ALU_Accessory_summary_xlsx" />
+      <ComponentRef Id="cmp_Excel_Schuco_2408Z03867_1_ALU_Calculation_xlsx" />
+      <ComponentRef Id="cmp_Excel_Schuco_2408Z03867_1_ALU_Glass_panel_composition_xlsx" />
+      <ComponentRef Id="cmp_Excel_Schuco_2408Z03867_1_ALU_Profile_summary_xlsx" />
+      <ComponentRef Id="cmp_Excel_Schuco_2408Z03932_8_ALU_Accessory_summary_xlsx" />
+      <ComponentRef Id="cmp_Excel_Schuco_2408Z03932_8_ALU_CalcSapaLogic_IX1_xlsx" />
+      <ComponentRef Id="cmp_Excel_Schuco_2408Z03932_8_ALU_Calculation_Schuco_xlsx" />
+      <ComponentRef Id="cmp_Excel_Schuco_2408Z03932_8_ALU_FillingList_xlsx" />
+      <ComponentRef Id="cmp_Excel_Schuco_2408Z03932_8_ALU_Glass_panel_composition_xlsx" />
+      <ComponentRef Id="cmp_Excel_Schuco_2408Z03932_8_ALU_MaterialList_xlsx" />
+      <ComponentRef Id="cmp_Excel_Schuco_2408Z03932_8_ALU_Profile_summary_xlsx" />
+      <ComponentRef Id="cmp_Excel_Schuco_2409Z04081_5_ALU_Accessory_summary_xlsx" />
+      <ComponentRef Id="cmp_Excel_Schuco_2409Z04081_5_ALU_Calculation_xlsx" />
+      <ComponentRef Id="cmp_Excel_Schuco_2409Z04081_5_ALU_Glass_panel_composition_xlsx" />
+      <ComponentRef Id="cmp_Excel_Schuco_2409Z04081_5_ALU_Profile_summary_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z000001_14_Price_Details_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z000001_14_SumList_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00001_1_Price_Details_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00001_1_SumList_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00001_13_Price_Details_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00001_13_SumList_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00001_2_Price_Details_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00001_2_SumList_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00001_3_Price_Details_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00001_3_SumList_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00001_4_Price_Details_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00001_4_SumList_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00001_5_Price_Details_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00001_5_SumList_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00001_6_Price_Details_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00001_6_SumList_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00001_7_Price_Details_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00001_7_SumList_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00001_8_Price_Details_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00001_8_SumList_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00001_9_Price_Details_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00001_9_SumList_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00021_1_Price_Details_decimal_LT_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00021_1_SumList_decimal_LT_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00021_2_Price_Details_decimal_US_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00021_2_SumList_decimal_US__xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00021_3_Price_Details_decimal_Mix_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_0000Z00021_3_SumList__decimal_Mix_xlsx" />
+      <ComponentRef Id="cmp_Excel_TechDesign_NorDan_a2p_ColorMapping_csv" />
       <ComponentRef Id="cmp_fr_Microsoft_Data_SqlClient_resources_dll" />
       <ComponentRef Id="cmp_it_Microsoft_Data_SqlClient_resources_dll" />
       <ComponentRef Id="cmp_ja_Microsoft_Data_SqlClient_resources_dll" />

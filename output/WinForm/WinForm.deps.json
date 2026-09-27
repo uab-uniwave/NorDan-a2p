@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v10.0": {
-      "WinForm/1.0.0.150": {
+      "WinForm/1.0.0.265": {
         "dependencies": {
           "Microsoft.Data.SqlClient": "6.0.0-preview3.24332.3",
           "Serilog.AspNetCore": "9.0.0",
@@ -23,7 +23,7 @@
           "Serilog.Sinks.EventLog": "4.0.1-dev-00087",
           "Serilog.Sinks.File": "6.0.0",
           "Serilog.Sinks.Seq": "9.0.0",
-          "Shared": "1.0.0.139"
+          "Shared": "1.0.0.259"
         },
         "runtime": {
           "WinForm.dll": {}
@@ -601,7 +601,7 @@
           }
         }
       },
-      "Shared/1.0.0.139": {
+      "Shared/1.0.0.259": {
         "dependencies": {
           "ClosedXML": "0.104.2",
           "Eris.Serilog.Formatting.Json": "1.1.0",
@@ -624,8 +624,8 @@
         },
         "runtime": {
           "Shared.dll": {
-            "assemblyVersion": "1.0.0.146",
-            "fileVersion": "1.0.0.146"
+            "assemblyVersion": "1.0.0.265",
+            "fileVersion": "1.0.0.265"
           }
         }
       },
@@ -696,7 +696,7 @@
     }
   },
   "libraries": {
-    "WinForm/1.0.0.150": {
+    "WinForm/1.0.0.265": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -1030,7 +1030,7 @@
       "path": "system.memory.data/1.0.2",
       "hashPath": "system.memory.data.1.0.2.nupkg.sha512"
     },
-    "Shared/1.0.0.139": {
+    "Shared/1.0.0.259": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

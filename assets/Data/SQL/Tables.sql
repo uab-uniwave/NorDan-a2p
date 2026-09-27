@@ -1,9 +1,3 @@
-﻿
-
-/****** Object:  Table [dbo].[Uniwave_a2p_Materials]    Script Date: 2025-06-26 22:28:59 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Uniwave_a2p_Materials]') AND type in (N'U'))
-DROP TABLE [dbo].[Uniwave_a2p_Materials]
-GO
 
 /****** Object:  Table [dbo].[Uniwave_a2p_Items]    Script Date: 2025-06-26 22:28:59 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Uniwave_a2p_Items]') AND type in (N'U'))

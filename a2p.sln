@@ -21,6 +21,50 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "a2p.PowerShellScripts", "a2
 		build\a2p.PowerShellScripts\wixComponents.ps1 = build\a2p.PowerShellScripts\wixComponents.ps1
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Icons", "Icons", "{8A34791D-ECFC-4587-8470-71001591D2FA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{6BD4C0B4-3748-45A1-B82D-3CA6488AF6C8}"
+	ProjectSection(SolutionItems) = preProject
+		src\a2p.GraphicAssets\Images\SpalshScreen.jpg = src\a2p.GraphicAssets\Images\SpalshScreen.jpg
+		src\a2p.GraphicAssets\Images\st_grean.png = src\a2p.GraphicAssets\Images\st_grean.png
+		src\a2p.GraphicAssets\Images\st_orange.png = src\a2p.GraphicAssets\Images\st_orange.png
+		src\a2p.GraphicAssets\Images\st_red.png = src\a2p.GraphicAssets\Images\st_red.png
+		src\a2p.GraphicAssets\Images\st_yellow.png = src\a2p.GraphicAssets\Images\st_yellow.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logos", "Logos", "{20789F8C-2157-4093-AECF-679B4A64D086}"
+	ProjectSection(SolutionItems) = preProject
+		src\a2p.GraphicAssets\Logos\NordanLogoInversed.png = src\a2p.GraphicAssets\Logos\NordanLogoInversed.png
+		src\a2p.GraphicAssets\Logos\UniwaveLogo.png = src\a2p.GraphicAssets\Logos\UniwaveLogo.png
+		src\a2p.GraphicAssets\Logos\UniwaveLogoInversed.png = src\a2p.GraphicAssets\Logos\UniwaveLogoInversed.png
+		src\a2p.GraphicAssets\Logos\UniwaveLogoMini.png = src\a2p.GraphicAssets\Logos\UniwaveLogoMini.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AppIcons", "AppIcons", "{BE5A1548-E891-4D17-A688-AB698536FEFB}"
+	ProjectSection(SolutionItems) = preProject
+		src\a2p.GraphicAssets\Icons\AppIcons\Icon.ico = src\a2p.GraphicAssets\Icons\AppIcons\Icon.ico
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SideBarIcons", "SideBarIcons", "{25482F05-7FD2-4CF9-8B83-18936537C3A6}"
+	ProjectSection(SolutionItems) = preProject
+		src\a2p.GraphicAssets\Icons\SideBarIcons\btnExit.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btnExit.png
+		src\a2p.GraphicAssets\Icons\SideBarIcons\btnImport.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btnImport.png
+		src\a2p.GraphicAssets\Icons\SideBarIcons\btnLoad.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btnLoad.png
+		src\a2p.GraphicAssets\Icons\SideBarIcons\btnLog.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btnLog.png
+		src\a2p.GraphicAssets\Icons\SideBarIcons\btnProperties.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btnProperties.png
+		src\a2p.GraphicAssets\Icons\SideBarIcons\btnSideBar.png = src\a2p.GraphicAssets\Icons\SideBarIcons\btnSideBar.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TitleBarIcons", "TitleBarIcons", "{1A97C381-26F0-4D9C-9EFA-1FA5C64960E1}"
+	ProjectSection(SolutionItems) = preProject
+		src\a2p.GraphicAssets\Icons\TitleBarIcons\btnClose.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btnClose.png
+		src\a2p.GraphicAssets\Icons\TitleBarIcons\btnCloseHover.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btnCloseHover.png
+		src\a2p.GraphicAssets\Icons\TitleBarIcons\btnMaximize.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btnMaximize.png
+		src\a2p.GraphicAssets\Icons\TitleBarIcons\btnMaximizeHover.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btnMaximizeHover.png
+		src\a2p.GraphicAssets\Icons\TitleBarIcons\btnMinimize.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btnMinimize.png
+		src\a2p.GraphicAssets\Icons\TitleBarIcons\btnMinimizeHover.png = src\a2p.GraphicAssets\Icons\TitleBarIcons\btnMinimizeHover.png
+	EndProjectSection
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{80D579FC-77B1-4965-934F-61FBE27F9DF2}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -76,7 +120,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Excel", "Excel", "{613B7624
 		assets\Data\Excel\0000Z00021-2 SumList_decimal_US_.xlsx = assets\Data\Excel\0000Z00021-2 SumList_decimal_US_.xlsx
 		assets\Data\Excel\0000Z00021-3 Price_Details_decimal_Mix.xlsx = assets\Data\Excel\0000Z00021-3 Price_Details_decimal_Mix.xlsx
 		assets\Data\Excel\0000Z00021-3 SumList__decimal_Mix.xlsx = assets\Data\Excel\0000Z00021-3 SumList__decimal_Mix.xlsx
-		assets\Data\Excel\NorDan_a2p_ColorMapping.csv = assets\Data\Excel\NorDan_a2p_ColorMapping.csv
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logos", "Logos", "{AD6227F0-8ACE-43E7-92CF-90A1C9B70D6E}"
@@ -155,6 +198,9 @@ Global
 		{BA5C04DE-B4AE-FA66-7C2B-E49C3C6817E8} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{220CD5BA-7D5E-437D-BA4B-EF3F9EC349F1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{58A4D13F-3B73-48F5-959A-94ACCB93A37C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71B8}
+		{BE5A1548-E891-4D17-A688-AB698536FEFB} = {8A34791D-ECFC-4587-8470-71001591D2FA}
+		{25482F05-7FD2-4CF9-8B83-18936537C3A6} = {8A34791D-ECFC-4587-8470-71001591D2FA}
+		{1A97C381-26F0-4D9C-9EFA-1FA5C64960E1} = {8A34791D-ECFC-4587-8470-71001591D2FA}
 		{B4CA6F01-53B5-B9F9-CBBD-01D49D65824B} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{A302C9CA-238A-44AD-85B6-C996E0EBDB0D} = {80D579FC-77B1-4965-934F-61FBE27F9DF2}
 		{57A3FC3A-1B0B-4A0E-92B7-EEC05357DFAD} = {80D579FC-77B1-4965-934F-61FBE27F9DF2}
